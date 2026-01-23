@@ -9,10 +9,166 @@
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
     Title="Activitats"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
 
     <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <DataTemplate x:Key="ActivityDialogTemplate">
+            <StackPanel Width="480">
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="{Binding IsEditing, Converter={StaticResource ActivityEditingToTitleConverter}, FallbackValue='Nova activitat'}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <ui:Button HorizontalAlignment="Right"
+                               Appearance="Transparent"
+                               Command="{Binding CloseDialogCommand}"
+                               Padding="4">
+                        <ui:SymbolIcon Symbol="Dismiss24" />
+                    </ui:Button>
+                </Grid>
+
+                <TextBlock Text="Nom de l'activitat"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <ui:TextBox Text="{Binding EditingActivity.Name, Mode=TwoWay}"
+                            PlaceholderText="Nom de l'activitat..."
+                            Margin="0,0,0,16" />
+
+                <TextBlock Text="Color"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+                <ItemsControl Margin="0,0,0,20">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.Items>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#0078D4"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#0078D4" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#10B981"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#10B981" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#F59E0B"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#F59E0B" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#EF4444"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#EF4444" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#8B5CF6"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#8B5CF6" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#EC4899"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#EC4899" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#06B6D4"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#06B6D4" />
+                            </Button.Background>
+                        </Button>
+                        <Button Width="40" Height="40" Margin="0,0,8,8"
+                                Command="{Binding SelectColorCommand}"
+                                CommandParameter="#F97316"
+                                Style="{StaticResource ColorButtonStyle}">
+                            <Button.Background>
+                                <SolidColorBrush Color="#F97316" />
+                            </Button.Background>
+                        </Button>
+                    </ItemsControl.Items>
+                </ItemsControl>
+
+                <CheckBox Content="Activitat activa"
+                          IsChecked="{Binding EditingActivity.Active}"
+                          Margin="0,0,0,20" />
+
+                <ui:Button Content="{Binding IsEditing, Converter={StaticResource ActivityEditingToButtonTextConverter}, FallbackValue='Crear activitat'}"
+                           Appearance="Primary"
+                           HorizontalAlignment="Stretch"
+                           Command="{Binding SaveActivityAsyncCommand}"
+                           Padding="16,12" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DeleteActivityDialogTemplate">
+            <StackPanel Width="420">
+                <ui:SymbolIcon Symbol="Warning24"
+                               FontSize="48"
+                               Foreground="#F59E0B"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,16" />
+
+                <TextBlock Text="Eliminar activitat?"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,8" />
+
+                <TextBlock TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,20">
+                    <Run Text="Aquesta activitat té " />
+                    <Run Text="{Binding ActivityToDelete.RecordCount}" FontWeight="SemiBold" />
+                    <Run Text=" registres associats. Si l'elimines, es perdran totes les dades." />
+                </TextBlock>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:Button Grid.Column="0"
+                               Content="Cancel·lar"
+                               Appearance="Secondary"
+                               Command="{Binding CancelDeleteCommand}"
+                               HorizontalAlignment="Stretch"
+                               Padding="16,10" />
+
+                    <ui:Button Grid.Column="2"
+                               Content="Eliminar"
+                               Appearance="Danger"
+                               Command="{Binding ConfirmDeleteActivityCommand}"
+                               HorizontalAlignment="Stretch"
+                               Padding="16,10" />
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
@@ -192,191 +348,6 @@
             </StackPanel>
         </Grid>
 
-        <!-- Edit/Create Dialog -->
-        <Grid Visibility="{Binding IsDialogOpen, Converter={StaticResource BoolToVisibility}}">
-            <Grid.Background>
-                <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutral}" Opacity="0.5" />
-            </Grid.Background>
-            <ui:Card MaxWidth="500"
-                     MinWidth="450"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Center"
-                     Padding="24">
-                <StackPanel>
-                    <!-- Dialog Header -->
-                    <Grid Margin="0,0,0,20">
-                        <TextBlock Text="{Binding IsEditing, Converter={StaticResource ActivityEditingToTitleConverter}, FallbackValue='Nova activitat'}"
-                                   FontSize="20"
-                                   FontWeight="SemiBold" />
-                        <ui:Button HorizontalAlignment="Right"
-                                   Appearance="Transparent"
-                                   Command="{Binding CloseDialogCommand}"
-                                   Padding="4">
-                            <ui:SymbolIcon Symbol="Dismiss24" />
-                        </ui:Button>
-                    </Grid>
-
-                    <!-- Activity Name -->
-                    <TextBlock Text="Nom de l'activitat"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,8" />
-                    <ui:TextBox Text="{Binding EditingActivity.Name, Mode=TwoWay}"
-                                PlaceholderText="Nom de l'activitat..."
-                                Margin="0,0,0,16" />
-
-                    <!-- Color Picker -->
-                    <TextBlock Text="Color"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,12" />
-                    <ItemsControl Margin="0,0,0,20">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.Items>
-                            <!-- Color Options -->
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#0078D4"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#0078D4" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#10B981"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#10B981" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#F59E0B"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#F59E0B" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#EF4444"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#EF4444" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#8B5CF6"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#8B5CF6" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#EC4899"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#EC4899" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#06B6D4"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#06B6D4" />
-                                </Button.Background>
-                            </Button>
-                            <Button Width="40" Height="40" Margin="0,0,8,8"
-                                    Command="{Binding SelectColorCommand}"
-                                    CommandParameter="#F97316"
-                                    Style="{StaticResource ColorButtonStyle}">
-                                <Button.Background>
-                                    <SolidColorBrush Color="#F97316" />
-                                </Button.Background>
-                            </Button>
-                        </ItemsControl.Items>
-                    </ItemsControl>
-
-                    <!-- Active Status -->
-                    <CheckBox Content="Activitat activa"
-                              IsChecked="{Binding EditingActivity.Active}"
-                              Margin="0,0,0,20" />
-
-                    <!-- Save Button -->
-                    <ui:Button Content="{Binding IsEditing, Converter={StaticResource ActivityEditingToButtonTextConverter}, FallbackValue='Crear activitat'}"
-                               Appearance="Primary"
-                               HorizontalAlignment="Stretch"
-                               Command="{Binding SaveActivityAsyncCommand}"
-                               Padding="16,12" />
-                </StackPanel>
-            </ui:Card>
-        </Grid>
-
-        <!-- Delete Confirmation Dialog -->
-        <Grid Visibility="{Binding IsDeleteConfirmationOpen, Converter={StaticResource BoolToVisibility}}">
-            <Grid.Background>
-                <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutral}" Opacity="0.5" />
-            </Grid.Background>
-            <ui:Card MaxWidth="400"
-                     MinWidth="350"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Center"
-                     Padding="24">
-                <StackPanel>
-                    <!-- Warning Icon -->
-                    <ui:SymbolIcon Symbol="Warning24"
-                                   FontSize="48"
-                                   Foreground="#F59E0B"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,16" />
-                    
-                    <!-- Title -->
-                    <TextBlock Text="Eliminar activitat?"
-                               FontSize="20"
-                               FontWeight="SemiBold"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,8" />
-                    
-                    <!-- Message -->
-                    <TextBlock TextAlignment="Center"
-                               TextWrapping="Wrap"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                               Margin="0,0,0,20">
-                        <Run Text="Aquesta activitat té " />
-                        <Run Text="{Binding ActivityToDelete.RecordCount}" FontWeight="SemiBold" />
-                        <Run Text=" registres associats. Si l'elimines, es perdran totes les dades." />
-                    </TextBlock>
-
-                    <!-- Actions -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        
-                        <ui:Button Grid.Column="0"
-                                   Content="Cancel·lar"
-                                   Appearance="Secondary"
-                                   Command="{Binding CancelDeleteCommand}"
-                                   HorizontalAlignment="Stretch"
-                                   Padding="16,10" />
-                        
-                        <ui:Button Grid.Column="2"
-                                   Content="Eliminar"
-                                   Appearance="Danger"
-                                   Command="{Binding ConfirmDeleteActivityCommand}"
-                                   HorizontalAlignment="Stretch"
-                                   Padding="16,10" />
-                    </Grid>
-                </StackPanel>
-            </ui:Card>
-        </Grid>
+        <ContentPresenter x:Name="RootDialogPresenter" />
     </Grid>
 </Page>
