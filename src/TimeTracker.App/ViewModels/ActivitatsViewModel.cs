@@ -151,7 +151,7 @@ public partial class ActivitatsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void RequestDeleteActivity(ActivityDisplay activity)
+    private async Task RequestDeleteActivity(ActivityDisplay activity)
     {
         ActivityToDelete = activity;
         
@@ -162,7 +162,7 @@ public partial class ActivitatsViewModel : ObservableObject
         }
         else
         {
-            _ = ConfirmDeleteActivity();
+            await ConfirmDeleteActivity();
         }
     }
 
