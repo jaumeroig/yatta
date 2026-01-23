@@ -5,6 +5,25 @@
 
 REPO="jaumeroig/time-tracker"
 
+# Validació de prerequisits
+echo "🔍 Validant prerequisits..."
+
+# Comprovar si gh està instal·lat
+if ! command -v gh &> /dev/null; then
+    echo "❌ Error: GitHub CLI (gh) no està instal·lat."
+    echo "   Instal·la'l des de: https://cli.github.com/"
+    exit 1
+fi
+
+# Comprovar si l'usuari està autenticat
+if ! gh auth status &> /dev/null; then
+    echo "❌ Error: No estàs autenticat amb GitHub CLI."
+    echo "   Executa: gh auth login"
+    exit 1
+fi
+
+echo "✅ Prerequisites correctes!"
+echo ""
 echo "🚀 Creant issues per al projecte TimeTracker..."
 echo ""
 
