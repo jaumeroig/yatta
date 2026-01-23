@@ -151,7 +151,7 @@ public partial class RegistresViewModel : ObservableObject
         var dayName = culture.TextInfo.ToTitleCase(date.ToString("dddd", culture));
         var day = date.Day;
         var month = culture.TextInfo.ToTitleCase(date.ToString("MMMM", culture));
-        return $"{dayName}, {day} De {month}";
+        return $"{dayName}, {day} de {month}";
     }
 
     private static string FormatDuration(double hours)
@@ -236,7 +236,7 @@ public partial class RegistresViewModel : ObservableObject
         else
         {
             await _timeRecordRepository.AddAsync(record);
-            _allRecords.Insert(0, record);
+            _allRecords.Add(record);
         }
 
         IsDialogOpen = false;
@@ -248,7 +248,8 @@ public partial class RegistresViewModel : ObservableObject
     private async Task DeleteRecordAsync(TimeRecordDisplay record)
     {
         await _timeRecordRepository.DeleteAsync(record.Id);
-        _allRecords.RemoveAll(r => r.Id == record.Id);
+        var index = _allRecords.FindIndex(r => r.Id == record.Id);
+        if (index >= 0) _allRecords.RemoveAt(index);
         ApplyFilters();
         CalculateTodayWorkedTime();
     }

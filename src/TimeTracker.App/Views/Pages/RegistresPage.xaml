@@ -228,8 +228,10 @@
         </Grid>
 
         <!-- Dialog Overlay -->
-        <Grid Background="#80000000"
-              Visibility="{Binding IsDialogOpen, Converter={StaticResource BoolToVisibility}}">
+        <Grid Visibility="{Binding IsDialogOpen, Converter={StaticResource BoolToVisibility}}">
+            <Grid.Background>
+                <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutral}" Opacity="0.5" />
+            </Grid.Background>
             <ui:Card MaxWidth="500"
                      MinWidth="450"
                      VerticalAlignment="Center"
