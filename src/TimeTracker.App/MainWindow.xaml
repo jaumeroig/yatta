@@ -1,12 +1,81 @@
-﻿<Window x:Class="TimeTracker.App.MainWindow"
+﻿<ui:FluentWindow x:Class="TimeTracker.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TimeTracker.App"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:pages="clr-namespace:TimeTracker.App.Views.Pages"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="TimeTracker" 
+        Height="700" 
+        Width="1100"
+        MinHeight="500"
+        MinWidth="800"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round">
+    
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <ui:TitleBar
+            x:Name="TitleBar"
+            Grid.Row="0"
+            Title="TimeTracker"
+            ShowMaximize="True"
+            ShowMinimize="True" />
+        
+        <ui:NavigationView
+            x:Name="NavigationView"
+            Grid.Row="1"
+            PaneDisplayMode="Left"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleVisible="True"
+            OpenPaneLength="200">
+            
+            <ui:NavigationView.Header>
+                <StackPanel Orientation="Horizontal" Margin="16,8">
+                    <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
+                    <StackPanel>
+                        <TextBlock Text="TimeTracker" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="Control de temps" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    </StackPanel>
+                </StackPanel>
+            </ui:NavigationView.Header>
+            
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Content="Registres" TargetPageType="{x:Type pages:RegistresPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Document24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="Jornada" TargetPageType="{x:Type pages:JornadaPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="CalendarLtr24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="Activitats" TargetPageType="{x:Type pages:ActivitatsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="AppsList24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+            
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Content="Opcions" TargetPageType="{x:Type pages:OpcionsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.FooterMenuItems>
+            
+            <ui:NavigationView.ContentOverlay>
+                <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,0,0,0" />
+            </ui:NavigationView.ContentOverlay>
+            
+        </ui:NavigationView>
     </Grid>
-</Window>
+</ui:FluentWindow>
