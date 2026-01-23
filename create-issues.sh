@@ -22,7 +22,7 @@ if ! gh auth status &> /dev/null; then
     exit 1
 fi
 
-echo "✅ Prerequisites correctes!"
+echo "✅ Prerequisits correctes!"
 echo ""
 echo "🚀 Creant issues per al projecte TimeTracker..."
 echo ""
