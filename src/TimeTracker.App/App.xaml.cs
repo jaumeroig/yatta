@@ -5,6 +5,8 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Services;
 using TimeTracker.Data;
 using TimeTracker.Data.Repositories;
+using TimeTracker.App.ViewModels;
+using TimeTracker.App.Views.Pages;
 
 namespace TimeTracker.App;
 
@@ -51,10 +53,21 @@ public partial class App : Application
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IWorkdayService, WorkdayService>();
 
+        // Register ViewModels
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddTransient<RegistresViewModel>();
+        services.AddTransient<JornadaViewModel>();
+        services.AddTransient<ActivitatsViewModel>();
+        services.AddTransient<OpcionsViewModel>();
+
+        // Register Pages
+        services.AddTransient<RegistresPage>();
+        services.AddTransient<JornadaPage>();
+        services.AddTransient<ActivitatsPage>();
+        services.AddTransient<OpcionsPage>();
+
         // Register windows
         services.AddSingleton<MainWindow>();
-
-        // TODO: Register view models here
     }
 
     protected override void OnExit(ExitEventArgs e)
