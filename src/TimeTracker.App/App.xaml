@@ -16,6 +16,32 @@
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
             <converters:EditingToTitleConverter x:Key="EditingToTitleConverter" />
             <converters:EditingToButtonTextConverter x:Key="EditingToButtonTextConverter" />
+            <converters:ActivityEditingToTitleConverter x:Key="ActivityEditingToTitleConverter" />
+            <converters:ActivityEditingToButtonTextConverter x:Key="ActivityEditingToButtonTextConverter" />
+            <converters:ActivityStatusToBackgroundConverter x:Key="ActivityStatusToBackgroundConverter" />
+            <converters:ActivityStatusToForegroundConverter x:Key="ActivityStatusToForegroundConverter" />
+            
+            <!-- Color Button Style -->
+            <Style x:Key="ColorButtonStyle" TargetType="Button">
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="20">
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorSecondary}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
