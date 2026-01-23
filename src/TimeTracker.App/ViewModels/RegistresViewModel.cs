@@ -61,7 +61,12 @@ public partial class RegistresViewModel : ObservableObject
     public async Task LoadDataAsync()
     {
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
-        Activities = new ObservableCollection<Activity>(_allActivities);
+        
+        // Afegir opció "Totes les activitats" al principi
+        var allActivitiesOption = new Activity { Id = Guid.Empty, Name = "Totes les activitats" };
+        var activitiesWithAll = new List<Activity> { allActivitiesOption };
+        activitiesWithAll.AddRange(_allActivities);
+        Activities = new ObservableCollection<Activity>(activitiesWithAll);
 
         _allRecords = (await _timeRecordRepository.GetAllAsync()).ToList();
         ApplyFilters();
@@ -96,8 +101,8 @@ public partial class RegistresViewModel : ObservableObject
                 _allActivities.FirstOrDefault(a => a.Id == r.ActivityId)?.Name.Contains(searchLower, StringComparison.InvariantCultureIgnoreCase) == true);
         }
 
-        // Filtre per activitat
-        if (SelectedActivityFilter != null)
+        // Filtre per activitat (excepte "Totes les activitats")
+        if (SelectedActivityFilter != null && SelectedActivityFilter.Id != Guid.Empty)
         {
             filtered = filtered.Where(r => r.ActivityId == SelectedActivityFilter.Id);
         }
@@ -178,7 +183,8 @@ public partial class RegistresViewModel : ObservableObject
         {
             Date = DateTime.Today,
             StartTimeText = "09:00",
-            EndTimeText = "10:00"
+            EndTimeText = "10:00",
+            ValidationError = string.Empty
         };
         IsDialogOpen = true;
     }
@@ -195,7 +201,8 @@ public partial class RegistresViewModel : ObservableObject
             Id = originalRecord.Id,
             ActivityId = originalRecord.ActivityId,
             Date = originalRecord.Date.ToDateTime(TimeOnly.MinValue),
-            Notes = originalRecord.Notes ?? string.Empty
+            Notes = originalRecord.Notes ?? string.Empty,
+            ValidationError = string.Empty
         };
         editModel.SetStartTime(originalRecord.StartTime);
         editModel.SetEndTime(originalRecord.EndTime);
@@ -217,13 +224,23 @@ public partial class RegistresViewModel : ObservableObject
         var startTime = EditingRecord.GetStartTime();
         if (!startTime.HasValue) return;
 
+        var endTime = EditingRecord.GetEndTime();
+        
+        // Validar que l'hora de fi sigui posterior a l'hora d'inici
+        if (endTime.HasValue && endTime.Value <= startTime.Value)
+        {
+            // TODO: Mostrar missatge d'error a la UI
+            EditingRecord.ValidationError = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+            return;
+        }
+
         var record = new TimeRecord
         {
             Id = IsEditing ? EditingRecord.Id : Guid.NewGuid(),
             ActivityId = EditingRecord.ActivityId,
             Date = DateOnly.FromDateTime(EditingRecord.Date),
             StartTime = startTime.Value,
-            EndTime = EditingRecord.GetEndTime(),
+            EndTime = endTime,
             Notes = string.IsNullOrWhiteSpace(EditingRecord.Notes) ? null : EditingRecord.Notes
         };
 
@@ -330,6 +347,9 @@ public partial class TimeRecordEditModel : ObservableObject
 
     [ObservableProperty]
     private string _notes = string.Empty;
+
+    [ObservableProperty]
+    private string _validationError = string.Empty;
 
     public TimeOnly? GetStartTime()
     {

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TimeTracker.Core.Interfaces;
@@ -7,6 +7,7 @@ using TimeTracker.Data;
 using TimeTracker.Data.Repositories;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
+using TimeTracker.App.Services;
 
 namespace TimeTracker.App;
 
@@ -32,6 +33,10 @@ public partial class App : Application
             dbContext.Database.Migrate();
         }
 
+        // Load and apply theme
+        var themeService = _serviceProvider.GetRequiredService<ThemeService>();
+        _ = themeService.LoadThemeAsync();
+
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
     }
@@ -52,6 +57,9 @@ public partial class App : Application
         services.AddScoped<ITimeCalculatorService, TimeCalculatorService>();
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IWorkdayService, WorkdayService>();
+        services.AddSingleton<IThemeService, ThemeService>();
+        services.AddSingleton<ThemeService>();
+        services.AddSingleton<IDialogService, DialogService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();

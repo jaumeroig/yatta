@@ -28,6 +28,11 @@ public interface IWorkdaySlotRepository
     Task<IEnumerable<WorkdaySlot>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate);
 
     /// <summary>
+    /// Obté les dates que tenen franges de jornada dins d'un rang.
+    /// </summary>
+    Task<IEnumerable<DateOnly>> GetDatesWithSlotsAsync(DateOnly startDate, DateOnly endDate);
+
+    /// <summary>
     /// Afegeix una nova franja de jornada.
     /// </summary>
     Task<WorkdaySlot> AddAsync(WorkdaySlot workdaySlot);

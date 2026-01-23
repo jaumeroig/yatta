@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
+    xmlns:converters="clr-namespace:TimeTracker.App.Converters"
     d:DataContext="{d:DesignInstance vm:ActivitatsViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
@@ -51,6 +52,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#0078D4" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#0078D4" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -59,6 +67,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#10B981" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#10B981" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -67,6 +82,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#F59E0B" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#F59E0B" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -75,6 +97,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#EF4444" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#EF4444" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -83,6 +112,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#8B5CF6" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#8B5CF6" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -91,6 +127,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#EC4899" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#EC4899" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -99,6 +142,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#06B6D4" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#06B6D4" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                         <Button Width="40" Height="40" Margin="0,0,8,8"
                                 Command="{Binding SelectColorCommand}"
@@ -107,6 +157,13 @@
                             <Button.Background>
                                 <SolidColorBrush Color="#F97316" />
                             </Button.Background>
+                            <Button.BorderThickness>
+                                <Binding Path="EditingActivity.Color">
+                                    <Binding.Converter>
+                                        <converters:SelectedColorToBorderThicknessConverter TargetColor="#F97316" />
+                                    </Binding.Converter>
+                                </Binding>
+                            </Button.BorderThickness>
                         </Button>
                     </ItemsControl.Items>
                 </ItemsControl>
@@ -347,7 +404,5 @@
                            HorizontalAlignment="Center" />
             </StackPanel>
         </Grid>
-
-        <ContentPresenter x:Name="RootDialogPresenter" />
     </Grid>
 </Page>

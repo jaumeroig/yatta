@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using Wpf.Ui.Controls;
 
@@ -11,16 +12,18 @@ namespace TimeTracker.App.Views.Pages;
 public partial class ActivitatsPage : Page
 {
     private readonly ActivitatsViewModel _viewModel;
+    private readonly IDialogService _dialogService;
     private ContentDialog? _activityDialog;
     private ContentDialog? _deleteDialog;
     private bool _isActivityDialogVisible;
     private bool _isDeleteDialogVisible;
     private bool _isSubscribedToChanges;
 
-    public ActivitatsPage(ActivitatsViewModel viewModel)
+    public ActivitatsPage(ActivitatsViewModel viewModel, IDialogService dialogService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         DataContext = viewModel;
     }
 
@@ -126,7 +129,9 @@ public partial class ActivitatsPage : Page
     private ContentDialog CreateDialog(string templateKey)
     {
         var content = CreateDialogContent(templateKey);
-        return new ContentDialog(RootDialogPresenter)
+        var dialogHost = _dialogService.GetDialogHost();
+        
+        return new ContentDialog(dialogHost)
         {
             Content = content
         };

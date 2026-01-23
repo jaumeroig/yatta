@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using Wpf.Ui.Controls;
 
@@ -11,14 +12,16 @@ namespace TimeTracker.App.Views.Pages;
 public partial class RegistresPage : Page
 {
     private readonly RegistresViewModel _viewModel;
+    private readonly IDialogService _dialogService;
     private ContentDialog? _recordDialog;
     private bool _isRecordDialogVisible;
     private bool _isSubscribedToChanges;
 
-    public RegistresPage(RegistresViewModel viewModel)
+    public RegistresPage(RegistresViewModel viewModel, IDialogService dialogService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         DataContext = viewModel;
     }
 
@@ -86,7 +89,9 @@ public partial class RegistresPage : Page
     private ContentDialog CreateDialog()
     {
         var content = CreateDialogContent();
-        return new ContentDialog(RootDialogPresenter)
+        var dialogHost = _dialogService.GetDialogHost();
+        
+        return new ContentDialog(dialogHost)
         {
             Content = content
         };

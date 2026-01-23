@@ -192,3 +192,77 @@ public class StringToBrushConverter : IValueConverter
         return "#000000";
     }
 }
+
+/// <summary>
+/// Converts the selected color to a BorderThickness (3 if selected, 0 otherwise).
+/// </summary>
+public class SelectedColorToBorderThicknessConverter : IValueConverter
+{
+    public string? TargetColor { get; set; }
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string currentColor && TargetColor != null)
+        {
+            // Normalitzar els colors per comparar-los (majúscules)
+            var current = currentColor.ToUpperInvariant();
+            var target = TargetColor.ToUpperInvariant();
+            
+            return current == target ? new Thickness(3) : new Thickness(0);
+        }
+        return new Thickness(0);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Inverteix un valor booleà (true → false, false → true).
+/// S'utilitza per a radio buttons amb comparació inversa.
+/// </summary>
+public class BoolInverterConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool boolValue)
+        {
+            return !boolValue;
+        }
+        return false;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool boolValue)
+        {
+            return !boolValue;
+        }
+        return false;
+    }
+}
+
+/// <summary>
+/// Converteix un valor double a amplada de barra (mínim 4px si hi ha valor).
+/// S'utilitza pel gràfic de barres de la jornada.
+/// </summary>
+public class BarWidthConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is double width)
+        {
+            // Si hi ha hores però l'amplada és 0, mostra una barra mínima
+            return width > 0 ? width : 0;
+        }
+        return 0.0;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+

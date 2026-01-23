@@ -8,16 +8,222 @@
     d:DataContext="{d:DesignInstance vm:OpcionsViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="450" d:DesignWidth="800"
-    Title="Opcions">
-    <Grid Margin="24">
-        <StackPanel VerticalAlignment="Top">
-            <TextBlock Text="Opcions"
-                       FontSize="28"
-                       FontWeight="SemiBold"
-                       Margin="0,0,0,8" />
-            <TextBlock Text="Configuració de l'aplicació"
-                       FontSize="14"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-        </StackPanel>
-    </Grid>
+    Title="Opcions"
+    Loaded="Page_Loaded">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24">
+            <StackPanel VerticalAlignment="Top">
+                <!-- Header -->
+                <TextBlock Text="Opcions"
+                           FontSize="28"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <TextBlock Text="Configuració de l'aplicació"
+                           FontSize="14"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,32" />
+
+                <!-- Aparença Section -->
+                <ui:CardExpander Icon="{ui:SymbolIcon ColorBackground24}"
+                                 Header="Aparença"
+                                 ContentPadding="16"
+                                 IsExpanded="True"
+                                 Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Tema de l'aplicació"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+                        
+                        <!-- Tema Fosc -->
+                        <RadioButton Content="Fosc"
+                                     IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
+                                     Command="{Binding SelectDarkThemeCommand}"
+                                     Margin="0,0,0,8">
+                            <RadioButton.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="WeatherMoon24" 
+                                                       FontSize="16" 
+                                                       Margin="0,0,8,0" />
+                                        <TextBlock Text="{Binding}" 
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </RadioButton.ContentTemplate>
+                        </RadioButton>
+
+                        <!-- Tema Clar -->
+                        <RadioButton Content="Clar"
+                                     IsChecked="{Binding IsLightTheme, Mode=TwoWay}"
+                                     Command="{Binding SelectLightThemeCommand}"
+                                     Margin="0,0,0,8">
+                            <RadioButton.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="WeatherSunny24" 
+                                                       FontSize="16" 
+                                                       Margin="0,0,8,0" />
+                                        <TextBlock Text="{Binding}" 
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </RadioButton.ContentTemplate>
+                        </RadioButton>
+
+                        <!-- Tema del Sistema -->
+                        <RadioButton Content="Sistema"
+                                     IsChecked="{Binding IsSystemTheme, Mode=TwoWay}"
+                                     Command="{Binding SelectSystemThemeCommand}">
+                            <RadioButton.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Desktop24" 
+                                                       FontSize="16" 
+                                                       Margin="0,0,8,0" />
+                                        <TextBlock Text="{Binding}" 
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </RadioButton.ContentTemplate>
+                        </RadioButton>
+                    </StackPanel>
+                </ui:CardExpander>
+
+                <!-- Notificacions Section -->
+                <ui:CardExpander Icon="{ui:SymbolIcon Alert24}"
+                                 Header="Notificacions"
+                                 ContentPadding="16"
+                                 IsExpanded="True"
+                                 Margin="0,0,0,16">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Activar notificacions"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,4" />
+                                <TextBlock Text="Mostra notificacions per recordar-te registrar les hores"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <ui:ToggleSwitch Grid.Column="1"
+                                          IsChecked="{Binding NotificationsEnabled, Mode=TwoWay}"
+                                          Command="{Binding ToggleNotificationsCommand}"
+                                          VerticalAlignment="Center"
+                                          Margin="16,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+                </ui:CardExpander>
+
+                <!-- Jornada Section -->
+                <ui:CardExpander Icon="{ui:SymbolIcon Clock24}"
+                                 Header="Jornada laboral"
+                                 ContentPadding="16"
+                                 IsExpanded="True"
+                                 Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Temps total de la jornada"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <TextBlock Text="Defineix la durada esperada de la teva jornada laboral diària"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,16" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Hores -->
+                            <ui:TextBox Grid.Column="0"
+                                        Text="{Binding WorkdayHours, Mode=TwoWay}"
+                                        Width="100"
+                                        Margin="0,0,8,0" />
+                            <TextBlock Grid.Column="1"
+                                       Text="hores"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0" />
+
+                            <!-- Minuts -->
+                            <ui:TextBox Grid.Column="2"
+                                        Text="{Binding WorkdayMinutes, Mode=TwoWay}"
+                                        Width="100"
+                                        Margin="0,0,8,0" />
+                            <TextBlock Grid.Column="3"
+                                       Text="minuts"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+
+                        <ui:Button Content="Desar"
+                                   Command="{Binding SaveWorkdayTimeCommand}"
+                                   Appearance="Primary"
+                                   Icon="{ui:SymbolIcon Checkmark24}"
+                                   Margin="0,16,0,0"
+                                   HorizontalAlignment="Left" />
+                    </StackPanel>
+                </ui:CardExpander>
+
+                <!-- Sobre l'aplicació Section -->
+                <ui:CardExpander Icon="{ui:SymbolIcon Info24}"
+                                 Header="Sobre l'aplicació"
+                                 ContentPadding="16"
+                                 IsExpanded="False">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Nom de l'aplicació -->
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="Aplicació:"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,16,8" />
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Text="TimeTracker"
+                                       Margin="0,0,0,8" />
+
+                            <!-- Versió -->
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="Versió:"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,16,8" />
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       Text="{Binding AppVersion}"
+                                       Margin="0,0,0,8" />
+
+                            <!-- Tecnologia -->
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="Tecnologia:"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,16,0" />
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       Text=".NET 10, WPF, SQLite" />
+                        </Grid>
+                    </StackPanel>
+                </ui:CardExpander>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </Page>

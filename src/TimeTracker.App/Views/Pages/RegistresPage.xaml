@@ -84,12 +84,26 @@
                             MinHeight="80"
                             TextWrapping="Wrap"
                             AcceptsReturn="True"
-                            Margin="0,0,0,20" />
+                            Margin="0,0,0,16" />
+
+                <!-- Missatge d'error de validació -->
+                <Border Background="#FEE2E2"
+                        BorderBrush="#EF4444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8"
+                        Margin="0,0,0,16"
+                        Visibility="{Binding EditingRecord.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{Binding EditingRecord.ValidationError}"
+                               Foreground="#DC2626"
+                               TextWrapping="Wrap"
+                               FontSize="13" />
+                </Border>
 
                 <ui:Button Content="{Binding IsEditing, Converter={StaticResource EditingToButtonTextConverter}, FallbackValue='Afegir entrada'}"
                            Appearance="Primary"
                            HorizontalAlignment="Stretch"
-                           Command="{Binding SaveRecordCommand}"
+                           Command="{Binding SaveRecordAsyncCommand}"
                            Padding="16,12" />
             </StackPanel>
         </DataTemplate>
@@ -303,7 +317,5 @@
                            HorizontalAlignment="Center" />
             </StackPanel>
         </Grid>
-
-        <ContentPresenter x:Name="RootDialogPresenter" />
     </Grid>
 </Page>
