@@ -178,9 +178,20 @@ public partial class ActivitatsViewModel : ObservableObject
     {
         if (ActivityToDelete == null) return;
 
+        // Delete all related time records first (cascade delete)
+        var relatedRecords = await _timeRecordRepository.GetByActivityIdAsync(ActivityToDelete.Id);
+        foreach (var record in relatedRecords)
+        {
+            await _timeRecordRepository.DeleteAsync(record.Id);
+        }
+
+        // Then delete the activity
         await _activityRepository.DeleteAsync(ActivityToDelete.Id);
         var index = _allActivities.FindIndex(a => a.Id == ActivityToDelete.Id);
         if (index >= 0) _allActivities.RemoveAt(index);
+        
+        // Remove deleted records from local cache
+        _allRecords.RemoveAll(r => r.ActivityId == ActivityToDelete.Id);
         
         IsDeleteConfirmationOpen = false;
         ActivityToDelete = null;
