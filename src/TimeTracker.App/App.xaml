@@ -20,27 +20,39 @@
             <converters:ActivityEditingToButtonTextConverter x:Key="ActivityEditingToButtonTextConverter" />
             <converters:ActivityStatusToBackgroundConverter x:Key="ActivityStatusToBackgroundConverter" />
             <converters:ActivityStatusToForegroundConverter x:Key="ActivityStatusToForegroundConverter" />
+            <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
             
             <!-- Color Button Style -->
             <Style x:Key="ColorButtonStyle" TargetType="Button">
-                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Cursor" Value="Hand" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="20">
-                            </Border>
+                            <Grid>
+                                <Border x:Name="OuterBorder"
+                                        Width="40"
+                                        Height="40"
+                                        CornerRadius="20"
+                                        BorderThickness="3"
+                                        BorderBrush="Transparent"
+                                        Background="Transparent"
+                                        Padding="0">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="17"
+                                            Width="34"
+                                            Height="34" />
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{DynamicResource SystemAccentColorSecondaryBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorSecondary}" />
-                    </Trigger>
-                </Style.Triggers>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

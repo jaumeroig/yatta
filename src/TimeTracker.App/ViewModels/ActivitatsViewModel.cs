@@ -206,6 +206,25 @@ public class ActivityDisplay
     public int RecordCount { get; set; }
     public string TotalTime { get; set; } = string.Empty;
     public string StatusText { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// </summary>
+    public System.Windows.Media.SolidColorBrush ColorBrush
+    {
+        get
+        {
+            try
+            {
+                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(Color);
+                return new System.Windows.Media.SolidColorBrush(color);
+            }
+            catch
+            {
+                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
+            }
+        }
+    }
 }
 
 /// <summary>
@@ -220,8 +239,28 @@ public partial class ActivityEditModel : ObservableObject
     private string _name = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ColorBrush))]
     private string _color = "#0078D4";
 
     [ObservableProperty]
     private bool _active = true;
+
+    /// <summary>
+    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// </summary>
+    public System.Windows.Media.SolidColorBrush ColorBrush
+    {
+        get
+        {
+            try
+            {
+                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(Color);
+                return new System.Windows.Media.SolidColorBrush(color);
+            }
+            catch
+            {
+                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
+            }
+        }
+    }
 }

@@ -161,3 +161,34 @@ public class ActivityStatusToForegroundConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+/// <summary>
+/// Converts a hex color string (e.g., "#FF003E92") to a SolidColorBrush.
+/// </summary>
+public class StringToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string colorString && !string.IsNullOrWhiteSpace(colorString))
+        {
+            try
+            {
+                return new SolidColorBrush((Color)ColorConverter.ConvertFromString(colorString));
+            }
+            catch
+            {
+                return new SolidColorBrush(Colors.Gray);
+            }
+        }
+        return new SolidColorBrush(Colors.Gray);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is SolidColorBrush brush)
+        {
+            return brush.Color.ToString();
+        }
+        return "#000000";
+    }
+}

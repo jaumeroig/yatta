@@ -133,11 +133,8 @@
                                                              Width="12"
                                                              Height="12"
                                                              Margin="0,0,16,0"
-                                                             VerticalAlignment="Center">
-                                                        <Ellipse.Fill>
-                                                            <SolidColorBrush Color="{Binding ActivityColor}" />
-                                                        </Ellipse.Fill>
-                                                    </Ellipse>
+                                                             VerticalAlignment="Center"
+                                                             Fill="{Binding ActivityColor, Converter={StaticResource StringToBrushConverter}}" />
 
                                                     <!-- Activity Info -->
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">

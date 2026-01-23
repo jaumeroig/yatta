@@ -287,6 +287,25 @@ public class TimeRecordDisplay
     public string EndTime { get; set; } = string.Empty;
     public string Duration { get; set; } = string.Empty;
     public DateOnly Date { get; set; }
+
+    /// <summary>
+    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// </summary>
+    public System.Windows.Media.SolidColorBrush ActivityColorBrush
+    {
+        get
+        {
+            try
+            {
+                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(ActivityColor);
+                return new System.Windows.Media.SolidColorBrush(color);
+            }
+            catch
+            {
+                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
+            }
+        }
+    }
 }
 
 /// <summary>
