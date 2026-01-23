@@ -13,9 +13,12 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
     {
         builder.ToTable("AppSettings");
 
-        // AppSettings serà una taula amb una sola fila
-        // Utilitzem un valor de clau fix
-        builder.HasKey(s => s.Theme);
+        // AppSettings serà una taula amb una sola fila (singleton)
+        builder.HasKey(s => s.Id);
+
+        builder.Property(s => s.Id)
+            .IsRequired()
+            .ValueGeneratedNever(); // No auto-increment per garantir Id = 1
 
         builder.Property(s => s.Theme)
             .IsRequired()

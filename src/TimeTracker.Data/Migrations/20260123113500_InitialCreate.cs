@@ -29,13 +29,14 @@ namespace TimeTracker.Data.Migrations
                 name: "AppSettings",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
                     Theme = table.Column<string>(type: "TEXT", nullable: false),
                     Notifications = table.Column<bool>(type: "INTEGER", nullable: false),
                     WorkdayTotalTime = table.Column<TimeSpan>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppSettings", x => x.Theme);
+                    table.PrimaryKey("PK_AppSettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(

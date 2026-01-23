@@ -6,6 +6,11 @@ namespace TimeTracker.Core.Models;
 public class AppSettings
 {
     /// <summary>
+    /// Identificador de la configuració. Sempre serà 1 (singleton).
+    /// </summary>
+    public int Id { get; set; } = 1;
+
+    /// <summary>
     /// Tema de l'aplicació.
     /// </summary>
     public Theme Theme { get; set; } = Theme.System;

@@ -11,7 +11,7 @@ using TimeTracker.Data;
 namespace TimeTracker.Data.Migrations
 {
     [DbContext(typeof(TimeTrackerDbContext))]
-    [Migration("20260123113253_InitialCreate")]
+    [Migration("20260123113500_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -49,16 +49,20 @@ namespace TimeTracker.Data.Migrations
 
             modelBuilder.Entity("TimeTracker.Core.Models.AppSettings", b =>
                 {
-                    b.Property<string>("Theme")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Notifications")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<TimeSpan>("WorkdayTotalTime")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Theme");
+                    b.HasKey("Id");
 
                     b.ToTable("AppSettings", (string)null);
                 });

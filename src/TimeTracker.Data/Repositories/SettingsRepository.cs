@@ -18,13 +18,14 @@ public class SettingsRepository : ISettingsRepository
 
     public async Task<AppSettings> GetAsync()
     {
-        // Obtenir la primera configuració o crear-ne una de nova amb valors per defecte
-        var settings = await _context.AppSettings.FirstOrDefaultAsync();
+        // Obtenir la configuració amb Id = 1 o crear-ne una de nova
+        var settings = await _context.AppSettings.FindAsync(1);
         
         if (settings == null)
         {
             settings = new AppSettings
             {
+                Id = 1,
                 Theme = Theme.System,
                 Notifications = false,
                 WorkdayTotalTime = TimeSpan.FromHours(8)
@@ -39,7 +40,10 @@ public class SettingsRepository : ISettingsRepository
 
     public async Task UpdateAsync(AppSettings settings)
     {
-        var existingSettings = await _context.AppSettings.FirstOrDefaultAsync();
+        // Assegurar que sempre utilitzem Id = 1
+        settings.Id = 1;
+        
+        var existingSettings = await _context.AppSettings.FindAsync(1);
         
         if (existingSettings != null)
         {
