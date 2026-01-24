@@ -410,4 +410,13 @@
   <data name="Description_Language" xml:space="preserve">
     <value>Selecciona l'idioma de la interfície</value>
   </data>
+  <data name="Description_LanguageRequiresRestart" xml:space="preserve">
+    <value>Selecciona l'idioma de l'aplicació. Això invalidarà l'idioma predeterminat del sistema.</value>
+  </data>
+  <data name="Label_LanguageRequiresRestart" xml:space="preserve">
+    <value>Idioma (requereix reiniciar)</value>
+  </data>
+  <data name="Label_ThemeDescription" xml:space="preserve">
+    <value>Selecciona el tema de la interfície d'usuari</value>
+  </data>
 </root>
