@@ -2,9 +2,42 @@ namespace TimeTracker.App.ViewModels;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
+
+/// <summary>
+/// Representa una opció de tema per al dropdown.
+/// </summary>
+public class ThemeOption
+{
+    /// <summary>
+    /// Valor del tema.
+    /// </summary>
+    public Theme Value { get; set; }
+
+    /// <summary>
+    /// Nom per mostrar a la UI.
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Representa una opció d'idioma per al dropdown.
+/// </summary>
+public class LanguageOption
+{
+    /// <summary>
+    /// Codi de cultura (null per sistema).
+    /// </summary>
+    public string? Value { get; set; }
+
+    /// <summary>
+    /// Nom per mostrar a la UI.
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
+}
 
 /// <summary>
 /// ViewModel per a la pàgina d'opcions i configuració.
@@ -13,19 +46,37 @@ public partial class OpcionsViewModel : ObservableObject
 {
     private readonly ISettingsRepository _settingsRepository;
     private readonly IThemeService _themeService;
+    private readonly ILocalizationService _localizationService;
     private AppSettings? _currentSettings;
 
     public OpcionsViewModel(
         ISettingsRepository settingsRepository,
-        IThemeService themeService)
+        IThemeService themeService,
+        ILocalizationService localizationService)
     {
         _settingsRepository = settingsRepository;
         _themeService = themeService;
+        _localizationService = localizationService;
         
-        // Inicialitzar valors per defecte
-        IsDarkTheme = true;
-        IsLightTheme = false;
-        IsSystemTheme = false;
+        // Inicialitzar opcions de tema
+        ThemeOptions =
+        [
+            new ThemeOption { Value = Theme.System, DisplayName = "Predeterminat (Sistema)" },
+            new ThemeOption { Value = Theme.Dark, DisplayName = "Fosc" },
+            new ThemeOption { Value = Theme.Light, DisplayName = "Clar" }
+        ];
+
+        // Inicialitzar opcions d'idioma
+        LanguageOptions =
+        [
+            new LanguageOption { Value = null, DisplayName = "Predeterminat (Sistema)" },
+            new LanguageOption { Value = "es-ES", DisplayName = "Español" },
+            new LanguageOption { Value = "ca-ES", DisplayName = "Català" }
+        ];
+
+        // Valors per defecte
+        _selectedTheme = ThemeOptions[0];
+        _selectedLanguage = LanguageOptions[0];
         NotificationsEnabled = false;
         WorkdayHours = 8;
         WorkdayMinutes = 0;
@@ -34,22 +85,26 @@ public partial class OpcionsViewModel : ObservableObject
     #region Observable Properties
 
     /// <summary>
-    /// Indica si el tema fosc està seleccionat.
+    /// Opcions de tema disponibles.
     /// </summary>
-    [ObservableProperty]
-    private bool _isDarkTheme;
+    public ObservableCollection<ThemeOption> ThemeOptions { get; }
 
     /// <summary>
-    /// Indica si el tema clar està seleccionat.
+    /// Opcions d'idioma disponibles.
     /// </summary>
-    [ObservableProperty]
-    private bool _isLightTheme;
+    public ObservableCollection<LanguageOption> LanguageOptions { get; }
 
     /// <summary>
-    /// Indica si el tema del sistema està seleccionat.
+    /// Tema seleccionat.
     /// </summary>
     [ObservableProperty]
-    private bool _isSystemTheme;
+    private ThemeOption _selectedTheme;
+
+    /// <summary>
+    /// Idioma seleccionat.
+    /// </summary>
+    [ObservableProperty]
+    private LanguageOption _selectedLanguage;
 
     /// <summary>
     /// Indica si les notificacions estan activades.
@@ -77,6 +132,32 @@ public partial class OpcionsViewModel : ObservableObject
 
     #endregion
 
+    #region Property Changed Handlers
+
+    /// <summary>
+    /// S'executa quan canvia el tema seleccionat.
+    /// </summary>
+    partial void OnSelectedThemeChanged(ThemeOption value)
+    {
+        if (_currentSettings != null && value != null)
+        {
+            _ = SaveThemeAsync(value.Value);
+        }
+    }
+
+    /// <summary>
+    /// S'executa quan canvia l'idioma seleccionat.
+    /// </summary>
+    partial void OnSelectedLanguageChanged(LanguageOption value)
+    {
+        if (_currentSettings != null && value != null)
+        {
+            _ = SaveLanguageAsync(value.Value);
+        }
+    }
+
+    #endregion
+
     #region Commands
 
     /// <summary>
@@ -87,42 +168,6 @@ public partial class OpcionsViewModel : ObservableObject
     {
         await LoadSettingsAsync();
         LoadAppVersion();
-    }
-
-    /// <summary>
-    /// Aplica el tema fosc.
-    /// </summary>
-    [RelayCommand]
-    private async Task SelectDarkThemeAsync()
-    {
-        IsDarkTheme = true;
-        IsLightTheme = false;
-        IsSystemTheme = false;
-        await SaveThemeAsync(Theme.Dark);
-    }
-
-    /// <summary>
-    /// Aplica el tema clar.
-    /// </summary>
-    [RelayCommand]
-    private async Task SelectLightThemeAsync()
-    {
-        IsDarkTheme = false;
-        IsLightTheme = true;
-        IsSystemTheme = false;
-        await SaveThemeAsync(Theme.Light);
-    }
-
-    /// <summary>
-    /// Aplica el tema del sistema.
-    /// </summary>
-    [RelayCommand]
-    private async Task SelectSystemThemeAsync()
-    {
-        IsDarkTheme = false;
-        IsLightTheme = false;
-        IsSystemTheme = true;
-        await SaveThemeAsync(Theme.System);
     }
 
     /// <summary>
@@ -166,10 +211,11 @@ public partial class OpcionsViewModel : ObservableObject
     {
         _currentSettings = await _settingsRepository.GetAsync();
 
-        // Actualitzar les propietats del tema
-        IsDarkTheme = _currentSettings.Theme == Theme.Dark;
-        IsLightTheme = _currentSettings.Theme == Theme.Light;
-        IsSystemTheme = _currentSettings.Theme == Theme.System;
+        // Actualitzar el tema seleccionat
+        SelectedTheme = ThemeOptions.FirstOrDefault(t => t.Value == _currentSettings.Theme) ?? ThemeOptions[0];
+
+        // Actualitzar l'idioma seleccionat
+        SelectedLanguage = LanguageOptions.FirstOrDefault(l => l.Value == _currentSettings.Language) ?? LanguageOptions[0];
 
         // Actualitzar notificacions
         NotificationsEnabled = _currentSettings.Notifications;
@@ -222,6 +268,24 @@ public partial class OpcionsViewModel : ObservableObject
 
         _currentSettings.WorkdayTotalTime = totalTime;
         await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Desa l'idioma seleccionat i l'aplica immediatament.
+    /// </summary>
+    /// <param name="language">Codi de cultura (es-ES, ca-ES) o null per sistema.</param>
+    private async Task SaveLanguageAsync(string? language)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.Language = language;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+        
+        // Aplicar l'idioma immediatament
+        _localizationService.SetCulture(language);
     }
 
     /// <summary>

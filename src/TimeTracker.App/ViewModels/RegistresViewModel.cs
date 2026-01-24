@@ -227,7 +227,7 @@ public partial class RegistresViewModel : ObservableObject
         // Validar que l'hora de fi sigui posterior a l'hora d'inici
         if (endTime.HasValue && endTime.Value <= startTime.Value)
         {
-            EditingRecord.ValidationError = ResourceHelper.GetString("Validation_EndTimeAfterStartTime", "La hora de fin debe ser posterior a la hora de inicio.");
+            EditingRecord.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
             return;
         }
 
