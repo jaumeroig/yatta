@@ -172,11 +172,27 @@
                           IsChecked="{Binding EditingActivity.Active}"
                           Margin="0,0,0,20" />
 
-                <ui:Button Content="{Binding IsEditing, Converter={StaticResource ActivityEditingToButtonTextConverter}, FallbackValue='Crear activitat'}"
-                           Appearance="Primary"
-                           HorizontalAlignment="Stretch"
-                           Command="{Binding SaveActivityAsyncCommand}"
-                           Padding="16,12" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:Button Grid.Column="0"
+                               Content="{Binding IsEditing, Converter={StaticResource ActivityEditingToButtonTextConverter}, FallbackValue='Crear activitat'}"
+                               Appearance="Primary"
+                               Command="{Binding SaveActivityCommand}"
+                               Padding="16,12"
+                               HorizontalAlignment="Stretch" />
+
+                    <ui:Button Grid.Column="2"
+                               Content="Cancelar"
+                               Appearance="Secondary"
+                               Command="{Binding CloseDialogCommand}"
+                               Padding="16,12"
+                               HorizontalAlignment="Stretch" />
+                </Grid>
             </StackPanel>
         </DataTemplate>
 
