@@ -144,7 +144,8 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
         if (_currentSettings != null && value != null)
         {
             ResetCancellationTokenSource(ref _themeSaveCts);
-            _ = SaveThemeAsync(value.Value, _themeSaveCts!.Token);
+            var token = _themeSaveCts!.Token;
+            _ = SaveThemeAsync(value.Value, token);
         }
     }
 
@@ -156,7 +157,8 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
         if (_currentSettings != null && value != null)
         {
             ResetCancellationTokenSource(ref _languageSaveCts);
-            _ = SaveLanguageAsync(value.Value, _languageSaveCts!.Token);
+            var token = _languageSaveCts!.Token;
+            _ = SaveLanguageAsync(value.Value, token);
         }
     }
 
