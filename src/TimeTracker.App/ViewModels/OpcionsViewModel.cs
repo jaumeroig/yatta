@@ -42,7 +42,7 @@ public class LanguageOption
 /// <summary>
 /// ViewModel per a la pàgina d'opcions i configuració.
 /// </summary>
-public partial class OpcionsViewModel : ObservableObject
+public partial class OpcionsViewModel : ObservableObject, IDisposable
 {
     private readonly ISettingsRepository _settingsRepository;
     private readonly IThemeService _themeService;
@@ -249,15 +249,17 @@ public partial class OpcionsViewModel : ObservableObject
 
         try
         {
+            // Comprovar si l'operació ha estat cancel·lada abans de desar
+            cancellationToken.ThrowIfCancellationRequested();
+            
             _currentSettings.Theme = theme;
             await _settingsRepository.UpdateAsync(_currentSettings);
             
             // Comprovar si l'operació ha estat cancel·lada abans d'aplicar el tema
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                // Aplicar el tema immediatament
-                _themeService.ApplyTheme(theme);
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            // Aplicar el tema immediatament
+            _themeService.ApplyTheme(theme);
         }
         catch (OperationCanceledException)
         {
@@ -307,15 +309,17 @@ public partial class OpcionsViewModel : ObservableObject
 
         try
         {
+            // Comprovar si l'operació ha estat cancel·lada abans de desar
+            cancellationToken.ThrowIfCancellationRequested();
+            
             _currentSettings.Language = language;
             await _settingsRepository.UpdateAsync(_currentSettings);
             
             // Comprovar si l'operació ha estat cancel·lada abans d'aplicar l'idioma
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                // Aplicar l'idioma immediatament
-                _localizationService.SetCulture(language);
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            // Aplicar l'idioma immediatament
+            _localizationService.SetCulture(language);
         }
         catch (OperationCanceledException)
         {
@@ -337,6 +341,21 @@ public partial class OpcionsViewModel : ObservableObject
         {
             AppVersion = "v1.0.0";
         }
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    /// <summary>
+    /// Allibera els recursos utilitzats pel ViewModel.
+    /// </summary>
+    public void Dispose()
+    {
+        _languageSaveCts?.Cancel();
+        _languageSaveCts?.Dispose();
+        _themeSaveCts?.Cancel();
+        _themeSaveCts?.Dispose();
     }
 
     #endregion
