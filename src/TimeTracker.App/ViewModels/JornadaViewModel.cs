@@ -15,6 +15,7 @@ public partial class JornadaViewModel : ObservableObject
     private readonly IWorkdaySlotRepository _workdaySlotRepository;
     private readonly IWorkdayService _workdayService;
     private readonly ITimeCalculatorService _timeCalculatorService;
+    private readonly ILocalizationService _localizationService;
     private List<WorkdaySlot> _allSlots = [];
 
     [ObservableProperty]
@@ -320,10 +321,24 @@ public partial class JornadaViewModel : ObservableObject
 
         // Validar solapament
         var (isValid, errorMessage) = await _workdayService.ValidateWorkdaySlotAsync(slot);
-        
         if (!isValid)
         {
-            EditingSlot.ValidationError = errorMessage;
+            // If errorMessage is a resource key with arguments (pipe-delimited), localize it
+            if (!string.IsNullOrWhiteSpace(errorMessage) && errorMessage.Contains("|"))
+            {
+                var parts = errorMessage.Split('|');
+                var key = parts[0];
+                var args = parts.Skip(1).ToArray();
+                EditingSlot.ValidationError = _localizationService.GetString(key, args);
+            }
+            else if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                EditingSlot.ValidationError = _localizationService.GetString(errorMessage);
+            }
+            else
+            {
+                EditingSlot.ValidationError = string.Empty;
+            }
             return;
         }
 
