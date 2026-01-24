@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
-using TimeTracker.App.Helpers;
 
 namespace TimeTracker.App.ViewModels;
 
@@ -134,8 +133,8 @@ public partial class JornadaViewModel : ObservableObject
                 EndTime = slot.EndTime.ToString("HH:mm"),
                 Duration = FormatDuration(_timeCalculatorService.CalculateDuration(slot.StartTime, slot.EndTime)),
                 LocationText = slot.Telework 
-                    ? ResourceHelper.GetString("Location_Telework", "Casa (teletrabajo)")
-                    : ResourceHelper.GetString("Location_Office", "Oficina"),
+                    ? Resources.Resources.Location_Telework
+                    : Resources.Resources.Location_Office,
                 LocationIcon = slot.Telework ? "Home24" : "Building24",
                 Telework = slot.Telework
             });
@@ -192,17 +191,12 @@ public partial class JornadaViewModel : ObservableObject
 
     private void UpdateDateDisplay()
     {
-        var culture = new CultureInfo("ca-ES");
-        var dayName = culture.TextInfo.ToTitleCase(SelectedDate.ToString("dddd", culture));
-        var day = SelectedDate.Day;
-        var month = culture.TextInfo.ToTitleCase(SelectedDate.ToString("MMMM", culture));
-        var year = SelectedDate.Year;
-        SelectedDateDisplay = $"{dayName}, {day} de {month} de {year}";
+        SelectedDateDisplay = SelectedDate.ToString("D");
     }
 
     private void UpdateMonthYearDisplay()
     {
-        var culture = new CultureInfo("ca-ES");
+        var culture = Thread.CurrentThread.CurrentCulture;
         var month = culture.TextInfo.ToTitleCase(SelectedDate.ToString("MMMM", culture));
         MonthYear = $"{month} {SelectedDate.Year}";
     }
@@ -212,7 +206,7 @@ public partial class JornadaViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        var format = ResourceHelper.GetString("Format_Duration", "{0}h {1}m");
+        var format = Resources.Resources.Format_Duration;
         return string.Format(format, h, m);
     }
 
@@ -297,21 +291,21 @@ public partial class JornadaViewModel : ObservableObject
         var startTime = EditingSlot.GetStartTime();
         if (!startTime.HasValue)
         {
-            EditingSlot.ValidationError = ResourceHelper.GetString("Validation_InvalidStartTime", "La hora de inicio no es válida.");
+            EditingSlot.ValidationError = Resources.Resources.Validation_InvalidStartTime;
             return;
         }
 
         var endTime = EditingSlot.GetEndTime();
         if (!endTime.HasValue)
         {
-            EditingSlot.ValidationError = ResourceHelper.GetString("Validation_InvalidEndTime", "La hora de fin no es válida.");
+            EditingSlot.ValidationError = Resources.Resources.Validation_InvalidEndTime;
             return;
         }
 
         // Validar que l'hora de fi sigui posterior a l'hora d'inici
         if (endTime.Value <= startTime.Value)
         {
-            EditingSlot.ValidationError = ResourceHelper.GetString("Validation_EndTimeAfterStartTime", "La hora de fin debe ser posterior a la hora de inicio.");
+            EditingSlot.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
             return;
         }
 

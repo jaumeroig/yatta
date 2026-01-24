@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TimeTracker.App.Helpers;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -62,9 +61,9 @@ public partial class RegistresViewModel : ObservableObject
     public async Task LoadDataAsync()
     {
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
-        
+
         // Afegir opció "Totes les activitats" al principi
-        var allActivitiesText = ResourceHelper.GetString("Filter_AllActivities", "Todas las actividades");
+        var allActivitiesText = Resources.Resources.Filter_AllActivities;
         var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
         var activitiesWithAll = new List<Activity> { allActivitiesOption };
         activitiesWithAll.AddRange(_allActivities);
@@ -142,7 +141,7 @@ public partial class RegistresViewModel : ObservableObject
         return new TimeRecordDisplay
         {
             Id = record.Id,
-            ActivityName = activity?.Name ?? ResourceHelper.GetString("Activity_Unknown", "Desconocida"),
+            ActivityName = activity?.Name ?? Resources.Resources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
@@ -154,11 +153,7 @@ public partial class RegistresViewModel : ObservableObject
 
     private static string FormatDate(DateOnly date)
     {
-        var culture = new CultureInfo("ca-ES");
-        var dayName = culture.TextInfo.ToTitleCase(date.ToString("dddd", culture));
-        var day = date.Day;
-        var month = culture.TextInfo.ToTitleCase(date.ToString("MMMM", culture));
-        return $"{dayName}, {day} de {month}";
+        return date.ToLongDateString();
     }
 
     private static string FormatDuration(double hours)
@@ -166,7 +161,7 @@ public partial class RegistresViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        var format = ResourceHelper.GetString("Format_Duration", "{0}h {1}m");
+        var format = Resources.Resources.Format_Duration;
         return string.Format(format, h, m);
     }
 

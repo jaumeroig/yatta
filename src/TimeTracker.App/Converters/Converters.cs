@@ -6,40 +6,6 @@ using System.Windows.Media;
 namespace TimeTracker.App.Converters;
 
 /// <summary>
-/// Helper per accedir als recursos de manera segura.
-/// </summary>
-internal static class ResourceHelper
-{
-    private static System.Resources.ResourceManager? _resourceManager;
-    
-    private static System.Resources.ResourceManager ResourceManager
-    {
-        get
-        {
-            if (_resourceManager == null)
-            {
-                _resourceManager = new System.Resources.ResourceManager(
-                    "TimeTracker.App.Resources.Resources", 
-                    typeof(ResourceHelper).Assembly);
-            }
-            return _resourceManager;
-        }
-    }
-    
-    public static string GetString(string key, string fallback = "")
-    {
-        try
-        {
-            return ResourceManager.GetString(key, System.Globalization.CultureInfo.CurrentUICulture) ?? fallback;
-        }
-        catch
-        {
-            return fallback;
-        }
-    }
-}
-
-/// <summary>
 /// Converts a string to Visibility (Visible if not empty, Collapsed otherwise).
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
@@ -86,10 +52,10 @@ public class EditingToTitleConverter : IValueConverter
         if (value is bool isEditing)
         {
             return isEditing 
-                ? ResourceHelper.GetString("Dialog_EditRecord_Title", "Editar entrada")
-                : ResourceHelper.GetString("Dialog_NewRecord_Title", "Añadir nueva entrada");
+                ? Resources.Resources.Dialog_EditRecord_Title
+                : Resources.Resources.Dialog_NewRecord_Title;
         }
-        return ResourceHelper.GetString("Dialog_NewRecord_Title", "Añadir nueva entrada");
+        return Resources.Resources.Dialog_NewRecord_Title;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -108,10 +74,10 @@ public class EditingToButtonTextConverter : IValueConverter
         if (value is bool isEditing)
         {
             return isEditing 
-                ? ResourceHelper.GetString("Button_SaveChanges", "Guardar cambios")
-                : ResourceHelper.GetString("Button_AddRecord", "Añadir entrada");
+                ? Resources.Resources.Button_SaveChanges
+                : Resources.Resources.Button_AddRecord;
         }
-        return ResourceHelper.GetString("Button_AddRecord", "Añadir entrada");
+        return Resources.Resources.Button_AddRecord;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -129,11 +95,11 @@ public class ActivityEditingToTitleConverter : IValueConverter
     {
         if (value is bool isEditing)
         {
-            return isEditing 
-                ? ResourceHelper.GetString("Dialog_EditActivity_Title", "Editar actividad")
-                : ResourceHelper.GetString("Dialog_NewActivity_Title", "Nueva actividad");
+            return isEditing
+                ? Resources.Resources.Dialog_EditActivity_Title
+                : Resources.Resources.Dialog_NewActivity_Title;
         }
-        return ResourceHelper.GetString("Dialog_NewActivity_Title", "Nueva actividad");
+        return Resources.Resources.Dialog_NewActivity_Title;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -151,11 +117,11 @@ public class ActivityEditingToButtonTextConverter : IValueConverter
     {
         if (value is bool isEditing)
         {
-            return isEditing 
-                ? ResourceHelper.GetString("Button_SaveChanges", "Guardar cambios")
-                : ResourceHelper.GetString("Button_CreateActivity", "Crear actividad");
+            return isEditing
+                ? Resources.Resources.Button_SaveChanges
+                : Resources.Resources.Button_CreateActivity;
         }
-        return ResourceHelper.GetString("Button_CreateActivity", "Crear actividad");
+        return Resources.Resources.Button_CreateActivity;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
