@@ -42,12 +42,14 @@ public class LanguageOption
 /// <summary>
 /// ViewModel per a la pàgina d'opcions i configuració.
 /// </summary>
-public partial class OpcionsViewModel : ObservableObject
+public partial class OpcionsViewModel : ObservableObject, IDisposable
 {
     private readonly ISettingsRepository _settingsRepository;
     private readonly IThemeService _themeService;
     private readonly ILocalizationService _localizationService;
     private AppSettings? _currentSettings;
+    private CancellationTokenSource? _languageSaveCts;
+    private CancellationTokenSource? _themeSaveCts;
 
     public OpcionsViewModel(
         ISettingsRepository settingsRepository,
@@ -141,7 +143,9 @@ public partial class OpcionsViewModel : ObservableObject
     {
         if (_currentSettings != null && value != null)
         {
-            _ = SaveThemeAsync(value.Value);
+            ResetCancellationTokenSource(ref _themeSaveCts);
+            var token = _themeSaveCts!.Token;
+            _ = SaveThemeAsync(value.Value, token);
         }
     }
 
@@ -152,7 +156,9 @@ public partial class OpcionsViewModel : ObservableObject
     {
         if (_currentSettings != null && value != null)
         {
-            _ = SaveLanguageAsync(value.Value);
+            ResetCancellationTokenSource(ref _languageSaveCts);
+            var token = _languageSaveCts!.Token;
+            _ = SaveLanguageAsync(value.Value, token);
         }
     }
 
@@ -228,18 +234,31 @@ public partial class OpcionsViewModel : ObservableObject
     /// <summary>
     /// Desa el tema seleccionat.
     /// </summary>
-    private async Task SaveThemeAsync(Theme theme)
+    private async Task SaveThemeAsync(Theme theme, CancellationToken cancellationToken = default)
     {
         if (_currentSettings == null)
         {
             return;
         }
 
-        _currentSettings.Theme = theme;
-        await _settingsRepository.UpdateAsync(_currentSettings);
-        
-        // Aplicar el tema immediatament
-        _themeService.ApplyTheme(theme);
+        try
+        {
+            // Comprovar si l'operació ha estat cancel·lada abans de desar
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            _currentSettings.Theme = theme;
+            await _settingsRepository.UpdateAsync(_currentSettings);
+            
+            // Comprovar si l'operació ha estat cancel·lada abans d'aplicar el tema
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            // Aplicar el tema immediatament
+            _themeService.ApplyTheme(theme);
+        }
+        catch (OperationCanceledException)
+        {
+            // L'operació ha estat cancel·lada, no fer res
+        }
     }
 
     /// <summary>
@@ -274,18 +293,32 @@ public partial class OpcionsViewModel : ObservableObject
     /// Desa l'idioma seleccionat i l'aplica immediatament.
     /// </summary>
     /// <param name="language">Codi de cultura (es-ES, ca-ES) o null per sistema.</param>
-    private async Task SaveLanguageAsync(string? language)
+    /// <param name="cancellationToken">Token per cancel·lar l'operació.</param>
+    private async Task SaveLanguageAsync(string? language, CancellationToken cancellationToken = default)
     {
         if (_currentSettings == null)
         {
             return;
         }
 
-        _currentSettings.Language = language;
-        await _settingsRepository.UpdateAsync(_currentSettings);
-        
-        // Aplicar l'idioma immediatament
-        _localizationService.SetCulture(language);
+        try
+        {
+            // Comprovar si l'operació ha estat cancel·lada abans de desar
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            _currentSettings.Language = language;
+            await _settingsRepository.UpdateAsync(_currentSettings);
+            
+            // Comprovar si l'operació ha estat cancel·lada abans d'aplicar l'idioma
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            // Aplicar l'idioma immediatament
+            _localizationService.SetCulture(language);
+        }
+        catch (OperationCanceledException)
+        {
+            // L'operació ha estat cancel·lada, no fer res
+        }
     }
 
     /// <summary>
@@ -301,6 +334,56 @@ public partial class OpcionsViewModel : ObservableObject
         else
         {
             AppVersion = "v1.0.0";
+        }
+    }
+
+    /// <summary>
+    /// Reinicia un CancellationTokenSource, cancel·lant i disposant l'anterior.
+    /// </summary>
+    /// <param name="cts">Referència al CancellationTokenSource a reiniciar.</param>
+    private static void ResetCancellationTokenSource(ref CancellationTokenSource? cts)
+    {
+        cts?.Cancel();
+        cts?.Dispose();
+        cts = new CancellationTokenSource();
+    }
+
+    #endregion
+
+    #region IDisposable
+
+    private bool _disposed = false;
+
+    /// <summary>
+    /// Allibera els recursos utilitzats pel ViewModel.
+    /// </summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Allibera els recursos utilitzats pel ViewModel.
+    /// </summary>
+    /// <param name="disposing">Indica si s'estan disposant els recursos gerenciats.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Alliberar recursos gerenciats
+                _languageSaveCts?.Cancel();
+                _languageSaveCts?.Dispose();
+                _languageSaveCts = null;
+                
+                _themeSaveCts?.Cancel();
+                _themeSaveCts?.Dispose();
+                _themeSaveCts = null;
+            }
+
+            _disposed = true;
         }
     }
 
