@@ -61,9 +61,10 @@ public partial class RegistresViewModel : ObservableObject
     public async Task LoadDataAsync()
     {
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
-        
+
         // Afegir opció "Totes les activitats" al principi
-        var allActivitiesOption = new Activity { Id = Guid.Empty, Name = "Totes les activitats" };
+        var allActivitiesText = Resources.Resources.Filter_AllActivities;
+        var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
         var activitiesWithAll = new List<Activity> { allActivitiesOption };
         activitiesWithAll.AddRange(_allActivities);
         Activities = new ObservableCollection<Activity>(activitiesWithAll);
@@ -140,7 +141,7 @@ public partial class RegistresViewModel : ObservableObject
         return new TimeRecordDisplay
         {
             Id = record.Id,
-            ActivityName = activity?.Name ?? "Desconeguda",
+            ActivityName = activity?.Name ?? Resources.Resources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
@@ -152,11 +153,7 @@ public partial class RegistresViewModel : ObservableObject
 
     private static string FormatDate(DateOnly date)
     {
-        var culture = new CultureInfo("ca-ES");
-        var dayName = culture.TextInfo.ToTitleCase(date.ToString("dddd", culture));
-        var day = date.Day;
-        var month = culture.TextInfo.ToTitleCase(date.ToString("MMMM", culture));
-        return $"{dayName}, {day} de {month}";
+        return date.ToLongDateString();
     }
 
     private static string FormatDuration(double hours)
@@ -164,7 +161,8 @@ public partial class RegistresViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        return $"{h}h {m}m";
+        var format = Resources.Resources.Format_Duration;
+        return string.Format(format, h, m);
     }
 
     private void CalculateTodayWorkedTime()
@@ -229,8 +227,7 @@ public partial class RegistresViewModel : ObservableObject
         // Validar que l'hora de fi sigui posterior a l'hora d'inici
         if (endTime.HasValue && endTime.Value <= startTime.Value)
         {
-            // TODO: Mostrar missatge d'error a la UI
-            EditingRecord.ValidationError = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+            EditingRecord.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
             return;
         }
 

@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:pages="clr-namespace:TimeTracker.App.Views.Pages"
+        xmlns:local="clr-namespace:TimeTracker.App.Markup"
         mc:Ignorable="d"
-        Title="TimeTracker" 
+        Title="{local:Localize Window_Title}" 
         Height="700" 
         Width="1100"
         MinHeight="500"
@@ -24,7 +25,7 @@
         <ui:TitleBar
             x:Name="TitleBar"
             Grid.Row="0"
-            Title="TimeTracker"
+            Title="{local:Localize TitleBar_Title}"
             ShowMaximize="True"
             ShowMinimize="True" />
         
@@ -40,24 +41,24 @@
                 <StackPanel Orientation="Horizontal" Margin="16,8">
                     <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
                     <StackPanel>
-                        <TextBlock Text="TimeTracker" FontWeight="SemiBold" FontSize="14" />
-                        <TextBlock Text="Control de temps" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="{local:Localize TitleBar_Title}" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="{local:Localize TitleBar_Subtitle}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                     </StackPanel>
                 </StackPanel>
             </ui:NavigationView.Header>
             
             <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem Content="Registres" TargetPageType="{x:Type pages:RegistresPage}">
+                <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:RegistresPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Document24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Content="Jornada" TargetPageType="{x:Type pages:JornadaPage}">
+                <ui:NavigationViewItem Content="{local:Localize Nav_Workday}" TargetPageType="{x:Type pages:JornadaPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="CalendarLtr24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Content="Activitats" TargetPageType="{x:Type pages:ActivitatsPage}">
+                <ui:NavigationViewItem Content="{local:Localize Nav_Activities}" TargetPageType="{x:Type pages:ActivitatsPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="AppsList24" />
                     </ui:NavigationViewItem.Icon>
@@ -65,7 +66,7 @@
             </ui:NavigationView.MenuItems>
             
             <ui:NavigationView.FooterMenuItems>
-                <ui:NavigationViewItem Content="Opcions" TargetPageType="{x:Type pages:OpcionsPage}">
+                <ui:NavigationViewItem Content="{local:Localize Nav_Settings}" TargetPageType="{x:Type pages:OpcionsPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Settings24" />
                     </ui:NavigationViewItem.Icon>

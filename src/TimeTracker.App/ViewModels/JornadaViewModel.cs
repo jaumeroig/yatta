@@ -15,6 +15,7 @@ public partial class JornadaViewModel : ObservableObject
     private readonly IWorkdaySlotRepository _workdaySlotRepository;
     private readonly IWorkdayService _workdayService;
     private readonly ITimeCalculatorService _timeCalculatorService;
+    private readonly ILocalizationService _localizationService;
     private List<WorkdaySlot> _allSlots = [];
 
     [ObservableProperty]
@@ -76,12 +77,14 @@ public partial class JornadaViewModel : ObservableObject
     public JornadaViewModel(
         IWorkdaySlotRepository workdaySlotRepository,
         IWorkdayService workdayService,
-        ITimeCalculatorService timeCalculatorService)
+        ITimeCalculatorService timeCalculatorService,
+        ILocalizationService localizationService)
     {
         _workdaySlotRepository = workdaySlotRepository;
         _workdayService = workdayService;
         _timeCalculatorService = timeCalculatorService;
-        
+        _localizationService = localizationService;
+
         UpdateDateDisplay();
         UpdateMonthYearDisplay();
     }
@@ -132,7 +135,9 @@ public partial class JornadaViewModel : ObservableObject
                 StartTime = slot.StartTime.ToString("HH:mm"),
                 EndTime = slot.EndTime.ToString("HH:mm"),
                 Duration = FormatDuration(_timeCalculatorService.CalculateDuration(slot.StartTime, slot.EndTime)),
-                LocationText = slot.Telework ? "Casa (teletreball)" : "Oficina",
+                LocationText = slot.Telework 
+                    ? Resources.Resources.Location_Telework
+                    : Resources.Resources.Location_Office,
                 LocationIcon = slot.Telework ? "Home24" : "Building24",
                 Telework = slot.Telework
             });
@@ -189,17 +194,12 @@ public partial class JornadaViewModel : ObservableObject
 
     private void UpdateDateDisplay()
     {
-        var culture = new CultureInfo("ca-ES");
-        var dayName = culture.TextInfo.ToTitleCase(SelectedDate.ToString("dddd", culture));
-        var day = SelectedDate.Day;
-        var month = culture.TextInfo.ToTitleCase(SelectedDate.ToString("MMMM", culture));
-        var year = SelectedDate.Year;
-        SelectedDateDisplay = $"{dayName}, {day} de {month} de {year}";
+        SelectedDateDisplay = SelectedDate.ToString("D");
     }
 
     private void UpdateMonthYearDisplay()
     {
-        var culture = new CultureInfo("ca-ES");
+        var culture = Thread.CurrentThread.CurrentCulture;
         var month = culture.TextInfo.ToTitleCase(SelectedDate.ToString("MMMM", culture));
         MonthYear = $"{month} {SelectedDate.Year}";
     }
@@ -209,7 +209,8 @@ public partial class JornadaViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        return $"{h}h {m}m";
+        var format = Resources.Resources.Format_Duration;
+        return string.Format(format, h, m);
     }
 
     [RelayCommand]
@@ -293,21 +294,21 @@ public partial class JornadaViewModel : ObservableObject
         var startTime = EditingSlot.GetStartTime();
         if (!startTime.HasValue)
         {
-            EditingSlot.ValidationError = "L'hora d'inici no és vàlida.";
+            EditingSlot.ValidationError = Resources.Resources.Validation_InvalidStartTime;
             return;
         }
 
         var endTime = EditingSlot.GetEndTime();
         if (!endTime.HasValue)
         {
-            EditingSlot.ValidationError = "L'hora de fi no és vàlida.";
+            EditingSlot.ValidationError = Resources.Resources.Validation_InvalidEndTime;
             return;
         }
 
         // Validar que l'hora de fi sigui posterior a l'hora d'inici
         if (endTime.Value <= startTime.Value)
         {
-            EditingSlot.ValidationError = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+            EditingSlot.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
             return;
         }
 
@@ -322,10 +323,24 @@ public partial class JornadaViewModel : ObservableObject
 
         // Validar solapament
         var (isValid, errorMessage) = await _workdayService.ValidateWorkdaySlotAsync(slot);
-        
         if (!isValid)
         {
-            EditingSlot.ValidationError = errorMessage;
+            // If errorMessage is a resource key with arguments (pipe-delimited), localize it
+            if (!string.IsNullOrWhiteSpace(errorMessage) && errorMessage.Contains("|"))
+            {
+                var parts = errorMessage.Split('|');
+                var key = parts[0];
+                var args = parts.Skip(1).ToArray();
+                EditingSlot.ValidationError = _localizationService.GetString(key, args);
+            }
+            else if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                EditingSlot.ValidationError = _localizationService.GetString(errorMessage);
+            }
+            else
+            {
+                EditingSlot.ValidationError = string.Empty;
+            }
             return;
         }
 

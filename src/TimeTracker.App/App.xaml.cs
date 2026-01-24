@@ -33,6 +33,10 @@ public partial class App : Application
             dbContext.Database.Migrate();
         }
 
+        // Initialize localization service (loads saved language preference)
+        var localizationService = _serviceProvider.GetRequiredService<ILocalizationService>();
+        localizationService.InitializeAsync().GetAwaiter().GetResult();
+
         // Load and apply theme
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
         _ = themeService.LoadThemeAsync();
@@ -41,7 +45,7 @@ public partial class App : Application
         mainWindow.Show();
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services)
     {
         // Register DbContext
         services.AddDbContext<TimeTrackerDbContext>(options =>
@@ -60,6 +64,7 @@ public partial class App : Application
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<ILocalizationService, LocalizationService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();

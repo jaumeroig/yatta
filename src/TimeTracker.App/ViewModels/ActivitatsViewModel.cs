@@ -70,7 +70,9 @@ public partial class ActivitatsViewModel : ObservableObject
                 Active = activity.Active,
                 RecordCount = records.Count,
                 TotalTime = FormatDuration(totalHours),
-                StatusText = activity.Active ? "Activa" : "Inactiva"
+                StatusText = activity.Active 
+                    ? Resources.Resources.Status_Active
+                    : Resources.Resources.Status_Inactive
             };
         }).OrderBy(a => a.Name);
 
@@ -82,7 +84,8 @@ public partial class ActivitatsViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        return $"{h}h {m}m";
+        var format = Resources.Resources.Format_Duration;
+        return string.Format(format, h, m);
     }
 
     [RelayCommand]

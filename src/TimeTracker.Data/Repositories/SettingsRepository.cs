@@ -50,6 +50,7 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.Theme = settings.Theme;
             existingSettings.Notifications = settings.Notifications;
             existingSettings.WorkdayTotalTime = settings.WorkdayTotalTime;
+            existingSettings.Language = settings.Language;
             
             _context.AppSettings.Update(existingSettings);
         }

@@ -51,9 +51,11 @@ public class EditingToTitleConverter : IValueConverter
     {
         if (value is bool isEditing)
         {
-            return isEditing ? "Editar entrada" : "Afegir nova entrada";
+            return isEditing 
+                ? Resources.Resources.Dialog_EditRecord_Title
+                : Resources.Resources.Dialog_NewRecord_Title;
         }
-        return "Afegir nova entrada";
+        return Resources.Resources.Dialog_NewRecord_Title;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -71,9 +73,11 @@ public class EditingToButtonTextConverter : IValueConverter
     {
         if (value is bool isEditing)
         {
-            return isEditing ? "Desar canvis" : "Afegir entrada";
+            return isEditing 
+                ? Resources.Resources.Button_SaveChanges
+                : Resources.Resources.Button_AddRecord;
         }
-        return "Afegir entrada";
+        return Resources.Resources.Button_AddRecord;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -91,9 +95,11 @@ public class ActivityEditingToTitleConverter : IValueConverter
     {
         if (value is bool isEditing)
         {
-            return isEditing ? "Editar activitat" : "Nova activitat";
+            return isEditing
+                ? Resources.Resources.Dialog_EditActivity_Title
+                : Resources.Resources.Dialog_NewActivity_Title;
         }
-        return "Nova activitat";
+        return Resources.Resources.Dialog_NewActivity_Title;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -111,9 +117,11 @@ public class ActivityEditingToButtonTextConverter : IValueConverter
     {
         if (value is bool isEditing)
         {
-            return isEditing ? "Guardar canvis" : "Crear activitat";
+            return isEditing
+                ? Resources.Resources.Button_SaveChanges
+                : Resources.Resources.Button_CreateActivity;
         }
-        return "Crear activitat";
+        return Resources.Resources.Button_CreateActivity;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
