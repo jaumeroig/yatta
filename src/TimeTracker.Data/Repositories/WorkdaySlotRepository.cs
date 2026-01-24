@@ -46,6 +46,16 @@ public class WorkdaySlotRepository : IWorkdaySlotRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<DateOnly>> GetDatesWithSlotsAsync(DateOnly startDate, DateOnly endDate)
+    {
+        return await _context.WorkdaySlots
+            .Where(ws => ws.Date >= startDate && ws.Date <= endDate)
+            .Select(ws => ws.Date)
+            .Distinct()
+            .OrderBy(d => d)
+            .ToListAsync();
+    }
+
     public async Task<WorkdaySlot> AddAsync(WorkdaySlot workdaySlot)
     {
         _context.WorkdaySlots.Add(workdaySlot);

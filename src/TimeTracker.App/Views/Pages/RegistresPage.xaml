@@ -9,10 +9,104 @@
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
     Title="Registres"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
 
     <Page.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <DataTemplate x:Key="RecordDialogTemplate">
+            <StackPanel Width="500">
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="{Binding IsEditing, Converter={StaticResource EditingToTitleConverter}, FallbackValue='Afegir nova entrada'}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <ui:Button HorizontalAlignment="Right"
+                               Appearance="Transparent"
+                               Command="{Binding CloseDialogCommand}"
+                               Padding="4">
+                        <ui:SymbolIcon Symbol="Dismiss24" />
+                    </ui:Button>
+                </Grid>
+
+                <TextBlock Text="Activitat"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <ComboBox ItemsSource="{Binding Activities}"
+                          SelectedValue="{Binding EditingRecord.ActivityId}"
+                          SelectedValuePath="Id"
+                          DisplayMemberPath="Name"
+                          Margin="0,0,0,16"
+                          HorizontalAlignment="Stretch">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                            <Setter Property="Tag" Value="Selecciona una activitat" />
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+
+                <TextBlock Text="Data"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <DatePicker SelectedDate="{Binding EditingRecord.Date}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,16" />
+
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Hora inici"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <ui:TextBox x:Name="StartTimeTextBox"
+                                    PlaceholderText="HH:mm"
+                                    Text="{Binding EditingRecord.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Hora fi"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <ui:TextBox x:Name="EndTimeTextBox"
+                                    PlaceholderText="HH:mm"
+                                    Text="{Binding EditingRecord.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Notes (opcional)"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <ui:TextBox Text="{Binding EditingRecord.Notes, Mode=TwoWay}"
+                            PlaceholderText="Afegeix notes sobre aquesta entrada..."
+                            MinHeight="80"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            Margin="0,0,0,16" />
+
+                <!-- Missatge d'error de validació -->
+                <Border Background="#FEE2E2"
+                        BorderBrush="#EF4444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8"
+                        Margin="0,0,0,16"
+                        Visibility="{Binding EditingRecord.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{Binding EditingRecord.ValidationError}"
+                               Foreground="#DC2626"
+                               TextWrapping="Wrap"
+                               FontSize="13" />
+                </Border>
+
+                <ui:Button Content="{Binding IsEditing, Converter={StaticResource EditingToButtonTextConverter}, FallbackValue='Afegir entrada'}"
+                           Appearance="Primary"
+                           HorizontalAlignment="Stretch"
+                           Command="{Binding SaveRecordAsyncCommand}"
+                           Padding="16,12" />
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
@@ -133,11 +227,8 @@
                                                              Width="12"
                                                              Height="12"
                                                              Margin="0,0,16,0"
-                                                             VerticalAlignment="Center">
-                                                        <Ellipse.Fill>
-                                                            <SolidColorBrush Color="{Binding ActivityColor}" />
-                                                        </Ellipse.Fill>
-                                                    </Ellipse>
+                                                             VerticalAlignment="Center"
+                                                             Fill="{Binding ActivityColor, Converter={StaticResource StringToBrushConverter}}" />
 
                                                     <!-- Activity Info -->
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -225,103 +316,6 @@
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            HorizontalAlignment="Center" />
             </StackPanel>
-        </Grid>
-
-        <!-- Dialog Overlay -->
-        <Grid Visibility="{Binding IsDialogOpen, Converter={StaticResource BoolToVisibility}}">
-            <Grid.Background>
-                <SolidColorBrush Color="{DynamicResource SystemFillColorSolidNeutral}" Opacity="0.5" />
-            </Grid.Background>
-            <ui:Card MaxWidth="500"
-                     MinWidth="450"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Center"
-                     Padding="24">
-                <StackPanel>
-                    <!-- Dialog Header -->
-                    <Grid Margin="0,0,0,20">
-                        <TextBlock Text="{Binding IsEditing, Converter={StaticResource EditingToTitleConverter}, FallbackValue='Afegir nova entrada'}"
-                                   FontSize="20"
-                                   FontWeight="SemiBold" />
-                        <ui:Button HorizontalAlignment="Right"
-                                   Appearance="Transparent"
-                                   Command="{Binding CloseDialogCommand}"
-                                   Padding="4">
-                            <ui:SymbolIcon Symbol="Dismiss24" />
-                        </ui:Button>
-                    </Grid>
-
-                    <!-- Activity Selection -->
-                    <TextBlock Text="Activitat"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,8" />
-                    <ComboBox ItemsSource="{Binding Activities}"
-                              SelectedValue="{Binding EditingRecord.ActivityId}"
-                              SelectedValuePath="Id"
-                              DisplayMemberPath="Name"
-                              Margin="0,0,0,16"
-                              HorizontalAlignment="Stretch">
-                        <ComboBox.Style>
-                            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-                                <Setter Property="Tag" Value="Selecciona una activitat" />
-                            </Style>
-                        </ComboBox.Style>
-                    </ComboBox>
-
-                    <!-- Date Selection -->
-                    <TextBlock Text="Data"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,8" />
-                    <DatePicker SelectedDate="{Binding EditingRecord.Date}"
-                                HorizontalAlignment="Stretch"
-                                Margin="0,0,0,16" />
-
-                    <!-- Time Selection -->
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="16" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Hora inici"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,8" />
-                            <ui:TextBox x:Name="StartTimeTextBox"
-                                        PlaceholderText="HH:mm"
-                                        Text="{Binding EditingRecord.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Hora fi"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,8" />
-                            <ui:TextBox x:Name="EndTimeTextBox"
-                                        PlaceholderText="HH:mm"
-                                        Text="{Binding EditingRecord.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Notes -->
-                    <TextBlock Text="Notes (opcional)"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,8" />
-                    <ui:TextBox Text="{Binding EditingRecord.Notes, Mode=TwoWay}"
-                                PlaceholderText="Afegeix notes sobre aquesta entrada..."
-                                MinHeight="80"
-                                TextWrapping="Wrap"
-                                AcceptsReturn="True"
-                                Margin="0,0,0,20" />
-
-                    <!-- Actions -->
-                    <ui:Button Content="{Binding IsEditing, Converter={StaticResource EditingToButtonTextConverter}, FallbackValue='Afegir entrada'}"
-                               Appearance="Primary"
-                               HorizontalAlignment="Stretch"
-                               Command="{Binding SaveRecordCommand}"
-                               Padding="16,12" />
-                </StackPanel>
-            </ui:Card>
         </Grid>
     </Grid>
 </Page>

@@ -7,17 +7,604 @@
     xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
     d:DataContext="{d:DesignInstance vm:JornadaViewModel}"
     mc:Ignorable="d"
-    d:DesignHeight="450" d:DesignWidth="800"
-    Title="Jornada">
-    <Grid Margin="24">
-        <StackPanel VerticalAlignment="Top">
-            <TextBlock Text="Jornada"
-                       FontSize="28"
-                       FontWeight="SemiBold"
-                       Margin="0,0,0,8" />
-            <TextBlock Text="Control de la jornada laboral"
-                       FontSize="14"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-        </StackPanel>
+    d:DesignHeight="700" d:DesignWidth="1100"
+    Title="Jornada"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
+
+    <Page.Resources>
+        <!-- Plantilla del diàleg per afegir/editar franges -->
+        <DataTemplate x:Key="SlotDialogTemplate">
+            <StackPanel Width="480">
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="{Binding IsEditing, Converter={StaticResource EditingToTitleConverter}, FallbackValue='Afegir franja'}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <ui:Button HorizontalAlignment="Right"
+                               Appearance="Transparent"
+                               Command="{Binding CloseDialogCommand}"
+                               Padding="4">
+                        <ui:SymbolIcon Symbol="Dismiss24" />
+                    </ui:Button>
+                </Grid>
+
+                <TextBlock Text="Data"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <DatePicker SelectedDate="{Binding EditingSlot.Date}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,16" />
+
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Hora inici"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <ui:TextBox PlaceholderText="HH:mm"
+                                    Text="{Binding EditingSlot.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Hora fi"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <ui:TextBox PlaceholderText="HH:mm"
+                                    Text="{Binding EditingSlot.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Lloc de treball"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+                <StackPanel Margin="0,0,0,16">
+                    <RadioButton Content="Oficina"
+                                 IsChecked="{Binding EditingSlot.Telework, Converter={StaticResource BoolInverterConverter}}"
+                                 GroupName="Location"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="Casa (teletreball)"
+                                 IsChecked="{Binding EditingSlot.Telework}"
+                                 GroupName="Location" />
+                </StackPanel>
+
+                <!-- Missatge d'error de validació -->
+                <Border Background="#FEE2E2"
+                        BorderBrush="#EF4444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8"
+                        Margin="0,0,0,16"
+                        Visibility="{Binding EditingSlot.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{Binding EditingSlot.ValidationError}"
+                               Foreground="#DC2626"
+                               TextWrapping="Wrap"
+                               FontSize="13" />
+                </Border>
+
+                <ui:Button Content="{Binding IsEditing, Converter={StaticResource EditingToButtonTextConverter}, FallbackValue='Afegir franja'}"
+                           Appearance="Primary"
+                           HorizontalAlignment="Stretch"
+                           Command="{Binding SaveSlotAsyncCommand}"
+                           Padding="16,12" />
+            </StackPanel>
+        </DataTemplate>
+        
+        <!-- Estil personalitzat per als dies del calendari amb indicadors -->
+        <Style x:Key="CalendarDayButtonStyleWithIndicator" TargetType="CalendarDayButton">
+            <Setter Property="MinWidth" Value="40" />
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CalendarDayButton">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Background" 
+                                                           Storyboard.TargetProperty="Opacity" 
+                                                           To="0.6" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Background" 
+                                                           Storyboard.TargetProperty="Opacity" 
+                                                           To="0.8" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="SelectionStates">
+                                    <VisualState x:Name="Unselected" />
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Background" 
+                                                           Storyboard.TargetProperty="Opacity" 
+                                                           To="1" Duration="0:0:0.1" />
+                                            <ColorAnimation Storyboard.TargetName="Background"
+                                                          Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                          To="{DynamicResource SystemAccentColor}" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CalendarButtonFocusStates">
+                                    <VisualState x:Name="CalendarButtonUnfocused" />
+                                    <VisualState x:Name="CalendarButtonFocused">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FocusBorder"
+                                                                          Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="ActiveStates">
+                                    <VisualState x:Name="Active" />
+                                    <VisualState x:Name="Inactive">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Content"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0.4" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DayStates">
+                                    <VisualState x:Name="RegularDay" />
+                                    <VisualState x:Name="Today">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TodayBorder"
+                                                                          Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            
+                            <Border x:Name="Background" 
+                                    Background="{DynamicResource SystemAccentColorSecondaryBrush}" 
+                                    CornerRadius="20" 
+                                    Opacity="0" />
+                            <Border x:Name="TodayBorder" 
+                                    BorderBrush="{DynamicResource SystemAccentColorPrimaryBrush}" 
+                                    BorderThickness="2" 
+                                    CornerRadius="20" 
+                                    Visibility="Collapsed" />
+                            <Border x:Name="FocusBorder"
+                                    BorderBrush="{DynamicResource SystemAccentColorPrimaryBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="20"
+                                    Visibility="Collapsed" />
+                            <ContentPresenter x:Name="Content"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsBlackedOut" Value="True">
+                                <Setter Property="Opacity" Value="0.2" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <!-- Contingut principal -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Capçalera -->
+                <Grid Grid.Row="0" Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Jornada laboral"
+                                   FontSize="28"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,4" />
+                        <TextBlock Text="Control de la teva jornada de treball"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    </StackPanel>
+
+                    <ui:Button Grid.Column="1"
+                               Appearance="Primary"
+                               Command="{Binding OpenNewSlotDialogCommand}"
+                               Padding="16,10">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
+                            <TextBlock Text="Afegir franja" />
+                        </StackPanel>
+                    </ui:Button>
+                </Grid>
+
+                <!-- Contingut principal amb dues columnes -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Columna esquerra: Calendari -->
+                    <ui:Card Grid.Column="0" Padding="16" VerticalAlignment="Top">
+                        <StackPanel>
+                            <!-- Navegació de mes -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ui:Button Grid.Column="0"
+                                           Appearance="Transparent"
+                                           Command="{Binding PreviousMonthCommand}"
+                                           Padding="8">
+                                    <ui:SymbolIcon Symbol="ChevronLeft24" FontSize="16" />
+                                </ui:Button>
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding MonthYear}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+
+                                <ui:Button Grid.Column="2"
+                                           Appearance="Transparent"
+                                           Command="{Binding NextMonthCommand}"
+                                           Padding="8">
+                                    <ui:SymbolIcon Symbol="ChevronRight24" FontSize="16" />
+                                </ui:Button>
+                            </Grid>
+
+                            <!-- Calendari WPF -->
+                            <Calendar x:Name="WorkdayCalendar"
+                                      SelectionMode="SingleDate"
+                                      DisplayDate="{Binding SelectedDate, Mode=TwoWay}"
+                                      SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                      SelectedDatesChanged="Calendar_SelectedDatesChanged"
+                                      DisplayDateChanged="Calendar_DisplayDateChanged"
+                                      IsTodayHighlighted="True"
+                                      FirstDayOfWeek="Monday" />
+
+                            <!-- Botó per anar a avui -->
+                            <ui:Button Content="Avui"
+                                       Appearance="Secondary"
+                                       Command="{Binding TodayCommand}"
+                                       HorizontalAlignment="Stretch"
+                                       Margin="0,12,0,0"
+                                       Padding="12,8" />
+
+                            <!-- Resum mensual -->
+                            <Border Margin="0,16,0,0"
+                                    Padding="12"
+                                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                    CornerRadius="8">
+                                <StackPanel>
+                                    <TextBlock Text="Resum mensual"
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Margin="0,0,0,12" />
+
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="Total treballat"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding MonthTotalTime}"
+                                                   FontSize="15"
+                                                   FontWeight="SemiBold" />
+                                    </Grid>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="% Teletreball"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding MonthTeleworkPercentage}"
+                                                   FontSize="15"
+                                                   FontWeight="SemiBold" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ui:Card>
+
+                    <!-- Columna dreta: Informació del dia seleccionat -->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Informació del dia seleccionat -->
+                        <ui:Card Grid.Row="0" Padding="20" Margin="0,0,0,16">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Títol del dia -->
+                                <TextBlock Grid.Row="0"
+                                           Text="{Binding SelectedDateDisplay}"
+                                           FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,16" />
+
+                                <!-- Estadístiques del dia -->
+                                <Grid Grid.Row="1" Margin="0,0,0,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="Total"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding TotalWorkedTime}"
+                                                   FontSize="24"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="Oficina"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding OfficeTime}"
+                                                   FontSize="24"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="Teletreball"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding TeleworkTime}"
+                                                   FontSize="24"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                                        <TextBlock Text="% Teletreball"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding TeleworkPercentage}"
+                                                   FontSize="24"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Gràfic de barres -->
+                                <Grid Grid.Row="2">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Barra Oficina -->
+                                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="60" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0"
+                                                   Text="Oficina"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Center" />
+
+                                        <Border Grid.Column="1"
+                                                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                                CornerRadius="4"
+                                                Height="24">
+                                            <Border Background="#4CAF50"
+                                                    CornerRadius="4"
+                                                    HorizontalAlignment="Left"
+                                                    Width="{Binding OfficeBarWidth, Converter={StaticResource BarWidthConverter}}" />
+                                        </Border>
+
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding OfficeTime}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+
+                                    <!-- Barra Teletreball -->
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="60" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0"
+                                                   Text="Teletreball"
+                                                   FontSize="13"
+                                                   VerticalAlignment="Center" />
+
+                                        <Border Grid.Column="1"
+                                                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                                CornerRadius="4"
+                                                Height="24">
+                                            <Border Background="#2196F3"
+                                                    CornerRadius="4"
+                                                    HorizontalAlignment="Left"
+                                                    Width="{Binding TeleworkBarWidth, Converter={StaticResource BarWidthConverter}}" />
+                                        </Border>
+
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding TeleworkTime}"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </ui:Card>
+
+                        <!-- Títol de la llista de franges -->
+                        <TextBlock Grid.Row="1"
+                                   Text="Franges horàries"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12" />
+
+                        <!-- Llista de franges -->
+                        <Grid Grid.Row="2">
+                            <!-- Llista de franges quan n'hi ha -->
+                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <ItemsControl ItemsSource="{Binding Slots}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <ui:Card Margin="0,0,0,12" Padding="16">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Icona -->
+                                                    <Border Grid.Column="0"
+                                                            Width="44"
+                                                            Height="44"
+                                                            CornerRadius="8"
+                                                            Background="{DynamicResource SystemAccentColorSecondaryBrush}"
+                                                            Margin="0,0,12,0">
+                                                        <ui:SymbolIcon Symbol="{Binding LocationIcon}"
+                                                                       FontSize="22"
+                                                                       Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
+                                                    </Border>
+
+                                                    <!-- Informació de la franja -->
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding LocationText}"
+                                                                   FontWeight="SemiBold"
+                                                                   FontSize="15"
+                                                                   Margin="0,0,0,2" />
+                                                        <TextBlock FontSize="13"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                                                            <Run Text="{Binding StartTime}" />
+                                                            <Run Text=" - " />
+                                                            <Run Text="{Binding EndTime}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+
+                                                    <!-- Durada -->
+                                                    <TextBlock Grid.Column="2"
+                                                               Text="{Binding Duration}"
+                                                               FontSize="16"
+                                                               FontWeight="SemiBold"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,12,0" />
+
+                                                    <!-- Menú d'accions -->
+                                                    <ui:DropDownButton Grid.Column="3"
+                                                                       VerticalAlignment="Center"
+                                                                       Padding="8,4"
+                                                                       Appearance="Secondary">
+                                                        <ui:SymbolIcon Symbol="MoreHorizontal24" />
+                                                        <ui:DropDownButton.Flyout>
+                                                            <ContextMenu>
+                                                                <ui:MenuItem Header="Editar"
+                                                                             Command="{Binding DataContext.OpenEditSlotDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                             CommandParameter="{Binding}">
+                                                                    <ui:MenuItem.Icon>
+                                                                        <ui:SymbolIcon Symbol="Edit24" />
+                                                                    </ui:MenuItem.Icon>
+                                                                </ui:MenuItem>
+                                                                <ui:MenuItem Header="Eliminar"
+                                                                             Command="{Binding DataContext.DeleteSlotAsyncCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                             CommandParameter="{Binding}">
+                                                                    <ui:MenuItem.Icon>
+                                                                        <ui:SymbolIcon Symbol="Delete24" />
+                                                                    </ui:MenuItem.Icon>
+                                                                </ui:MenuItem>
+                                                            </ContextMenu>
+                                                        </ui:DropDownButton.Flyout>
+                                                    </ui:DropDownButton>
+                                                </Grid>
+                                            </ui:Card>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <!-- Estat buit -->
+                            <StackPanel VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Visibility="{Binding Slots.Count, Converter={StaticResource CountToVisibilityConverter}, FallbackValue=Collapsed}">
+                                <ui:SymbolIcon Symbol="CalendarLtr24"
+                                               FontSize="48"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Margin="0,0,0,16" />
+                                <TextBlock Text="No hi ha franges per aquest dia"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,4" />
+                                <TextBlock Text="Afegeix la teva primera franja horària"
+                                           FontSize="14"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>
