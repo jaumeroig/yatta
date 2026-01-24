@@ -143,12 +143,8 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     {
         if (_currentSettings != null && value != null)
         {
-            // Cancel·lar l'operació anterior si n'hi ha una en curs
-            _themeSaveCts?.Cancel();
-            _themeSaveCts?.Dispose();
-            _themeSaveCts = new CancellationTokenSource();
-            
-            _ = SaveThemeAsync(value.Value, _themeSaveCts.Token);
+            ResetCancellationTokenSource(ref _themeSaveCts);
+            _ = SaveThemeAsync(value.Value, _themeSaveCts!.Token);
         }
     }
 
@@ -159,12 +155,8 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     {
         if (_currentSettings != null && value != null)
         {
-            // Cancel·lar l'operació anterior si n'hi ha una en curs
-            _languageSaveCts?.Cancel();
-            _languageSaveCts?.Dispose();
-            _languageSaveCts = new CancellationTokenSource();
-            
-            _ = SaveLanguageAsync(value.Value, _languageSaveCts.Token);
+            ResetCancellationTokenSource(ref _languageSaveCts);
+            _ = SaveLanguageAsync(value.Value, _languageSaveCts!.Token);
         }
     }
 
@@ -343,19 +335,54 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    /// Reinicia un CancellationTokenSource, cancel·lant i disposant l'anterior.
+    /// </summary>
+    /// <param name="cts">Referència al CancellationTokenSource a reiniciar.</param>
+    private static void ResetCancellationTokenSource(ref CancellationTokenSource? cts)
+    {
+        cts?.Cancel();
+        cts?.Dispose();
+        cts = new CancellationTokenSource();
+    }
+
     #endregion
 
     #region IDisposable
+
+    private bool _disposed = false;
 
     /// <summary>
     /// Allibera els recursos utilitzats pel ViewModel.
     /// </summary>
     public void Dispose()
     {
-        _languageSaveCts?.Cancel();
-        _languageSaveCts?.Dispose();
-        _themeSaveCts?.Cancel();
-        _themeSaveCts?.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Allibera els recursos utilitzats pel ViewModel.
+    /// </summary>
+    /// <param name="disposing">Indica si s'estan disposant els recursos gerenciats.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Alliberar recursos gerenciats
+                _languageSaveCts?.Cancel();
+                _languageSaveCts?.Dispose();
+                _languageSaveCts = null;
+                
+                _themeSaveCts?.Cancel();
+                _themeSaveCts?.Dispose();
+                _themeSaveCts = null;
+            }
+
+            _disposed = true;
+        }
     }
 
     #endregion
