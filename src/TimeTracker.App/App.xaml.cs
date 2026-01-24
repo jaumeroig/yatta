@@ -35,6 +35,7 @@ public partial class App : Application
 
         // Initialize localization service (loads saved language preference)
         var localizationService = _serviceProvider.GetRequiredService<ILocalizationService>();
+        localizationService.InitializeAsync().GetAwaiter().GetResult();
 
         // Load and apply theme
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
@@ -44,7 +45,7 @@ public partial class App : Application
         mainWindow.Show();
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services)
     {
         // Register DbContext
         services.AddDbContext<TimeTrackerDbContext>(options =>

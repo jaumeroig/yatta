@@ -135,8 +135,8 @@
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
                     </ui:CardControl.Header>
-                    <TextBlock Text=".NET 10, WPF, SQLite"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    <!--<TextBlock Text=".NET 10, WPF, SQLite"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />-->
                 </ui:CardControl>
             </StackPanel>
         </Grid>

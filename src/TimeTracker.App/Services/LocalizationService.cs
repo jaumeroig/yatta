@@ -1,6 +1,7 @@
 namespace TimeTracker.App.Services;
 
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.App.Resources;
 
@@ -9,17 +10,17 @@ using TimeTracker.App.Resources;
 /// </summary>
 public class LocalizationService : ILocalizationService
 {
-    private readonly ISettingsRepository _settingsRepository;
+    private readonly IServiceProvider _serviceProvider;
     private CultureInfo _currentCulture;
 
     public event EventHandler? CultureChanged;
 
-    public LocalizationService(ISettingsRepository settingsRepository)
+    public LocalizationService(IServiceProvider serviceProvider)
     {
-        _settingsRepository = settingsRepository;
+        _serviceProvider = serviceProvider;
         
-        // Carregar preferència d'idioma o usar idioma del sistema
-        _currentCulture = LoadSavedCulture();
+        // Inicialitzar amb idioma del sistema per defecte
+        _currentCulture = GetSystemCulture();
         ApplyCulture(_currentCulture);
     }
 
@@ -70,7 +71,6 @@ public class LocalizationService : ILocalizationService
         {
             _currentCulture = newCulture;
             ApplyCulture(_currentCulture);
-            SaveCulture(culture);
             CultureChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -81,26 +81,32 @@ public class LocalizationService : ILocalizationService
         return _currentCulture.Name;
     }
 
-    private CultureInfo LoadSavedCulture()
+    /// <summary>
+    /// Inicialitza el servei de localització carregant l'idioma guardat.
+    /// </summary>
+    public async Task InitializeAsync()
     {
+        using var scope = _serviceProvider.CreateScope();
+        var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+        
         try
         {
-            var settings = _settingsRepository.GetAsync().GetAwaiter().GetResult();
+            var settings = await settingsRepository.GetAsync();
             
             if (settings != null && !string.IsNullOrEmpty(settings.Language))
             {
-                return new CultureInfo(settings.Language);
+                var savedCulture = new CultureInfo(settings.Language);
+                _currentCulture = savedCulture;
+                ApplyCulture(_currentCulture);
             }
         }
         catch
         {
-            // Si hi ha error, usar idioma del sistema
+            // Si hi ha error, mantenir idioma del sistema
         }
-
-        return GetSystemCulture();
     }
 
-    private CultureInfo GetSystemCulture()
+    private static CultureInfo GetSystemCulture()
     {
         var systemCulture = CultureInfo.CurrentUICulture;
         
@@ -123,22 +129,5 @@ public class LocalizationService : ILocalizationService
         
         // Actualitzar el ResourceManager perquè usi la nova cultura
         Resources.Culture = culture;
-    }
-
-    private void SaveCulture(string? culture)
-    {
-        try
-        {
-            var settings = _settingsRepository.GetAsync().GetAwaiter().GetResult();
-            if (settings != null)
-            {
-                settings.Language = culture;
-                _settingsRepository.UpdateAsync(settings).GetAwaiter().GetResult();
-            }
-        }
-        catch
-        {
-            // Si hi ha error guardant, no fer res
-        }
     }
 }

@@ -63,17 +63,17 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
         // Inicialitzar opcions de tema
         ThemeOptions =
         [
-            new ThemeOption { Value = Theme.System, DisplayName = "Predeterminat (Sistema)" },
-            new ThemeOption { Value = Theme.Dark, DisplayName = "Fosc" },
-            new ThemeOption { Value = Theme.Light, DisplayName = "Clar" }
+            new ThemeOption { Value = Theme.System, DisplayName = Resources.Resources.RadioButton_SystemTheme },
+            new ThemeOption { Value = Theme.Dark, DisplayName = Resources.Resources.RadioButton_DarkTheme },
+            new ThemeOption { Value = Theme.Light, DisplayName = Resources.Resources.RadioButton_LightTheme }
         ];
 
         // Inicialitzar opcions d'idioma
         LanguageOptions =
         [
-            new LanguageOption { Value = null, DisplayName = "Predeterminat (Sistema)" },
-            new LanguageOption { Value = "es-ES", DisplayName = "Español" },
-            new LanguageOption { Value = "ca-ES", DisplayName = "Català" }
+            new LanguageOption { Value = null, DisplayName = Resources.Resources.RadioButton_SystemLanguage },
+            new LanguageOption { Value = "es-ES", DisplayName = Resources.Resources.RadioButton_Spanish },
+            new LanguageOption { Value = "ca-ES", DisplayName = Resources.Resources.RadioButton_Catalan }
         ];
 
         // Valors per defecte

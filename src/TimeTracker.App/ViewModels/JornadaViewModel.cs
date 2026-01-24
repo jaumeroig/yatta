@@ -77,12 +77,14 @@ public partial class JornadaViewModel : ObservableObject
     public JornadaViewModel(
         IWorkdaySlotRepository workdaySlotRepository,
         IWorkdayService workdayService,
-        ITimeCalculatorService timeCalculatorService)
+        ITimeCalculatorService timeCalculatorService,
+        ILocalizationService localizationService)
     {
         _workdaySlotRepository = workdaySlotRepository;
         _workdayService = workdayService;
         _timeCalculatorService = timeCalculatorService;
-        
+        _localizationService = localizationService;
+
         UpdateDateDisplay();
         UpdateMonthYearDisplay();
     }

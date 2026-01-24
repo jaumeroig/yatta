@@ -6,6 +6,11 @@ namespace TimeTracker.Core.Interfaces;
 public interface ILocalizationService
 {
     /// <summary>
+    /// Inicialitza el servei carregant l'idioma guardat a la base de dades.
+    /// </summary>
+    Task InitializeAsync();
+
+    /// <summary>
     /// Obté el text traduït per una clau de recurs.
     /// </summary>
     /// <param name="key">Clau del recurs.</param>
