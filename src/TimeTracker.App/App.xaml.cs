@@ -33,6 +33,9 @@ public partial class App : Application
             dbContext.Database.Migrate();
         }
 
+        // Initialize localization service (loads saved language preference)
+        var localizationService = _serviceProvider.GetRequiredService<ILocalizationService>();
+
         // Load and apply theme
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
         _ = themeService.LoadThemeAsync();
@@ -60,6 +63,7 @@ public partial class App : Application
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<ILocalizationService, LocalizationService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();

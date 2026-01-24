@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" use="default" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- MainWindow -->
+  <data name="Window_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
+  <data name="TitleBar_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
+  <data name="TitleBar_Subtitle" xml:space="preserve">
+    <value>Control de temps</value>
+  </data>
+  <data name="Nav_Records" xml:space="preserve">
+    <value>Registres</value>
+  </data>
+  <data name="Nav_Workday" xml:space="preserve">
+    <value>Jornada</value>
+  </data>
+  <data name="Nav_Activities" xml:space="preserve">
+    <value>Activitats</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>Opcions</value>
+  </data>
+  
+  <!-- Activities Page -->
+  <data name="Page_Activities_Title" xml:space="preserve">
+    <value>Activitats</value>
+  </data>
+  <data name="Page_Activities_Subtitle" xml:space="preserve">
+    <value>Gestiona les teves activitats i tasques</value>
+  </data>
+  <data name="Dialog_NewActivity_Title" xml:space="preserve">
+    <value>Nova activitat</value>
+  </data>
+  <data name="Dialog_EditActivity_Title" xml:space="preserve">
+    <value>Editar activitat</value>
+  </data>
+  <data name="Dialog_DeleteActivity_Title" xml:space="preserve">
+    <value>Eliminar activitat?</value>
+  </data>
+  <data name="Label_ActivityName" xml:space="preserve">
+    <value>Nom de l'activitat</value>
+  </data>
+  <data name="Placeholder_ActivityName" xml:space="preserve">
+    <value>Nom de l'activitat...</value>
+  </data>
+  <data name="Label_Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="CheckBox_ActivityActive" xml:space="preserve">
+    <value>Activitat activa</value>
+  </data>
+  <data name="Button_CreateActivity" xml:space="preserve">
+    <value>Crear activitat</value>
+  </data>
+  <data name="Button_SaveChanges" xml:space="preserve">
+    <value>Desar canvis</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Cancel·lar</value>
+  </data>
+  <data name="Button_CancelDelete" xml:space="preserve">
+    <value>Cancel·lar</value>
+  </data>
+  <data name="Button_Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Button_NewActivity" xml:space="preserve">
+    <value>Nova activitat</value>
+  </data>
+  <data name="Message_DeleteActivityWarning" xml:space="preserve">
+    <value>Aquesta activitat té {0} registres associats. Si l'elimines, es perdran totes les dades.</value>
+  </data>
+  <data name="Menu_Edit" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Menu_Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Stat_Entries" xml:space="preserve">
+    <value>{0} entrades</value>
+  </data>
+  <data name="Label_TotalTime" xml:space="preserve">
+    <value>Temps total</value>
+  </data>
+  <data name="Empty_NoActivities" xml:space="preserve">
+    <value>No hi ha activitats</value>
+  </data>
+  <data name="Empty_CreateFirstActivity" xml:space="preserve">
+    <value>Crea la teva primera activitat</value>
+  </data>
+  
+  <!-- Records Page -->
+  <data name="Page_Records_Title" xml:space="preserve">
+    <value>Registres de temps</value>
+  </data>
+  <data name="Dialog_NewRecord_Title" xml:space="preserve">
+    <value>Afegir nova entrada</value>
+  </data>
+  <data name="Dialog_EditRecord_Title" xml:space="preserve">
+    <value>Editar entrada</value>
+  </data>
+  <data name="Label_Activity" xml:space="preserve">
+    <value>Activitat</value>
+  </data>
+  <data name="Placeholder_SelectActivity" xml:space="preserve">
+    <value>Selecciona una activitat</value>
+  </data>
+  <data name="Label_Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Label_StartTime" xml:space="preserve">
+    <value>Hora inici</value>
+  </data>
+  <data name="Label_EndTime" xml:space="preserve">
+    <value>Hora fi</value>
+  </data>
+  <data name="Placeholder_Time" xml:space="preserve">
+    <value>HH:mm</value>
+  </data>
+  <data name="Label_Notes" xml:space="preserve">
+    <value>Notes (opcional)</value>
+  </data>
+  <data name="Placeholder_RecordNotes" xml:space="preserve">
+    <value>Afegeix notes sobre aquesta entrada...</value>
+  </data>
+  <data name="Button_AddRecord" xml:space="preserve">
+    <value>Afegir entrada</value>
+  </data>
+  <data name="Stat_TodayWorked" xml:space="preserve">
+    <value>Avui has treballat {0}</value>
+  </data>
+  <data name="Button_NewRecord" xml:space="preserve">
+    <value>Nova entrada</value>
+  </data>
+  <data name="Placeholder_Search" xml:space="preserve">
+    <value>Cerca per activitat o notes...</value>
+  </data>
+  <data name="Placeholder_AllActivities" xml:space="preserve">
+    <value>Totes les activitats</value>
+  </data>
+  <data name="Label_DateDisplay" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Label_TotalWorkedDay" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Empty_NoRecords" xml:space="preserve">
+    <value>No hi ha registres</value>
+  </data>
+  <data name="Empty_CreateFirstRecord" xml:space="preserve">
+    <value>Crea el teu primer registre de temps</value>
+  </data>
+  
+  <!-- Workday Page -->
+  <data name="Page_Workday_Title" xml:space="preserve">
+    <value>Jornada laboral</value>
+  </data>
+  <data name="Page_Workday_Subtitle" xml:space="preserve">
+    <value>Control de la teva jornada de treball</value>
+  </data>
+  <data name="Dialog_NewSlot_Title" xml:space="preserve">
+    <value>Afegir franja</value>
+  </data>
+  <data name="Dialog_EditSlot_Title" xml:space="preserve">
+    <value>Editar franja</value>
+  </data>
+  <data name="Label_WorkLocation" xml:space="preserve">
+    <value>Lloc de treball</value>
+  </data>
+  <data name="RadioButton_Office" xml:space="preserve">
+    <value>Oficina</value>
+  </data>
+  <data name="RadioButton_Telework" xml:space="preserve">
+    <value>Casa (teletreball)</value>
+  </data>
+  <data name="Button_AddSlot" xml:space="preserve">
+    <value>Afegir franja</value>
+  </data>
+  <data name="Button_Today" xml:space="preserve">
+    <value>Avui</value>
+  </data>
+  <data name="Section_MonthlySummary" xml:space="preserve">
+    <value>Resum mensual</value>
+  </data>
+  <data name="Label_TotalWorked" xml:space="preserve">
+    <value>Total treballat</value>
+  </data>
+  <data name="Label_TeleworkPercentage" xml:space="preserve">
+    <value>% Teletreball</value>
+  </data>
+  <data name="Label_SelectedDay" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Stat_Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Stat_Office" xml:space="preserve">
+    <value>Oficina</value>
+  </data>
+  <data name="Stat_Telework" xml:space="preserve">
+    <value>Teletreball</value>
+  </data>
+  <data name="Stat_TeleworkPercentage" xml:space="preserve">
+    <value>% Teletreball</value>
+  </data>
+  <data name="Label_OfficeBar" xml:space="preserve">
+    <value>Oficina</value>
+  </data>
+  <data name="Label_TeleworkBar" xml:space="preserve">
+    <value>Teletreball</value>
+  </data>
+  <data name="Section_TimeSlots" xml:space="preserve">
+    <value>Franges horàries</value>
+  </data>
+  <data name="Label_Location" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Empty_NoSlots" xml:space="preserve">
+    <value>No hi ha franges per aquest dia</value>
+  </data>
+  <data name="Empty_AddFirstSlot" xml:space="preserve">
+    <value>Afegeix la teva primera franja horària</value>
+  </data>
+  
+  <!-- Settings Page -->
+  <data name="Page_Settings_Title" xml:space="preserve">
+    <value>Opcions</value>
+  </data>
+  <data name="Page_Settings_Subtitle" xml:space="preserve">
+    <value>Configuració de l'aplicació</value>
+  </data>
+  <data name="Section_Appearance" xml:space="preserve">
+    <value>Aparença</value>
+  </data>
+  <data name="Label_AppTheme" xml:space="preserve">
+    <value>Tema de l'aplicació</value>
+  </data>
+  <data name="RadioButton_DarkTheme" xml:space="preserve">
+    <value>Fosc</value>
+  </data>
+  <data name="RadioButton_LightTheme" xml:space="preserve">
+    <value>Clar</value>
+  </data>
+  <data name="RadioButton_SystemTheme" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="Section_Notifications" xml:space="preserve">
+    <value>Notificacions</value>
+  </data>
+  <data name="Label_EnableNotifications" xml:space="preserve">
+    <value>Activar notificacions</value>
+  </data>
+  <data name="Description_Notifications" xml:space="preserve">
+    <value>Mostra notificacions per recordar-te registrar les hores</value>
+  </data>
+  <data name="Section_WorkdaySettings" xml:space="preserve">
+    <value>Jornada laboral</value>
+  </data>
+  <data name="Label_WorkdayDuration" xml:space="preserve">
+    <value>Temps total de la jornada</value>
+  </data>
+  <data name="Description_WorkdayDuration" xml:space="preserve">
+    <value>Defineix la durada esperada de la teva jornada laboral diària</value>
+  </data>
+  <data name="Unit_Hours" xml:space="preserve">
+    <value>hores</value>
+  </data>
+  <data name="Unit_Minutes" xml:space="preserve">
+    <value>minuts</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>Desar</value>
+  </data>
+  <data name="Section_About" xml:space="preserve">
+    <value>Sobre l'aplicació</value>
+  </data>
+  <data name="Label_Application" xml:space="preserve">
+    <value>Aplicació:</value>
+  </data>
+  <data name="Value_AppName" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
+  <data name="Label_Version" xml:space="preserve">
+    <value>Versió:</value>
+  </data>
+  <data name="Label_Technology" xml:space="preserve">
+    <value>Tecnologia:</value>
+  </data>
+  <data name="Value_Technology" xml:space="preserve">
+    <value>.NET 10, WPF, SQLite</value>
+  </data>
+  
+  <!-- ViewModels -->
+  <data name="Status_Active" xml:space="preserve">
+    <value>Activa</value>
+  </data>
+  <data name="Status_Inactive" xml:space="preserve">
+    <value>Inactiva</value>
+  </data>
+  <data name="Format_Duration" xml:space="preserve">
+    <value>{0}h {1}m</value>
+  </data>
+  <data name="Location_Telework" xml:space="preserve">
+    <value>Casa (teletreball)</value>
+  </data>
+  <data name="Location_Office" xml:space="preserve">
+    <value>Oficina</value>
+  </data>
+  <data name="Filter_AllActivities" xml:space="preserve">
+    <value>Totes les activitats</value>
+  </data>
+  <data name="Activity_Unknown" xml:space="preserve">
+    <value>Desconeguda</value>
+  </data>
+  
+  <!-- Validation Messages -->
+  <data name="Validation_EndTimeAfterStartTime" xml:space="preserve">
+    <value>L'hora de fi ha de ser posterior a l'hora d'inici.</value>
+  </data>
+  <data name="Validation_OverlappingRecord" xml:space="preserve">
+    <value>El registre solapa amb un altre registre existent ({0} - {1}).</value>
+  </data>
+  <data name="Validation_OverlappingSlot" xml:space="preserve">
+    <value>La franja solapa amb una altra franja existent ({0} - {1}).</value>
+  </data>
+  <data name="Validation_InvalidStartTime" xml:space="preserve">
+    <value>L'hora d'inici no és vàlida.</value>
+  </data>
+  <data name="Validation_InvalidEndTime" xml:space="preserve">
+    <value>L'hora de fi no és vàlida.</value>
+  </data>
+  
+  <!-- Section: Language Settings (new) -->
+  <data name="Section_Language" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Label_AppLanguage" xml:space="preserve">
+    <value>Idioma de l'aplicació</value>
+  </data>
+  <data name="RadioButton_SystemLanguage" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="RadioButton_Spanish" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="RadioButton_Catalan" xml:space="preserve">
+    <value>Català</value>
+  </data>
+  <data name="Description_Language" xml:space="preserve">
+    <value>Selecciona l'idioma de la interfície</value>
+  </data>
+</root>

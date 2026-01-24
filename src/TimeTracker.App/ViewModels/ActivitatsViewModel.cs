@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Helpers;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -70,7 +71,9 @@ public partial class ActivitatsViewModel : ObservableObject
                 Active = activity.Active,
                 RecordCount = records.Count,
                 TotalTime = FormatDuration(totalHours),
-                StatusText = activity.Active ? "Activa" : "Inactiva"
+                StatusText = activity.Active 
+                    ? ResourceHelper.GetString("Status_Active", "Activa")
+                    : ResourceHelper.GetString("Status_Inactive", "Inactiva")
             };
         }).OrderBy(a => a.Name);
 
@@ -82,7 +85,8 @@ public partial class ActivitatsViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        return $"{h}h {m}m";
+        var format = ResourceHelper.GetString("Format_Duration", "{0}h {1}m");
+        return string.Format(format, h, m);
     }
 
     [RelayCommand]

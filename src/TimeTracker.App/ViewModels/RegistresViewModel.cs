@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Helpers;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -63,7 +64,8 @@ public partial class RegistresViewModel : ObservableObject
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
         
         // Afegir opció "Totes les activitats" al principi
-        var allActivitiesOption = new Activity { Id = Guid.Empty, Name = "Totes les activitats" };
+        var allActivitiesText = ResourceHelper.GetString("Filter_AllActivities", "Todas las actividades");
+        var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
         var activitiesWithAll = new List<Activity> { allActivitiesOption };
         activitiesWithAll.AddRange(_allActivities);
         Activities = new ObservableCollection<Activity>(activitiesWithAll);
@@ -140,7 +142,7 @@ public partial class RegistresViewModel : ObservableObject
         return new TimeRecordDisplay
         {
             Id = record.Id,
-            ActivityName = activity?.Name ?? "Desconeguda",
+            ActivityName = activity?.Name ?? ResourceHelper.GetString("Activity_Unknown", "Desconocida"),
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
@@ -164,7 +166,8 @@ public partial class RegistresViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        return $"{h}h {m}m";
+        var format = ResourceHelper.GetString("Format_Duration", "{0}h {1}m");
+        return string.Format(format, h, m);
     }
 
     private void CalculateTodayWorkedTime()
@@ -229,8 +232,7 @@ public partial class RegistresViewModel : ObservableObject
         // Validar que l'hora de fi sigui posterior a l'hora d'inici
         if (endTime.HasValue && endTime.Value <= startTime.Value)
         {
-            // TODO: Mostrar missatge d'error a la UI
-            EditingRecord.ValidationError = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+            EditingRecord.ValidationError = ResourceHelper.GetString("Validation_EndTimeAfterStartTime", "La hora de fin debe ser posterior a la hora de inicio.");
             return;
         }
 

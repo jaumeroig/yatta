@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
+using TimeTracker.App.Helpers;
 
 namespace TimeTracker.App.ViewModels;
 
@@ -132,7 +133,9 @@ public partial class JornadaViewModel : ObservableObject
                 StartTime = slot.StartTime.ToString("HH:mm"),
                 EndTime = slot.EndTime.ToString("HH:mm"),
                 Duration = FormatDuration(_timeCalculatorService.CalculateDuration(slot.StartTime, slot.EndTime)),
-                LocationText = slot.Telework ? "Casa (teletreball)" : "Oficina",
+                LocationText = slot.Telework 
+                    ? ResourceHelper.GetString("Location_Telework", "Casa (teletrabajo)")
+                    : ResourceHelper.GetString("Location_Office", "Oficina"),
                 LocationIcon = slot.Telework ? "Home24" : "Building24",
                 Telework = slot.Telework
             });
@@ -209,7 +212,8 @@ public partial class JornadaViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        return $"{h}h {m}m";
+        var format = ResourceHelper.GetString("Format_Duration", "{0}h {1}m");
+        return string.Format(format, h, m);
     }
 
     [RelayCommand]
@@ -293,21 +297,21 @@ public partial class JornadaViewModel : ObservableObject
         var startTime = EditingSlot.GetStartTime();
         if (!startTime.HasValue)
         {
-            EditingSlot.ValidationError = "L'hora d'inici no és vàlida.";
+            EditingSlot.ValidationError = ResourceHelper.GetString("Validation_InvalidStartTime", "La hora de inicio no es válida.");
             return;
         }
 
         var endTime = EditingSlot.GetEndTime();
         if (!endTime.HasValue)
         {
-            EditingSlot.ValidationError = "L'hora de fi no és vàlida.";
+            EditingSlot.ValidationError = ResourceHelper.GetString("Validation_InvalidEndTime", "La hora de fin no es válida.");
             return;
         }
 
         // Validar que l'hora de fi sigui posterior a l'hora d'inici
         if (endTime.Value <= startTime.Value)
         {
-            EditingSlot.ValidationError = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+            EditingSlot.ValidationError = ResourceHelper.GetString("Validation_EndTimeAfterStartTime", "La hora de fin debe ser posterior a la hora de inicio.");
             return;
         }
 

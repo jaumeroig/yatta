@@ -5,6 +5,7 @@ using TimeTracker.Core.Models;
 
 /// <summary>
 /// Implementació del servei per a la validació de registres i franges de treball.
+/// Nota: Els missatges d'error s'hauran de traduir a través del servei de localització.
 /// </summary>
 public class ValidationService : IValidationService
 {
@@ -23,7 +24,8 @@ public class ValidationService : IValidationService
             return true;
         }
 
-        errorMessage = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+        // Clau de recursos: Validation_EndTimeAfterStartTime
+        errorMessage = "Validation_EndTimeAfterStartTime";
         return false;
     }
 
@@ -67,7 +69,8 @@ public class ValidationService : IValidationService
                 (record.EndTime.Value > existing.StartTime && record.EndTime.Value <= existing.EndTime.Value) ||
                 (record.StartTime <= existing.StartTime && record.EndTime.Value >= existing.EndTime.Value))
             {
-                errorMessage = $"El registre solapa amb un altre registre existent ({existing.StartTime:HH\\:mm} - {existing.EndTime.Value:HH\\:mm}).";
+                // Clau de recursos: Validation_OverlappingRecord (amb format de 2 arguments: startTime, endTime)
+                errorMessage = $"Validation_OverlappingRecord|{existing.StartTime:HH\\:mm}|{existing.EndTime.Value:HH\\:mm}";
                 return false;
             }
         }
@@ -103,7 +106,8 @@ public class ValidationService : IValidationService
                 (slot.EndTime > existing.StartTime && slot.EndTime <= existing.EndTime) ||
                 (slot.StartTime <= existing.StartTime && slot.EndTime >= existing.EndTime))
             {
-                errorMessage = $"La franja solapa amb una altra franja existent ({existing.StartTime:HH\\:mm} - {existing.EndTime:HH\\:mm}).";
+                // Clau de recursos: Validation_OverlappingSlot (amb format de 2 arguments: startTime, endTime)
+                errorMessage = $"Validation_OverlappingSlot|{existing.StartTime:HH\\:mm}|{existing.EndTime:HH\\:mm}";
                 return false;
             }
         }
