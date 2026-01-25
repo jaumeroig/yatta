@@ -299,7 +299,7 @@
                        Appearance="Danger"
                        Command="{Binding RequestDeleteCommand}"
                        Padding="16,10"
-                       Visibility="{Binding RecordCount, Converter={StaticResource PositiveCountToVisibilityConverter}, ConverterParameter=inverse, FallbackValue=Collapsed}">
+                       Visibility="{Binding IsExistingActivity, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Delete24" Margin="0,0,8,0" />
                     <TextBlock Text="{local:Localize Button_Delete}" />

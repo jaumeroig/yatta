@@ -57,6 +57,11 @@ public partial class ActivityDetailViewModel : ObservableObject
     private bool _hasNameError;
 
     /// <summary>
+    /// Indica si l'activitat ja existeix (no és nova).
+    /// </summary>
+    public bool IsExistingActivity => !_isNewActivity;
+
+    /// <summary>
     /// Indica si es pot desar l'activitat (validació bàsica).
     /// </summary>
     public bool CanSave => !string.IsNullOrWhiteSpace(Name) && Name.Length <= MaxNameLength;
@@ -105,12 +110,14 @@ public partial class ActivityDetailViewModel : ObservableObject
         {
             _activityId = activityId.Value;
             _isNewActivity = false;
+            OnPropertyChanged(nameof(IsExistingActivity));
             await LoadActivityAsync();
         }
         else
         {
             _activityId = Guid.NewGuid();
             _isNewActivity = true;
+            OnPropertyChanged(nameof(IsExistingActivity));
             PageTitle = Resources.Resources.ActivityDetail_NewTitle;
             Name = string.Empty;
             _originalName = string.Empty;
