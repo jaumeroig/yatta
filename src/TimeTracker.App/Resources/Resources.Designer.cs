@@ -421,6 +421,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buscar por nombre....
+        /// </summary>
+        internal static string Filter_SearchByName {
+            get {
+                return ResourceManager.GetString("Filter_SearchByName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mostrar inactivas.
+        /// </summary>
+        internal static string Filter_ShowInactive {
+            get {
+                return ResourceManager.GetString("Filter_ShowInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}h {1}m.
         /// </summary>
         internal static string Format_Duration {

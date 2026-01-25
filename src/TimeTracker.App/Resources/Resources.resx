@@ -460,4 +460,10 @@
   <data name="Activity_NoRecords" xml:space="preserve">
     <value>Sin registros</value>
   </data>
+  <data name="Filter_SearchByName" xml:space="preserve">
+    <value>Buscar por nombre...</value>
+  </data>
+  <data name="Filter_ShowInactive" xml:space="preserve">
+    <value>Mostrar inactivas</value>
+  </data>
 </root>

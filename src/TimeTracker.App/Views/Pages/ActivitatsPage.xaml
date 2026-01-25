@@ -16,11 +16,12 @@
     <Grid Margin="42,12,42,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,20">
+        <!-- Header amb botó Nova activitat -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
             <ui:Button Appearance="Primary"
                        Command="{Binding NavigateToNewActivityCommand}"
                        Padding="16,10"
@@ -32,8 +33,33 @@
             </ui:Button>
         </Grid>
 
+        <!-- Filtres: Cerca per nom i switch per mostrar inactives -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MaxWidth="400" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Camp de cerca per nom -->
+            <ui:TextBox Grid.Column="0"
+                        PlaceholderText="{local:Localize Filter_SearchByName}"
+                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                        Icon="{ui:SymbolIcon Search24}" />
+
+            <!-- Switch per mostrar activitats inactives -->
+            <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        VerticalAlignment="Center"
+                        Margin="24,0,0,0">
+                <TextBlock Text="{local:Localize Filter_ShowInactive}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0" />
+                <ui:ToggleSwitch IsChecked="{Binding ShowInactive}" />
+            </StackPanel>
+        </Grid>
+
         <!-- Activities List (Windows Settings Style) -->
-        <ScrollViewer Grid.Row="1"
+        <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Visibility="{Binding Activities.Count, Converter={StaticResource InverseCountToVisibilityConverter}, FallbackValue=Visible}">
@@ -65,10 +91,23 @@
 
                                 <!-- Activity Info -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Name}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
-                                               TextTrimming="CharacterEllipsis" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis" />
+                                        <!-- Indicador d'activitat inactiva -->
+                                        <Border Visibility="{Binding Active, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                                Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                                                CornerRadius="4"
+                                                Padding="6,2"
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="{local:Localize Status_Inactive}"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+                                        </Border>
+                                    </StackPanel>
                                     <TextBlock Text="{Binding Subtitle}"
                                                FontSize="12"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -83,7 +122,7 @@
         </ScrollViewer>
 
         <!-- Empty State -->
-        <StackPanel Grid.Row="1"
+        <StackPanel Grid.Row="2"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Visibility="{Binding Activities.Count, Converter={StaticResource CountToVisibilityConverter}, FallbackValue=Collapsed}">

@@ -23,6 +23,28 @@ public partial class ActivitatsViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ActivityDisplay> _activities = [];
 
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    [ObservableProperty]
+    private bool _showInactive = false;
+
+    /// <summary>
+    /// S'executa quan canvia el text de cerca.
+    /// </summary>
+    partial void OnSearchTextChanged(string value)
+    {
+        ApplyFilters();
+    }
+
+    /// <summary>
+    /// S'executa quan canvia el switch de mostrar inactives.
+    /// </summary>
+    partial void OnShowInactiveChanged(bool value)
+    {
+        ApplyFilters();
+    }
+
     public ActivitatsViewModel(
         IActivityRepository activityRepository,
         ITimeRecordRepository timeRecordRepository,
@@ -42,12 +64,30 @@ public partial class ActivitatsViewModel : ObservableObject
     {
         _allActivities = (await _activityRepository.GetAllAsync()).ToList();
         _allRecords = (await _timeRecordRepository.GetAllAsync()).ToList();
-        UpdateActivitiesDisplay();
+        ApplyFilters();
     }
 
-    private void UpdateActivitiesDisplay()
+    /// <summary>
+    /// Aplica els filtres de cerca i estat actiu/inactiu a la llista d'activitats.
+    /// </summary>
+    private void ApplyFilters()
     {
-        var activityDisplays = _allActivities.Select(activity =>
+        var filtered = _allActivities.AsEnumerable();
+
+        // Filtrar per estat actiu/inactiu
+        if (!ShowInactive)
+        {
+            filtered = filtered.Where(a => a.Active);
+        }
+
+        // Filtrar per text de cerca
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            var searchLower = SearchText.ToLower();
+            filtered = filtered.Where(a => a.Name.ToLower().Contains(searchLower));
+        }
+
+        var activityDisplays = filtered.Select(activity =>
         {
             var records = _allRecords.Where(r => r.ActivityId == activity.Id).ToList();
             var totalHours = _timeCalculatorService.CalculateTotalHours(records);

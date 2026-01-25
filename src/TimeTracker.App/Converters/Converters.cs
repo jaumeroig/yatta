@@ -30,6 +30,31 @@ public class BooleanToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
+/// Converteix un booleà a Visibility inversa (Collapsed si true, Visible si false).
+/// S'utilitza per mostrar indicadors quan una activitat NO està activa.
+/// </summary>
+public class InverseBooleanToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool boolValue)
+        {
+            return boolValue ? Visibility.Collapsed : Visibility.Visible;
+        }
+        return Visibility.Visible;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is Visibility visibility)
+        {
+            return visibility != Visibility.Visible;
+        }
+        return true;
+    }
+}
+
+/// <summary>
 /// Converts a string to Visibility (Visible if not empty, Collapsed otherwise).
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
