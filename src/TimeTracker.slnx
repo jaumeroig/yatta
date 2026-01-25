@@ -1,5 +1,8 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../README.md" />
+  </Folder>
+  <Project Path="TimeTracker.App/TimeTracker.App.csproj" />
   <Project Path="TimeTracker.Core/TimeTracker.Core.csproj" />
   <Project Path="TimeTracker.Data/TimeTracker.Data.csproj" />
-  <Project Path="TimeTracker.App/TimeTracker.App.csproj" />
 </Solution>
