@@ -12,8 +12,11 @@
             </ResourceDictionary.MergedDictionaries>
             
             <!-- Global Converters -->
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+            <converters:InverseCountToVisibilityConverter x:Key="InverseCountToVisibilityConverter" />
+            <converters:PositiveCountToVisibilityConverter x:Key="PositiveCountToVisibilityConverter" />
             <converters:EditingToTitleConverter x:Key="EditingToTitleConverter" />
             <converters:EditingToButtonTextConverter x:Key="EditingToButtonTextConverter" />
             <converters:ActivityEditingToTitleConverter x:Key="ActivityEditingToTitleConverter" />

@@ -6,6 +6,30 @@ using System.Windows.Media;
 namespace TimeTracker.App.Converters;
 
 /// <summary>
+/// Converteix un booleà a Visibility (Visible si true, Collapsed si false).
+/// </summary>
+public class BooleanToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is bool boolValue)
+        {
+            return boolValue ? Visibility.Visible : Visibility.Collapsed;
+        }
+        return Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is Visibility visibility)
+        {
+            return visibility == Visibility.Visible;
+        }
+        return false;
+    }
+}
+
+/// <summary>
 /// Converts a string to Visibility (Visible if not empty, Collapsed otherwise).
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
@@ -32,6 +56,48 @@ public class CountToVisibilityConverter : IValueConverter
         if (value is int count)
         {
             return count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+        return Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts a count to Visibility (Visible if count > 0, Collapsed if 0).
+/// Inverse of CountToVisibilityConverter. Used for lists with items.
+/// </summary>
+public class InverseCountToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is int count)
+        {
+            return count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+        return Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts a count to Visibility (Visible if count > 0, Collapsed if 0).
+/// Alias for InverseCountToVisibilityConverter. Used for showing statistics when records exist.
+/// </summary>
+public class PositiveCountToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is int count)
+        {
+            return count > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
         return Visibility.Collapsed;
     }

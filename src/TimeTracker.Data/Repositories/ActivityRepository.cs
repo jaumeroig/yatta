@@ -33,6 +33,12 @@ public class ActivityRepository : IActivityRepository
             .ToListAsync();
     }
 
+    public async Task<Activity?> GetByNameAsync(string name)
+    {
+        return await _context.Activities
+            .FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower());
+    }
+
     public async Task<Activity> AddAsync(Activity activity)
     {
         _context.Activities.Add(activity);
@@ -42,8 +48,14 @@ public class ActivityRepository : IActivityRepository
 
     public async Task UpdateAsync(Activity activity)
     {
-        _context.Activities.Update(activity);
-        await _context.SaveChangesAsync();
+        var existingActivity = await _context.Activities.FindAsync(activity.Id);
+        if (existingActivity != null)
+        {
+            existingActivity.Name = activity.Name;
+            existingActivity.Color = activity.Color;
+            existingActivity.Active = activity.Active;
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task DeleteAsync(Guid id)

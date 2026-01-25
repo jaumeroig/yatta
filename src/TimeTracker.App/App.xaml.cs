@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,9 +34,9 @@ public partial class App : Application
             dbContext.Database.Migrate();
         }
 
-        // Initialize localization service (loads saved language preference)
-        var localizationService = _serviceProvider.GetRequiredService<ILocalizationService>();
-        localizationService.InitializeAsync().GetAwaiter().GetResult();
+        // IMPORTANT: Inicialitzar localització ABANS de crear la MainWindow
+        // Això assegura que els recursos XAML s'avaluïn amb la cultura correcta
+        InitializeLocalization();
 
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         
@@ -45,6 +46,58 @@ public partial class App : Application
         mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
         
         mainWindow.Show();
+    }
+
+    /// <summary>
+    /// Inicialitza la localització carregant l'idioma guardat de la base de dades.
+    /// S'ha de cridar ABANS de crear qualsevol finestra o pàgina.
+    /// </summary>
+    private void InitializeLocalization()
+    {
+        using var scope = _serviceProvider!.CreateScope();
+        var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+        
+        try
+        {
+            var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
+            CultureInfo culture;
+            
+            if (settings != null && !string.IsNullOrEmpty(settings.Language))
+            {
+                // Usar l'idioma guardat
+                culture = new CultureInfo(settings.Language);
+            }
+            else
+            {
+                // Usar idioma del sistema (si és es o ca), sinó espanyol per defecte
+                var systemCulture = CultureInfo.CurrentUICulture;
+                culture = (systemCulture.Name.StartsWith("es") || systemCulture.Name.StartsWith("ca"))
+                    ? systemCulture
+                    : new CultureInfo("es-ES");
+            }
+            
+            // Aplicar la cultura a tot el sistema
+            CultureInfo.CurrentUICulture = culture;
+            CultureInfo.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            Thread.CurrentThread.CurrentCulture = culture;
+            TimeTracker.App.Resources.Resources.Culture = culture;
+            
+            // Actualitzar el LocalizationService amb la cultura correcta
+            if (_serviceProvider != null)
+            {
+                var localizationService = _serviceProvider.GetRequiredService<ILocalizationService>();
+                localizationService.SetCulture(culture.Name);
+            }
+        }
+        catch
+        {
+            // Si hi ha error, usar espanyol per defecte
+            var defaultCulture = new CultureInfo("es-ES");
+            CultureInfo.CurrentUICulture = defaultCulture;
+            CultureInfo.CurrentCulture = defaultCulture;
+            TimeTracker.App.Resources.Resources.Culture = defaultCulture;
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -67,18 +120,21 @@ public partial class App : Application
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<ILocalizationService, LocalizationService>();
+        services.AddSingleton<INavigationService, NavigationService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<RegistresViewModel>();
         services.AddTransient<JornadaViewModel>();
         services.AddTransient<ActivitatsViewModel>();
+        services.AddTransient<ActivityDetailViewModel>();
         services.AddTransient<OpcionsViewModel>();
 
         // Register Pages
         services.AddTransient<RegistresPage>();
         services.AddTransient<JornadaPage>();
         services.AddTransient<ActivitatsPage>();
+        services.AddTransient<ActivityDetailPage>();
         services.AddTransient<OpcionsPage>();
 
         // Register windows

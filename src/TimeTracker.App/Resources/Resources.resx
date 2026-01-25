@@ -390,6 +390,18 @@
   <data name="Validation_InvalidEndTime" xml:space="preserve">
     <value>La hora de fin no es válida.</value>
   </data>
+  <data name="Validation_ActivityNameRequired" xml:space="preserve">
+    <value>El nombre de la actividad es obligatorio.</value>
+  </data>
+  <data name="Validation_ActivityNameTooLong" xml:space="preserve">
+    <value>El nombre no puede superar los {0} caracteres.</value>
+  </data>
+  <data name="Validation_ActivityNameExists" xml:space="preserve">
+    <value>Ya existe una actividad con este nombre.</value>
+  </data>
+  <data name="Validation_ActivitySaveError" xml:space="preserve">
+    <value>Error al guardar la actividad. Inténtalo de nuevo.</value>
+  </data>
   
   <!-- Section: Language Settings (new) -->
   <data name="Section_Language" xml:space="preserve">
@@ -418,5 +430,34 @@
   </data>
   <data name="Label_ThemeDescription" xml:space="preserve">
     <value>Selecciona el tema de la interfaz de usuario</value>
+  </data>
+  
+  <!-- Activity Detail Page -->
+  <data name="ActivityDetail_NewTitle" xml:space="preserve">
+    <value>Nueva actividad</value>
+  </data>
+  <data name="ActivityDetail_Statistics" xml:space="preserve">
+    <value>Estadísticas</value>
+  </data>
+  <data name="ActivityDetail_RecordCount" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="ActivityDetail_DeleteWarning" xml:space="preserve">
+    <value>Esta actividad tiene {0} registros asociados. Si la eliminas, se perderán todos los datos.</value>
+  </data>
+  <data name="Button_Back" xml:space="preserve">
+    <value>Atrás</value>
+  </data>
+  <data name="Activities_Subtitle" xml:space="preserve">
+    <value>{0} registros · {1}</value>
+  </data>
+  <data name="Activity_SingleRecord" xml:space="preserve">
+    <value>1 registro</value>
+  </data>
+  <data name="Activity_MultipleRecords" xml:space="preserve">
+    <value>{0} registros</value>
+  </data>
+  <data name="Activity_NoRecords" xml:space="preserve">
+    <value>Sin registros</value>
   </data>
 </root>

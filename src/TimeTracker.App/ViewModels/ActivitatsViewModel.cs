@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
+using TimeTracker.App.Services;
+using TimeTracker.App.Views.Pages;
 
 namespace TimeTracker.App.ViewModels;
 
@@ -14,35 +16,23 @@ public partial class ActivitatsViewModel : ObservableObject
     private readonly IActivityRepository _activityRepository;
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly ITimeCalculatorService _timeCalculatorService;
+    private readonly INavigationService _navigationService;
     private List<Activity> _allActivities = [];
     private List<TimeRecord> _allRecords = [];
 
     [ObservableProperty]
     private ObservableCollection<ActivityDisplay> _activities = [];
 
-    [ObservableProperty]
-    private bool _isDialogOpen;
-
-    [ObservableProperty]
-    private bool _isEditing;
-
-    [ObservableProperty]
-    private ActivityEditModel _editingActivity = new();
-
-    [ObservableProperty]
-    private bool _isDeleteConfirmationOpen;
-
-    [ObservableProperty]
-    private ActivityDisplay? _activityToDelete;
-
     public ActivitatsViewModel(
         IActivityRepository activityRepository,
         ITimeRecordRepository timeRecordRepository,
-        ITimeCalculatorService timeCalculatorService)
+        ITimeCalculatorService timeCalculatorService,
+        INavigationService navigationService)
     {
         _activityRepository = activityRepository;
         _timeRecordRepository = timeRecordRepository;
         _timeCalculatorService = timeCalculatorService;
+        _navigationService = navigationService;
     }
 
     /// <summary>
@@ -61,6 +51,15 @@ public partial class ActivitatsViewModel : ObservableObject
         {
             var records = _allRecords.Where(r => r.ActivityId == activity.Id).ToList();
             var totalHours = _timeCalculatorService.CalculateTotalHours(records);
+            var totalTime = FormatDuration(totalHours);
+            
+            // Crear subtítol amb format: "X registres · Xh Xm"
+            var recordsText = records.Count == 1 
+                ? Resources.Resources.Activity_SingleRecord 
+                : string.Format(Resources.Resources.Activity_MultipleRecords, records.Count);
+            var subtitle = records.Count > 0 
+                ? $"{recordsText} · {totalTime}" 
+                : Resources.Resources.Activity_NoRecords;
             
             return new ActivityDisplay
             {
@@ -69,7 +68,8 @@ public partial class ActivitatsViewModel : ObservableObject
                 Color = activity.Color,
                 Active = activity.Active,
                 RecordCount = records.Count,
-                TotalTime = FormatDuration(totalHours),
+                TotalTime = totalTime,
+                Subtitle = subtitle,
                 StatusText = activity.Active 
                     ? Resources.Resources.Status_Active
                     : Resources.Resources.Status_Inactive
@@ -88,123 +88,22 @@ public partial class ActivitatsViewModel : ObservableObject
         return string.Format(format, h, m);
     }
 
+    /// <summary>
+    /// Navega a la pàgina de detall per crear una nova activitat.
+    /// </summary>
     [RelayCommand]
-    private void OpenNewActivityDialog()
+    private void NavigateToNewActivity()
     {
-        IsEditing = false;
-        EditingActivity = new ActivityEditModel
-        {
-            Name = string.Empty,
-            Color = "#0078D4", // Default blue color
-            Active = true
-        };
-        IsDialogOpen = true;
+        _navigationService.Navigate<ActivityDetailPage>(null);
     }
 
+    /// <summary>
+    /// Navega a la pàgina de detall per editar una activitat existent.
+    /// </summary>
     [RelayCommand]
-    private void OpenEditActivityDialog(ActivityDisplay activity)
+    private void NavigateToActivity(ActivityDisplay activity)
     {
-        var originalActivity = _allActivities.FirstOrDefault(a => a.Id == activity.Id);
-        if (originalActivity == null) return;
-
-        IsEditing = true;
-        EditingActivity = new ActivityEditModel
-        {
-            Id = originalActivity.Id,
-            Name = originalActivity.Name,
-            Color = originalActivity.Color,
-            Active = originalActivity.Active
-        };
-        IsDialogOpen = true;
-    }
-
-    [RelayCommand]
-    private void CloseDialog()
-    {
-        IsDialogOpen = false;
-    }
-
-    [RelayCommand]
-    private async Task SaveActivityAsync()
-    {
-        if (string.IsNullOrWhiteSpace(EditingActivity.Name)) return;
-
-        var activity = new Activity
-        {
-            Id = IsEditing ? EditingActivity.Id : Guid.NewGuid(),
-            Name = EditingActivity.Name.Trim(),
-            Color = EditingActivity.Color,
-            Active = EditingActivity.Active
-        };
-
-        if (IsEditing)
-        {
-            await _activityRepository.UpdateAsync(activity);
-            var index = _allActivities.FindIndex(a => a.Id == activity.Id);
-            if (index >= 0) _allActivities[index] = activity;
-        }
-        else
-        {
-            await _activityRepository.AddAsync(activity);
-            _allActivities.Add(activity);
-        }
-
-        IsDialogOpen = false;
-        UpdateActivitiesDisplay();
-    }
-
-    [RelayCommand]
-    private async Task RequestDeleteActivity(ActivityDisplay activity)
-    {
-        ActivityToDelete = activity;
-        
-        // Check if activity has records
-        if (activity.RecordCount > 0)
-        {
-            IsDeleteConfirmationOpen = true;
-        }
-        else
-        {
-            await ConfirmDeleteActivity();
-        }
-    }
-
-    [RelayCommand]
-    private void CancelDelete()
-    {
-        IsDeleteConfirmationOpen = false;
-        ActivityToDelete = null;
-    }
-
-    [RelayCommand]
-    private async Task ConfirmDeleteActivity()
-    {
-        if (ActivityToDelete == null) return;
-
-        // Delete all related time records first (cascade delete)
-        var relatedRecords = await _timeRecordRepository.GetByActivityIdAsync(ActivityToDelete.Id);
-        foreach (var record in relatedRecords)
-        {
-            await _timeRecordRepository.DeleteAsync(record.Id);
-        }
-
-        // Then delete the activity
-        await _activityRepository.DeleteAsync(ActivityToDelete.Id);
-        var index = _allActivities.FindIndex(a => a.Id == ActivityToDelete.Id);
-        if (index >= 0) _allActivities.RemoveAt(index);
-        
-        // Remove deleted records from local cache
-        _allRecords.RemoveAll(r => r.ActivityId == ActivityToDelete.Id);
-        
-        IsDeleteConfirmationOpen = false;
-        ActivityToDelete = null;
-        UpdateActivitiesDisplay();
-    }
-
-    [RelayCommand]
-    private void SelectColor(string color)
-    {
-        EditingActivity.Color = color;
+        _navigationService.Navigate<ActivityDetailPage>(activity.Id);
     }
 }
 
@@ -220,6 +119,11 @@ public class ActivityDisplay
     public int RecordCount { get; set; }
     public string TotalTime { get; set; } = string.Empty;
     public string StatusText { get; set; } = string.Empty;
+    
+    /// <summary>
+    /// Subtítol amb el resum de registres i temps total.
+    /// </summary>
+    public string Subtitle { get; set; } = string.Empty;
 
     /// <summary>
     /// Retorna el color com a SolidColorBrush per facilitar el binding.
@@ -241,40 +145,3 @@ public class ActivityDisplay
     }
 }
 
-/// <summary>
-/// Model d'edició per a una activitat.
-/// </summary>
-public partial class ActivityEditModel : ObservableObject
-{
-    [ObservableProperty]
-    private Guid _id;
-
-    [ObservableProperty]
-    private string _name = string.Empty;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ColorBrush))]
-    private string _color = "#0078D4";
-
-    [ObservableProperty]
-    private bool _active = true;
-
-    /// <summary>
-    /// Retorna el color com a SolidColorBrush per facilitar el binding.
-    /// </summary>
-    public System.Windows.Media.SolidColorBrush ColorBrush
-    {
-        get
-        {
-            try
-            {
-                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(Color);
-                return new System.Windows.Media.SolidColorBrush(color);
-            }
-            catch
-            {
-                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
-            }
-        }
-    }
-}
