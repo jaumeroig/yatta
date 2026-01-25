@@ -13,7 +13,7 @@
     Title="Activitats"
     Loaded="Page_Loaded">
 
-    <Grid Margin="24">
+    <Grid Margin="42,12,42,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -21,25 +21,10 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="{local:Localize Page_Activities_Title}"
-                           FontSize="28"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,4" />
-                <TextBlock Text="{local:Localize Page_Activities_Subtitle}"
-                           FontSize="14"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-            </StackPanel>
-
-            <ui:Button Grid.Column="1"
-                       Appearance="Primary"
+            <ui:Button Appearance="Primary"
                        Command="{Binding NavigateToNewActivityCommand}"
-                       Padding="16,10">
+                       Padding="16,10"
+                       HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
                     <TextBlock Text="{local:Localize Button_NewActivity}" />

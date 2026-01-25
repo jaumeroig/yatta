@@ -16,6 +16,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
+    private readonly IBreadcrumbService _breadcrumbService;
     private Guid _activityId;
     private bool _isNewActivity;
     private string _originalName = string.Empty;
@@ -84,13 +85,15 @@ public partial class ActivityDetailViewModel : ObservableObject
         ITimeRecordRepository timeRecordRepository,
         ITimeCalculatorService timeCalculatorService,
         INavigationService navigationService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IBreadcrumbService breadcrumbService)
     {
         _activityRepository = activityRepository;
         _timeRecordRepository = timeRecordRepository;
         _timeCalculatorService = timeCalculatorService;
         _navigationService = navigationService;
         _dialogService = dialogService;
+        _breadcrumbService = breadcrumbService;
     }
 
     /// <summary>
@@ -117,6 +120,7 @@ public partial class ActivityDetailViewModel : ObservableObject
             TotalTime = FormatDuration(0);
         }
         
+        UpdateBreadcrumb();
         ClearErrors();
     }
 
@@ -149,6 +153,19 @@ public partial class ActivityDetailViewModel : ObservableObject
         var m = totalMinutes % 60;
         var format = Resources.Resources.Format_Duration;
         return string.Format(format, h, m);
+    }
+
+    /// <summary>
+    /// Actualitza els elements del breadcrumb.
+    /// </summary>
+    private void UpdateBreadcrumb()
+    {
+        var activitiesLabel = Resources.Resources.Nav_Activities;
+        
+        _breadcrumbService.SetItems(
+            new BreadcrumbItem(activitiesLabel, () => _navigationService.GoBack()),
+            new BreadcrumbItem(PageTitle)
+        );
     }
 
     /// <summary>

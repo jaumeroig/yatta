@@ -1,0 +1,210 @@
+<ui:Page x:Class="YourApp.Views.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    mc:Ignorable="d"
+    Title="Settings"
+    d:DesignHeight="800"
+    d:DesignWidth="800">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,0,24,24" MaxWidth="800">
+            
+            <!-- Page Header -->
+            <TextBlock Text="Settings" 
+                       FontSize="28" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,24" />
+            
+            <!-- Appearance Section -->
+            <TextBlock Text="Appearance" 
+                       FontSize="16" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,12" />
+            
+            <ui:CardControl Header="Theme" 
+                            Description="Select your preferred color theme"
+                            Icon="{ui:SymbolIcon PaintBrush24}"
+                            Margin="0,0,0,8">
+                <ComboBox Width="150" SelectedIndex="0">
+                    <ComboBoxItem Content="System default" />
+                    <ComboBoxItem Content="Light" />
+                    <ComboBoxItem Content="Dark" />
+                </ComboBox>
+            </ui:CardControl>
+            
+            <ui:CardControl Header="Backdrop Effect" 
+                            Description="Window background effect (Windows 11)"
+                            Icon="{ui:SymbolIcon Blur24}"
+                            Margin="0,0,0,8">
+                <ComboBox Width="150" SelectedIndex="0">
+                    <ComboBoxItem Content="Mica" />
+                    <ComboBoxItem Content="Acrylic" />
+                    <ComboBoxItem Content="None" />
+                </ComboBox>
+            </ui:CardControl>
+            
+            <ui:Card Margin="0,0,0,24">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Compact Mode" FontWeight="SemiBold" />
+                        <TextBlock Text="Reduce spacing between elements" 
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                   FontSize="12" />
+                    </StackPanel>
+                    <ui:ToggleSwitch HorizontalAlignment="Right" />
+                </Grid>
+            </ui:Card>
+            
+            <!-- Notifications Section -->
+            <TextBlock Text="Notifications" 
+                       FontSize="16" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,12" />
+            
+            <ui:Card Margin="0,0,0,8">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Desktop Notifications" FontWeight="SemiBold" />
+                        <TextBlock Text="Show notifications in the system tray" 
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                   FontSize="12" />
+                    </StackPanel>
+                    <ui:ToggleSwitch HorizontalAlignment="Right" IsChecked="True" />
+                </Grid>
+            </ui:Card>
+            
+            <ui:Card Margin="0,0,0,8">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Sound Effects" FontWeight="SemiBold" />
+                        <TextBlock Text="Play sounds for notifications and actions" 
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                   FontSize="12" />
+                    </StackPanel>
+                    <ui:ToggleSwitch HorizontalAlignment="Right" IsChecked="True" />
+                </Grid>
+            </ui:Card>
+            
+            <ui:Card Margin="0,0,0,24">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="Email Notifications" FontWeight="SemiBold" />
+                        <TextBlock Text="Receive email alerts for important updates" 
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                   FontSize="12" />
+                    </StackPanel>
+                    <ui:ToggleSwitch HorizontalAlignment="Right" />
+                </Grid>
+            </ui:Card>
+            
+            <!-- Account Section -->
+            <TextBlock Text="Account" 
+                       FontSize="16" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,12" />
+            
+            <ui:Card Margin="0,0,0,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Width="48" Height="48" 
+                            CornerRadius="24" 
+                            Background="{ui:ThemeResource SystemAccentColorPrimaryBrush}"
+                            Margin="0,0,16,0">
+                        <TextBlock Text="JS" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"
+                                   FontWeight="SemiBold"
+                                   Foreground="White" />
+                    </Border>
+                    
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="John Smith" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="john.smith@example.com" 
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                   FontSize="12" />
+                    </StackPanel>
+                    
+                    <ui:Button Grid.Column="2" 
+                               Content="Edit Profile" 
+                               Appearance="Secondary" />
+                </Grid>
+            </ui:Card>
+            
+            <ui:CardExpander Header="Advanced Options" 
+                             Icon="{ui:SymbolIcon Settings24}"
+                             Margin="0,0,0,24">
+                <StackPanel>
+                    <ui:Card Margin="0,0,0,8">
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="Developer Mode" FontWeight="SemiBold" />
+                                <TextBlock Text="Enable advanced debugging features" 
+                                           Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                           FontSize="12" />
+                            </StackPanel>
+                            <ui:ToggleSwitch HorizontalAlignment="Right" />
+                        </Grid>
+                    </ui:Card>
+                    
+                    <ui:CardControl Header="Clear Cache" 
+                                    Description="Free up storage by clearing temporary files"
+                                    Icon="{ui:SymbolIcon Delete24}">
+                        <ui:Button Content="Clear" Appearance="Danger" />
+                    </ui:CardControl>
+                </StackPanel>
+            </ui:CardExpander>
+            
+            <!-- About Section -->
+            <TextBlock Text="About" 
+                       FontSize="16" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,12" />
+            
+            <ui:Card>
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <ui:SymbolIcon Symbol="Apps24" FontSize="48" Margin="0,0,16,0" />
+                        
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="Your Application" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Version 1.0.0" 
+                                       Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </Grid>
+                    
+                    <Separator Margin="0,0,0,16" />
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <ui:HyperlinkButton Content="View on GitHub" 
+                                            Icon="{ui:SymbolIcon Link24}"
+                                            NavigateUri="https://github.com" />
+                        
+                        <ui:HyperlinkButton Grid.Column="1" 
+                                            Content="Documentation" 
+                                            Icon="{ui:SymbolIcon Document24}"
+                                            NavigateUri="https://docs.example.com" />
+                    </Grid>
+                </StackPanel>
+            </ui:Card>
+            
+        </StackPanel>
+    </ScrollViewer>
+</ui:Page>

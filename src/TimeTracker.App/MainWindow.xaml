@@ -73,9 +73,19 @@
                 </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
             
-            <ui:NavigationView.ContentOverlay>
-                <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,0,0,0" />
-            </ui:NavigationView.ContentOverlay>
+            <ui:NavigationView.Header>
+                <StackPanel Margin="42,32,42,20">
+                    <ui:BreadcrumbBar x:Name="BreadcrumbBar">
+                        <ui:BreadcrumbBar.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" 
+                                           FontSize="28" 
+                                           FontWeight="SemiBold" />
+                            </DataTemplate>
+                        </ui:BreadcrumbBar.ItemTemplate>
+                    </ui:BreadcrumbBar>
+                </StackPanel>
+            </ui:NavigationView.Header>
             
         </ui:NavigationView>
         

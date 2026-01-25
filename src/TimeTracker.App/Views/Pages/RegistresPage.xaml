@@ -111,7 +111,7 @@
 
     <Grid>
         <!-- Main Content -->
-        <Grid Margin="24">
+        <Grid Margin="42,12,42,12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -120,27 +120,10 @@
 
             <!-- Header -->
             <Grid Grid.Row="0" Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Registres de temps"
-                               FontSize="28"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,4" />
-                    <TextBlock FontSize="14"
-                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                        <Run Text="Avui has treballat " />
-                        <Run Text="{Binding TodayWorkedTime}" FontWeight="SemiBold" />
-                    </TextBlock>
-                </StackPanel>
-
-                <ui:Button Grid.Column="1"
-                           Appearance="Primary"
+                <ui:Button Appearance="Primary"
                            Command="{Binding OpenNewRecordDialogCommand}"
-                           Padding="16,10">
+                           Padding="16,10"
+                           HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
                         <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
                         <TextBlock Text="Nova entrada" />

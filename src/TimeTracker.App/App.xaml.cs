@@ -121,6 +121,7 @@ public partial class App : Application
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IBreadcrumbService, BreadcrumbService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();

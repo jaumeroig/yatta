@@ -11,6 +11,7 @@
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
     Title="Detall d'activitat"
+    FocusManager.FocusedElement="{Binding ElementName=ActivityName}"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded">
 
@@ -23,7 +24,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="White"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="4"
                                 Cursor="Hand">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -80,32 +81,14 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Margin="24">
+    <Grid Margin="42,12,42,12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Header amb botó enrere -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,24">
-            <ui:Button Appearance="Transparent"
-                       Command="{Binding GoBackCommand}"
-                       Padding="0"
-                       Margin="0,0,0,16">
-                <StackPanel Orientation="Horizontal">
-                    <ui:SymbolIcon Symbol="ChevronLeft24" Margin="0,0,8,0" />
-                    <TextBlock Text="{local:Localize Nav_Activities}" />
-                </StackPanel>
-            </ui:Button>
-
-            <TextBlock Text="{Binding PageTitle}"
-                       FontSize="28"
-                       FontWeight="SemiBold" />
-        </StackPanel>
-
         <!-- Contingut principal -->
-        <ScrollViewer Grid.Row="1"
+        <ScrollViewer Grid.Row="0"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel MaxWidth="600" HorizontalAlignment="Left">
@@ -114,7 +97,7 @@
                 <TextBlock Text="{local:Localize Label_ActivityName}"
                            FontWeight="SemiBold"
                            Margin="0,0,0,8" />
-                <ui:TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <ui:TextBox x:Name="ActivityName" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             PlaceholderText="{local:Localize Placeholder_ActivityName}"
                             Margin="0,0,0,4" />
                 <TextBlock Text="{Binding NameError}"
@@ -302,7 +285,7 @@
         </ScrollViewer>
 
         <!-- Botons d'acció -->
-        <Grid Grid.Row="2" Margin="0,24,0,0">
+        <Grid Grid.Row="1" Margin="0,24,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
