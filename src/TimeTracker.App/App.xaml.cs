@@ -37,11 +37,13 @@ public partial class App : Application
         var localizationService = _serviceProvider.GetRequiredService<ILocalizationService>();
         localizationService.InitializeAsync().GetAwaiter().GetResult();
 
-        // Load and apply theme
-        var themeService = _serviceProvider.GetRequiredService<ThemeService>();
-        _ = themeService.LoadThemeAsync();
-
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+        
+        // Carregar i aplicar el tema després de crear la finestra principal
+        // Això assegura que el tema del sistema es detecti correctament
+        var themeService = _serviceProvider.GetRequiredService<ThemeService>();
+        mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
+        
         mainWindow.Show();
     }
 
