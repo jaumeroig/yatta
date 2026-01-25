@@ -1,6 +1,7 @@
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using TimeTracker.App.ViewModels;
+using TimeTracker.App.Views.Pages;
 
 namespace TimeTracker.App;
 
@@ -15,6 +16,9 @@ public partial class MainWindow : FluentWindow
         DataContext = viewModel;
         
         NavigationView.SetServiceProvider(serviceProvider);
+        
+        // Navegar a la pàgina de Registres per defecte
+        Loaded += (_, _) => NavigationView.Navigate(typeof(RegistresPage));
     }
 
     /// <summary>

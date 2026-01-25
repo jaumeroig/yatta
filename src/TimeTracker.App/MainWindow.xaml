@@ -37,7 +37,7 @@
             IsPaneToggleVisible="True"
             OpenPaneLength="200">
             
-            <ui:NavigationView.Header>
+            <!--<ui:NavigationView.Header>
                 <StackPanel Orientation="Horizontal" Margin="16,8">
                     <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
                     <StackPanel>
@@ -45,7 +45,7 @@
                         <TextBlock Text="{local:Localize TitleBar_Subtitle}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                     </StackPanel>
                 </StackPanel>
-            </ui:NavigationView.Header>
+            </ui:NavigationView.Header>-->
             
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:RegistresPage}">
