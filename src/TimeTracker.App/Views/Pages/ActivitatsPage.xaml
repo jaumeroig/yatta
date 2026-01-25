@@ -90,13 +90,6 @@
                                                TextTrimming="CharacterEllipsis"
                                                Margin="0,2,0,0" />
                                 </StackPanel>
-
-                                <!-- Chevron -->
-                                <ui:SymbolIcon Grid.Column="2"
-                                               Symbol="ChevronRight24"
-                                               FontSize="16"
-                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                               VerticalAlignment="Center" />
                             </Grid>
                         </ui:CardAction>
                     </DataTemplate>
