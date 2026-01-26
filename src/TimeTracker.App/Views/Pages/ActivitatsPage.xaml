@@ -20,23 +20,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Header amb botó Nova activitat -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
-            <ui:Button Appearance="Primary"
-                       Command="{Binding NavigateToNewActivityCommand}"
-                       Padding="16,10"
-                       HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
-                    <TextBlock Text="{local:Localize Button_NewActivity}" />
-                </StackPanel>
-            </ui:Button>
-        </Grid>
-
-        <!-- Filtres: Cerca per nom i switch per mostrar inactives -->
-        <Grid Grid.Row="1" Margin="0,0,0,16">
+        <!-- Botó de nova activitat y filtres: Cerca per nom i switch per mostrar inactives -->
+        <Grid Grid.Row="1" Margin="0,0,0,24">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MaxWidth="400" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -56,6 +44,17 @@
                            Margin="0,0,12,0" />
                 <ui:ToggleSwitch IsChecked="{Binding ShowInactive}" />
             </StackPanel>
+
+            <ui:Button Grid.Column="2" Appearance="Primary"
+               Command="{Binding NavigateToNewActivityCommand}"
+               Margin="24,0,0,0"
+               Padding="16,10"
+               HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
+                        <TextBlock Text="{local:Localize Button_NewActivity}" />
+                    </StackPanel>
+            </ui:Button>
         </Grid>
 
         <!-- Activities List (Windows Settings Style) -->
