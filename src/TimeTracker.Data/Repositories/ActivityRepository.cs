@@ -30,6 +30,7 @@ public class ActivityRepository : IActivityRepository
     {
         return await _context.Activities
             .Where(a => a.Active)
+            .OrderBy(a => a.Name)
             .ToListAsync();
     }
 

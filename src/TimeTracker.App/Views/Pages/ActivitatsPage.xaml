@@ -38,7 +38,7 @@
             <StackPanel Grid.Column="1" 
                         Orientation="Horizontal" 
                         VerticalAlignment="Center"
-                        Margin="24,0,0,0">
+                        Margin="12,0,0,0">
                 <TextBlock Text="{local:Localize Filter_ShowInactive}"
                            VerticalAlignment="Center"
                            Margin="0,0,12,0" />
@@ -48,8 +48,8 @@
             <ui:Button Grid.Column="2"
                        Appearance="Primary"
                        Command="{Binding NavigateToNewActivityCommand}"
-                       Margin="24,0,0,0"
-                       Padding="16,10"
+                       Margin="32,0,0,0"
+                       Padding="16,6"
                        HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
