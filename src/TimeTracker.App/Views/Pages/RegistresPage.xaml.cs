@@ -13,20 +13,27 @@ public partial class RegistresPage : Page
 {
     private readonly RegistresViewModel _viewModel;
     private readonly IDialogService _dialogService;
+    private readonly IBreadcrumbService _breadcrumbService;
     private ContentDialog? _recordDialog;
     private bool _isRecordDialogVisible;
     private bool _isSubscribedToChanges;
 
-    public RegistresPage(RegistresViewModel viewModel, IDialogService dialogService)
+    public RegistresPage(RegistresViewModel viewModel, IDialogService dialogService, IBreadcrumbService breadcrumbService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+        _breadcrumbService = breadcrumbService ?? throw new ArgumentNullException(nameof(breadcrumbService));
         DataContext = viewModel;
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
+        // Configurar el breadcrumb amb el títol de la pàgina
+        _breadcrumbService.SetItems(
+            TimeTracker.App.Resources.Resources.Nav_Records
+        );
+
         if (!_isSubscribedToChanges)
         {
             _viewModel.PropertyChanged += ViewModelOnPropertyChanged;

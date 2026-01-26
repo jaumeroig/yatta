@@ -202,7 +202,7 @@
     <Grid>
         <!-- Contingut principal -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Grid Margin="24">
+            <Grid Margin="42,12,42,12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -210,25 +210,10 @@
 
                 <!-- Capçalera -->
                 <Grid Grid.Row="0" Margin="0,0,0,24">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Jornada laboral"
-                                   FontSize="28"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,4" />
-                        <TextBlock Text="Control de la teva jornada de treball"
-                                   FontSize="14"
-                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                    </StackPanel>
-
-                    <ui:Button Grid.Column="1"
-                               Appearance="Primary"
+                    <ui:Button Appearance="Primary"
                                Command="{Binding OpenNewSlotDialogCommand}"
-                               Padding="16,10">
+                               Padding="16,10"
+                               HorizontalAlignment="Right">
                         <StackPanel Orientation="Horizontal">
                             <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
                             <TextBlock Text="Afegir franja" />

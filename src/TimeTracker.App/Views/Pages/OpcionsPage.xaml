@@ -12,14 +12,8 @@
     Title="{local:Localize Page_Settings_Title}"
     Loaded="Page_Loaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="24">
+        <Grid Margin="42,12,42,12">
             <StackPanel VerticalAlignment="Top" MaxWidth="800">
-                <!-- Header -->
-                <TextBlock Text="{local:Localize Page_Settings_Title}"
-                           FontSize="28"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,32" />
-
                 <!-- Tema -->
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>

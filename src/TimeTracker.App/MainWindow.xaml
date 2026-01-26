@@ -37,7 +37,7 @@
             IsPaneToggleVisible="True"
             OpenPaneLength="200">
             
-            <ui:NavigationView.Header>
+            <!--<ui:NavigationView.Header>
                 <StackPanel Orientation="Horizontal" Margin="16,8">
                     <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
                     <StackPanel>
@@ -45,7 +45,7 @@
                         <TextBlock Text="{local:Localize TitleBar_Subtitle}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                     </StackPanel>
                 </StackPanel>
-            </ui:NavigationView.Header>
+            </ui:NavigationView.Header>-->
             
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:RegistresPage}">
@@ -73,9 +73,19 @@
                 </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
             
-            <ui:NavigationView.ContentOverlay>
-                <ui:BreadcrumbBar x:Name="BreadcrumbBar" Margin="42,0,0,0" />
-            </ui:NavigationView.ContentOverlay>
+            <ui:NavigationView.Header>
+                <StackPanel Margin="42,32,42,20">
+                    <ui:BreadcrumbBar x:Name="BreadcrumbBar">
+                        <ui:BreadcrumbBar.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" 
+                                           FontSize="28" 
+                                           FontWeight="SemiBold" />
+                            </DataTemplate>
+                        </ui:BreadcrumbBar.ItemTemplate>
+                    </ui:BreadcrumbBar>
+                </StackPanel>
+            </ui:NavigationView.Header>
             
         </ui:NavigationView>
         
