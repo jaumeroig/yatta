@@ -45,15 +45,16 @@
                 <ui:ToggleSwitch IsChecked="{Binding ShowInactive}" />
             </StackPanel>
 
-            <ui:Button Grid.Column="2" Appearance="Primary"
-               Command="{Binding NavigateToNewActivityCommand}"
-               Margin="24,0,0,0"
-               Padding="16,10"
-               HorizontalAlignment="Right">
-                    <StackPanel Orientation="Horizontal">
-                        <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
-                        <TextBlock Text="{local:Localize Button_NewActivity}" />
-                    </StackPanel>
+            <ui:Button Grid.Column="2"
+                       Appearance="Primary"
+                       Command="{Binding NavigateToNewActivityCommand}"
+                       Margin="24,0,0,0"
+                       Padding="16,10"
+                       HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
+                    <TextBlock Text="{local:Localize Button_NewActivity}" />
+                </StackPanel>
             </ui:Button>
         </Grid>
 

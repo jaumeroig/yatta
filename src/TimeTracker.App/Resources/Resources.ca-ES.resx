@@ -466,4 +466,27 @@
   <data name="Filter_ShowInactive" xml:space="preserve">
     <value>Mostrar inactives</value>
   </data>
+  <data name="Filter_SearchByActivityOrNotes" xml:space="preserve">
+    <value>Cerca per activitat o notes...</value>
+  </data>
+  
+  <!-- Record Detail Page -->
+  <data name="RecordDetail_NewTitle" xml:space="preserve">
+    <value>Nou registre</value>
+  </data>
+  <data name="RecordDetail_EditTitle" xml:space="preserve">
+    <value>Editar registre</value>
+  </data>
+  <data name="Dialog_DeleteRecord_Title" xml:space="preserve">
+    <value>Eliminar registre?</value>
+  </data>
+  <data name="Dialog_DeleteRecord_Message" xml:space="preserve">
+    <value>Estàs segur que vols eliminar aquest registre? Aquesta acció no es pot desfer.</value>
+  </data>
+  <data name="Validation_ActivityRequired" xml:space="preserve">
+    <value>Has de seleccionar una activitat.</value>
+  </data>
+  <data name="Validation_RecordSaveError" xml:space="preserve">
+    <value>Error en desar el registre. Torna-ho a provar.</value>
+  </data>
 </root>

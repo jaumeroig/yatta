@@ -1,0 +1,200 @@
+<Page x:Class="TimeTracker.App.Views.Pages.RecordDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
+    xmlns:local="clr-namespace:TimeTracker.App.Markup"
+    d:DataContext="{d:DesignInstance vm:RecordDetailViewModel}"
+    mc:Ignorable="d"
+    d:DesignHeight="600" d:DesignWidth="900"
+    Title="Detall de registre"
+    Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded">
+
+    <Page.Resources>
+        <DataTemplate x:Key="DeleteRecordDialogTemplate">
+            <StackPanel Width="420">
+                <ui:SymbolIcon Symbol="Warning24"
+                               FontSize="48"
+                               Foreground="#F59E0B"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,16" />
+
+                <TextBlock Text="{local:Localize Dialog_DeleteRecord_Title}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,8" />
+
+                <TextBlock Text="{local:Localize Dialog_DeleteRecord_Message}"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,20" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:Button Grid.Column="0"
+                               Content="{local:Localize Button_CancelDelete}"
+                               Appearance="Secondary"
+                               Command="{Binding CancelDeleteCommand}"
+                               HorizontalAlignment="Stretch"
+                               Padding="16,10" />
+
+                    <ui:Button Grid.Column="2"
+                               Content="{local:Localize Button_Delete}"
+                               Appearance="Danger"
+                               Command="{Binding ConfirmDeleteCommand}"
+                               HorizontalAlignment="Stretch"
+                               Padding="16,10" />
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Margin="42,12,42,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Contingut principal -->
+        <ScrollViewer Grid.Row="0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel MaxWidth="600" HorizontalAlignment="Left">
+                
+                <!-- Activitat -->
+                <TextBlock Text="{local:Localize Label_Activity}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <ComboBox ItemsSource="{Binding Activities}"
+                          SelectedValue="{Binding ActivityId}"
+                          SelectedValuePath="Id"
+                          DisplayMemberPath="Name"
+                          Margin="0,0,0,4"
+                          HorizontalAlignment="Stretch"
+                          MinWidth="300">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                            <Setter Property="Tag" Value="{local:Localize Placeholder_SelectActivity}" />
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+                <TextBlock Text="{Binding ActivityError}"
+                           Foreground="#EF4444"
+                           FontSize="12"
+                           Margin="0,0,0,20"
+                           Visibility="{Binding HasActivityError, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <!-- Data -->
+                <TextBlock Text="{local:Localize Label_Date}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <DatePicker SelectedDate="{Binding Date}"
+                            HorizontalAlignment="Left"
+                            MinWidth="200"
+                            Margin="0,0,0,24" />
+
+                <!-- Hores (inici i fi) -->
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="150" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="Auto" MinWidth="150" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="{local:Localize Label_StartTime}"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <ui:TextBox PlaceholderText="HH:mm"
+                                    Text="{Binding StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    MinWidth="120" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="{local:Localize Label_EndTime}"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8" />
+                        <ui:TextBox PlaceholderText="HH:mm"
+                                    Text="{Binding EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    MinWidth="120" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Missatge d'error de validació de temps -->
+                <Border Background="#FEE2E2"
+                        BorderBrush="#EF4444"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8"
+                        Margin="0,0,0,24"
+                        Visibility="{Binding TimeError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{Binding TimeError}"
+                               Foreground="#DC2626"
+                               TextWrapping="Wrap"
+                               FontSize="13" />
+                </Border>
+
+                <!-- Notes -->
+                <TextBlock Text="{local:Localize Label_Notes}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <ui:TextBox Text="{Binding Notes, Mode=TwoWay}"
+                            PlaceholderText="{local:Localize Placeholder_RecordNotes}"
+                            MinHeight="100"
+                            TextWrapping="Wrap"
+                            AcceptsReturn="True"
+                            Margin="0,0,0,24"
+                            MaxWidth="500"
+                            HorizontalAlignment="Left" />
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Botons d'acció -->
+        <Grid Grid.Row="1" Margin="0,24,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Botó eliminar (només per registres existents) -->
+            <ui:Button Grid.Column="0"
+                       Appearance="Danger"
+                       Command="{Binding RequestDeleteCommand}"
+                       Padding="16,10"
+                       Visibility="{Binding IsExistingRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Delete24" Margin="0,0,8,0" />
+                    <TextBlock Text="{local:Localize Button_Delete}" />
+                </StackPanel>
+            </ui:Button>
+
+            <ui:Button Grid.Column="2"
+                       Content="{local:Localize Button_Cancel}"
+                       Appearance="Secondary"
+                       Command="{Binding CancelCommand}"
+                       Padding="16,10"
+                       MinWidth="120" />
+
+            <ui:Button Grid.Column="4"
+                       Content="{local:Localize Button_Save}"
+                       Appearance="Primary"
+                       Command="{Binding SaveCommand}"
+                       Padding="16,10"
+                       MinWidth="120" />
+        </Grid>
+    </Grid>
+</Page>

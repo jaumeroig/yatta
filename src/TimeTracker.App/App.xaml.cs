@@ -126,6 +126,7 @@ public partial class App : Application
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<RegistresViewModel>();
+        services.AddTransient<RecordDetailViewModel>();
         services.AddTransient<JornadaViewModel>();
         services.AddTransient<ActivitatsViewModel>();
         services.AddTransient<ActivityDetailViewModel>();
@@ -133,6 +134,7 @@ public partial class App : Application
 
         // Register Pages
         services.AddTransient<RegistresPage>();
+        services.AddTransient<RecordDetailPage>();
         services.AddTransient<JornadaPage>();
         services.AddTransient<ActivitatsPage>();
         services.AddTransient<ActivityDetailPage>();
