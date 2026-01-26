@@ -6,14 +6,16 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
     xmlns:local="clr-namespace:TimeTracker.App.Markup"
+    xmlns:behaviors="clr-namespace:TimeTracker.App.Behaviors"
     d:DataContext="{d:DesignInstance vm:RegistresViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
     Title="Registres"
+    ScrollViewer.CanContentScroll="False"
     Loaded="Page_Loaded">
 
     <!-- Main Content -->
-    <Grid Margin="42,12,42,12">
+    <Grid Margin="42,12,22,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -21,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <!-- Filters -->
-        <Grid Grid.Row="1" Margin="0,0,0,24">
+        <Grid Grid.Row="1" Margin="0,0,20,24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -81,11 +83,12 @@
         <!-- Records List -->
         <ScrollViewer Grid.Row="2"
                           VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
+                          HorizontalScrollBarVisibility="Disabled" >
+             
             <ItemsControl ItemsSource="{Binding GroupedRecords}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="0,0,0,24">
+                        <StackPanel Margin="0,0,20,24">
                             <!-- Day Header (separador amb label de data) -->
                             <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
@@ -109,9 +112,10 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <ui:CardAction Command="{Binding DataContext.NavigateToRecordCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                           CommandParameter="{Binding}"
-                                                           Margin="0,0,0,4"
-                                                           Padding="16,12">
+                                                       CommandParameter="{Binding}"
+                                                       behaviors:ScrollParentBehavior.BubbleScroll="True"
+                                                       Margin="0,0,0,4"
+                                                       Padding="16,12">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />

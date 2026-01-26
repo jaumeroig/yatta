@@ -7,13 +7,15 @@
     xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
     xmlns:converters="clr-namespace:TimeTracker.App.Converters"
     xmlns:local="clr-namespace:TimeTracker.App.Markup"
+    xmlns:behaviors="clr-namespace:TimeTracker.App.Behaviors"
     d:DataContext="{d:DesignInstance vm:ActivitatsViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="600" d:DesignWidth="900"
     Title="Activitats"
+    ScrollViewer.CanContentScroll="False"
     Loaded="Page_Loaded">
 
-    <Grid Margin="42,12,42,12">
+    <Grid Margin="42,12,22,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -21,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <!-- Botó de nova activitat y filtres: Cerca per nom i switch per mostrar inactives -->
-        <Grid Grid.Row="1" Margin="0,0,0,24">
+        <Grid Grid.Row="1" Margin="0,0,20,24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -68,7 +70,8 @@
                     <DataTemplate>
                         <ui:CardAction Command="{Binding DataContext.NavigateToActivityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                        CommandParameter="{Binding}"
-                                       Margin="0,0,0,4"
+                                       behaviors:ScrollParentBehavior.BubbleScroll="True"
+                                       Margin="0,0,20,4"
                                        Padding="16,12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
