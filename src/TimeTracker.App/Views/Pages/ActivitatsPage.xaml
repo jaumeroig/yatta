@@ -71,7 +71,7 @@
                         <ui:CardAction Command="{Binding DataContext.NavigateToActivityCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                        CommandParameter="{Binding}"
                                        behaviors:ScrollParentBehavior.BubbleScroll="True"
-                                       Margin="0,0,20,4"
+                                       Margin="0,0,2Po0,4"
                                        Padding="16,12">
                             <Grid>
                                 <Grid.ColumnDefinitions>

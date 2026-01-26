@@ -66,10 +66,11 @@ public partial class RecordDetailViewModel : ObservableObject
 
     /// <summary>
     /// Indica si es pot desar el registre (validació bàsica).
+    /// L'hora de fi és opcional (pot estar buida).
     /// </summary>
     public bool CanSave => ActivityId != Guid.Empty && 
                            TimeOnly.TryParse(StartTimeText, out _) && 
-                           TimeOnly.TryParse(EndTimeText, out _);
+                           (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _));
 
     public RecordDetailViewModel(
         ITimeRecordRepository timeRecordRepository,
