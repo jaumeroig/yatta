@@ -89,7 +89,7 @@
                 <ui:Button Content="{Binding IsEditing, Converter={StaticResource EditingToButtonTextConverter}, FallbackValue='Afegir franja'}"
                            Appearance="Primary"
                            HorizontalAlignment="Stretch"
-                           Command="{Binding SaveSlotAsyncCommand}"
+                           Command="{Binding SaveSlotCommand}"
                            Padding="16,12" />
             </StackPanel>
         </DataTemplate>

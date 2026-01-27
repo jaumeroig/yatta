@@ -234,7 +234,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
-    private async Task SaveAsync()
+    private async Task Save()
     {
         // Validate before saving
         if (!await ValidateNameAsync())
