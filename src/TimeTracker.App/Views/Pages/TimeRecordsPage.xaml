@@ -185,6 +185,7 @@
                            FontSize="16"
                            FontWeight="SemiBold"
                            HorizontalAlignment="Center"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,4" />
             <TextBlock Text="{local:Localize Empty_CreateFirstRecord}"
                            FontSize="14"

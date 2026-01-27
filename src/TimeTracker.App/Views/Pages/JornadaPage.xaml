@@ -483,6 +483,7 @@
                                    Text="Franges horàries"
                                    FontSize="16"
                                    FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,12" />
 
                         <!-- Llista de franges -->
@@ -580,6 +581,7 @@
                                            FontSize="16"
                                            FontWeight="SemiBold"
                                            HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                            Margin="0,0,0,4" />
                                 <TextBlock Text="Afegeix la teva primera franja horària"
                                            FontSize="14"
