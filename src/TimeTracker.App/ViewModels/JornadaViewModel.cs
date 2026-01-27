@@ -288,7 +288,7 @@ public partial class JornadaViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task SaveSlotAsync()
+    private async Task SaveSlot()
     {
         var startTime = EditingSlot.GetStartTime();
         if (!startTime.HasValue)

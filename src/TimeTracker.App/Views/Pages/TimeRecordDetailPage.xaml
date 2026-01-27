@@ -74,6 +74,7 @@
                 <!-- Activitat -->
                 <TextBlock Text="{local:Localize Label_Activity}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,8" />
                 <ComboBox ItemsSource="{Binding Activities}"
                           SelectedValue="{Binding ActivityId}"
@@ -97,6 +98,7 @@
                 <!-- Data -->
                 <TextBlock Text="{local:Localize Label_Date}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,8" />
                 <DatePicker SelectedDate="{Binding Date}"
                             HorizontalAlignment="Left"
@@ -114,6 +116,7 @@
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="{local:Localize Label_StartTime}"
                                    FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,8" />
                         <ui:TextBox PlaceholderText="HH:mm"
                                     Text="{Binding StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -123,6 +126,7 @@
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="{local:Localize Label_EndTime}"
                                    FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,8" />
                         <ui:TextBox PlaceholderText="HH:mm"
                                     Text="{Binding EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -147,6 +151,7 @@
                 <!-- Notes -->
                 <TextBlock Text="{local:Localize Label_Notes}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,8" />
                 <ui:TextBox Text="{Binding Notes, Mode=TwoWay}"
                             PlaceholderText="{local:Localize Placeholder_RecordNotes}"
