@@ -79,15 +79,17 @@ dotnet restore src/TimeTracker.slnx
 ## Code Style Guidelines
 
 ### Language and Comments
-- **Primary language**: Catalan (Català)
-- All comments, documentation, and user-facing text in Catalan
-- Variable names and code elements in English (standard C# conventions)
+- **Primary language**: English (en-US)
+- All comments, documentation, in English (en-US)
+- Variable names and code elements in English (en-US) (standard C# conventions)
+- User-facing text in Spanish (es-ES) and Catalan (ca-ES) using always resource files.
 
 ### File Organization
+Always start files with namespace declaration followed by usings:
 ```
-namespace TimeTracker.Core.Services;  // No blank line after namespace
+namespace TimeTracker.Core.Services;  // Add a blank line after namespace
 
-using System;                          // System usings first
+using System;                         // System usings first
 using Microsoft.Extensions.Logging;   // Then Microsoft usings
 using TimeTracker.Core.Interfaces;    // Finally project usings
 ```
@@ -159,14 +161,14 @@ public async Task<Activity?> GetByIdAsync(Guid id)
 
 ```csharp
 /// <summary>
-/// Valida que l'hora de fi sigui posterior a l'hora d'inici.
+/// Validates that the end time is after the start time.
 /// </summary>
-/// <exception cref="ArgumentException">Si el rang no és vàlid.</exception>
+/// <exception cref="ArgumentException">If the range is invalid.</exception>
 public bool ValidateTimeRange(TimeOnly startTime, TimeOnly endTime, out string errorMessage)
 {
     if (endTime <= startTime)
     {
-        errorMessage = "L'hora de fi ha de ser posterior a l'hora d'inici.";
+        errorMessage = Resources.Validation_EndTimeAfterStartTime;
         return false;
     }
     
@@ -177,14 +179,14 @@ public bool ValidateTimeRange(TimeOnly startTime, TimeOnly endTime, out string e
 
 ### XML Documentation
 - **Required** for all public types, methods, and properties
-- Use Catalan for documentation text
+- Use English (en-US) for documentation text
 - Include `<summary>`, `<param>`, `<returns>`, `<exception>` as needed
 
 ```csharp
 /// <summary>
-/// Obté totes les activitats actives.
+/// Gets all active activities.
 /// </summary>
-/// <returns>Una col·lecció d'activitats actives.</returns>
+/// <returns>A collection of active activities.</returns>
 Task<IEnumerable<Activity>> GetActiveAsync();
 ```
 
@@ -262,7 +264,6 @@ public class ValidationService : IValidationService
 - Use `TimeOnly` for time values (not `DateTime`)
 - Use `DateOnly` for dates without time component
 - GUID for all entity IDs
-- All text in Catalan except code identifiers
 
 ## When Creating New Features
 
