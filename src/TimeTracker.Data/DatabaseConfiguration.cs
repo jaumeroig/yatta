@@ -1,29 +1,32 @@
 namespace TimeTracker.Data;
 
 /// <summary>
-/// Configuració de la base de dades.
+/// Database configuration.
 /// </summary>
 public static class DatabaseConfiguration
 {
+    private const string AppName = "TimeTracker";
+
     /// <summary>
-    /// Obté la ruta de la base de dades.
+    /// Gets the database path.
     /// </summary>
     public static string GetDatabasePath()
     {
         var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        var appDirectory = Path.Combine(localAppData, "TimeTracker");
+        var appDirectory = Path.Combine(localAppData, AppName);
         
-        // Crear el directori si no existeix
+        
+        // Create the directory if it doesn't exist
         if (!Directory.Exists(appDirectory))
         {
             Directory.CreateDirectory(appDirectory);
         }
 
-        return Path.Combine(appDirectory, "TimeTracker.db");
+        return Path.Combine(appDirectory, $"{AppName}.db");
     }
 
     /// <summary>
-    /// Obté la cadena de connexió per SQLite.
+    /// Gets the connection string for SQLite.
     /// </summary>
     public static string GetConnectionString()
     {

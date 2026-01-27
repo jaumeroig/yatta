@@ -6,7 +6,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.App.Resources;
 
 /// <summary>
-/// Servei de localització/internacionalització.
+/// Localization/internationalization service.
 /// </summary>
 public class LocalizationService : ILocalizationService
 {
@@ -19,7 +19,7 @@ public class LocalizationService : ILocalizationService
     {
         _serviceProvider = serviceProvider;
         
-        // Inicialitzar amb idioma del sistema per defecte
+        // Initialize with system language by default
         _currentCulture = GetSystemCulture();
         ApplyCulture(_currentCulture);
     }
@@ -49,9 +49,10 @@ public class LocalizationService : ILocalizationService
     {
         CultureInfo newCulture;
         
+        
         if (string.IsNullOrEmpty(culture))
         {
-            // Usar idioma del sistema
+            // Use system language
             newCulture = GetSystemCulture();
         }
         else
@@ -62,7 +63,7 @@ public class LocalizationService : ILocalizationService
             }
             catch
             {
-                // Si la cultura no és vàlida, usar espanyol per defecte
+                // If the culture is not valid, use Spanish by default
                 newCulture = new CultureInfo("es-ES");
             }
         }
@@ -82,7 +83,7 @@ public class LocalizationService : ILocalizationService
     }
 
     /// <summary>
-    /// Inicialitza el servei de localització carregant l'idioma guardat.
+    /// Initializes the localization service by loading the saved language.
     /// </summary>
     public async Task InitializeAsync()
     {
@@ -102,7 +103,7 @@ public class LocalizationService : ILocalizationService
         }
         catch
         {
-            // Si hi ha error, mantenir idioma del sistema
+            // If there's an error, keep system language
         }
     }
 
@@ -110,13 +111,13 @@ public class LocalizationService : ILocalizationService
     {
         var systemCulture = CultureInfo.CurrentUICulture;
         
-        // Si el sistema és en espanyol o català, usar-lo
+        // If the system is in Spanish or Catalan, use it
         if (systemCulture.Name.StartsWith("es") || systemCulture.Name.StartsWith("ca"))
         {
             return systemCulture;
         }
         
-        // Per defecte, usar espanyol
+        // By default, use Spanish
         return new CultureInfo("es-ES");
     }
 
@@ -127,7 +128,7 @@ public class LocalizationService : ILocalizationService
         Thread.CurrentThread.CurrentUICulture = culture;
         Thread.CurrentThread.CurrentCulture = culture;
         
-        // Actualitzar el ResourceManager perquè usi la nova cultura
+        // Update the ResourceManager to use the new culture
         Resources.Culture = culture;
     }
 }

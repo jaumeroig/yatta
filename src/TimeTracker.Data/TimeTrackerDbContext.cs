@@ -5,27 +5,27 @@ using TimeTracker.Core.Models;
 using TimeTracker.Data.Configurations;
 
 /// <summary>
-/// Context de base de dades per l'aplicació Time Tracker.
+/// Database context for the Time Tracker application.
 /// </summary>
 public class TimeTrackerDbContext : DbContext
 {
     /// <summary>
-    /// DbSet per les activitats.
+    /// DbSet for activities.
     /// </summary>
     public DbSet<Activity> Activities { get; set; } = null!;
 
     /// <summary>
-    /// DbSet per els registres de temps.
+    /// DbSet for time records.
     /// </summary>
     public DbSet<TimeRecord> TimeRecords { get; set; } = null!;
 
     /// <summary>
-    /// DbSet per les franges de jornada.
+    /// DbSet for workday slots.
     /// </summary>
     public DbSet<WorkdaySlot> WorkdaySlots { get; set; } = null!;
 
     /// <summary>
-    /// DbSet per la configuració de l'aplicació.
+    /// DbSet for application configuration.
     /// </summary>
     public DbSet<AppSettings> AppSettings { get; set; } = null!;
 
@@ -38,7 +38,7 @@ public class TimeTrackerDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Aplicar les configuracions de les entitats
+        // Apply entity configurations
         modelBuilder.ApplyConfiguration(new ActivityConfiguration());
         modelBuilder.ApplyConfiguration(new TimeRecordConfiguration());
         modelBuilder.ApplyConfiguration(new WorkdaySlotConfiguration());

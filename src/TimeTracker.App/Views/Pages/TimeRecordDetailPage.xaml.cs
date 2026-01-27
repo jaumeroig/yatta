@@ -1,3 +1,5 @@
+namespace TimeTracker.App.Views.Pages;
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -5,22 +7,20 @@ using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using Wpf.Ui.Controls;
 
-namespace TimeTracker.App.Views.Pages;
-
 /// <summary>
-/// Pàgina de detall per editar o crear un registre de temps.
+/// Detail page to edit or create a time record.
 /// </summary>
-public partial class RecordDetailPage : Page
+public partial class TimeRecordDetailPage : Page
 {
-    private readonly RecordDetailViewModel _viewModel;
+    private readonly TimeRecordDetailViewModel _viewModel;
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
     private ContentDialog? _deleteDialog;
     private bool _isDeleteDialogVisible;
     private bool _isSubscribedToChanges;
 
-    public RecordDetailPage(
-        RecordDetailViewModel viewModel,
+    public TimeRecordDetailPage(
+        TimeRecordDetailViewModel viewModel,
         INavigationService navigationService,
         IDialogService dialogService)
     {
@@ -58,7 +58,7 @@ public partial class RecordDetailPage : Page
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(RecordDetailViewModel.IsDeleteConfirmationOpen))
+        if (e.PropertyName == nameof(TimeRecordDetailViewModel.IsDeleteConfirmationOpen))
         {
             if (_viewModel.IsDeleteConfirmationOpen)
             {

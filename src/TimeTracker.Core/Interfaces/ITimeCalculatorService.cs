@@ -3,50 +3,50 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Servei per al càlcul de durades, totals diaris i percentatges.
+/// Service for calculating durations, daily totals, and percentages.
 /// </summary>
 public interface ITimeCalculatorService
 {
     /// <summary>
-    /// Calcula la durada en hores entre dues hores.
+    /// Calculates the duration in hours between two times.
     /// </summary>
-    /// <param name="startTime">Hora d'inici.</param>
-    /// <param name="endTime">Hora de fi.</param>
-    /// <returns>Durada en hores.</returns>
+    /// <param name="startTime">Start time.</param>
+    /// <param name="endTime">End time.</param>
+    /// <returns>Duration in hours.</returns>
     double CalculateDuration(TimeOnly startTime, TimeOnly endTime);
 
     /// <summary>
-    /// Calcula el total d'hores d'una llista de registres.
+    /// Calculates the total hours from a list of records.
     /// </summary>
-    /// <param name="records">Llista de registres de temps.</param>
-    /// <returns>Total d'hores.</returns>
+    /// <param name="records">List of time records.</param>
+    /// <returns>Total hours.</returns>
     double CalculateTotalHours(IEnumerable<TimeRecord> records);
 
     /// <summary>
-    /// Calcula el total d'hores d'una llista de franges de treball.
+    /// Calculates the total hours from a list of work slots.
     /// </summary>
-    /// <param name="slots">Llista de franges de treball.</param>
-    /// <returns>Total d'hores.</returns>
+    /// <param name="slots">List of work slots.</param>
+    /// <returns>Total hours.</returns>
     double CalculateTotalHours(IEnumerable<WorkdaySlot> slots);
 
     /// <summary>
-    /// Calcula el percentatge de teletreball sobre el total d'hores.
+    /// Calculates the telework percentage over total hours.
     /// </summary>
-    /// <param name="slots">Llista de franges de treball.</param>
-    /// <returns>Percentatge de teletreball (0-100).</returns>
+    /// <param name="slots">List of work slots.</param>
+    /// <returns>Telework percentage (0-100).</returns>
     double CalculateTeleworkPercentage(IEnumerable<WorkdaySlot> slots);
 
     /// <summary>
-    /// Calcula les hores totals de teletreball.
+    /// Calculates the total telework hours.
     /// </summary>
-    /// <param name="slots">Llista de franges de treball.</param>
-    /// <returns>Total d'hores de teletreball.</returns>
+    /// <param name="slots">List of work slots.</param>
+    /// <returns>Total telework hours.</returns>
     double CalculateTeleworkHours(IEnumerable<WorkdaySlot> slots);
 
     /// <summary>
-    /// Calcula les hores totals de treball a l'oficina.
+    /// Calculates the total office work hours.
     /// </summary>
-    /// <param name="slots">Llista de franges de treball.</param>
-    /// <returns>Total d'hores a l'oficina.</returns>
+    /// <param name="slots">List of work slots.</param>
+    /// <returns>Total office hours.</returns>
     double CalculateOfficeHours(IEnumerable<WorkdaySlot> slots);
 }

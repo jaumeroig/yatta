@@ -8,7 +8,7 @@ using Wpf.Ui.Controls;
 namespace TimeTracker.App.Views.Pages;
 
 /// <summary>
-/// Pàgina de detall per editar o crear una activitat.
+/// Detail page to edit or create an activity.
 /// </summary>
 public partial class ActivityDetailPage : Page
 {

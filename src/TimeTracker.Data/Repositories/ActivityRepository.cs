@@ -5,7 +5,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del repositori d'activitats.
+/// Implementation of the activities repository.
 /// </summary>
 public class ActivityRepository : IActivityRepository
 {

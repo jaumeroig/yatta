@@ -1,26 +1,27 @@
+namespace TimeTracker.App.Services;
+
 using System.Windows;
 using Wpf.Ui.Controls;
 
-namespace TimeTracker.App.Services;
 
 /// <summary>
-/// Servei per gestionar els diàlegs de l'aplicació.
+/// Service to manage application dialogs.
 /// </summary>
 public interface IDialogService
 {
     /// <summary>
-    /// Obté el ContentDialogHost global de l'aplicació.
+    /// Gets the global ContentDialogHost of the application.
     /// </summary>
     ContentDialogHost? GetDialogHost();
 }
 
 /// <summary>
-/// Implementació del servei de diàlegs.
+/// Implementation of the dialogs service.
 /// </summary>
 public class DialogService : IDialogService
 {
     /// <summary>
-    /// Obté el ContentDialogHost global de l'aplicació.
+    /// Gets the global ContentDialogHost of the application.
     /// </summary>
     public ContentDialogHost? GetDialogHost()
     {

@@ -1,13 +1,13 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using TimeTracker.Core.Interfaces;
-using TimeTracker.Core.Models;
-using TimeTracker.App.Services;
-
 namespace TimeTracker.App.ViewModels;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Services;
+using TimeTracker.Core.Interfaces;
+using TimeTracker.Core.Models;
+
 /// <summary>
-/// ViewModel per a la pàgina de detall d'una activitat.
+/// ViewModel for the activity detail page.
 /// </summary>
 public partial class ActivityDetailViewModel : ObservableObject
 {
@@ -22,7 +22,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     private string _originalName = string.Empty;
 
     /// <summary>
-    /// Longitud màxima permesa per al nom de l'activitat.
+    /// Maximum allowed length for the activity name.
     /// </summary>
     public const int MaxNameLength = 100;
 
@@ -57,17 +57,17 @@ public partial class ActivityDetailViewModel : ObservableObject
     private bool _hasNameError;
 
     /// <summary>
-    /// Indica si l'activitat ja existeix (no és nova).
+    /// Indicates if the activity already exists (not new).
     /// </summary>
     public bool IsExistingActivity => !_isNewActivity;
 
     /// <summary>
-    /// Indica si es pot desar l'activitat (validació bàsica).
+    /// Indicates if the activity can be saved (basic validation).
     /// </summary>
     public bool CanSave => !string.IsNullOrWhiteSpace(Name) && Name.Length <= MaxNameLength;
 
     /// <summary>
-    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// Returns the color as a SolidColorBrush to facilitate binding.
     /// </summary>
     public System.Windows.Media.SolidColorBrush ColorBrush
     {
@@ -102,7 +102,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Inicialitza el ViewModel amb les dades de l'activitat.
+    /// Initializes the ViewModel with the activity data.
     /// </summary>
     public async Task InitializeAsync(Guid? activityId)
     {
@@ -126,7 +126,7 @@ public partial class ActivityDetailViewModel : ObservableObject
             RecordCount = 0;
             TotalTime = FormatDuration(0);
         }
-        
+
         UpdateBreadcrumb();
         ClearErrors();
     }
@@ -146,7 +146,7 @@ public partial class ActivityDetailViewModel : ObservableObject
         Color = activity.Color;
         Active = activity.Active;
 
-        // Carregar estadístiques
+        // Load statistics
         var records = (await _timeRecordRepository.GetByActivityIdAsync(_activityId)).ToList();
         RecordCount = records.Count;
         var totalHours = _timeCalculatorService.CalculateTotalHours(records);
@@ -163,12 +163,12 @@ public partial class ActivityDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Actualitza els elements del breadcrumb.
+    /// Updates the breadcrumb items.
     /// </summary>
     private void UpdateBreadcrumb()
     {
         var activitiesLabel = Resources.Resources.Nav_Activities;
-        
+
         _breadcrumbService.SetItems(
             new BreadcrumbItem(activitiesLabel, () => _navigationService.GoBack()),
             new BreadcrumbItem(PageTitle)
@@ -176,7 +176,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Neteja tots els errors de validació.
+    /// Clears all validation errors.
     /// </summary>
     private void ClearErrors()
     {
@@ -185,33 +185,33 @@ public partial class ActivityDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Valida el nom de l'activitat.
+    /// Validates the activity name.
     /// </summary>
-    /// <returns>True si el nom és vàlid, false en cas contrari.</returns>
+    /// <returns>True if the name is valid, false otherwise.</returns>
     private async Task<bool> ValidateNameAsync()
     {
         ClearErrors();
-        
+
         var trimmedName = Name?.Trim() ?? string.Empty;
-        
-        // Validar que no estigui buit
+
+        // Validate that it's not empty
         if (string.IsNullOrWhiteSpace(trimmedName))
         {
             NameError = Resources.Resources.Validation_ActivityNameRequired;
             HasNameError = true;
             return false;
         }
-        
-        // Validar longitud màxima
+
+        // Validate maximum length
         if (trimmedName.Length > MaxNameLength)
         {
             NameError = string.Format(Resources.Resources.Validation_ActivityNameTooLong, MaxNameLength);
             HasNameError = true;
             return false;
         }
-        
-        // Validar que no existeixi una altra activitat amb el mateix nom
-        // (excepte si és la mateixa activitat que estem editant)
+
+        // Validate that another activity with the same name doesn't exist
+        // (except if it's the same activity we're editing)
         var nameChanged = !string.Equals(trimmedName, _originalName, StringComparison.OrdinalIgnoreCase);
         if (nameChanged)
         {
@@ -223,7 +223,7 @@ public partial class ActivityDetailViewModel : ObservableObject
                 return false;
             }
         }
-        
+
         return true;
     }
 
@@ -236,7 +236,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanSave))]
     private async Task SaveAsync()
     {
-        // Validar abans de desar
+        // Validate before saving
         if (!await ValidateNameAsync())
         {
             return;
@@ -265,7 +265,7 @@ public partial class ActivityDetailViewModel : ObservableObject
         }
         catch (Exception)
         {
-            // En cas d'error inesperat (ex: constraint de BD), mostrar missatge genèric
+            // In case of unexpected error (e.g., DB constraint), show generic message
             NameError = Resources.Resources.Validation_ActivitySaveError;
             HasNameError = true;
         }
@@ -307,16 +307,16 @@ public partial class ActivityDetailViewModel : ObservableObject
     [RelayCommand]
     private async Task ConfirmDeleteAsync()
     {
-        // Eliminar tots els registres relacionats primer
+        // Delete all related records first
         var relatedRecords = await _timeRecordRepository.GetByActivityIdAsync(_activityId);
         foreach (var record in relatedRecords)
         {
             await _timeRecordRepository.DeleteAsync(record.Id);
         }
 
-        // Després eliminar l'activitat
+        // Then delete the activity
         await _activityRepository.DeleteAsync(_activityId);
-        
+
         IsDeleteConfirmationOpen = false;
         _navigationService.GoBack();
     }

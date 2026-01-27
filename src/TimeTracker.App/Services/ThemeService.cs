@@ -1,12 +1,13 @@
+namespace TimeTracker.App.Services;
+
 using System.Windows;
 using Wpf.Ui.Appearance;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
-namespace TimeTracker.App.Services;
 
 /// <summary>
-/// Implementació del servei de tema per WPF-UI.
+/// Implementation of the theme service for WPF-UI.
 /// </summary>
 public class ThemeService : IThemeService
 {
@@ -30,12 +31,13 @@ public class ThemeService : IThemeService
         
         ApplicationTheme applicationTheme;
         
+        
         if (theme == Theme.System)
         {
-            // Obtenir el tema actual del sistema operatiu i convertir-lo
+            // Get the current operating system theme and convert it
             applicationTheme = ConvertSystemThemeToApplicationTheme(ApplicationThemeManager.GetSystemTheme());
             
-            // Subscriure's als canvis de tema del sistema operatiu si encara no ho estem
+            // Subscribe to operating system theme changes if we're not already
             EnsureSystemThemeWatcherInitialized();
         }
         else
@@ -52,7 +54,7 @@ public class ThemeService : IThemeService
     }
 
     /// <summary>
-    /// Inicialitza el watcher del tema del sistema si encara no s'ha fet.
+    /// Initializes the system theme watcher if not already done.
     /// </summary>
     private void EnsureSystemThemeWatcherInitialized()
     {
@@ -69,7 +71,7 @@ public class ThemeService : IThemeService
     }
 
     /// <summary>
-    /// Converteix un SystemTheme a ApplicationTheme.
+    /// Converts a SystemTheme to ApplicationTheme.
     /// </summary>
     private static ApplicationTheme ConvertSystemThemeToApplicationTheme(SystemTheme systemTheme)
     {
@@ -106,11 +108,11 @@ public class ThemeService : IThemeService
     }
 
     /// <summary>
-    /// Gestiona els canvis de tema del sistema operatiu quan s'utilitza Theme.System.
+    /// Handles operating system theme changes when using Theme.System.
     /// </summary>
     private void OnApplicationThemeChanged(ApplicationTheme currentTheme, System.Windows.Media.Color systemAccent)
     {
-        // Si el tema configurat és System, re-aplicar quan el sistema canvia
+        // If the configured theme is System, re-apply when the system changes
         if (_currentTheme == Theme.System)
         {
             var systemTheme = ApplicationThemeManager.GetSystemTheme();

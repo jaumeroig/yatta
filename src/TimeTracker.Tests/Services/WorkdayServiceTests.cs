@@ -6,7 +6,7 @@ using TimeTracker.Core.Models;
 using TimeTracker.Core.Services;
 
 /// <summary>
-/// Tests unitaris per al servei de jornada laboral.
+/// Unit tests for the workday service.
 /// </summary>
 public class WorkdayServiceTests
 {
@@ -29,7 +29,7 @@ public class WorkdayServiceTests
     #region GetDailySummaryAsync Tests
 
     /// <summary>
-    /// Verifica que GetDailySummaryAsync retorna un resum amb valors correctes.
+    /// Verifies that GetDailySummaryAsync returns a summary with correct values.
     /// </summary>
     [Fact]
     public async Task GetDailySummaryAsync_ShouldReturnCorrectSummary()
@@ -89,7 +89,7 @@ public class WorkdayServiceTests
     }
 
     /// <summary>
-    /// Verifica que GetDailySummaryAsync retorna resum buit quan no hi ha franges.
+    /// Verifies that GetDailySummaryAsync returns an empty summary when there are no slots.
     /// </summary>
     [Fact]
     public async Task GetDailySummaryAsync_WhenNoSlots_ShouldReturnEmptySummary()

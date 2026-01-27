@@ -5,7 +5,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del repositori de franges de jornada.
+/// Implementation of the workday slots repository.
 /// </summary>
 public class WorkdaySlotRepository : IWorkdaySlotRepository
 {

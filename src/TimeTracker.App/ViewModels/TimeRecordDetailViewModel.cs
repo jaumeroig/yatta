@@ -1,16 +1,17 @@
+namespace TimeTracker.App.ViewModels;
+
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
-using TimeTracker.App.Services;
 
-namespace TimeTracker.App.ViewModels;
 
 /// <summary>
-/// ViewModel per a la pàgina de detall d'un registre de temps.
+/// ViewModel for the time record detail page.
 /// </summary>
-public partial class RecordDetailViewModel : ObservableObject
+public partial class TimeRecordDetailViewModel : ObservableObject
 {
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
@@ -60,19 +61,19 @@ public partial class RecordDetailViewModel : ObservableObject
     private string _timeError = string.Empty;
 
     /// <summary>
-    /// Indica si el registre ja existeix (no és nou).
+    /// Indicates if the record already exists (not new).
     /// </summary>
     public bool IsExistingRecord => !_isNewRecord;
 
     /// <summary>
-    /// Indica si es pot desar el registre (validació bàsica).
-    /// L'hora de fi és opcional (pot estar buida).
+    /// Indicates if the record can be saved (basic validation).
+    /// The end time is optional (can be empty).
     /// </summary>
-    public bool CanSave => ActivityId != Guid.Empty && 
-                           TimeOnly.TryParse(StartTimeText, out _) && 
+    public bool CanSave => ActivityId != Guid.Empty &&
+                           TimeOnly.TryParse(StartTimeText, out _) &&
                            (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _));
 
-    public RecordDetailViewModel(
+    public TimeRecordDetailViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         INavigationService navigationService,
@@ -87,11 +88,11 @@ public partial class RecordDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Inicialitza el ViewModel amb les dades del registre.
+    /// Initializes the ViewModel with the record data.
     /// </summary>
     public async Task InitializeAsync(Guid? recordId)
     {
-        // Carregar activitats actives
+        // Load active activities
         var activeActivities = await _activityRepository.GetActiveAsync();
         Activities = new ObservableCollection<Activity>(activeActivities);
 
@@ -114,7 +115,7 @@ public partial class RecordDetailViewModel : ObservableObject
             EndTimeText = "10:00";
             Notes = string.Empty;
         }
-        
+
         UpdateBreadcrumb();
         ClearErrors();
     }
@@ -128,8 +129,8 @@ public partial class RecordDetailViewModel : ObservableObject
             return;
         }
 
-        // Assegurem que l'activitat del registre estigui disponible per seleccionar
-        // (pot ser que l'activitat estigui inactiva)
+        // Ensure the record's activity is available for selection
+        // (the activity might be inactive)
         var activity = await _activityRepository.GetByIdAsync(record.ActivityId);
         if (activity != null && !Activities.Any(a => a.Id == activity.Id))
         {
@@ -145,12 +146,12 @@ public partial class RecordDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Actualitza els elements del breadcrumb.
+    /// Updates the breadcrumb items.
     /// </summary>
     private void UpdateBreadcrumb()
     {
         var recordsLabel = Resources.Resources.Nav_Records;
-        
+
         _breadcrumbService.SetItems(
             new BreadcrumbItem(recordsLabel, () => _navigationService.GoBack()),
             new BreadcrumbItem(PageTitle)
@@ -158,7 +159,7 @@ public partial class RecordDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Neteja tots els errors de validació.
+    /// Clears all validation errors.
     /// </summary>
     private void ClearErrors()
     {
@@ -168,30 +169,33 @@ public partial class RecordDetailViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Valida les dades del registre.
+    /// Validates the record data.
     /// </summary>
-    /// <returns>True si les dades són vàlides, false en cas contrari.</returns>
+    /// <returns>True if the data is valid, false otherwise.</returns>
     private bool Validate()
     {
         ClearErrors();
         var isValid = true;
-        
-        // Validar activitat seleccionada
+
+
+        // Validate selected activity
         if (ActivityId == Guid.Empty)
         {
             ActivityError = Resources.Resources.Validation_ActivityRequired;
             HasActivityError = true;
             isValid = false;
         }
-        
-        // Validar hora d'inici
+
+
+        // Validate start time
         if (!TimeOnly.TryParse(StartTimeText, out var startTime))
         {
             TimeError = Resources.Resources.Validation_InvalidStartTime;
             return false;
         }
-        
-        // Validar hora de fi (opcional si està buida)
+
+
+        // Validate end time (optional if empty)
         TimeOnly? endTime = null;
         if (!string.IsNullOrWhiteSpace(EndTimeText))
         {
@@ -201,30 +205,30 @@ public partial class RecordDetailViewModel : ObservableObject
                 return false;
             }
             endTime = parsedEndTime;
-            
-            // Validar que l'hora de fi sigui posterior a l'hora d'inici
+
+            // Validate that end time is after start time
             if (endTime.Value <= startTime)
             {
                 TimeError = Resources.Resources.Validation_EndTimeAfterStartTime;
                 return false;
             }
         }
-        
+
         return isValid;
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]
     private async Task SaveAsync()
     {
-        // Validar abans de desar
+        // Validate before saving
         if (!Validate())
         {
             return;
         }
 
         var startTime = TimeOnly.Parse(StartTimeText);
-        TimeOnly? endTime = string.IsNullOrWhiteSpace(EndTimeText) 
-            ? null 
+        TimeOnly? endTime = string.IsNullOrWhiteSpace(EndTimeText)
+            ? null
             : TimeOnly.Parse(EndTimeText);
 
         var record = new TimeRecord
@@ -252,7 +256,7 @@ public partial class RecordDetailViewModel : ObservableObject
         }
         catch (Exception)
         {
-            // En cas d'error inesperat, mostrar missatge genèric
+            // In case of unexpected error, show generic message
             TimeError = Resources.Resources.Validation_RecordSaveError;
         }
     }

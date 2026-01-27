@@ -3,86 +3,86 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Servei per a la lògica específica de jornada laboral.
+/// Service for workday-specific logic.
 /// </summary>
 public interface IWorkdayService
 {
     /// <summary>
-    /// Obté el resum diari d'una jornada laboral.
+    /// Gets the daily summary of a workday.
     /// </summary>
-    /// <param name="date">Data de la jornada.</param>
-    /// <param name="cancellationToken">Token de cancel·lació.</param>
-    /// <returns>Resum diari amb hores totals, teletreball i oficina.</returns>
+    /// <param name="date">Date of the workday.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Daily summary with total hours, telework and office.</returns>
     Task<WorkdaySummary> GetDailySummaryAsync(DateOnly date, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Valida si es pot afegir una nova franja de treball a una jornada.
+    /// Validates if a new work slot can be added to a workday.
     /// </summary>
-    /// <param name="slot">Franja de treball a afegir.</param>
-    /// <param name="cancellationToken">Token de cancel·lació.</param>
-    /// <returns>True si es pot afegir, false en cas contrari.</returns>
+    /// <param name="slot">Work slot to add.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>True if it can be added, false otherwise.</returns>
     Task<bool> CanAddWorkdaySlotAsync(WorkdaySlot slot, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Valida si es pot afegir una nova franja de treball a una jornada amb missatge d'error.
+    /// Validates if a new work slot can be added to a workday with error message.
     /// </summary>
-    /// <param name="slot">Franja de treball a afegir.</param>
-    /// <param name="errorMessage">Missatge d'error si no es pot afegir.</param>
-    /// <param name="cancellationToken">Token de cancel·lació.</param>
-    /// <returns>True si es pot afegir, false en cas contrari.</returns>
+    /// <param name="slot">Work slot to add.</param>
+    /// <param name="errorMessage">Error message if it cannot be added.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>True if it can be added, false otherwise.</returns>
     Task<(bool IsValid, string ErrorMessage)> ValidateWorkdaySlotAsync(WorkdaySlot slot, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Obté les hores totals treballades en un rang de dates.
+    /// Gets the total hours worked in a date range.
     /// </summary>
-    /// <param name="startDate">Data d'inici.</param>
-    /// <param name="endDate">Data de fi.</param>
-    /// <param name="cancellationToken">Token de cancel·lació.</param>
-    /// <returns>Total d'hores treballades.</returns>
+    /// <param name="startDate">Start date.</param>
+    /// <param name="endDate">End date.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Total hours worked.</returns>
     Task<double> GetTotalHoursAsync(DateOnly startDate, DateOnly endDate, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Obté el percentatge de teletreball en un rang de dates.
+    /// Gets the telework percentage in a date range.
     /// </summary>
-    /// <param name="startDate">Data d'inici.</param>
-    /// <param name="endDate">Data de fi.</param>
-    /// <param name="cancellationToken">Token de cancel·lació.</param>
-    /// <returns>Percentatge de teletreball (0-100).</returns>
+    /// <param name="startDate">Start date.</param>
+    /// <param name="endDate">End date.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Telework percentage (0-100).</returns>
     Task<double> GetTeleworkPercentageAsync(DateOnly startDate, DateOnly endDate, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
-/// Resum diari d'una jornada laboral.
+/// Daily summary of a workday.
 /// </summary>
 public class WorkdaySummary
 {
     /// <summary>
-    /// Data de la jornada.
+    /// Date of the workday.
     /// </summary>
     public DateOnly Date { get; set; }
 
     /// <summary>
-    /// Total d'hores treballades.
+    /// Total hours worked.
     /// </summary>
     public double TotalHours { get; set; }
 
     /// <summary>
-    /// Hores de teletreball.
+    /// Telework hours.
     /// </summary>
     public double TeleworkHours { get; set; }
 
     /// <summary>
-    /// Hores a l'oficina.
+    /// Office hours.
     /// </summary>
     public double OfficeHours { get; set; }
 
     /// <summary>
-    /// Percentatge de teletreball.
+    /// Telework percentage.
     /// </summary>
     public double TeleworkPercentage { get; set; }
 
     /// <summary>
-    /// Nombre de franges de treball.
+    /// Number of work slots.
     /// </summary>
     public int SlotCount { get; set; }
 }

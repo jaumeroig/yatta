@@ -5,7 +5,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del repositori de registres de temps.
+/// Implementation of the time records repository.
 /// </summary>
 public class TimeRecordRepository : ITimeRecordRepository
 {

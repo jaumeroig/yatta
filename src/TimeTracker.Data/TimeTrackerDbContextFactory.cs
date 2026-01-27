@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 /// <summary>
-/// Factory per crear el DbContext en temps de disseny (per migracions).
+/// Factory to create the DbContext at design time (for migrations).
 /// </summary>
 public class TimeTrackerDbContextFactory : IDesignTimeDbContextFactory<TimeTrackerDbContext>
 {

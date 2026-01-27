@@ -1,17 +1,17 @@
+namespace TimeTracker.App.ViewModels;
+
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TimeTracker.Core.Interfaces;
-using TimeTracker.Core.Models;
 using TimeTracker.App.Services;
 using TimeTracker.App.Views.Pages;
-
-namespace TimeTracker.App.ViewModels;
+using TimeTracker.Core.Interfaces;
+using TimeTracker.Core.Models;
 
 /// <summary>
-/// ViewModel per a la gestió d'activitats.
+/// ViewModel for activities management.
 /// </summary>
-public partial class ActivitatsViewModel : ObservableObject
+public partial class ActivitiesViewModel : ObservableObject
 {
     private readonly IActivityRepository _activityRepository;
     private readonly ITimeRecordRepository _timeRecordRepository;
@@ -30,7 +30,7 @@ public partial class ActivitatsViewModel : ObservableObject
     private bool _showInactive = false;
 
     /// <summary>
-    /// S'executa quan canvia el text de cerca.
+    /// Executes when the search text changes.
     /// </summary>
     partial void OnSearchTextChanged(string value)
     {
@@ -38,14 +38,14 @@ public partial class ActivitatsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// S'executa quan canvia el switch de mostrar inactives.
+    /// Executes when the show inactive switch changes.
     /// </summary>
     partial void OnShowInactiveChanged(bool value)
     {
         ApplyFilters();
     }
 
-    public ActivitatsViewModel(
+    public ActivitiesViewModel(
         IActivityRepository activityRepository,
         ITimeRecordRepository timeRecordRepository,
         ITimeCalculatorService timeCalculatorService,
@@ -58,7 +58,7 @@ public partial class ActivitatsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Carrega les dades inicials.
+    /// Loads initial data.
     /// </summary>
     public async Task LoadDataAsync()
     {
@@ -68,19 +68,19 @@ public partial class ActivitatsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Aplica els filtres de cerca i estat actiu/inactiu a la llista d'activitats.
+    /// Applies search and active/inactive status filters to the activities list.
     /// </summary>
     private void ApplyFilters()
     {
         var filtered = _allActivities.AsEnumerable();
 
-        // Filtrar per estat actiu/inactiu
+        // Filter by active/inactive status
         if (!ShowInactive)
         {
             filtered = filtered.Where(a => a.Active);
         }
 
-        // Filtrar per text de cerca
+        // Filter by search text
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             var searchLower = SearchText.ToLower();
@@ -92,15 +92,15 @@ public partial class ActivitatsViewModel : ObservableObject
             var records = _allRecords.Where(r => r.ActivityId == activity.Id).ToList();
             var totalHours = _timeCalculatorService.CalculateTotalHours(records);
             var totalTime = FormatDuration(totalHours);
-            
-            // Crear subtítol amb format: "X registres · Xh Xm"
-            var recordsText = records.Count == 1 
-                ? Resources.Resources.Activity_SingleRecord 
+
+            // Create subtitle with format: "X records · Xh Xm"
+            var recordsText = records.Count == 1
+                ? Resources.Resources.Activity_SingleRecord
                 : string.Format(Resources.Resources.Activity_MultipleRecords, records.Count);
-            var subtitle = records.Count > 0 
-                ? $"{recordsText} · {totalTime}" 
+            var subtitle = records.Count > 0
+                ? $"{recordsText} · {totalTime}"
                 : Resources.Resources.Activity_NoRecords;
-            
+
             return new ActivityDisplay
             {
                 Id = activity.Id,
@@ -110,7 +110,7 @@ public partial class ActivitatsViewModel : ObservableObject
                 RecordCount = records.Count,
                 TotalTime = totalTime,
                 Subtitle = subtitle,
-                StatusText = activity.Active 
+                StatusText = activity.Active
                     ? Resources.Resources.Status_Active
                     : Resources.Resources.Status_Inactive
             };
@@ -129,7 +129,7 @@ public partial class ActivitatsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Navega a la pàgina de detall per crear una nova activitat.
+    /// Navigates to the detail page to create a new activity.
     /// </summary>
     [RelayCommand]
     private void NavigateToNewActivity()
@@ -138,7 +138,7 @@ public partial class ActivitatsViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Navega a la pàgina de detall per editar una activitat existent.
+    /// Navigates to the detail page to edit an existing activity.
     /// </summary>
     [RelayCommand]
     private void NavigateToActivity(ActivityDisplay activity)
@@ -148,7 +148,7 @@ public partial class ActivitatsViewModel : ObservableObject
 }
 
 /// <summary>
-/// Model de presentació per a una activitat.
+/// Display model for an activity.
 /// </summary>
 public class ActivityDisplay
 {
@@ -159,14 +159,14 @@ public class ActivityDisplay
     public int RecordCount { get; set; }
     public string TotalTime { get; set; } = string.Empty;
     public string StatusText { get; set; } = string.Empty;
-    
+
     /// <summary>
-    /// Subtítol amb el resum de registres i temps total.
+    /// Subtitle with summary of records and total time.
     /// </summary>
     public string Subtitle { get; set; } = string.Empty;
 
     /// <summary>
-    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// Returns the color as a SolidColorBrush to facilitate binding.
     /// </summary>
     public System.Windows.Media.SolidColorBrush ColorBrush
     {

@@ -3,47 +3,47 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Repositori per gestionar franges de jornada.
+/// Repository to manage workday slots.
 /// </summary>
 public interface IWorkdaySlotRepository
 {
     /// <summary>
-    /// Obté totes les franges de jornada.
+    /// Gets all workday slots.
     /// </summary>
     Task<IEnumerable<WorkdaySlot>> GetAllAsync();
 
     /// <summary>
-    /// Obté una franja de jornada per identificador.
+    /// Gets a workday slot by identifier.
     /// </summary>
     Task<WorkdaySlot?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Obté les franges de jornada d'una data específica.
+    /// Gets workday slots for a specific date.
     /// </summary>
     Task<IEnumerable<WorkdaySlot>> GetByDateAsync(DateOnly date);
 
     /// <summary>
-    /// Obté les franges de jornada d'un rang de dates.
+    /// Gets workday slots for a date range.
     /// </summary>
     Task<IEnumerable<WorkdaySlot>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate);
 
     /// <summary>
-    /// Obté les dates que tenen franges de jornada dins d'un rang.
+    /// Gets dates that have workday slots within a range.
     /// </summary>
     Task<IEnumerable<DateOnly>> GetDatesWithSlotsAsync(DateOnly startDate, DateOnly endDate);
 
     /// <summary>
-    /// Afegeix una nova franja de jornada.
+    /// Adds a new workday slot.
     /// </summary>
     Task<WorkdaySlot> AddAsync(WorkdaySlot workdaySlot);
 
     /// <summary>
-    /// Actualitza una franja de jornada existent.
+    /// Updates an existing workday slot.
     /// </summary>
     Task UpdateAsync(WorkdaySlot workdaySlot);
 
     /// <summary>
-    /// Elimina una franja de jornada.
+    /// Deletes a workday slot.
     /// </summary>
     Task DeleteAsync(Guid id);
 }

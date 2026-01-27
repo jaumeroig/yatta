@@ -1,32 +1,32 @@
 namespace TimeTracker.Core.Models;
 
 /// <summary>
-/// Defineix una franja de treball d'una jornada.
+/// Defines a work slot of a workday.
 /// </summary>
 public class WorkdaySlot
 {
     /// <summary>
-    /// Identificador únic de la franja de treball.
+    /// Unique identifier of the work slot.
     /// </summary>
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Data de la franja de treball.
+    /// Date of the work slot.
     /// </summary>
     public DateOnly Date { get; set; }
 
     /// <summary>
-    /// Hora d'inici de la franja de treball.
+    /// Start time of the work slot.
     /// </summary>
     public TimeOnly StartTime { get; set; }
 
     /// <summary>
-    /// Hora de finalització de la franja de treball.
+    /// End time of the work slot.
     /// </summary>
     public TimeOnly EndTime { get; set; }
 
     /// <summary>
-    /// Indica si la franja de treball és en teletreball.
+    /// Indicates if the work slot is telework.
     /// </summary>
     public bool Telework { get; set; } = false;
 }

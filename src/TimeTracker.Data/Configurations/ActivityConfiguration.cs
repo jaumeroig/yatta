@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Configuració de l'entitat Activity per Entity Framework.
+/// Configuration of the Activity entity for Entity Framework.
 /// </summary>
 public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
 {

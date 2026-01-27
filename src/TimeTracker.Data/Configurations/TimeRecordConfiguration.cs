@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Configuració de l'entitat TimeRecord per Entity Framework.
+/// Configuration of the TimeRecord entity for Entity Framework.
 /// </summary>
 public class TimeRecordConfiguration : IEntityTypeConfiguration<TimeRecord>
 {

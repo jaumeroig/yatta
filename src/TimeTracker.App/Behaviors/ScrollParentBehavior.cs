@@ -6,18 +6,18 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 /// <summary>
-/// Comportament que permet propagar l'event de scroll cap al ScrollViewer pare
-/// quan un element fill captura l'event de la roda del ratolí.
+/// Behavior that allows propagating the scroll event to the parent ScrollViewer
+/// when a child element captures the mouse wheel event.
 /// </summary>
 public static class ScrollParentBehavior
 {
     /// <summary>
-    /// Factor de multiplicació per al scroll. Ajusta la velocitat de l'scroll.
+    /// Multiplication factor for scrolling. Adjusts the scroll speed.
     /// </summary>
     private const double ScrollFactor = 0.5;
 
     /// <summary>
-    /// Propietat adjunta per habilitar la propagació de l'scroll cap al pare.
+    /// Attached property to enable scroll propagation to parent.
     /// </summary>
     public static readonly DependencyProperty BubbleScrollProperty =
         DependencyProperty.RegisterAttached(
@@ -27,7 +27,7 @@ public static class ScrollParentBehavior
             new PropertyMetadata(false, OnBubbleScrollChanged));
 
     /// <summary>
-    /// Obté el valor de BubbleScroll per a l'element especificat.
+    /// Gets the BubbleScroll value for the specified element.
     /// </summary>
     public static bool GetBubbleScroll(DependencyObject obj)
     {
@@ -35,7 +35,7 @@ public static class ScrollParentBehavior
     }
 
     /// <summary>
-    /// Estableix el valor de BubbleScroll per a l'element especificat.
+    /// Sets the BubbleScroll value for the specified element.
     /// </summary>
     public static void SetBubbleScroll(DependencyObject obj, bool value)
     {
@@ -62,30 +62,30 @@ public static class ScrollParentBehavior
         if (sender is not UIElement element)
             return;
 
-        // Buscar el ScrollViewer pare a l'arbre visual
+        // Find the parent ScrollViewer in the visual tree
         var scrollViewer = FindParentScrollViewer(element);
         if (scrollViewer == null)
             return;
 
-        // Marcar l'event com a gestionat per evitar que altres elements el processin
+        // Mark the event as handled to prevent other elements from processing it
         e.Handled = true;
 
-        // Calcular la quantitat de scroll
-        // e.Delta és típicament 120 o -120 per cada "notch" de la roda
-        // Valor positiu = scroll amunt, negatiu = scroll avall
+        // Calculate the scroll amount
+        // e.Delta is typically 120 or -120 per wheel "notch"
+        // Positive value = scroll up, negative = scroll down
         double newOffset = scrollViewer.VerticalOffset - (e.Delta * ScrollFactor);
         
-        // Assegurar que el nou offset està dins dels límits
+        // Ensure the new offset is within bounds
         newOffset = Math.Max(0, Math.Min(newOffset, scrollViewer.ScrollableHeight));
         
         scrollViewer.ScrollToVerticalOffset(newOffset);
     }
 
     /// <summary>
-    /// Cerca el primer ScrollViewer pare a l'arbre visual.
+    /// Searches for the first parent ScrollViewer in the visual tree.
     /// </summary>
-    /// <param name="element">L'element des del qual començar la cerca.</param>
-    /// <returns>El ScrollViewer pare o null si no es troba.</returns>
+    /// <param name="element">The element from which to start the search.</param>
+    /// <returns>The parent ScrollViewer or null if not found.</returns>
     private static ScrollViewer? FindParentScrollViewer(DependencyObject element)
     {
         var parent = VisualTreeHelper.GetParent(element);

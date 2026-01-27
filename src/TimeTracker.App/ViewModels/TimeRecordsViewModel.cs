@@ -1,18 +1,17 @@
-using System.Collections.ObjectModel;
-using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using TimeTracker.Core.Interfaces;
-using TimeTracker.Core.Models;
-using TimeTracker.App.Services;
-using TimeTracker.App.Views.Pages;
-
 namespace TimeTracker.App.ViewModels;
 
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Services;
+using TimeTracker.App.Views.Pages;
+using TimeTracker.Core.Interfaces;
+using TimeTracker.Core.Models;
+
 /// <summary>
-/// ViewModel per a la gestió de registres de temps.
+/// ViewModel for time records management.
 /// </summary>
-public partial class RegistresViewModel : ObservableObject
+public partial class TimeRecordViewModel : ObservableObject
 {
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
@@ -39,7 +38,7 @@ public partial class RegistresViewModel : ObservableObject
     [ObservableProperty]
     private string _todayWorkedTime = "0h 0m";
 
-    public RegistresViewModel(
+    public TimeRecordViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         ITimeCalculatorService timeCalculatorService,
@@ -52,13 +51,13 @@ public partial class RegistresViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Carrega les dades inicials.
+    /// Loads initial data.
     /// </summary>
     public async Task LoadDataAsync()
     {
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
 
-        // Afegir opció "Totes les activitats" al principi
+        // Add "All activities" option at the beginning
         var allActivitiesText = Resources.Resources.Filter_AllActivities;
         var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
         var activitiesWithAll = new List<Activity> { allActivitiesOption };
@@ -89,7 +88,7 @@ public partial class RegistresViewModel : ObservableObject
     {
         var filtered = _allRecords.AsEnumerable();
 
-        // Filtre per text (cerca a notes i nom d'activitat)
+        // Filter by text (search in notes and activity name)
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             var searchLower = SearchText.ToLowerInvariant();
@@ -98,20 +97,20 @@ public partial class RegistresViewModel : ObservableObject
                 _allActivities.FirstOrDefault(a => a.Id == r.ActivityId)?.Name.Contains(searchLower, StringComparison.InvariantCultureIgnoreCase) == true);
         }
 
-        // Filtre per activitat (excepte "Totes les activitats")
+        // Filter by activity (except "All activities")
         if (SelectedActivityFilter != null && SelectedActivityFilter.Id != Guid.Empty)
         {
             filtered = filtered.Where(r => r.ActivityId == SelectedActivityFilter.Id);
         }
 
-        // Filtre per data
+        // Filter by date
         if (SelectedDate.HasValue)
         {
             var date = DateOnly.FromDateTime(SelectedDate.Value);
             filtered = filtered.Where(r => r.Date == date);
         }
 
-        // Agrupar per dia
+        // Group by day
         var groups = filtered
             .GroupBy(r => r.Date)
             .OrderByDescending(g => g.Key)
@@ -170,21 +169,21 @@ public partial class RegistresViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Navega a la pàgina de detall per crear un nou registre.
+    /// Navigates to the detail page to create a new record.
     /// </summary>
     [RelayCommand]
     private void NavigateToNewRecord()
     {
-        _navigationService.Navigate<RecordDetailPage>(null);
+        _navigationService.Navigate<TimeRecordDetailPage>(null);
     }
 
     /// <summary>
-    /// Navega a la pàgina de detall per editar un registre existent.
+    /// Navigates to the detail page to edit an existing record.
     /// </summary>
     [RelayCommand]
     private void NavigateToRecord(TimeRecordDisplay record)
     {
-        _navigationService.Navigate<RecordDetailPage>(record.Id);
+        _navigationService.Navigate<TimeRecordDetailPage>(record.Id);
     }
 
     [RelayCommand]
@@ -197,7 +196,7 @@ public partial class RegistresViewModel : ObservableObject
 }
 
 /// <summary>
-/// Grup de registres per dia.
+/// Group of records per day.
 /// </summary>
 public class DayGroup
 {
@@ -208,7 +207,7 @@ public class DayGroup
 }
 
 /// <summary>
-/// Model de presentació per a un registre de temps.
+/// Display model for a time record.
 /// </summary>
 public class TimeRecordDisplay
 {
@@ -222,7 +221,7 @@ public class TimeRecordDisplay
     public DateOnly Date { get; set; }
 
     /// <summary>
-    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// Returns the color as a SolidColorBrush to facilitate binding.
     /// </summary>
     public System.Windows.Media.SolidColorBrush ActivityColorBrush
     {

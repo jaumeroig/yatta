@@ -6,15 +6,15 @@ using TimeTracker.App.ViewModels;
 namespace TimeTracker.App.Views.Pages;
 
 /// <summary>
-/// Pàgina de gestió d'activitats.
-/// Mostra una llista d'activitats amb navegació a la pàgina de detall.
+/// Activities management page.
+/// Shows a list of activities with navigation to the detail page.
 /// </summary>
-public partial class ActivitatsPage : Page
+public partial class ActivitiesPage : Page
 {
-    private readonly ActivitatsViewModel _viewModel;
+    private readonly ActivitiesViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
 
-    public ActivitatsPage(ActivitatsViewModel viewModel, IBreadcrumbService breadcrumbService)
+    public ActivitiesPage(ActivitiesViewModel viewModel, IBreadcrumbService breadcrumbService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
@@ -24,7 +24,7 @@ public partial class ActivitatsPage : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        // Configurar el breadcrumb amb el títol de la pàgina
+        // Configure the breadcrumb with the page title
         _breadcrumbService.SetItems(
             TimeTracker.App.Resources.Resources.Page_Activities_Title
         );

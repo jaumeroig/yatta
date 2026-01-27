@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Configuració de l'entitat AppSettings per Entity Framework.
+/// Configuration of the AppSettings entity for Entity Framework.
 /// </summary>
 public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
 {
@@ -13,12 +13,12 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
     {
         builder.ToTable("AppSettings");
 
-        // AppSettings serà una taula amb una sola fila (singleton)
+        // AppSettings will be a table with a single row (singleton)
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Id)
             .IsRequired()
-            .ValueGeneratedNever(); // No auto-increment per garantir Id = 1
+            .ValueGeneratedNever(); // No auto-increment to guarantee Id = 1
 
         builder.Property(s => s.Theme)
             .IsRequired()

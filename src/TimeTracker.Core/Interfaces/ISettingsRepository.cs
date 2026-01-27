@@ -3,17 +3,17 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Repositori per gestionar la configuració de l'aplicació.
+/// Repository to manage application configuration.
 /// </summary>
 public interface ISettingsRepository
 {
     /// <summary>
-    /// Obté la configuració de l'aplicació.
+    /// Gets the application configuration.
     /// </summary>
     Task<AppSettings> GetAsync();
 
     /// <summary>
-    /// Actualitza la configuració de l'aplicació.
+    /// Updates the application configuration.
     /// </summary>
     Task UpdateAsync(AppSettings settings);
 }
