@@ -96,6 +96,7 @@
                 <!-- Nom de l'activitat -->
                 <TextBlock Text="{local:Localize Label_ActivityName}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,8" />
                 <ui:TextBox x:Name="ActivityName" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             PlaceholderText="{local:Localize Placeholder_ActivityName}"
@@ -109,6 +110,7 @@
                 <!-- Color -->
                 <TextBlock Text="{local:Localize Label_Color}"
                            FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,12" />
                 <ItemsControl Margin="0,0,0,24">
                     <ItemsControl.ItemsPanel>
