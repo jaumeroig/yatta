@@ -10,7 +10,7 @@ using Wpf.Ui.Controls;
 namespace TimeTracker.App.Views.Pages;
 
 /// <summary>
-/// Pàgina per gestionar la jornada laboral amb calendari i franges horàries.
+/// Page to manage the workday with calendar and time slots.
 /// </summary>
 public partial class JornadaPage : Page
 {

@@ -304,6 +304,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ¿Estás seguro de que quieres eliminar este registro? Esta acción no se puede deshacer..
+        /// </summary>
+        internal static string Dialog_DeleteRecord_Message {
+            get {
+                return ResourceManager.GetString("Dialog_DeleteRecord_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Eliminar registro?.
+        /// </summary>
+        internal static string Dialog_DeleteRecord_Title {
+            get {
+                return ResourceManager.GetString("Dialog_DeleteRecord_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Editar actividad.
         /// </summary>
         internal static string Dialog_EditActivity_Title {
@@ -417,6 +435,15 @@ namespace TimeTracker.App.Resources {
         internal static string Filter_AllActivities {
             get {
                 return ResourceManager.GetString("Filter_AllActivities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buscar por actividad o notas....
+        /// </summary>
+        internal static string Filter_SearchByActivityOrNotes {
+            get {
+                return ResourceManager.GetString("Filter_SearchByActivityOrNotes", resourceCulture);
             }
         }
         
@@ -952,6 +979,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Editar registro.
+        /// </summary>
+        internal static string RecordDetail_EditTitle {
+            get {
+                return ResourceManager.GetString("RecordDetail_EditTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nuevo registro.
+        /// </summary>
+        internal static string RecordDetail_NewTitle {
+            get {
+                return ResourceManager.GetString("RecordDetail_NewTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sobre la aplicación.
         /// </summary>
         internal static string Section_About {
@@ -1150,6 +1195,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debes seleccionar una actividad..
+        /// </summary>
+        internal static string Validation_ActivityRequired {
+            get {
+                return ResourceManager.GetString("Validation_ActivityRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error al guardar la actividad. Inténtalo de nuevo..
         /// </summary>
         internal static string Validation_ActivitySaveError {
@@ -1200,6 +1254,15 @@ namespace TimeTracker.App.Resources {
         internal static string Validation_OverlappingSlot {
             get {
                 return ResourceManager.GetString("Validation_OverlappingSlot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error al guardar el registro. Inténtalo de nuevo..
+        /// </summary>
+        internal static string Validation_RecordSaveError {
+            get {
+                return ResourceManager.GetString("Validation_RecordSaveError", resourceCulture);
             }
         }
         

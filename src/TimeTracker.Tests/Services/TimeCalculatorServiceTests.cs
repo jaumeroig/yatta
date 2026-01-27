@@ -4,7 +4,7 @@ using TimeTracker.Core.Models;
 using TimeTracker.Core.Services;
 
 /// <summary>
-/// Tests unitaris per al servei de càlcul de temps.
+/// Unit tests for the time calculation service.
 /// </summary>
 public class TimeCalculatorServiceTests
 {
@@ -18,7 +18,7 @@ public class TimeCalculatorServiceTests
     #region CalculateDuration Tests
 
     /// <summary>
-    /// Verifica que CalculateDuration calcula correctament la durada en hores.
+    /// Verifies that CalculateDuration correctly calculates the duration in hours.
     /// </summary>
     [Fact]
     public void CalculateDuration_ShouldReturnCorrectHours()
@@ -35,7 +35,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateDuration calcula correctament amb minuts.
+    /// Verifies that CalculateDuration correctly calculates with minutes.
     /// </summary>
     [Fact]
     public void CalculateDuration_WithMinutes_ShouldReturnCorrectHours()
@@ -52,7 +52,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateDuration retorna zero quan les hores són iguals.
+    /// Verifies that CalculateDuration returns zero when the times are equal.
     /// </summary>
     [Fact]
     public void CalculateDuration_WhenSameTime_ShouldReturnZero()
@@ -69,9 +69,9 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateDuration gestiona correctament quan l'hora de fi és anterior 
-    /// (es considera com un període que travessa la mitjanit, resultant en una durada negativa).
-    /// Nota: TimeSpan amb TimeOnly pot donar resultats inesperats quan endTime &lt; startTime.
+    /// Verifies that CalculateDuration correctly handles when the end time is before 
+    /// (considered as a period crossing midnight, resulting in a negative duration).
+    /// Note: TimeSpan with TimeOnly can give unexpected results when endTime &lt; startTime.
     /// </summary>
     [Fact]
     public void CalculateDuration_WhenEndTimeBeforeStartTime_ShouldHandleCorrectly()
@@ -84,14 +84,14 @@ public class TimeCalculatorServiceTests
         var result = _sut.CalculateDuration(startTime, endTime);
 
         // Assert
-        // TimeOnly - TimeOnly retorna la diferència com si fos dins del mateix dia,
-        // per tant 9:00 - 17:00 = -8 hores, però TimeSpan ho tracta com 16 hores (cap al futur).
-        // Aquest comportament hauria de ser validat pel ValidationService abans.
-        Assert.True(result < 0 || result > 8); // La durada no és vàlida per un dia normal
+        // TimeOnly - TimeOnly returns the difference as if it were within the same day,
+        // so 9:00 - 17:00 = -8 hours, but TimeSpan treats it as 16 hours (forward).
+        // This behavior should be validated by ValidationService beforehand.
+        Assert.True(result < 0 || result > 8); // The duration is not valid for a normal day
     }
 
     /// <summary>
-    /// Verifica que CalculateDuration calcula correctament 15 minuts.
+    /// Verifies that CalculateDuration correctly calculates 15 minutes.
     /// </summary>
     [Fact]
     public void CalculateDuration_FifteenMinutes_ShouldReturnQuarterHour()
@@ -112,7 +112,7 @@ public class TimeCalculatorServiceTests
     #region CalculateTotalHours TimeRecord Tests
 
     /// <summary>
-    /// Verifica que CalculateTotalHours retorna zero quan no hi ha registres.
+    /// Verifies that CalculateTotalHours returns zero when there are no records.
     /// </summary>
     [Fact]
     public void CalculateTotalHours_TimeRecords_WhenEmpty_ShouldReturnZero()
@@ -128,7 +128,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTotalHours suma correctament les hores dels registres.
+    /// Verifies that CalculateTotalHours correctly sums the hours of the records.
     /// </summary>
     [Fact]
     public void CalculateTotalHours_TimeRecords_ShouldSumAllRecords()
@@ -160,7 +160,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTotalHours ignora registres sense hora de fi.
+    /// Verifies that CalculateTotalHours ignores records without end time.
     /// </summary>
     [Fact]
     public void CalculateTotalHours_TimeRecords_ShouldIgnoreRecordsWithoutEndTime()
@@ -180,7 +180,7 @@ public class TimeCalculatorServiceTests
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
                 StartTime = new TimeOnly(13, 0),
-                EndTime = null // Registre en curs
+                EndTime = null // In-progress record
             }
         };
 
@@ -196,7 +196,7 @@ public class TimeCalculatorServiceTests
     #region CalculateTotalHours WorkdaySlot Tests
 
     /// <summary>
-    /// Verifica que CalculateTotalHours per franges retorna zero quan no n'hi ha.
+    /// Verifies that CalculateTotalHours for slots returns zero when there are none.
     /// </summary>
     [Fact]
     public void CalculateTotalHours_WorkdaySlots_WhenEmpty_ShouldReturnZero()
@@ -212,7 +212,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTotalHours suma correctament les hores de les franges.
+    /// Verifies that CalculateTotalHours correctly sums the hours of the slots.
     /// </summary>
     [Fact]
     public void CalculateTotalHours_WorkdaySlots_ShouldSumAllSlots()
@@ -250,7 +250,7 @@ public class TimeCalculatorServiceTests
     #region CalculateTeleworkHours Tests
 
     /// <summary>
-    /// Verifica que CalculateTeleworkHours retorna zero quan no hi ha franges.
+    /// Verifies that CalculateTeleworkHours returns zero when there are no slots.
     /// </summary>
     [Fact]
     public void CalculateTeleworkHours_WhenEmpty_ShouldReturnZero()
@@ -266,7 +266,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTeleworkHours suma només les franges de teletreball.
+    /// Verifies that CalculateTeleworkHours sums only the telework slots.
     /// </summary>
     [Fact]
     public void CalculateTeleworkHours_ShouldSumOnlyTeleworkSlots()
@@ -300,7 +300,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTeleworkHours retorna zero quan no hi ha teletreball.
+    /// Verifies that CalculateTeleworkHours returns zero when there is no telework.
     /// </summary>
     [Fact]
     public void CalculateTeleworkHours_WhenNoTelework_ShouldReturnZero()
@@ -330,7 +330,7 @@ public class TimeCalculatorServiceTests
     #region CalculateOfficeHours Tests
 
     /// <summary>
-    /// Verifica que CalculateOfficeHours retorna zero quan no hi ha franges.
+    /// Verifies that CalculateOfficeHours returns zero when there are no slots.
     /// </summary>
     [Fact]
     public void CalculateOfficeHours_WhenEmpty_ShouldReturnZero()
@@ -346,7 +346,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateOfficeHours suma només les franges d'oficina.
+    /// Verifies that CalculateOfficeHours sums only the office slots.
     /// </summary>
     [Fact]
     public void CalculateOfficeHours_ShouldSumOnlyOfficeSlots()
@@ -380,7 +380,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateOfficeHours retorna zero quan tot és teletreball.
+    /// Verifies that CalculateOfficeHours returns zero when everything is telework.
     /// </summary>
     [Fact]
     public void CalculateOfficeHours_WhenAllTelework_ShouldReturnZero()
@@ -410,7 +410,7 @@ public class TimeCalculatorServiceTests
     #region CalculateTeleworkPercentage Tests
 
     /// <summary>
-    /// Verifica que CalculateTeleworkPercentage retorna zero quan no hi ha franges.
+    /// Verifies that CalculateTeleworkPercentage returns zero when there are no slots.
     /// </summary>
     [Fact]
     public void CalculateTeleworkPercentage_WhenEmpty_ShouldReturnZero()
@@ -426,7 +426,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTeleworkPercentage calcula correctament el percentatge.
+    /// Verifies that CalculateTeleworkPercentage correctly calculates the percentage.
     /// </summary>
     [Fact]
     public void CalculateTeleworkPercentage_ShouldCalculateCorrectPercentage()
@@ -460,7 +460,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTeleworkPercentage retorna 100 quan tot és teletreball.
+    /// Verifies that CalculateTeleworkPercentage returns 100 when everything is telework.
     /// </summary>
     [Fact]
     public void CalculateTeleworkPercentage_WhenAllTelework_ShouldReturn100()
@@ -486,7 +486,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTeleworkPercentage retorna 0 quan no hi ha teletreball.
+    /// Verifies that CalculateTeleworkPercentage returns 0 when there is no telework.
     /// </summary>
     [Fact]
     public void CalculateTeleworkPercentage_WhenNoTelework_ShouldReturnZero()
@@ -512,7 +512,7 @@ public class TimeCalculatorServiceTests
     }
 
     /// <summary>
-    /// Verifica que CalculateTeleworkPercentage calcula correctament amb proporcions no iguals.
+    /// Verifies that CalculateTeleworkPercentage correctly calculates with unequal proportions.
     /// </summary>
     [Fact]
     public void CalculateTeleworkPercentage_WithUnequalSlots_ShouldCalculateCorrectPercentage()
@@ -525,7 +525,7 @@ public class TimeCalculatorServiceTests
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
                 StartTime = new TimeOnly(8, 0),
-                EndTime = new TimeOnly(14, 0), // 6 hores oficina
+                EndTime = new TimeOnly(14, 0), // 6 office hours
                 Telework = false
             },
             new WorkdaySlot
@@ -533,7 +533,7 @@ public class TimeCalculatorServiceTests
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
                 StartTime = new TimeOnly(15, 0),
-                EndTime = new TimeOnly(17, 0), // 2 hores teletreball
+                EndTime = new TimeOnly(17, 0), // 2 telework hours
                 Telework = true
             }
         };

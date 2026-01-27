@@ -1,37 +1,37 @@
 namespace TimeTracker.Core.Models;
 
 /// <summary>
-/// Defineix cada un dels registres del time tracker.
+/// Defines each of the time tracker records.
 /// </summary>
 public class TimeRecord
 {
     /// <summary>
-    /// Identificador únic del registre.
+    /// Unique identifier of the record.
     /// </summary>
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Data del registre.
+    /// Date of the record.
     /// </summary>
     public DateOnly Date { get; set; }
 
     /// <summary>
-    /// Hora d'inici del registre.
+    /// Start time of the record.
     /// </summary>
     public TimeOnly StartTime { get; set; }
 
     /// <summary>
-    /// Hora de finalització del registre (opcional).
+    /// End time of the record (optional).
     /// </summary>
     public TimeOnly? EndTime { get; set; }
 
     /// <summary>
-    /// Identificador de l'activitat associada.
+    /// Identifier of the associated activity.
     /// </summary>
     public Guid ActivityId { get; set; }
 
     /// <summary>
-    /// Notes addicionals del registre (opcional).
+    /// Additional notes for the record (optional).
     /// </summary>
     public string? Notes { get; set; }
 }

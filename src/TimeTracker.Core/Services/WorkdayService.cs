@@ -4,7 +4,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del servei per a la lògica específica de jornada laboral.
+/// Implementation of the service for workday-specific logic.
 /// </summary>
 public class WorkdayService : IWorkdayService
 {
@@ -13,11 +13,11 @@ public class WorkdayService : IWorkdayService
     private readonly IValidationService _validationService;
 
     /// <summary>
-    /// Constructor del servei de jornada laboral.
+    /// Constructor of the workday service.
     /// </summary>
-    /// <param name="workdaySlotRepository">Repositori de franges de jornada.</param>
-    /// <param name="timeCalculatorService">Servei de càlcul de temps.</param>
-    /// <param name="validationService">Servei de validació.</param>
+    /// <param name="workdaySlotRepository">Workday slots repository.</param>
+    /// <param name="timeCalculatorService">Time calculation service.</param>
+    /// <param name="validationService">Validation service.</param>
     public WorkdayService(
         IWorkdaySlotRepository workdaySlotRepository,
         ITimeCalculatorService timeCalculatorService,
@@ -60,16 +60,16 @@ public class WorkdayService : IWorkdayService
     /// <inheritdoc/>
     public async Task<(bool IsValid, string ErrorMessage)> ValidateWorkdaySlotAsync(WorkdaySlot slot, CancellationToken cancellationToken = default)
     {
-        // Validar que la franja sigui vàlida (hora de fi posterior a hora d'inici)
+        // Validate that the slot is valid (end time after start time)
         if (!_validationService.ValidateWorkdaySlot(slot, out var errorMessage))
         {
             return (false, errorMessage);
         }
 
-        // Obtenir les franges existents del mateix dia
+        // Get existing slots for the same day
         var existingSlots = await _workdaySlotRepository.GetByDateAsync(slot.Date);
 
-        // Validar que no hi hagi solapament
+        // Validate that there is no overlap
         if (!_validationService.ValidateNoOverlap(slot, existingSlots, out errorMessage))
         {
             return (false, errorMessage);

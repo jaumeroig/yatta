@@ -4,14 +4,14 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del servei per al càlcul de durades, totals diaris i percentatges.
+/// Implementation of the service for calculating durations, daily totals, and percentages.
 /// </summary>
 public class TimeCalculatorService : ITimeCalculatorService
 {
     /// <inheritdoc/>
     public double CalculateDuration(TimeOnly startTime, TimeOnly endTime)
     {
-        // Calcula la diferència en hores
+        // Calculate the difference in hours
         var duration = endTime - startTime;
         return duration.TotalHours;
     }
@@ -23,7 +23,7 @@ public class TimeCalculatorService : ITimeCalculatorService
 
         foreach (var record in records)
         {
-            // Només comptem registres amb hora de fi definida
+            // Only count records with defined end time
             if (record.EndTime.HasValue)
             {
                 totalHours += CalculateDuration(record.StartTime, record.EndTime.Value);

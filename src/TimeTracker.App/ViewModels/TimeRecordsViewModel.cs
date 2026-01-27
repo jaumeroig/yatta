@@ -1,20 +1,22 @@
+namespace TimeTracker.App.ViewModels;
+
 using System.Collections.ObjectModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Services;
+using TimeTracker.App.Views.Pages;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
-namespace TimeTracker.App.ViewModels;
-
 /// <summary>
-/// ViewModel per a la gestió de registres de temps.
+/// ViewModel for time records management.
 /// </summary>
-public partial class RegistresViewModel : ObservableObject
+public partial class TimeRecordViewModel : ObservableObject
 {
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
     private readonly ITimeCalculatorService _timeCalculatorService;
+    private readonly INavigationService _navigationService;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
 
@@ -36,33 +38,26 @@ public partial class RegistresViewModel : ObservableObject
     [ObservableProperty]
     private string _todayWorkedTime = "0h 0m";
 
-    [ObservableProperty]
-    private bool _isDialogOpen;
-
-    [ObservableProperty]
-    private bool _isEditing;
-
-    [ObservableProperty]
-    private TimeRecordEditModel _editingRecord = new();
-
-    public RegistresViewModel(
+    public TimeRecordViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
-        ITimeCalculatorService timeCalculatorService)
+        ITimeCalculatorService timeCalculatorService,
+        INavigationService navigationService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
         _timeCalculatorService = timeCalculatorService;
+        _navigationService = navigationService;
     }
 
     /// <summary>
-    /// Carrega les dades inicials.
+    /// Loads initial data.
     /// </summary>
     public async Task LoadDataAsync()
     {
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
 
-        // Afegir opció "Totes les activitats" al principi
+        // Add "All activities" option at the beginning
         var allActivitiesText = Resources.Resources.Filter_AllActivities;
         var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
         var activitiesWithAll = new List<Activity> { allActivitiesOption };
@@ -93,7 +88,7 @@ public partial class RegistresViewModel : ObservableObject
     {
         var filtered = _allRecords.AsEnumerable();
 
-        // Filtre per text (cerca a notes i nom d'activitat)
+        // Filter by text (search in notes and activity name)
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             var searchLower = SearchText.ToLowerInvariant();
@@ -102,20 +97,20 @@ public partial class RegistresViewModel : ObservableObject
                 _allActivities.FirstOrDefault(a => a.Id == r.ActivityId)?.Name.Contains(searchLower, StringComparison.InvariantCultureIgnoreCase) == true);
         }
 
-        // Filtre per activitat (excepte "Totes les activitats")
+        // Filter by activity (except "All activities")
         if (SelectedActivityFilter != null && SelectedActivityFilter.Id != Guid.Empty)
         {
             filtered = filtered.Where(r => r.ActivityId == SelectedActivityFilter.Id);
         }
 
-        // Filtre per data
+        // Filter by date
         if (SelectedDate.HasValue)
         {
             var date = DateOnly.FromDateTime(SelectedDate.Value);
             filtered = filtered.Where(r => r.Date == date);
         }
 
-        // Agrupar per dia
+        // Group by day
         var groups = filtered
             .GroupBy(r => r.Date)
             .OrderByDescending(g => g.Key)
@@ -173,99 +168,22 @@ public partial class RegistresViewModel : ObservableObject
         TodayWorkedTime = FormatDuration(totalHours);
     }
 
+    /// <summary>
+    /// Navigates to the detail page to create a new record.
+    /// </summary>
     [RelayCommand]
-    private void OpenNewRecordDialog()
+    private void NavigateToNewRecord()
     {
-        IsEditing = false;
-        EditingRecord = new TimeRecordEditModel
-        {
-            Date = DateTime.Today,
-            StartTimeText = "09:00",
-            EndTimeText = "10:00",
-            ValidationError = string.Empty
-        };
-        IsDialogOpen = true;
+        _navigationService.Navigate<TimeRecordDetailPage>(null);
     }
 
+    /// <summary>
+    /// Navigates to the detail page to edit an existing record.
+    /// </summary>
     [RelayCommand]
-    private void OpenEditRecordDialog(TimeRecordDisplay record)
+    private void NavigateToRecord(TimeRecordDisplay record)
     {
-        var originalRecord = _allRecords.FirstOrDefault(r => r.Id == record.Id);
-        if (originalRecord == null) return;
-
-        IsEditing = true;
-        var editModel = new TimeRecordEditModel
-        {
-            Id = originalRecord.Id,
-            ActivityId = originalRecord.ActivityId,
-            Date = originalRecord.Date.ToDateTime(TimeOnly.MinValue),
-            Notes = originalRecord.Notes ?? string.Empty,
-            ValidationError = string.Empty
-        };
-        editModel.SetStartTime(originalRecord.StartTime);
-        editModel.SetEndTime(originalRecord.EndTime);
-        EditingRecord = editModel;
-        IsDialogOpen = true;
-    }
-
-    [RelayCommand]
-    private void CloseDialog()
-    {
-        IsDialogOpen = false;
-    }
-
-    [RelayCommand]
-    private async Task SaveRecordAsync()
-    {
-        if (EditingRecord.ActivityId == Guid.Empty) return;
-
-        var startTime = EditingRecord.GetStartTime();
-        if (!startTime.HasValue) return;
-
-        var endTime = EditingRecord.GetEndTime();
-        
-        // Validar que l'hora de fi sigui posterior a l'hora d'inici
-        if (endTime.HasValue && endTime.Value <= startTime.Value)
-        {
-            EditingRecord.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
-            return;
-        }
-
-        var record = new TimeRecord
-        {
-            Id = IsEditing ? EditingRecord.Id : Guid.NewGuid(),
-            ActivityId = EditingRecord.ActivityId,
-            Date = DateOnly.FromDateTime(EditingRecord.Date),
-            StartTime = startTime.Value,
-            EndTime = endTime,
-            Notes = string.IsNullOrWhiteSpace(EditingRecord.Notes) ? null : EditingRecord.Notes
-        };
-
-        if (IsEditing)
-        {
-            await _timeRecordRepository.UpdateAsync(record);
-            var index = _allRecords.FindIndex(r => r.Id == record.Id);
-            if (index >= 0) _allRecords[index] = record;
-        }
-        else
-        {
-            await _timeRecordRepository.AddAsync(record);
-            _allRecords.Add(record);
-        }
-
-        IsDialogOpen = false;
-        ApplyFilters();
-        CalculateTodayWorkedTime();
-    }
-
-    [RelayCommand]
-    private async Task DeleteRecordAsync(TimeRecordDisplay record)
-    {
-        await _timeRecordRepository.DeleteAsync(record.Id);
-        var index = _allRecords.FindIndex(r => r.Id == record.Id);
-        if (index >= 0) _allRecords.RemoveAt(index);
-        ApplyFilters();
-        CalculateTodayWorkedTime();
+        _navigationService.Navigate<TimeRecordDetailPage>(record.Id);
     }
 
     [RelayCommand]
@@ -278,7 +196,7 @@ public partial class RegistresViewModel : ObservableObject
 }
 
 /// <summary>
-/// Grup de registres per dia.
+/// Group of records per day.
 /// </summary>
 public class DayGroup
 {
@@ -289,7 +207,7 @@ public class DayGroup
 }
 
 /// <summary>
-/// Model de presentació per a un registre de temps.
+/// Display model for a time record.
 /// </summary>
 public class TimeRecordDisplay
 {
@@ -303,7 +221,7 @@ public class TimeRecordDisplay
     public DateOnly Date { get; set; }
 
     /// <summary>
-    /// Retorna el color com a SolidColorBrush per facilitar el binding.
+    /// Returns the color as a SolidColorBrush to facilitate binding.
     /// </summary>
     public System.Windows.Media.SolidColorBrush ActivityColorBrush
     {
@@ -319,58 +237,5 @@ public class TimeRecordDisplay
                 return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
             }
         }
-    }
-}
-
-/// <summary>
-/// Model d'edició per a un registre de temps.
-/// </summary>
-public partial class TimeRecordEditModel : ObservableObject
-{
-    [ObservableProperty]
-    private Guid _id;
-
-    [ObservableProperty]
-    private Guid _activityId;
-
-    [ObservableProperty]
-    private DateTime _date = DateTime.Today;
-
-    [ObservableProperty]
-    private string _startTimeText = "09:00";
-
-    [ObservableProperty]
-    private string _endTimeText = "10:00";
-
-    [ObservableProperty]
-    private string _notes = string.Empty;
-
-    [ObservableProperty]
-    private string _validationError = string.Empty;
-
-    public TimeOnly? GetStartTime()
-    {
-        if (TimeOnly.TryParse(StartTimeText, out var time))
-            return time;
-        return null;
-    }
-
-    public TimeOnly? GetEndTime()
-    {
-        if (string.IsNullOrWhiteSpace(EndTimeText))
-            return null;
-        if (TimeOnly.TryParse(EndTimeText, out var time))
-            return time;
-        return null;
-    }
-
-    public void SetStartTime(TimeOnly time)
-    {
-        StartTimeText = time.ToString("HH:mm");
-    }
-
-    public void SetEndTime(TimeOnly? time)
-    {
-        EndTimeText = time?.ToString("HH:mm") ?? "";
     }
 }

@@ -1,3 +1,5 @@
+namespace TimeTracker.App;
+
 using System.Globalization;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +11,6 @@ using TimeTracker.Data.Repositories;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
-
-namespace TimeTracker.App;
 
 /// <summary>
 /// Interaction logic for App.xaml
@@ -34,14 +34,15 @@ public partial class App : Application
             dbContext.Database.Migrate();
         }
 
-        // IMPORTANT: Inicialitzar localització ABANS de crear la MainWindow
-        // Això assegura que els recursos XAML s'avaluïn amb la cultura correcta
+        // IMPORTANT: Initialize localization BEFORE creating the MainWindow
+        // This ensures that XAML resources are evaluated with the correct culture
         InitializeLocalization();
 
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         
-        // Carregar i aplicar el tema després de crear la finestra principal
-        // Això assegura que el tema del sistema es detecti correctament
+        
+        // Load and apply theme after creating the main window
+        // This ensures that the system theme is detected correctly
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
         mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
         
@@ -125,18 +126,20 @@ public partial class App : Application
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
-        services.AddTransient<RegistresViewModel>();
+        services.AddTransient<TimeRecordViewModel>();
+        services.AddTransient<TimeRecordDetailViewModel>();
         services.AddTransient<JornadaViewModel>();
-        services.AddTransient<ActivitatsViewModel>();
+        services.AddTransient<ActivitiesViewModel>();
         services.AddTransient<ActivityDetailViewModel>();
-        services.AddTransient<OpcionsViewModel>();
+        services.AddTransient<SettingsViewModel>();
 
         // Register Pages
-        services.AddTransient<RegistresPage>();
+        services.AddTransient<TimeRecordsPage>();
+        services.AddTransient<TimeRecordDetailPage>();
         services.AddTransient<JornadaPage>();
-        services.AddTransient<ActivitatsPage>();
+        services.AddTransient<ActivitiesPage>();
         services.AddTransient<ActivityDetailPage>();
-        services.AddTransient<OpcionsPage>();
+        services.AddTransient<SettingsPage>();
 
         // Register windows
         services.AddSingleton<MainWindow>();

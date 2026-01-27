@@ -1,49 +1,49 @@
+namespace TimeTracker.App.Services;
+
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
-namespace TimeTracker.App.Services;
-
 /// <summary>
-/// Interfície per al servei de navegació entre pàgines.
+/// Interface for the navigation service between pages.
 /// </summary>
 public interface INavigationService
 {
     /// <summary>
-    /// Navega a una pàgina específica.
+    /// Navigates to a specific page.
     /// </summary>
-    /// <typeparam name="T">Tipus de la pàgina.</typeparam>
+    /// <typeparam name="T">Page type.</typeparam>
     void Navigate<T>() where T : Page;
 
     /// <summary>
-    /// Navega a una pàgina específica amb paràmetres.
+    /// Navigates to a specific page with parameters.
     /// </summary>
-    /// <typeparam name="T">Tipus de la pàgina.</typeparam>
-    /// <param name="parameter">Paràmetre a passar a la pàgina.</param>
+    /// <typeparam name="T">Page type.</typeparam>
+    /// <param name="parameter">Parameter to pass to the page.</param>
     void Navigate<T>(object? parameter) where T : Page;
 
     /// <summary>
-    /// Navega enrere a la pàgina anterior.
+    /// Navigates back to the previous page.
     /// </summary>
     void GoBack();
 
     /// <summary>
-    /// Indica si es pot navegar enrere.
+    /// Indicates if navigation back is possible.
     /// </summary>
     bool CanGoBack { get; }
 
     /// <summary>
-    /// Obté o estableix el paràmetre de navegació actual.
+    /// Gets or sets the current navigation parameter.
     /// </summary>
     object? CurrentParameter { get; }
 
     /// <summary>
-    /// Estableix el NavigationView per gestionar la navegació.
+    /// Sets the NavigationView to manage navigation.
     /// </summary>
     void SetNavigationView(NavigationView navigationView);
 }
 
 /// <summary>
-/// Implementació del servei de navegació.
+/// Implementation of the navigation service.
 /// </summary>
 public class NavigationService : INavigationService
 {
@@ -73,7 +73,7 @@ public class NavigationService : INavigationService
     {
         if (_navigationView == null) return;
 
-        // Guardar la pàgina actual a la pila si existeix
+        // Save the current page to the stack if it exists
         var currentPage = GetCurrentPageType();
         if (currentPage != null && currentPage != typeof(T))
         {
@@ -96,7 +96,7 @@ public class NavigationService : INavigationService
 
     private Type? GetCurrentPageType()
     {
-        // Obtenir el tipus de la pàgina actual del NavigationView
+        // Get the current page type from the NavigationView
         if (_navigationView?.SelectedItem is NavigationViewItem item && item.TargetPageType != null)
         {
             return item.TargetPageType;

@@ -1,48 +1,48 @@
 namespace TimeTracker.App.ViewModels;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Representa una opció de tema per al dropdown.
+/// Represents a theme option for the dropdown.
 /// </summary>
 public class ThemeOption
 {
     /// <summary>
-    /// Valor del tema.
+    /// Theme value.
     /// </summary>
     public Theme Value { get; set; }
 
     /// <summary>
-    /// Nom per mostrar a la UI.
+    /// Name to display in the UI.
     /// </summary>
     public string DisplayName { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// Representa una opció d'idioma per al dropdown.
+/// Represents a language option for the dropdown.
 /// </summary>
 public class LanguageOption
 {
     /// <summary>
-    /// Codi de cultura (null per sistema).
+    /// Culture code (null for system).
     /// </summary>
     public string? Value { get; set; }
 
     /// <summary>
-    /// Nom per mostrar a la UI.
+    /// Name to display in the UI.
     /// </summary>
     public string DisplayName { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// ViewModel per a la pàgina d'opcions i configuració.
+/// ViewModel for the settings and configuration page.
 /// </summary>
-public partial class OpcionsViewModel : ObservableObject, IDisposable
+public partial class SettingsViewModel : ObservableObject, IDisposable
 {
     private readonly ISettingsRepository _settingsRepository;
     private readonly IThemeService _themeService;
@@ -51,7 +51,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _languageSaveCts;
     private CancellationTokenSource? _themeSaveCts;
 
-    public OpcionsViewModel(
+    public SettingsViewModel(
         ISettingsRepository settingsRepository,
         IThemeService themeService,
         ILocalizationService localizationService)
@@ -59,8 +59,9 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
         _settingsRepository = settingsRepository;
         _themeService = themeService;
         _localizationService = localizationService;
-        
-        // Inicialitzar opcions de tema
+
+
+        // Initialize theme options
         ThemeOptions =
         [
             new ThemeOption { Value = Theme.System, DisplayName = Resources.Resources.RadioButton_SystemTheme },
@@ -68,7 +69,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
             new ThemeOption { Value = Theme.Light, DisplayName = Resources.Resources.RadioButton_LightTheme }
         ];
 
-        // Inicialitzar opcions d'idioma
+        // Initialize language options
         LanguageOptions =
         [
             new LanguageOption { Value = null, DisplayName = Resources.Resources.RadioButton_SystemLanguage },
@@ -76,7 +77,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
             new LanguageOption { Value = "ca-ES", DisplayName = Resources.Resources.RadioButton_Catalan }
         ];
 
-        // Valors per defecte
+        // Default values
         _selectedTheme = ThemeOptions[0];
         _selectedLanguage = LanguageOptions[0];
         NotificationsEnabled = false;
@@ -87,47 +88,47 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     #region Observable Properties
 
     /// <summary>
-    /// Opcions de tema disponibles.
+    /// Available theme options.
     /// </summary>
     public ObservableCollection<ThemeOption> ThemeOptions { get; }
 
     /// <summary>
-    /// Opcions d'idioma disponibles.
+    /// Available language options.
     /// </summary>
     public ObservableCollection<LanguageOption> LanguageOptions { get; }
 
     /// <summary>
-    /// Tema seleccionat.
+    /// Selected theme.
     /// </summary>
     [ObservableProperty]
     private ThemeOption _selectedTheme;
 
     /// <summary>
-    /// Idioma seleccionat.
+    /// Selected language.
     /// </summary>
     [ObservableProperty]
     private LanguageOption _selectedLanguage;
 
     /// <summary>
-    /// Indica si les notificacions estan activades.
+    /// Indicates if notifications are enabled.
     /// </summary>
     [ObservableProperty]
     private bool _notificationsEnabled;
 
     /// <summary>
-    /// Hores de la jornada laboral total.
+    /// Hours of the total workday.
     /// </summary>
     [ObservableProperty]
     private int _workdayHours;
 
     /// <summary>
-    /// Minuts de la jornada laboral total.
+    /// Minutes of the total workday.
     /// </summary>
     [ObservableProperty]
     private int _workdayMinutes;
 
     /// <summary>
-    /// Versió de l'aplicació.
+    /// Application version.
     /// </summary>
     [ObservableProperty]
     private string _appVersion = string.Empty;
@@ -137,7 +138,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     #region Property Changed Handlers
 
     /// <summary>
-    /// S'executa quan canvia el tema seleccionat.
+    /// Executes when the selected theme changes.
     /// </summary>
     partial void OnSelectedThemeChanged(ThemeOption value)
     {
@@ -150,7 +151,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// S'executa quan canvia l'idioma seleccionat.
+    /// Executes when the selected language changes.
     /// </summary>
     partial void OnSelectedLanguageChanged(LanguageOption value)
     {
@@ -167,7 +168,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     #region Commands
 
     /// <summary>
-    /// Carrega les dades inicials.
+    /// Loads initial data.
     /// </summary>
     [RelayCommand]
     private async Task LoadDataAsync()
@@ -177,7 +178,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Activa o desactiva les notificacions.
+    /// Enables or disables notifications.
     /// </summary>
     [RelayCommand]
     private async Task ToggleNotificationsAsync()
@@ -186,18 +187,18 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Desa el temps total de la jornada.
+    /// Saves the total workday time.
     /// </summary>
     [RelayCommand]
     private async Task SaveWorkdayTimeAsync()
     {
-        // Validar que les hores i minuts són vàlids
+        // Validate that hours and minutes are valid
         if (WorkdayHours < 0 || WorkdayHours > 23)
         {
             WorkdayHours = 8;
         }
-        
-        if (WorkdayMinutes < 0 || WorkdayMinutes > 59)
+
+        if (WorkdayMinutes is < 0 or > 59)
         {
             WorkdayMinutes = 0;
         }
@@ -211,28 +212,28 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     #region Private Methods
 
     /// <summary>
-    /// Carrega la configuració des de la base de dades.
+    /// Loads configuration from the database.
     /// </summary>
     private async Task LoadSettingsAsync()
     {
         _currentSettings = await _settingsRepository.GetAsync();
 
-        // Actualitzar el tema seleccionat
+        // Update selected theme
         SelectedTheme = ThemeOptions.FirstOrDefault(t => t.Value == _currentSettings.Theme) ?? ThemeOptions[0];
 
-        // Actualitzar l'idioma seleccionat
+        // Update selected language
         SelectedLanguage = LanguageOptions.FirstOrDefault(l => l.Value == _currentSettings.Language) ?? LanguageOptions[0];
 
-        // Actualitzar notificacions
+        // Update notifications
         NotificationsEnabled = _currentSettings.Notifications;
 
-        // Actualitzar temps de jornada
+        // Update workday time
         WorkdayHours = _currentSettings.WorkdayTotalTime.Hours;
         WorkdayMinutes = _currentSettings.WorkdayTotalTime.Minutes;
     }
 
     /// <summary>
-    /// Desa el tema seleccionat.
+    /// Saves the selected theme.
     /// </summary>
     private async Task SaveThemeAsync(Theme theme, CancellationToken cancellationToken = default)
     {
@@ -243,26 +244,26 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
 
         try
         {
-            // Comprovar si l'operació ha estat cancel·lada abans de desar
+            // Check if the operation has been canceled before saving
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             _currentSettings.Theme = theme;
             await _settingsRepository.UpdateAsync(_currentSettings);
-            
-            // Comprovar si l'operació ha estat cancel·lada abans d'aplicar el tema
+
+            // Check if the operation has been canceled before applying the theme
             cancellationToken.ThrowIfCancellationRequested();
-            
-            // Aplicar el tema immediatament
+
+            // Apply the theme immediately
             _themeService.ApplyTheme(theme);
         }
         catch (OperationCanceledException)
         {
-            // L'operació ha estat cancel·lada, no fer res
+            // The operation has been canceled, do nothing
         }
     }
 
     /// <summary>
-    /// Desa la configuració de notificacions.
+    /// Saves the notifications configuration.
     /// </summary>
     private async Task SaveNotificationsAsync(bool enabled)
     {
@@ -276,7 +277,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Desa el temps total de la jornada.
+    /// Saves the total workday time.
     /// </summary>
     private async Task SaveWorkdayTotalTimeAsync(TimeSpan totalTime)
     {
@@ -290,10 +291,10 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Desa l'idioma seleccionat i l'aplica immediatament.
+    /// Saves the selected language and applies it immediately.
     /// </summary>
-    /// <param name="language">Codi de cultura (es-ES, ca-ES) o null per sistema.</param>
-    /// <param name="cancellationToken">Token per cancel·lar l'operació.</param>
+    /// <param name="language">Culture code (es-ES, ca-ES) or null for system.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
     private async Task SaveLanguageAsync(string? language, CancellationToken cancellationToken = default)
     {
         if (_currentSettings == null)
@@ -303,26 +304,26 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
 
         try
         {
-            // Comprovar si l'operació ha estat cancel·lada abans de desar
+            // Check if the operation has been canceled before saving
             cancellationToken.ThrowIfCancellationRequested();
-            
+
             _currentSettings.Language = language;
             await _settingsRepository.UpdateAsync(_currentSettings);
-            
-            // Comprovar si l'operació ha estat cancel·lada abans d'aplicar l'idioma
+
+            // Check if the operation has been canceled before applying the language
             cancellationToken.ThrowIfCancellationRequested();
-            
-            // Aplicar l'idioma immediatament
+
+            // Apply the language immediately
             _localizationService.SetCulture(language);
         }
         catch (OperationCanceledException)
         {
-            // L'operació ha estat cancel·lada, no fer res
+            // The operation has been canceled, do nothing
         }
     }
 
     /// <summary>
-    /// Carrega la versió de l'aplicació.
+    /// Loads the application version.
     /// </summary>
     private void LoadAppVersion()
     {
@@ -338,9 +339,9 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Reinicia un CancellationTokenSource, cancel·lant i disposant l'anterior.
+    /// Resets a CancellationTokenSource, canceling and disposing the previous one.
     /// </summary>
-    /// <param name="cts">Referència al CancellationTokenSource a reiniciar.</param>
+    /// <param name="cts">Reference to the CancellationTokenSource to reset.</param>
     private static void ResetCancellationTokenSource(ref CancellationTokenSource? cts)
     {
         cts?.Cancel();
@@ -377,7 +378,7 @@ public partial class OpcionsViewModel : ObservableObject, IDisposable
                 _languageSaveCts?.Cancel();
                 _languageSaveCts?.Dispose();
                 _languageSaveCts = null;
-                
+
                 _themeSaveCts?.Cancel();
                 _themeSaveCts?.Dispose();
                 _themeSaveCts = null;

@@ -1,0 +1,195 @@
+<Page x:Class="TimeTracker.App.Views.Pages.TimeRecordsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
+    xmlns:local="clr-namespace:TimeTracker.App.Markup"
+    xmlns:behaviors="clr-namespace:TimeTracker.App.Behaviors"
+    d:DataContext="{d:DesignInstance vm:TimeRecordViewModel}"
+    mc:Ignorable="d"
+    d:DesignHeight="600" d:DesignWidth="900"
+    Title="Registres"
+    ScrollViewer.CanContentScroll="False"
+    Loaded="Page_Loaded">
+
+    <!-- Main Content -->
+    <Grid Margin="42,12,22,12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Filters -->
+        <Grid Grid.Row="1" Margin="0,0,20,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ui:TextBox Grid.Column="0"
+                            PlaceholderText="{local:Localize Filter_SearchByActivityOrNotes}"
+                            Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Height="34"
+                            VerticalContentAlignment="Center"
+                            Margin="0,0,0,0">
+                <ui:TextBox.Icon>
+                    <ui:SymbolIcon Symbol="Search24" />
+                </ui:TextBox.Icon>
+            </ui:TextBox>
+
+            <ComboBox Grid.Column="1"
+                      IsEditable="False"
+                      Width="200"
+                      Height="34"
+                      VerticalContentAlignment="Center"
+                      ItemsSource="{Binding Activities}"
+                      SelectedItem="{Binding SelectedActivityFilter}"
+                      DisplayMemberPath="Name"
+                      Margin="12,0,0,0">
+                <ComboBox.Style>
+                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                        <Setter Property="Tag" Value="{local:Localize Filter_AllActivities}" />
+                    </Style>
+                </ComboBox.Style>
+            </ComboBox>
+
+            <DatePicker Grid.Column="2"
+                        Width="150"
+                        Height="34"
+                        VerticalContentAlignment="Center"
+                        Margin="12,0,0,0"
+                        SelectedDateFormat="Short"
+                        SelectedDate="{Binding SelectedDate}" />
+
+            <ui:Button Grid.Column="3"
+                       Appearance="Primary"
+                       Command="{Binding NavigateToNewRecordCommand}"
+                       Height="34"
+                       Margin="48,0,0,0"
+                       Padding="16,6"
+                       HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
+                    <TextBlock Text="{local:Localize Button_NewRecord}" />
+                </StackPanel>
+            </ui:Button>
+        </Grid>
+
+        <!-- Records List -->
+        <ScrollViewer Grid.Row="2"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled" >
+             
+            <ItemsControl ItemsSource="{Binding GroupedRecords}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="0,0,20,24">
+                            <!-- Day Header (separador amb label de data) -->
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                               Text="{Binding DateDisplay}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="1"
+                                               Text="{Binding TotalWorked}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </Grid>
+
+                            <!-- Records for this day -->
+                            <ItemsControl ItemsSource="{Binding Records}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ui:CardAction Command="{Binding DataContext.NavigateToRecordCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                       CommandParameter="{Binding}"
+                                                       behaviors:ScrollParentBehavior.BubbleScroll="True"
+                                                       Margin="0,0,0,4"
+                                                       Padding="16,12">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Activity Color Indicator -->
+                                                <Ellipse Grid.Column="0"
+                                                             Width="12"
+                                                             Height="12"
+                                                             Margin="0,0,16,0"
+                                                             VerticalAlignment="Center"
+                                                             Fill="{Binding ActivityColor, Converter={StaticResource StringToBrushConverter}}" />
+
+                                                <!-- Activity Info -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding ActivityName}"
+                                                                   FontWeight="SemiBold"
+                                                                   FontSize="14" />
+                                                    <TextBlock Text="{Binding Notes}"
+                                                                   FontSize="12"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   MaxWidth="400"
+                                                                   Visibility="{Binding Notes, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}" />
+                                                </StackPanel>
+
+                                                <!-- Time Info -->
+                                                <StackPanel Grid.Column="2"
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Right"
+                                                                Margin="0,0,0,0">
+                                                    <TextBlock Text="{Binding Duration}"
+                                                                   FontWeight="SemiBold"
+                                                                   FontSize="14"
+                                                                   HorizontalAlignment="Right" />
+                                                    <TextBlock FontSize="12"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                                   HorizontalAlignment="Right">
+                                                            <Run Text="{Binding StartTime}" />
+                                                            <Run Text=" - " />
+                                                            <Run Text="{Binding EndTime}" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+                                        </ui:CardAction>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Empty State -->
+        <StackPanel Grid.Row="2"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Visibility="{Binding GroupedRecords.Count, Converter={StaticResource CountToVisibilityConverter}, FallbackValue=Collapsed}">
+            <ui:SymbolIcon Symbol="Document24"
+                               FontSize="48"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Margin="0,0,0,16" />
+            <TextBlock Text="{local:Localize Empty_NoRecords}"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,4" />
+            <TextBlock Text="{local:Localize Empty_CreateFirstRecord}"
+                           FontSize="14"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           HorizontalAlignment="Center" />
+        </StackPanel>
+    </Grid>
+</Page>

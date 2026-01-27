@@ -1,3 +1,5 @@
+namespace TimeTracker.App.Views.Pages;
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -5,22 +7,20 @@ using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using Wpf.Ui.Controls;
 
-namespace TimeTracker.App.Views.Pages;
-
 /// <summary>
-/// Detail page to edit or create an activity.
+/// Detail page to edit or create a time record.
 /// </summary>
-public partial class ActivityDetailPage : Page
+public partial class TimeRecordDetailPage : Page
 {
-    private readonly ActivityDetailViewModel _viewModel;
+    private readonly TimeRecordDetailViewModel _viewModel;
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
     private ContentDialog? _deleteDialog;
     private bool _isDeleteDialogVisible;
     private bool _isSubscribedToChanges;
 
-    public ActivityDetailPage(
-        ActivityDetailViewModel viewModel,
+    public TimeRecordDetailPage(
+        TimeRecordDetailViewModel viewModel,
         INavigationService navigationService,
         IDialogService dialogService)
     {
@@ -39,9 +39,9 @@ public partial class ActivityDetailPage : Page
             _isSubscribedToChanges = true;
         }
 
-        // Obtenir el paràmetre de navegació (l'ID de l'activitat)
-        var activityId = _navigationService.CurrentParameter as Guid?;
-        await _viewModel.InitializeAsync(activityId);
+        // Obtenir el paràmetre de navegació (l'ID del registre)
+        var recordId = _navigationService.CurrentParameter as Guid?;
+        await _viewModel.InitializeAsync(recordId);
     }
 
     private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -58,7 +58,7 @@ public partial class ActivityDetailPage : Page
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(ActivityDetailViewModel.IsDeleteConfirmationOpen))
+        if (e.PropertyName == nameof(TimeRecordDetailViewModel.IsDeleteConfirmationOpen))
         {
             if (_viewModel.IsDeleteConfirmationOpen)
             {
@@ -75,7 +75,7 @@ public partial class ActivityDetailPage : Page
     {
         if (_deleteDialog == null)
         {
-            _deleteDialog = CreateDialog("DeleteActivityDialogTemplate");
+            _deleteDialog = CreateDialog("DeleteRecordDialogTemplate");
             _deleteDialog.Closed += OnDeleteDialogClosed;
         }
 

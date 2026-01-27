@@ -4,8 +4,8 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del servei per a la validació de registres i franges de treball.
-/// Nota: Els missatges d'error s'hauran de traduir a través del servei de localització.
+/// Implementation of the service for validating records and workday slots.
+/// Note: Error messages should be translated through the localization service.
 /// </summary>
 public class ValidationService : IValidationService
 {
@@ -24,7 +24,7 @@ public class ValidationService : IValidationService
             return true;
         }
 
-        // Clau de recursos: Validation_EndTimeAfterStartTime
+        // Resource key: Validation_EndTimeAfterStartTime
         errorMessage = "Validation_EndTimeAfterStartTime";
         return false;
     }
@@ -40,7 +40,7 @@ public class ValidationService : IValidationService
     {
         errorMessage = string.Empty;
 
-        // Si el registre no té hora de fi, no es pot validar solapament
+        // If the record has no end time, overlap cannot be validated
         if (!record.EndTime.HasValue)
         {
             return true;
@@ -48,28 +48,28 @@ public class ValidationService : IValidationService
 
         foreach (var existing in existingRecords)
         {
-            // No validar contra el mateix registre
+            // Do not validate against the same record
             if (existing.Id == record.Id)
             {
                 continue;
             }
 
-            // Si el registre existent no té hora de fi, no es pot validar solapament
+            // If the existing record has no end time, overlap cannot be validated
             if (!existing.EndTime.HasValue)
             {
                 continue;
             }
 
-            // Comprovar si hi ha solapament
-            // Solapament si:
-            // - L'inici del nou registre està entre l'inici i fi d'un existent
-            // - La fi del nou registre està entre l'inici i fi d'un existent
-            // - El nou registre envolta completament un existent
+            // Check if there is overlap
+            // Overlap if:
+            // - The start of the new record is between the start and end of an existing one
+            // - The end of the new record is between the start and end of an existing one
+            // - The new record completely surrounds an existing one
             if ((record.StartTime >= existing.StartTime && record.StartTime < existing.EndTime.Value) ||
                 (record.EndTime.Value > existing.StartTime && record.EndTime.Value <= existing.EndTime.Value) ||
                 (record.StartTime <= existing.StartTime && record.EndTime.Value >= existing.EndTime.Value))
             {
-                // Clau de recursos: Validation_OverlappingRecord (amb format de 2 arguments: startTime, endTime)
+                // Resource key: Validation_OverlappingRecord (with format of 2 arguments: startTime, endTime)
                 errorMessage = $"Validation_OverlappingRecord|{existing.StartTime:HH\\:mm}|{existing.EndTime.Value:HH\\:mm}";
                 return false;
             }
@@ -91,22 +91,22 @@ public class ValidationService : IValidationService
 
         foreach (var existing in existingSlots)
         {
-            // No validar contra la mateixa franja
+            // Do not validate against the same slot
             if (existing.Id == slot.Id)
             {
                 continue;
             }
 
-            // Comprovar si hi ha solapament
-            // Solapament si:
-            // - L'inici de la nova franja està entre l'inici i fi d'una existent
-            // - La fi de la nova franja està entre l'inici i fi d'una existent
-            // - La nova franja envolta completament una existent
+            // Check if there is overlap
+            // Overlap if:
+            // - The start of the new slot is between the start and end of an existing one
+            // - The end of the new slot is between the start and end of an existing one
+            // - The new slot completely surrounds an existing one
             if ((slot.StartTime >= existing.StartTime && slot.StartTime < existing.EndTime) ||
                 (slot.EndTime > existing.StartTime && slot.EndTime <= existing.EndTime) ||
                 (slot.StartTime <= existing.StartTime && slot.EndTime >= existing.EndTime))
             {
-                // Clau de recursos: Validation_OverlappingSlot (amb format de 2 arguments: startTime, endTime)
+                // Resource key: Validation_OverlappingSlot (with format of 2 arguments: startTime, endTime)
                 errorMessage = $"Validation_OverlappingSlot|{existing.StartTime:HH\\:mm}|{existing.EndTime:HH\\:mm}";
                 return false;
             }
@@ -126,13 +126,13 @@ public class ValidationService : IValidationService
     {
         errorMessage = string.Empty;
 
-        // Si no hi ha hora de fi, el registre és vàlid (pot estar en curs)
+        // If there is no end time, the record is valid (may be in progress)
         if (!record.EndTime.HasValue)
         {
             return true;
         }
 
-        // Validar que l'hora de fi sigui posterior a l'hora d'inici
+        // Validate that end time is after start time
         return ValidateTimeRange(record.StartTime, record.EndTime.Value, out errorMessage);
     }
 
@@ -145,7 +145,7 @@ public class ValidationService : IValidationService
     /// <inheritdoc/>
     public bool ValidateWorkdaySlot(WorkdaySlot slot, out string errorMessage)
     {
-        // Validar que l'hora de fi sigui posterior a l'hora d'inici
+        // Validate that end time is after start time
         return ValidateTimeRange(slot.StartTime, slot.EndTime, out errorMessage);
     }
 }

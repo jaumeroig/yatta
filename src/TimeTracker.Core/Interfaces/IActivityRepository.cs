@@ -3,44 +3,44 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Repositori per gestionar activitats.
+/// Repository to manage activities.
 /// </summary>
 public interface IActivityRepository
 {
     /// <summary>
-    /// Obté totes les activitats.
+    /// Gets all activities.
     /// </summary>
     Task<IEnumerable<Activity>> GetAllAsync();
 
     /// <summary>
-    /// Obté una activitat per identificador.
+    /// Gets an activity by identifier.
     /// </summary>
     Task<Activity?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Obté totes les activitats actives.
+    /// Gets all active activities.
     /// </summary>
     Task<IEnumerable<Activity>> GetActiveAsync();
 
     /// <summary>
-    /// Obté una activitat pel seu nom (cerca case-insensitive).
+    /// Gets an activity by its name (case-insensitive search).
     /// </summary>
-    /// <param name="name">Nom de l'activitat a cercar.</param>
-    /// <returns>L'activitat si existeix, null en cas contrari.</returns>
+    /// <param name="name">Name of the activity to search for.</param>
+    /// <returns>The activity if it exists, null otherwise.</returns>
     Task<Activity?> GetByNameAsync(string name);
 
     /// <summary>
-    /// Afegeix una nova activitat.
+    /// Adds a new activity.
     /// </summary>
     Task<Activity> AddAsync(Activity activity);
 
     /// <summary>
-    /// Actualitza una activitat existent.
+    /// Updates an existing activity.
     /// </summary>
     Task UpdateAsync(Activity activity);
 
     /// <summary>
-    /// Elimina una activitat.
+    /// Deletes an activity.
     /// </summary>
     Task DeleteAsync(Guid id);
 }

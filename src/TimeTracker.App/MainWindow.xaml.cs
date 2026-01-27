@@ -1,10 +1,10 @@
+namespace TimeTracker.App;
+
 using Wpf.Ui.Controls;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
 using Microsoft.Extensions.DependencyInjection;
-
-namespace TimeTracker.App;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -18,20 +18,23 @@ public partial class MainWindow : FluentWindow
         
         NavigationView.SetServiceProvider(serviceProvider);
         
-        // Configurar el NavigationService per permetre navegació programàtica
+        
+        // Configure the NavigationService to allow programmatic navigation
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
         navigationService.SetNavigationView(NavigationView);
         
-        // Configurar el BreadcrumbService amb el BreadcrumbBar global
+        
+        // Configure the BreadcrumbService with the global BreadcrumbBar
         var breadcrumbService = serviceProvider.GetRequiredService<IBreadcrumbService>();
         breadcrumbService.SetBreadcrumbBar(BreadcrumbBar);
         
-        // Navegar a la pàgina de Registres per defecte
-        Loaded += (_, _) => NavigationView.Navigate(typeof(RegistresPage));
+        
+        // Navigate to the Records page by default
+        Loaded += (_, _) => NavigationView.Navigate(typeof(TimeRecordsPage));
     }
 
     /// <summary>
-    /// Obté el ContentDialogHost global per mostrar diàlegs.
+    /// Gets the global ContentDialogHost to show dialogs.
     /// </summary>
     public ContentDialogHost DialogHost => RootContentDialogHost;
 }

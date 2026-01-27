@@ -1,14 +1,13 @@
+namespace TimeTracker.App.ViewModels;
+
 using System.Collections.ObjectModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
-namespace TimeTracker.App.ViewModels;
-
 /// <summary>
-/// ViewModel per a la gestió de la jornada laboral.
+/// ViewModel for workday management.
 /// </summary>
 public partial class JornadaViewModel : ObservableObject
 {
@@ -57,7 +56,7 @@ public partial class JornadaViewModel : ObservableObject
     [ObservableProperty]
     private string _monthTeleworkPercentage = "0%";
 
-    // Propietats pel gràfic de barres
+    // Properties for bar chart
     [ObservableProperty]
     private double _officeHoursValue;
 
@@ -70,7 +69,7 @@ public partial class JornadaViewModel : ObservableObject
     [ObservableProperty]
     private double _teleworkBarWidth;
 
-    // Dates amb registres (pel calendari)
+    // Dates with records (for calendar)
     [ObservableProperty]
     private ObservableCollection<DateTime> _datesWithRecords = [];
 
@@ -90,7 +89,7 @@ public partial class JornadaViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Carrega les dades inicials.
+    /// Loads initial data.
     /// </summary>
     public async Task LoadDataAsync()
     {
@@ -100,7 +99,7 @@ public partial class JornadaViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Carrega les dates del mes que tenen registres.
+    /// Loads the dates in the month that have records.
     /// </summary>
     private async Task LoadDatesWithRecordsAsync()
     {
@@ -135,7 +134,7 @@ public partial class JornadaViewModel : ObservableObject
                 StartTime = slot.StartTime.ToString("HH:mm"),
                 EndTime = slot.EndTime.ToString("HH:mm"),
                 Duration = FormatDuration(_timeCalculatorService.CalculateDuration(slot.StartTime, slot.EndTime)),
-                LocationText = slot.Telework 
+                LocationText = slot.Telework
                     ? Resources.Resources.Location_Telework
                     : Resources.Resources.Location_Office,
                 LocationIcon = slot.Telework ? "Home24" : "Building24",
@@ -157,7 +156,7 @@ public partial class JornadaViewModel : ObservableObject
         OfficeTime = FormatDuration(officeHours);
         TeleworkPercentage = $"{percentage:F0}%";
 
-        // Actualitzar valors pel gràfic de barres
+        // Update values for bar chart
         OfficeHoursValue = officeHours;
         TeleworkHoursValue = teleworkHours;
         UpdateBarWidths();
@@ -167,11 +166,11 @@ public partial class JornadaViewModel : ObservableObject
     {
         const double maxBarWidth = 200.0;
         var maxHours = Math.Max(OfficeHoursValue, TeleworkHoursValue);
-        
+
         if (maxHours > 0)
         {
-            OfficeBarWidth = (OfficeHoursValue / maxHours) * maxBarWidth;
-            TeleworkBarWidth = (TeleworkHoursValue / maxHours) * maxBarWidth;
+            OfficeBarWidth = OfficeHoursValue / maxHours * maxBarWidth;
+            TeleworkBarWidth = TeleworkHoursValue / maxHours * maxBarWidth;
         }
         else
         {
@@ -305,7 +304,7 @@ public partial class JornadaViewModel : ObservableObject
             return;
         }
 
-        // Validar que l'hora de fi sigui posterior a l'hora d'inici
+        // Validate that end time is after start time
         if (endTime.Value <= startTime.Value)
         {
             EditingSlot.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
@@ -321,7 +320,7 @@ public partial class JornadaViewModel : ObservableObject
             Telework = EditingSlot.Telework
         };
 
-        // Validar solapament
+        // Validate overlap
         var (isValid, errorMessage) = await _workdayService.ValidateWorkdaySlotAsync(slot);
         if (!isValid)
         {
@@ -375,7 +374,7 @@ public partial class JornadaViewModel : ObservableObject
 }
 
 /// <summary>
-/// Model de presentació per a una franja de jornada.
+/// Display model for a workday slot.
 /// </summary>
 public class WorkdaySlotDisplay
 {
@@ -389,7 +388,7 @@ public class WorkdaySlotDisplay
 }
 
 /// <summary>
-/// Model d'edició per a una franja de jornada.
+/// Edit model for a workday slot.
 /// </summary>
 public partial class WorkdaySlotEditModel : ObservableObject
 {

@@ -1,12 +1,12 @@
+namespace TimeTracker.App.Converters;
+
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace TimeTracker.App.Converters;
-
 /// <summary>
-/// Converteix un booleà a Visibility (Visible si true, Collapsed si false).
+/// Converts a boolean to Visibility (Visible if true, Collapsed if false).
 /// </summary>
 public class BooleanToVisibilityConverter : IValueConverter
 {
@@ -30,8 +30,8 @@ public class BooleanToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-/// Converteix un booleà a Visibility inversa (Collapsed si true, Visible si false).
-/// S'utilitza per mostrar indicadors quan una activitat NO està activa.
+/// Converts a boolean to inverse Visibility (Collapsed if true, Visible if false).
+/// Used to show indicators when an activity is NOT active.
 /// </summary>
 public class InverseBooleanToVisibilityConverter : IValueConverter
 {
@@ -303,7 +303,7 @@ public class SelectedColorToBorderThicknessConverter : IValueConverter
     {
         if (value is string currentColor && TargetColor != null)
         {
-            // Normalitzar els colors per comparar-los (majúscules)
+            // Normalize colors for comparison (uppercase)
             var current = currentColor.ToUpperInvariant();
             var target = TargetColor.ToUpperInvariant();
             
@@ -319,8 +319,8 @@ public class SelectedColorToBorderThicknessConverter : IValueConverter
 }
 
 /// <summary>
-/// Inverteix un valor booleà (true → false, false → true).
-/// S'utilitza per a radio buttons amb comparació inversa.
+/// Inverts a boolean value (true → false, false → true).
+/// Used for radio buttons with inverse comparison.
 /// </summary>
 public class BoolInverterConverter : IValueConverter
 {
@@ -344,8 +344,8 @@ public class BoolInverterConverter : IValueConverter
 }
 
 /// <summary>
-/// Converteix un valor double a amplada de barra (mínim 4px si hi ha valor).
-/// S'utilitza pel gràfic de barres de la jornada.
+/// Converts a double value to bar width (minimum 4px if there is a value).
+/// Used for the workday bar chart.
 /// </summary>
 public class BarWidthConverter : IValueConverter
 {
@@ -353,7 +353,7 @@ public class BarWidthConverter : IValueConverter
     {
         if (value is double width)
         {
-            // Si hi ha hores però l'amplada és 0, mostra una barra mínima
+            // If there are hours but the width is 0, show a minimum bar
             return width > 0 ? width : 0;
         }
         return 0.0;

@@ -4,7 +4,7 @@ using TimeTracker.Core.Models;
 using TimeTracker.Core.Services;
 
 /// <summary>
-/// Tests unitaris per al servei de validació.
+/// Unit tests for the validation service.
 /// </summary>
 public class ValidationServiceTests
 {
@@ -18,7 +18,7 @@ public class ValidationServiceTests
     #region ValidateTimeRange Tests
 
     /// <summary>
-    /// Verifica que ValidateTimeRange retorna true quan l'hora de fi és posterior a l'hora d'inici.
+    /// Verifies that ValidateTimeRange returns true when end time is after start time.
     /// </summary>
     [Fact]
     public void ValidateTimeRange_WhenEndTimeAfterStartTime_ShouldReturnTrue()
@@ -35,7 +35,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateTimeRange retorna false quan l'hora de fi és anterior a l'hora d'inici.
+    /// Verifies that ValidateTimeRange returns false when end time is before start time.
     /// </summary>
     [Fact]
     public void ValidateTimeRange_WhenEndTimeBeforeStartTime_ShouldReturnFalse()
@@ -52,7 +52,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateTimeRange retorna false quan l'hora de fi és igual a l'hora d'inici.
+    /// Verifies that ValidateTimeRange returns false when end time equals start time.
     /// </summary>
     [Fact]
     public void ValidateTimeRange_WhenEndTimeEqualsStartTime_ShouldReturnFalse()
@@ -69,7 +69,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateTimeRange amb out parameter retorna el missatge d'error correcte.
+    /// Verifies that ValidateTimeRange with out parameter returns the correct error message.
     /// </summary>
     [Fact]
     public void ValidateTimeRange_WhenInvalid_ShouldReturnErrorMessage()
@@ -87,7 +87,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateTimeRange amb out parameter retorna string buit quan és vàlid.
+    /// Verifies that ValidateTimeRange with out parameter returns empty string when valid.
     /// </summary>
     [Fact]
     public void ValidateTimeRange_WhenValid_ShouldReturnEmptyErrorMessage()
@@ -109,7 +109,7 @@ public class ValidationServiceTests
     #region ValidateNoOverlap TimeRecord Tests
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna true quan no hi ha registres existents.
+    /// Verifies that ValidateNoOverlap returns true when there are no existing records.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenNoExistingRecords_ShouldReturnTrue()
@@ -132,7 +132,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna true quan el registre no té hora de fi.
+    /// Verifies that ValidateNoOverlap returns true when the record has no end time.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenNoEndTime_ShouldReturnTrue()
@@ -164,7 +164,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna true quan els registres no es solapen.
+    /// Verifies that ValidateNoOverlap returns true when records do not overlap.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenNoOverlap_ShouldReturnTrue()
@@ -196,7 +196,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna false quan l'inici del nou registre solapa amb un existent.
+    /// Verifies that ValidateNoOverlap returns false when the start of the new record overlaps with an existing one.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenStartTimeOverlaps_ShouldReturnFalse()
@@ -228,7 +228,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna false quan la fi del nou registre solapa amb un existent.
+    /// Verifies that ValidateNoOverlap returns false when the end of the new record overlaps with an existing one.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenEndTimeOverlaps_ShouldReturnFalse()
@@ -260,7 +260,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna false quan el nou registre envolta completament un existent.
+    /// Verifies that ValidateNoOverlap returns false when the new record completely encompasses an existing one.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenNewRecordEncompasses_ShouldReturnFalse()
@@ -292,7 +292,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap ignora el mateix registre (per edicions).
+    /// Verifies that ValidateNoOverlap ignores the same record (for edits).
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenSameRecord_ShouldReturnTrue()

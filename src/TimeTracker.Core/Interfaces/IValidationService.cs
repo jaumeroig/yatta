@@ -3,88 +3,88 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Servei per a la validació de registres i franges de treball.
+/// Service for validation of records and work slots.
 /// </summary>
 public interface IValidationService
 {
     /// <summary>
-    /// Valida que l'hora de fi sigui posterior a l'hora d'inici.
+    /// Validates that the end time is after the start time.
     /// </summary>
-    /// <param name="startTime">Hora d'inici.</param>
-    /// <param name="endTime">Hora de fi.</param>
-    /// <returns>True si és vàlid, false en cas contrari.</returns>
+    /// <param name="startTime">Start time.</param>
+    /// <param name="endTime">End time.</param>
+    /// <returns>True if valid, false otherwise.</returns>
     bool ValidateTimeRange(TimeOnly startTime, TimeOnly endTime);
 
     /// <summary>
-    /// Valida que l'hora de fi sigui posterior a l'hora d'inici amb missatge d'error.
+    /// Validates that the end time is after the start time with error message.
     /// </summary>
-    /// <param name="startTime">Hora d'inici.</param>
-    /// <param name="endTime">Hora de fi.</param>
-    /// <param name="errorMessage">Missatge d'error si no és vàlid.</param>
-    /// <returns>True si és vàlid, false en cas contrari.</returns>
+    /// <param name="startTime">Start time.</param>
+    /// <param name="endTime">End time.</param>
+    /// <param name="errorMessage">Error message if not valid.</param>
+    /// <returns>True if valid, false otherwise.</returns>
     bool ValidateTimeRange(TimeOnly startTime, TimeOnly endTime, out string errorMessage);
 
     /// <summary>
-    /// Valida que un registre de temps no solapi amb altres registres del mateix dia.
+    /// Validates that a time record does not overlap with other records on the same day.
     /// </summary>
-    /// <param name="record">Registre a validar.</param>
-    /// <param name="existingRecords">Registres existents del mateix dia.</param>
-    /// <returns>True si no hi ha solapament, false en cas contrari.</returns>
+    /// <param name="record">Record to validate.</param>
+    /// <param name="existingRecords">Existing records on the same day.</param>
+    /// <returns>True if there is no overlap, false otherwise.</returns>
     bool ValidateNoOverlap(TimeRecord record, IEnumerable<TimeRecord> existingRecords);
 
     /// <summary>
-    /// Valida que un registre de temps no solapi amb altres registres del mateix dia amb missatge d'error.
+    /// Validates that a time record does not overlap with other records on the same day with error message.
     /// </summary>
-    /// <param name="record">Registre a validar.</param>
-    /// <param name="existingRecords">Registres existents del mateix dia.</param>
-    /// <param name="errorMessage">Missatge d'error si hi ha solapament.</param>
-    /// <returns>True si no hi ha solapament, false en cas contrari.</returns>
+    /// <param name="record">Record to validate.</param>
+    /// <param name="existingRecords">Existing records on the same day.</param>
+    /// <param name="errorMessage">Error message if there is overlap.</param>
+    /// <returns>True if there is no overlap, false otherwise.</returns>
     bool ValidateNoOverlap(TimeRecord record, IEnumerable<TimeRecord> existingRecords, out string errorMessage);
 
     /// <summary>
-    /// Valida que una franja de treball no solapi amb altres franges del mateix dia.
+    /// Validates that a work slot does not overlap with other slots on the same day.
     /// </summary>
-    /// <param name="slot">Franja a validar.</param>
-    /// <param name="existingSlots">Franges existents del mateix dia.</param>
-    /// <returns>True si no hi ha solapament, false en cas contrari.</returns>
+    /// <param name="slot">Slot to validate.</param>
+    /// <param name="existingSlots">Existing slots on the same day.</param>
+    /// <returns>True if there is no overlap, false otherwise.</returns>
     bool ValidateNoOverlap(WorkdaySlot slot, IEnumerable<WorkdaySlot> existingSlots);
 
     /// <summary>
-    /// Valida que una franja de treball no solapi amb altres franges del mateix dia amb missatge d'error.
+    /// Validates that a work slot does not overlap with other slots on the same day with error message.
     /// </summary>
-    /// <param name="slot">Franja a validar.</param>
-    /// <param name="existingSlots">Franges existents del mateix dia.</param>
-    /// <param name="errorMessage">Missatge d'error si hi ha solapament.</param>
-    /// <returns>True si no hi ha solapament, false en cas contrari.</returns>
+    /// <param name="slot">Slot to validate.</param>
+    /// <param name="existingSlots">Existing slots on the same day.</param>
+    /// <param name="errorMessage">Error message if there is overlap.</param>
+    /// <returns>True if there is no overlap, false otherwise.</returns>
     bool ValidateNoOverlap(WorkdaySlot slot, IEnumerable<WorkdaySlot> existingSlots, out string errorMessage);
 
     /// <summary>
-    /// Valida si un registre de temps és vàlid (hora de fi posterior a hora d'inici).
+    /// Validates if a time record is valid (end time after start time).
     /// </summary>
-    /// <param name="record">Registre a validar.</param>
-    /// <returns>True si és vàlid, false en cas contrari.</returns>
+    /// <param name="record">Record to validate.</param>
+    /// <returns>True if valid, false otherwise.</returns>
     bool ValidateTimeRecord(TimeRecord record);
 
     /// <summary>
-    /// Valida si un registre de temps és vàlid amb missatge d'error.
+    /// Validates if a time record is valid with error message.
     /// </summary>
-    /// <param name="record">Registre a validar.</param>
-    /// <param name="errorMessage">Missatge d'error si no és vàlid.</param>
-    /// <returns>True si és vàlid, false en cas contrari.</returns>
+    /// <param name="record">Record to validate.</param>
+    /// <param name="errorMessage">Error message if not valid.</param>
+    /// <returns>True if valid, false otherwise.</returns>
     bool ValidateTimeRecord(TimeRecord record, out string errorMessage);
 
     /// <summary>
-    /// Valida si una franja de treball és vàlida (hora de fi posterior a hora d'inici).
+    /// Validates if a work slot is valid (end time after start time).
     /// </summary>
-    /// <param name="slot">Franja a validar.</param>
-    /// <returns>True si és vàlid, false en cas contrari.</returns>
+    /// <param name="slot">Slot to validate.</param>
+    /// <returns>True if valid, false otherwise.</returns>
     bool ValidateWorkdaySlot(WorkdaySlot slot);
 
     /// <summary>
-    /// Valida si una franja de treball és vàlida amb missatge d'error.
+    /// Validates if a work slot is valid with error message.
     /// </summary>
-    /// <param name="slot">Franja a validar.</param>
-    /// <param name="errorMessage">Missatge d'error si no és vàlid.</param>
-    /// <returns>True si és vàlid, false en cas contrari.</returns>
+    /// <param name="slot">Slot to validate.</param>
+    /// <param name="errorMessage">Error message if not valid.</param>
+    /// <returns>True if valid, false otherwise.</returns>
     bool ValidateWorkdaySlot(WorkdaySlot slot, out string errorMessage);
 }

@@ -5,7 +5,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementació del repositori de configuració.
+/// Implementation of the configuration repository.
 /// </summary>
 public class SettingsRepository : ISettingsRepository
 {

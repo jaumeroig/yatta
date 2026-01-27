@@ -1,19 +1,20 @@
+namespace TimeTracker.App.Views.Pages;
+
 using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 
-namespace TimeTracker.App.Views.Pages;
 
 /// <summary>
-/// Pàgina d'opcions i configuració de l'aplicació.
+/// Settings and configuration page.
 /// </summary>
-public partial class OpcionsPage : Page
+public partial class SettingsPage : Page
 {
-    private readonly OpcionsViewModel _viewModel;
+    private readonly SettingsViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
 
-    public OpcionsPage(OpcionsViewModel viewModel, IBreadcrumbService breadcrumbService)
+    public SettingsPage(SettingsViewModel viewModel, IBreadcrumbService breadcrumbService)
     {
         InitializeComponent();
         DataContext = viewModel;
@@ -22,11 +23,11 @@ public partial class OpcionsPage : Page
     }
 
     /// <summary>
-    /// Event que es crida quan es carrega la pàgina.
+    /// Event that is called when the page is loaded.
     /// </summary>
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        // Configurar el breadcrumb amb el títol de la pàgina
+        // Configure the breadcrumb with the page title
         _breadcrumbService.SetItems(
             TimeTracker.App.Resources.Resources.Page_Settings_Title
         );

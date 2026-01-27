@@ -1,20 +1,19 @@
+namespace TimeTracker.App.Views.Pages;
+
 using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 
-namespace TimeTracker.App.Views.Pages;
-
 /// <summary>
-/// Pàgina de gestió d'activitats.
-/// Mostra una llista d'activitats amb navegació a la pàgina de detall.
+/// Page for time records management.
 /// </summary>
-public partial class ActivitatsPage : Page
+public partial class TimeRecordsPage : Page
 {
-    private readonly ActivitatsViewModel _viewModel;
+    private readonly TimeRecordViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
 
-    public ActivitatsPage(ActivitatsViewModel viewModel, IBreadcrumbService breadcrumbService)
+    public TimeRecordsPage(TimeRecordViewModel viewModel, IBreadcrumbService breadcrumbService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
@@ -24,11 +23,11 @@ public partial class ActivitatsPage : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        // Configurar el breadcrumb amb el títol de la pàgina
+        // Configure the breadcrumb with the page title
         _breadcrumbService.SetItems(
-            TimeTracker.App.Resources.Resources.Page_Activities_Title
+            TimeTracker.App.Resources.Resources.Nav_Records
         );
-        
+
         await _viewModel.LoadDataAsync();
     }
 }

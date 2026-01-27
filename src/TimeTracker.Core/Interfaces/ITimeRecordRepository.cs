@@ -3,47 +3,47 @@ namespace TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Repositori per gestionar registres de temps.
+/// Repository to manage time records.
 /// </summary>
 public interface ITimeRecordRepository
 {
     /// <summary>
-    /// Obté tots els registres de temps.
+    /// Gets all time records.
     /// </summary>
     Task<IEnumerable<TimeRecord>> GetAllAsync();
 
     /// <summary>
-    /// Obté un registre de temps per identificador.
+    /// Gets a time record by identifier.
     /// </summary>
     Task<TimeRecord?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Obté els registres de temps d'una data específica.
+    /// Gets time records for a specific date.
     /// </summary>
     Task<IEnumerable<TimeRecord>> GetByDateAsync(DateOnly date);
 
     /// <summary>
-    /// Obté els registres de temps d'un rang de dates.
+    /// Gets time records for a date range.
     /// </summary>
     Task<IEnumerable<TimeRecord>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate);
 
     /// <summary>
-    /// Obté els registres de temps d'una activitat específica.
+    /// Gets time records for a specific activity.
     /// </summary>
     Task<IEnumerable<TimeRecord>> GetByActivityIdAsync(Guid activityId);
 
     /// <summary>
-    /// Afegeix un nou registre de temps.
+    /// Adds a new time record.
     /// </summary>
     Task<TimeRecord> AddAsync(TimeRecord timeRecord);
 
     /// <summary>
-    /// Actualitza un registre de temps existent.
+    /// Updates an existing time record.
     /// </summary>
     Task UpdateAsync(TimeRecord timeRecord);
 
     /// <summary>
-    /// Elimina un registre de temps.
+    /// Deletes a time record.
     /// </summary>
     Task DeleteAsync(Guid id);
 }

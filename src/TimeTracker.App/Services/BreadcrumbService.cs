@@ -1,28 +1,29 @@
+namespace TimeTracker.App.Services;
+
 using System.Collections.ObjectModel;
 using Wpf.Ui.Controls;
 
-namespace TimeTracker.App.Services;
 
 /// <summary>
-/// Representa un element del breadcrumb per a la navegació.
+/// Represents a breadcrumb item for navigation.
 /// </summary>
 public class BreadcrumbItem
 {
     /// <summary>
-    /// Text a mostrar al breadcrumb.
+    /// Text to display in the breadcrumb.
     /// </summary>
     public string Label { get; set; } = string.Empty;
 
     /// <summary>
-    /// Acció a executar quan es fa clic a l'element.
+    /// Action to execute when the item is clicked.
     /// </summary>
     public Action? ClickAction { get; set; }
 
     /// <summary>
-    /// Crea un nou element de breadcrumb.
+    /// Creates a new breadcrumb item.
     /// </summary>
-    /// <param name="label">Text a mostrar.</param>
-    /// <param name="clickAction">Acció opcional al fer clic.</param>
+    /// <param name="label">Text to display.</param>
+    /// <param name="clickAction">Optional action when clicked.</param>
     public BreadcrumbItem(string label, Action? clickAction = null)
     {
         Label = label;
@@ -34,47 +35,47 @@ public class BreadcrumbItem
 }
 
 /// <summary>
-/// Interfície per al servei de gestió del breadcrumb.
+/// Interface for the breadcrumb management service.
 /// </summary>
 public interface IBreadcrumbService
 {
     /// <summary>
-    /// Col·lecció d'elements del breadcrumb (strings per mostrar).
+    /// Collection of breadcrumb items (strings to display).
     /// </summary>
     ObservableCollection<string> Items { get; }
 
     /// <summary>
-    /// Estableix el BreadcrumbBar a gestionar.
+    /// Sets the BreadcrumbBar to manage.
     /// </summary>
-    /// <param name="breadcrumbBar">El control BreadcrumbBar.</param>
+    /// <param name="breadcrumbBar">The BreadcrumbBar control.</param>
     void SetBreadcrumbBar(BreadcrumbBar breadcrumbBar);
 
     /// <summary>
-    /// Estableix un únic element al breadcrumb (per a pàgines principals).
+    /// Sets a single item in the breadcrumb (for main pages).
     /// </summary>
-    /// <param name="pageTitle">Títol de la pàgina.</param>
+    /// <param name="pageTitle">Page title.</param>
     void SetItems(string pageTitle);
 
     /// <summary>
-    /// Estableix els elements del breadcrumb.
+    /// Sets the breadcrumb items.
     /// </summary>
-    /// <param name="items">Elements a mostrar.</param>
+    /// <param name="items">Items to display.</param>
     void SetItems(params BreadcrumbItem[] items);
 
     /// <summary>
-    /// Neteja el breadcrumb (amaga'l o mostra només l'element arrel).
+    /// Clears the breadcrumb (hides it or shows only the root item).
     /// </summary>
     void Clear();
 
     /// <summary>
-    /// Gestiona el clic en un element del breadcrumb.
+    /// Handles clicks on a breadcrumb item.
     /// </summary>
-    /// <param name="index">Índex de l'element clicat.</param>
+    /// <param name="index">Index of the clicked item.</param>
     void HandleItemClicked(int index);
 }
 
 /// <summary>
-/// Implementació del servei de gestió del breadcrumb.
+/// Implementation of the breadcrumb management service.
 /// </summary>
 public class BreadcrumbService : IBreadcrumbService
 {

@@ -1,27 +1,27 @@
 namespace TimeTracker.Core.Models;
 
 /// <summary>
-/// Defineix les diferents activitats que es poden registrar al time tracker.
+/// Defines the different activities that can be recorded in the time tracker.
 /// </summary>
 public class Activity
 {
     /// <summary>
-    /// Identificador únic de l'activitat.
+    /// Unique identifier of the activity.
     /// </summary>
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Nom de l'activitat.
+    /// Name of the activity.
     /// </summary>
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Color associat a l'activitat.
+    /// Color associated with the activity.
     /// </summary>
     public string Color { get; set; } = string.Empty;
 
     /// <summary>
-    /// Indica si l'activitat està activa.
+    /// Indicates if the activity is active.
     /// </summary>
     public bool Active { get; set; } = true;
 }

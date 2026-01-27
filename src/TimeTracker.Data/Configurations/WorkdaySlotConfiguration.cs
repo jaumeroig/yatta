@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Configuració de l'entitat WorkdaySlot per Entity Framework.
+/// Configuration of the WorkdaySlot entity for Entity Framework.
 /// </summary>
 public class WorkdaySlotConfiguration : IEntityTypeConfiguration<WorkdaySlot>
 {
