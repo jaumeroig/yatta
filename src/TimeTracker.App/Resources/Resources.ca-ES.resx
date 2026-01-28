@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -31,7 +90,7 @@
               <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" use="default" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -58,8 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  
-  <!-- MainWindow -->
+	
   <data name="Window_Title" xml:space="preserve">
     <value>TimeTracker</value>
   </data>
@@ -81,8 +139,7 @@
   <data name="Nav_Settings" xml:space="preserve">
     <value>Opcions</value>
   </data>
-  
-  <!-- Activities Page -->
+	
   <data name="Page_Activities_Title" xml:space="preserve">
     <value>Activitats</value>
   </data>
@@ -149,8 +206,7 @@
   <data name="Empty_CreateFirstActivity" xml:space="preserve">
     <value>Crea la teva primera activitat</value>
   </data>
-  
-  <!-- Records Page -->
+	
   <data name="Page_Records_Title" xml:space="preserve">
     <value>Registres de temps</value>
   </data>
@@ -211,8 +267,7 @@
   <data name="Empty_CreateFirstRecord" xml:space="preserve">
     <value>Crea el teu primer registre de temps</value>
   </data>
-  
-  <!-- Workday Page -->
+	
   <data name="Page_Workday_Title" xml:space="preserve">
     <value>Jornada laboral</value>
   </data>
@@ -282,8 +337,7 @@
   <data name="Empty_AddFirstSlot" xml:space="preserve">
     <value>Afegeix la teva primera franja horària</value>
   </data>
-  
-  <!-- Settings Page -->
+	
   <data name="Page_Settings_Title" xml:space="preserve">
     <value>Opcions</value>
   </data>
@@ -350,8 +404,7 @@
   <data name="Value_Technology" xml:space="preserve">
     <value>.NET 10, WPF, SQLite</value>
   </data>
-  
-  <!-- ViewModels -->
+	
   <data name="Status_Active" xml:space="preserve">
     <value>Activa</value>
   </data>
@@ -373,8 +426,7 @@
   <data name="Activity_Unknown" xml:space="preserve">
     <value>Desconeguda</value>
   </data>
-  
-  <!-- Validation Messages -->
+	
   <data name="Validation_EndTimeAfterStartTime" xml:space="preserve">
     <value>L'hora de fi ha de ser posterior a l'hora d'inici.</value>
   </data>
@@ -402,8 +454,7 @@
   <data name="Validation_ActivitySaveError" xml:space="preserve">
     <value>Error en desar l'activitat. Torna-ho a provar.</value>
   </data>
-  
-  <!-- Section: Language Settings (new) -->
+	
   <data name="Section_Language" xml:space="preserve">
     <value>Idioma</value>
   </data>
@@ -431,8 +482,7 @@
   <data name="Label_ThemeDescription" xml:space="preserve">
     <value>Selecciona el tema de la interfície d'usuari</value>
   </data>
-  
-  <!-- Activity Detail Page -->
+	
   <data name="ActivityDetail_NewTitle" xml:space="preserve">
     <value>Nova activitat</value>
   </data>
@@ -469,8 +519,7 @@
   <data name="Filter_SearchByActivityOrNotes" xml:space="preserve">
     <value>Cerca per activitat o notes...</value>
   </data>
-  
-  <!-- Record Detail Page -->
+	
   <data name="RecordDetail_NewTitle" xml:space="preserve">
     <value>Nou registre</value>
   </data>
@@ -488,5 +537,14 @@
   </data>
   <data name="Validation_RecordSaveError" xml:space="preserve">
     <value>Error en desar el registre. Torna-ho a provar.</value>
+  </data>
+  <data name="Button_Archive" xml:space="preserve">
+    <value>Arxivar</value>
+  </data>
+  <data name="Button_Unarchive" xml:space="preserve">
+    <value>Desarxivar</value>
+  </data>
+  <data name="Filter_ShowArchived" xml:space="preserve">
+    <value>Mostrar arxivats</value>
   </data>
 </root>

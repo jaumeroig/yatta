@@ -36,17 +36,47 @@
                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                         Icon="{ui:SymbolIcon Search24}" />
 
-            <!-- Switch per mostrar activitats inactives -->
-            <StackPanel Grid.Column="1" 
-                        Orientation="Horizontal" 
-                        VerticalAlignment="Center"
-                        Margin="12,0,0,0">
-                <TextBlock Text="{local:Localize Filter_ShowInactive}"
+            <!-- Botó toggle per mostrar activitats arxivades -->
+            <ToggleButton Grid.Column="1"
+                          IsChecked="{Binding ShowInactive}"
+                          VerticalAlignment="Center"
+                          Margin="12,0,0,0"
+                          Padding="12,6">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="#5A5A5A" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Bd"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="6"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#2E2E2E" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="DarkGreen" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="#6A6A6A" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Style>
+                <TextBlock Text="{local:Localize Filter_ShowArchived}"
                            VerticalAlignment="Center"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           Margin="0,0,12,0" />
-                <ui:ToggleSwitch IsChecked="{Binding ShowInactive}" />
-            </StackPanel>
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </ToggleButton>
 
             <ui:Button Grid.Column="2"
                        Appearance="Primary"
@@ -81,17 +111,13 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Activity Icon -->
-                                <Border Grid.Column="0"
-                                        Width="40"
-                                        Height="40"
-                                        CornerRadius="8"
-                                        Margin="0,0,16,0"
-                                        Background="{Binding Color, Converter={StaticResource StringToBrushConverter}}">
-                                    <ui:SymbolIcon Symbol="Grid24"
-                                                   Foreground="White"
-                                                   FontSize="18" />
-                                </Border>
+                                <!-- Activity Color Indicator -->
+                                <Ellipse Grid.Column="0"
+                                         Width="12"
+                                         Height="12"
+                                         Margin="0,0,16,0"
+                                         VerticalAlignment="Center"
+                                         Fill="{Binding Color, Converter={StaticResource StringToBrushConverter}}" />
 
                                 <!-- Activity Info -->
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">

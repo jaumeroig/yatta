@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
+    xmlns:local="clr-namespace:TimeTracker.App.Markup"
     d:DataContext="{d:DesignInstance vm:JornadaViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="700" d:DesignWidth="1100"
@@ -67,7 +68,7 @@
                                  IsChecked="{Binding EditingSlot.Telework, Converter={StaticResource BoolInverterConverter}}"
                                  GroupName="Location"
                                  Margin="0,0,0,8" />
-                    <RadioButton Content="Casa (teletreball)"
+                    <RadioButton Content="{local:Localize RadioButton_Telework}"
                                  IsChecked="{Binding EditingSlot.Telework}"
                                  GroupName="Location" />
                 </StackPanel>
@@ -216,7 +217,7 @@
                                HorizontalAlignment="Right">
                         <StackPanel Orientation="Horizontal">
                             <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
-                            <TextBlock Text="Afegir franja" />
+                            <TextBlock Text="{local:Localize Button_AddSlot}" />
                         </StackPanel>
                     </ui:Button>
                 </Grid>
@@ -273,7 +274,7 @@
                                       FirstDayOfWeek="Monday" />
 
                             <!-- Botó per anar a avui -->
-                            <ui:Button Content="Avui"
+                            <ui:Button Content="{local:Localize Button_Today}"
                                        Appearance="Secondary"
                                        Command="{Binding TodayCommand}"
                                        HorizontalAlignment="Stretch"
@@ -286,7 +287,7 @@
                                     Background="{DynamicResource ControlFillColorDefaultBrush}"
                                     CornerRadius="8">
                                 <StackPanel>
-                                    <TextBlock Text="Resum mensual"
+                                    <TextBlock Text="{local:Localize Section_MonthlySummary}"
                                                FontSize="12"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -297,7 +298,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Total treballat"
+                                        <TextBlock Text="{local:Localize Label_TotalWorked}"
                                                    FontSize="13"
                                                    VerticalAlignment="Center" />
                                         <TextBlock Grid.Column="1"
@@ -311,7 +312,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="% Teletreball"
+                                        <TextBlock Text="{local:Localize Label_TeleworkPercentage}"
                                                    FontSize="13"
                                                    VerticalAlignment="Center" />
                                         <TextBlock Grid.Column="1"
@@ -382,7 +383,7 @@
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                        <TextBlock Text="Teletreball"
+                                        <TextBlock Text="{local:Localize Label_TeleworkBar}"
                                                    FontSize="12"
                                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                    HorizontalAlignment="Center"
@@ -394,7 +395,7 @@
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="3" HorizontalAlignment="Center">
-                                        <TextBlock Text="% Teletreball"
+                                        <TextBlock Text="{local:Localize Label_TeleworkPercentage}"
                                                    FontSize="12"
                                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                    HorizontalAlignment="Center"
@@ -453,7 +454,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0"
-                                                   Text="Teletreball"
+                                                   Text="{local:Localize Label_TeleworkBar}"
                                                    FontSize="13"
                                                    VerticalAlignment="Center" />
 
@@ -480,7 +481,7 @@
 
                         <!-- Títol de la llista de franges -->
                         <TextBlock Grid.Row="1"
-                                   Text="Franges horàries"
+                                   Text="{local:Localize Section_TimeSlots}"
                                    FontSize="16"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -577,13 +578,13 @@
                                                FontSize="48"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                Margin="0,0,0,16" />
-                                <TextBlock Text="No hi ha franges per aquest dia"
+                                <TextBlock Text="{local:Localize Empty_NoSlots}"
                                            FontSize="16"
                                            FontWeight="SemiBold"
                                            HorizontalAlignment="Center"
                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                            Margin="0,0,0,4" />
-                                <TextBlock Text="Afegeix la teva primera franja horària"
+                                <TextBlock Text="{local:Localize Empty_AddFirstSlot}"
                                            FontSize="14"
                                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                            HorizontalAlignment="Center" />

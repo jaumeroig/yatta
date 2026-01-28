@@ -49,8 +49,19 @@
                       VerticalContentAlignment="Center"
                       ItemsSource="{Binding Activities}"
                       SelectedItem="{Binding SelectedActivityFilter}"
-                      DisplayMemberPath="Name"
                       Margin="12,0,0,0">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="12"
+                                     Height="12"
+                                     VerticalAlignment="Center"
+                                     Margin="0,0,8,0"
+                                     Fill="{Binding Color, Converter={StaticResource StringToBrushConverter}}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
                 <ComboBox.Style>
                     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
                         <Setter Property="Tag" Value="{local:Localize Filter_AllActivities}" />
