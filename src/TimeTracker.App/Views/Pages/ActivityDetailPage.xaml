@@ -242,10 +242,8 @@
                     </ItemsControl.Items>
                 </ItemsControl>
 
-                <!-- Estat actiu -->
-                <CheckBox Content="{local:Localize CheckBox_ActivityActive}"
-                          IsChecked="{Binding Active}"
-                          Margin="0,0,0,24" />
+                <!-- Estat actiu: replaced by Archive/Unarchive action button in footer -->
+                <StackPanel Margin="0,0,0,24" />
 
                 <!-- Estadístiques (només per activitats existents) -->
                 <ui:Card Margin="0,0,0,24"
@@ -296,18 +294,41 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Botó eliminar (només per activitats existents) -->
+            <!-- Botó eliminar (només per activitats existents i sense registres) -->
             <ui:Button Grid.Column="0"
                        Appearance="Danger"
                        Command="{Binding RequestDeleteCommand}"
-                       Padding="16,10"
-                       Visibility="{Binding IsExistingActivity, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Padding="16,10">
+                <ui:Button.Style>
+                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsExistingActivity}" Value="True" />
+                                    <Condition Binding="{Binding RecordCount}" Value="0" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ui:Button.Style>
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Delete24" Margin="0,0,8,0" />
                     <TextBlock Text="{local:Localize Button_Delete}" />
                 </StackPanel>
             </ui:Button>
 
+
+            <ui:Button Grid.Column="1"
+                       Content="{Binding ArchiveButtonText}"
+                       Appearance="Secondary"
+                       Command="{Binding ToggleArchiveCommand}"
+                       Padding="16,10"
+                       Margin="16"
+                       MinWidth="120"
+                       Visibility="{Binding IsExistingActivity, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            
             <ui:Button Grid.Column="2"
                        Content="{local:Localize Button_Cancel}"
                        Appearance="Secondary"

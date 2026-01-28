@@ -62,6 +62,13 @@ public partial class ActivityDetailViewModel : ObservableObject
     public bool IsExistingActivity => !_isNewActivity;
 
     /// <summary>
+    /// Text for the archive/unarchive button based on Active state.
+    /// </summary>
+    public string ArchiveButtonText => Active
+        ? Resources.Resources.Button_Archive
+        : Resources.Resources.Button_Unarchive;
+
+    /// <summary>
     /// Indicates if the activity can be saved (basic validation).
     /// </summary>
     public bool CanSave => !string.IsNullOrWhiteSpace(Name) && Name.Length <= MaxNameLength;
@@ -145,6 +152,7 @@ public partial class ActivityDetailViewModel : ObservableObject
         _originalName = activity.Name;
         Color = activity.Color;
         Active = activity.Active;
+        OnPropertyChanged(nameof(ArchiveButtonText));
 
         // Load statistics
         var records = (await _timeRecordRepository.GetByActivityIdAsync(_activityId)).ToList();
@@ -233,6 +241,11 @@ public partial class ActivityDetailViewModel : ObservableObject
         Color = color;
     }
 
+    partial void OnActiveChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ArchiveButtonText));
+    }
+
     [RelayCommand(CanExecute = nameof(CanSave))]
     private async Task Save()
     {
@@ -268,6 +281,24 @@ public partial class ActivityDetailViewModel : ObservableObject
             // In case of unexpected error (e.g., DB constraint), show generic message
             NameError = Resources.Resources.Validation_ActivitySaveError;
             HasNameError = true;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ToggleArchive()
+    {
+        // Toggle Active state
+        Active = !Active;
+
+        // Update repository if existing activity
+        if (!_isNewActivity)
+        {
+            var activity = await _activityRepository.GetByIdAsync(_activityId);
+            if (activity != null)
+            {
+                activity.Active = Active;
+                await _activityRepository.UpdateAsync(activity);
+            }
         }
     }
 

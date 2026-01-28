@@ -160,6 +160,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archivar.
+        /// </summary>
+        internal static string Button_Archive {
+            get {
+                return ResourceManager.GetString("Button_Archive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Atrás.
         /// </summary>
         internal static string Button_Back {
@@ -246,6 +255,15 @@ namespace TimeTracker.App.Resources {
         internal static string Button_Today {
             get {
                 return ResourceManager.GetString("Button_Today", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desarchivar.
+        /// </summary>
+        internal static string Button_Unarchive {
+            get {
+                return ResourceManager.GetString("Button_Unarchive", resourceCulture);
             }
         }
         
@@ -453,6 +471,15 @@ namespace TimeTracker.App.Resources {
         internal static string Filter_SearchByName {
             get {
                 return ResourceManager.GetString("Filter_SearchByName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mostrar archivados.
+        /// </summary>
+        internal static string Filter_ShowArchived {
+            get {
+                return ResourceManager.GetString("Filter_ShowArchived", resourceCulture);
             }
         }
         
