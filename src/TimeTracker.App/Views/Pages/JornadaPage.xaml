@@ -74,15 +74,15 @@
                 </StackPanel>
 
                 <!-- Missatge d'error de validació -->
-                <Border Background="#FEE2E2"
-                        BorderBrush="#EF4444"
+                <Border Background="{DynamicResource SystemFillColorCriticalBackground}"
+                        BorderBrush="{DynamicResource SystemFillColorCritical}"
                         BorderThickness="1"
                         CornerRadius="4"
                         Padding="12,8"
                         Margin="0,0,0,16"
                         Visibility="{Binding EditingSlot.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
                     <TextBlock Text="{Binding EditingSlot.ValidationError}"
-                               Foreground="#DC2626"
+                               Foreground="{DynamicResource SystemFillColorCritical}"
                                TextWrapping="Wrap"
                                FontSize="13" />
                 </Border>
@@ -431,7 +431,7 @@
                                                 Background="{DynamicResource ControlFillColorDefaultBrush}"
                                                 CornerRadius="4"
                                                 Height="24">
-                                            <Border Background="#4CAF50"
+                                            <Border Background="{StaticResource OfficeBarColor}"
                                                     CornerRadius="4"
                                                     HorizontalAlignment="Left"
                                                     Width="{Binding OfficeBarWidth, Converter={StaticResource BarWidthConverter}}" />
@@ -462,7 +462,7 @@
                                                 Background="{DynamicResource ControlFillColorDefaultBrush}"
                                                 CornerRadius="4"
                                                 Height="24">
-                                            <Border Background="#2196F3"
+                                            <Border Background="{StaticResource TeleworkBarColor}"
                                                     CornerRadius="4"
                                                     HorizontalAlignment="Left"
                                                     Width="{Binding TeleworkBarWidth, Converter={StaticResource BarWidthConverter}}" />

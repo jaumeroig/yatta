@@ -28,6 +28,10 @@
             <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
             <converters:BarWidthConverter x:Key="BarWidthConverter" />
             
+            <!-- Bar Chart Colors -->
+            <SolidColorBrush x:Key="OfficeBarColor">#4CAF50</SolidColorBrush>
+            <SolidColorBrush x:Key="TeleworkBarColor">#2196F3</SolidColorBrush>
+            
             <!-- Color Button Style -->
             <Style x:Key="ColorButtonStyle" TargetType="Button">
                 <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorSecondaryBrush}" />
