@@ -45,7 +45,7 @@
                 <ToggleButton.Style>
                     <Style TargetType="ToggleButton">
                         <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="#5A5A5A" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorSecondaryBrush}" />
                         <Setter Property="BorderThickness" Value="1" />
                         <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
                         <Setter Property="Template">
@@ -61,11 +61,12 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#2E2E2E" />
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSecondaryBackgroundBrush}" />
                                         </Trigger>
                                         <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="DarkGreen" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="#6A6A6A" />
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
