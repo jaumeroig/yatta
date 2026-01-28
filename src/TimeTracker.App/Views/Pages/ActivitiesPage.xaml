@@ -73,9 +73,12 @@
                         </Setter>
                     </Style>
                 </ToggleButton.Style>
-                <TextBlock Text="{local:Localize Filter_ShowArchived}"
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Archive24" Margin="0,0,8,0" />
+                    <TextBlock Text="{local:Localize Filter_ShowArchived}"
                            VerticalAlignment="Center"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
             </ToggleButton>
 
             <ui:Button Grid.Column="2"
