@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
+using Wpf.Ui.Controls;
 
 /// <summary>
 /// ViewModel for the activity detail page.
@@ -67,6 +68,14 @@ public partial class ActivityDetailViewModel : ObservableObject
     public string ArchiveButtonText => Active
         ? Resources.Resources.Button_Archive
         : Resources.Resources.Button_Unarchive;
+
+    public IconElement ArchiveButtonIcon => Active 
+        ?new SymbolIcon(SymbolRegular.Archive24)
+        : new SymbolIcon(SymbolRegular.ArchiveArrowBack24);
+
+    public ControlAppearance ArchiveButtonAppearance => Active 
+        ? ControlAppearance.Danger 
+        : ControlAppearance.Secondary;
 
     /// <summary>
     /// Indicates if the activity can be saved (basic validation).
@@ -244,6 +253,8 @@ public partial class ActivityDetailViewModel : ObservableObject
     partial void OnActiveChanged(bool value)
     {
         OnPropertyChanged(nameof(ArchiveButtonText));
+        OnPropertyChanged(nameof(ArchiveButtonIcon)); 
+        OnPropertyChanged(nameof(ArchiveButtonAppearance));
     }
 
     [RelayCommand(CanExecute = nameof(CanSave))]

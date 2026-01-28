@@ -92,7 +92,7 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel MaxWidth="600" HorizontalAlignment="Left">
-                
+
                 <!-- Nom de l'activitat -->
                 <TextBlock Text="{local:Localize Label_ActivityName}"
                            FontWeight="SemiBold"
@@ -111,7 +111,7 @@
                 <TextBlock Text="{local:Localize Label_Color}"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           Margin="0,0,0,12" />
+                           Margin="0,24,0,12" />
                 <ItemsControl Margin="0,0,0,24">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -259,7 +259,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            
+
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="{local:Localize ActivityDetail_RecordCount}"
                                            FontSize="12"
@@ -268,7 +268,7 @@
                                            FontSize="20"
                                            FontWeight="SemiBold" />
                             </StackPanel>
-                            
+
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{local:Localize Label_TotalTime}"
                                            FontSize="12"
@@ -285,7 +285,7 @@
         </ScrollViewer>
 
         <!-- Botons d'acció -->
-        <Grid Grid.Row="1" Margin="0,24,0,0">
+        <Grid Grid.Row="1" Margin="0,24,0,24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -319,16 +319,15 @@
                 </StackPanel>
             </ui:Button>
 
-
             <ui:Button Grid.Column="1"
+                       Visibility="{Binding IsExistingActivity, Converter={StaticResource BooleanToVisibilityConverter}}"
+                       Icon="{Binding ArchiveButtonIcon}"
                        Content="{Binding ArchiveButtonText}"
-                       Appearance="Secondary"
+                       Appearance="{Binding ArchiveButtonAppearance}"
                        Command="{Binding ToggleArchiveCommand}"
                        Padding="16,10"
-                       Margin="16"
-                       MinWidth="120"
-                       Visibility="{Binding IsExistingActivity, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            
+                       MinWidth="120" />
+
             <ui:Button Grid.Column="2"
                        Content="{local:Localize Button_Cancel}"
                        Appearance="Secondary"
