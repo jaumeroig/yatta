@@ -61,7 +61,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} registros · {1}.
+        ///   Looks up a localized string similar to {0:n0} registros · {1}.
         /// </summary>
         internal static string Activities_Subtitle {
             get {
@@ -70,7 +70,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} registros.
+        ///   Looks up a localized string similar to {0:n0} registros.
         /// </summary>
         internal static string Activity_MultipleRecords {
             get {
@@ -484,7 +484,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mostrar archivados.
+        ///   Looks up a localized string similar to Mostrar archivadas.
         /// </summary>
         internal static string Filter_ShowArchived {
             get {
@@ -576,9 +576,9 @@ namespace TimeTracker.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
-        internal static string Label_DateDisplay {
+        internal static string Label_DateDisplayXXX {
             get {
-                return ResourceManager.GetString("Label_DateDisplay", resourceCulture);
+                return ResourceManager.GetString("Label_DateDisplayXXX", resourceCulture);
             }
         }
         
@@ -1159,6 +1159,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archivada.
+        /// </summary>
+        internal static string Status_Archive {
+            get {
+                return ResourceManager.GetString("Status_Archive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inactiva.
         /// </summary>
         internal static string Status_Inactive {
@@ -1173,6 +1182,24 @@ namespace TimeTracker.App.Resources {
         internal static string TitleBar_Subtitle {
             get {
                 return ResourceManager.GetString("TitleBar_Subtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cerrar.
+        /// </summary>
+        internal static string Tray_Close {
+            get {
+                return ResourceManager.GetString("Tray_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir.
+        /// </summary>
+        internal static string Tray_Open {
+            get {
+                return ResourceManager.GetString("Tray_Open", resourceCulture);
             }
         }
         
