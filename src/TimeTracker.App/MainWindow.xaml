@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
         xmlns:pages="clr-namespace:TimeTracker.App.Views.Pages"
         xmlns:local="clr-namespace:TimeTracker.App.Markup"
         mc:Ignorable="d"
-        Title="{local:Localize Window_Title}" 
+        Title="{local:Localize App_Title}" 
         Height="700" 
         Width="1100"
         MinHeight="500"
@@ -25,7 +26,7 @@
         <ui:TitleBar
             x:Name="TitleBar"
             Grid.Row="0"
-            Title="{local:Localize TitleBar_Title}"
+            Title="{local:Localize App_Title}"
             ShowMaximize="True"
             ShowMinimize="True" />
         
@@ -41,7 +42,7 @@
                 <StackPanel Orientation="Horizontal" Margin="16,8">
                     <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
                     <StackPanel>
-                        <TextBlock Text="{local:Localize TitleBar_Title}" FontWeight="SemiBold" FontSize="14" />
+                        <TextBlock Text="{local:Localize App_Title}" FontWeight="SemiBold" FontSize="14" />
                         <TextBlock Text="{local:Localize TitleBar_Subtitle}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                     </StackPanel>
                 </StackPanel>
@@ -88,7 +89,30 @@
             </ui:NavigationView.Header>
             
         </ui:NavigationView>
-        
+
+        <tray:NotifyIcon
+            Grid.Row="0"
+            FocusOnLeftClick="True"
+            MenuOnRightClick="True"
+            LeftClick="TrayOpen_Click"
+            TooltipText="{local:Localize App_Title}">
+            <tray:NotifyIcon.Menu>
+                <ContextMenu>
+                    <MenuItem Header="{local:Localize Tray_Open}" Click="TrayOpen_Click">
+                        <MenuItem.Icon>
+                            <ui:SymbolIcon Symbol="WindowNew24" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="{local:Localize Tray_Close}" Click="TrayClose_Click">
+                        <MenuItem.Icon>
+                            <ui:SymbolIcon Symbol="Dismiss24" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </tray:NotifyIcon.Menu>
+        </tray:NotifyIcon>
+
         <!-- Host global per als diàlegs (ha d'estar al final per estar per sobre de tot) -->
         <ui:ContentDialogHost x:Name="RootContentDialogHost" Grid.RowSpan="2" />
     </Grid>

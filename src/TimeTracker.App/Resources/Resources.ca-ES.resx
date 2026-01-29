@@ -339,9 +339,6 @@
   <data name="Page_Settings_Subtitle" xml:space="preserve">
     <value>Configuració de l'aplicació</value>
   </data>
-  <data name="Section_Appearance" xml:space="preserve">
-    <value>Aparença</value>
-  </data>
   <data name="Label_AppTheme" xml:space="preserve">
     <value>Tema de l'aplicació</value>
   </data>
@@ -381,14 +378,11 @@
   <data name="Button_Save" xml:space="preserve">
     <value>Desar</value>
   </data>
-  <data name="Section_About" xml:space="preserve">
+  <data name="Settings_Section_About" xml:space="preserve">
     <value>Sobre l'aplicació</value>
   </data>
   <data name="Label_Application" xml:space="preserve">
     <value>Aplicació:</value>
-  </data>
-  <data name="Value_AppName" xml:space="preserve">
-    <value>TimeTracker</value>
   </data>
   <data name="Label_Version" xml:space="preserve">
     <value>Versió:</value>
@@ -490,13 +484,13 @@
     <value>Enrere</value>
   </data>
   <data name="Activities_Subtitle" xml:space="preserve">
-    <value>{0} registres · {1}</value>
+    <value>{0:n0} registres · {1}</value>
   </data>
   <data name="Activity_SingleRecord" xml:space="preserve">
     <value>1 registre</value>
   </data>
   <data name="Activity_MultipleRecords" xml:space="preserve">
-    <value>{0} registres</value>
+    <value>{0:n0} registres</value>
   </data>
   <data name="Activity_NoRecords" xml:space="preserve">
     <value>Sense registres</value>
@@ -539,5 +533,23 @@
   </data>
   <data name="Status_Archive" xml:space="preserve">
     <value>Arxivada</value>
+  </data>
+  <data name="Tray_Open" xml:space="preserve">
+    <value>Obrir</value>
+  </data>
+  <data name="Tray_Close" xml:space="preserve">
+    <value>Tancar</value>
+  </data>
+  <data name="Label_MinimizeToTray" xml:space="preserve">
+    <value>Minimitzar a la safata del sistema</value>
+  </data>
+  <data name="Description_MinimizeToTray" xml:space="preserve">
+    <value>En tancar la finestra, minimitza l'aplicació a la safata en lloc de sortir</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Yatta</value>
+  </data>
+  <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
+    <value>Aparença i comportament</value>
   </data>
 </root>

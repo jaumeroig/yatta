@@ -61,7 +61,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} registros · {1}.
+        ///   Looks up a localized string similar to {0:n0} registros · {1}.
         /// </summary>
         internal static string Activities_Subtitle {
             get {
@@ -70,7 +70,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} registros.
+        ///   Looks up a localized string similar to {0:n0} registros.
         /// </summary>
         internal static string Activity_MultipleRecords {
             get {
@@ -138,6 +138,15 @@ namespace TimeTracker.App.Resources {
         internal static string ActivityDetail_Statistics {
             get {
                 return ResourceManager.GetString("ActivityDetail_Statistics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yatta.
+        /// </summary>
+        internal static string App_Title {
+            get {
+                return ResourceManager.GetString("App_Title", resourceCulture);
             }
         }
         
@@ -567,9 +576,9 @@ namespace TimeTracker.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
-        internal static string Label_DateDisplay {
+        internal static string Label_DateDisplayXXX {
             get {
-                return ResourceManager.GetString("Label_DateDisplay", resourceCulture);
+                return ResourceManager.GetString("Label_DateDisplayXXX", resourceCulture);
             }
         }
         
@@ -1177,11 +1186,20 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TimeTracker.
+        ///   Looks up a localized string similar to Cerrar.
         /// </summary>
-        internal static string TitleBar_Title {
+        internal static string Tray_Close {
             get {
-                return ResourceManager.GetString("TitleBar_Title", resourceCulture);
+                return ResourceManager.GetString("Tray_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir.
+        /// </summary>
+        internal static string Tray_Open {
+            get {
+                return ResourceManager.GetString("Tray_Open", resourceCulture);
             }
         }
         
@@ -1303,15 +1321,6 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TimeTracker.
-        /// </summary>
-        internal static string Value_AppName {
-            get {
-                return ResourceManager.GetString("Value_AppName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to .NET 10, WPF, SQLite.
         /// </summary>
         internal static string Value_Technology {
@@ -1321,11 +1330,38 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TimeTracker.
+        ///   Looks up a localized string similar to Abrir.
         /// </summary>
-        internal static string Window_Title {
+        internal static string Tray_Open {
             get {
-                return ResourceManager.GetString("Window_Title", resourceCulture);
+                return ResourceManager.GetString("Tray_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cerrar.
+        /// </summary>
+        internal static string Tray_Close {
+            get {
+                return ResourceManager.GetString("Tray_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimizar a la bandeja del sistema.
+        /// </summary>
+        internal static string Label_MinimizeToTray {
+            get {
+                return ResourceManager.GetString("Label_MinimizeToTray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Al cerrar la ventana, minimiza la aplicación a la bandeja en lugar de salir.
+        /// </summary>
+        internal static string Description_MinimizeToTray {
+            get {
+                return ResourceManager.GetString("Description_MinimizeToTray", resourceCulture);
             }
         }
     }
