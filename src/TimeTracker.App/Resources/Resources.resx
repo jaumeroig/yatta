@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Window_Title" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
-  <data name="TitleBar_Title" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
   <data name="TitleBar_Subtitle" xml:space="preserve">
     <value>Control de tiempo</value>
   </data>
@@ -387,9 +381,6 @@
   <data name="Label_Application" xml:space="preserve">
     <value>Aplicación:</value>
   </data>
-  <data name="Value_AppName" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
   <data name="Label_Version" xml:space="preserve">
     <value>Versión:</value>
   </data>
@@ -536,5 +527,14 @@
   </data>
   <data name="Filter_ShowArchived" xml:space="preserve">
     <value>Mostrar archivados</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Yatta</value>
+  </data>
+  <data name="Tray_Open" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="Tray_Close" xml:space="preserve">
+    <value>Cerrar</value>
   </data>
 </root>

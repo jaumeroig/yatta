@@ -142,6 +142,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Yatta.
+        /// </summary>
+        internal static string App_Title {
+            get {
+                return ResourceManager.GetString("App_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Añadir entrada.
         /// </summary>
         internal static string Button_AddRecord {
@@ -1168,15 +1177,6 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TimeTracker.
-        /// </summary>
-        internal static string TitleBar_Title {
-            get {
-                return ResourceManager.GetString("TitleBar_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to horas.
         /// </summary>
         internal static string Unit_Hours {
@@ -1294,29 +1294,11 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TimeTracker.
-        /// </summary>
-        internal static string Value_AppName {
-            get {
-                return ResourceManager.GetString("Value_AppName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to .NET 10, WPF, SQLite.
         /// </summary>
         internal static string Value_Technology {
             get {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TimeTracker.
-        /// </summary>
-        internal static string Window_Title {
-            get {
-                return ResourceManager.GetString("Window_Title", resourceCulture);
             }
         }
     }

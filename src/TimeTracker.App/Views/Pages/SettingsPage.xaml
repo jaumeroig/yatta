@@ -123,7 +123,7 @@
                     </ui:CardControl.Icon>
                     <ui:CardControl.Header>
                         <StackPanel>
-                            <TextBlock Text="{local:Localize Value_AppName}"
+                            <TextBlock Text="{local:Localize App_Title}"
                                        FontWeight="SemiBold" />
                             <TextBlock Text="{Binding AppVersion}"
                                        FontSize="12"

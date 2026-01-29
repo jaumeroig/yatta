@@ -5,6 +5,7 @@ using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Windows;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -37,4 +38,22 @@ public partial class MainWindow : FluentWindow
     /// Gets the global ContentDialogHost to show dialogs.
     /// </summary>
     public ContentDialogHost DialogHost => RootContentDialogHost;
+
+    /// <summary>
+    /// Handles the Tray Icon "Open" menu click.
+    /// </summary>
+    private void TrayOpen_Click(object sender, RoutedEventArgs e)
+    {
+        Show();
+        WindowState = WindowState.Normal;
+        Activate();
+    }
+
+    /// <summary>
+    /// Handles the Tray Icon "Close" menu click.
+    /// </summary>
+    private void TrayClose_Click(object sender, RoutedEventArgs e)
+    {
+        Application.Current.Shutdown();
+    }
 }

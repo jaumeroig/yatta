@@ -117,13 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-	
-  <data name="Window_Title" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
-  <data name="TitleBar_Title" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
   <data name="TitleBar_Subtitle" xml:space="preserve">
     <value>Control de temps</value>
   </data>
@@ -139,7 +132,6 @@
   <data name="Nav_Settings" xml:space="preserve">
     <value>Opcions</value>
   </data>
-	
   <data name="Page_Activities_Title" xml:space="preserve">
     <value>Activitats</value>
   </data>
@@ -206,7 +198,6 @@
   <data name="Empty_CreateFirstActivity" xml:space="preserve">
     <value>Crea la teva primera activitat</value>
   </data>
-	
   <data name="Page_Records_Title" xml:space="preserve">
     <value>Registres de temps</value>
   </data>
@@ -267,7 +258,6 @@
   <data name="Empty_CreateFirstRecord" xml:space="preserve">
     <value>Crea el teu primer registre de temps</value>
   </data>
-	
   <data name="Page_Workday_Title" xml:space="preserve">
     <value>Jornada laboral</value>
   </data>
@@ -337,7 +327,6 @@
   <data name="Empty_AddFirstSlot" xml:space="preserve">
     <value>Afegeix la teva primera franja horària</value>
   </data>
-	
   <data name="Page_Settings_Title" xml:space="preserve">
     <value>Opcions</value>
   </data>
@@ -392,9 +381,6 @@
   <data name="Label_Application" xml:space="preserve">
     <value>Aplicació:</value>
   </data>
-  <data name="Value_AppName" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
   <data name="Label_Version" xml:space="preserve">
     <value>Versió:</value>
   </data>
@@ -404,7 +390,6 @@
   <data name="Value_Technology" xml:space="preserve">
     <value>.NET 10, WPF, SQLite</value>
   </data>
-	
   <data name="Status_Active" xml:space="preserve">
     <value>Activa</value>
   </data>
@@ -426,7 +411,6 @@
   <data name="Activity_Unknown" xml:space="preserve">
     <value>Desconeguda</value>
   </data>
-	
   <data name="Validation_EndTimeAfterStartTime" xml:space="preserve">
     <value>L'hora de fi ha de ser posterior a l'hora d'inici.</value>
   </data>
@@ -454,7 +438,6 @@
   <data name="Validation_ActivitySaveError" xml:space="preserve">
     <value>Error en desar l'activitat. Torna-ho a provar.</value>
   </data>
-	
   <data name="Section_Language" xml:space="preserve">
     <value>Idioma</value>
   </data>
@@ -482,7 +465,6 @@
   <data name="Label_ThemeDescription" xml:space="preserve">
     <value>Selecciona el tema de la interfície d'usuari</value>
   </data>
-	
   <data name="ActivityDetail_NewTitle" xml:space="preserve">
     <value>Nova activitat</value>
   </data>
@@ -519,7 +501,6 @@
   <data name="Filter_SearchByActivityOrNotes" xml:space="preserve">
     <value>Cerca per activitat o notes...</value>
   </data>
-	
   <data name="RecordDetail_NewTitle" xml:space="preserve">
     <value>Nou registre</value>
   </data>
@@ -546,5 +527,11 @@
   </data>
   <data name="Filter_ShowArchived" xml:space="preserve">
     <value>Mostrar arxivats</value>
+  </data>
+  <data name="Tray_Open" xml:space="preserve">
+    <value>Obrir</value>
+  </data>
+  <data name="Tray_Close" xml:space="preserve">
+    <value>Tancar</value>
   </data>
 </root>
