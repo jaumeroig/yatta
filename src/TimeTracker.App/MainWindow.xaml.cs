@@ -6,12 +6,15 @@ using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using System.ComponentModel;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
 public partial class MainWindow : FluentWindow
 {
+    private bool _isRealClose = false;
+
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel)
     {
         InitializeComponent();
@@ -32,6 +35,21 @@ public partial class MainWindow : FluentWindow
         
         // Navigate to the Records page by default
         Loaded += (_, _) => NavigationView.Navigate(typeof(TimeRecordsPage));
+        
+        // Handle window closing to minimize to tray instead of closing
+        Closing += MainWindow_Closing;
+    }
+
+    /// <summary>
+    /// Handles the window closing event to minimize to tray instead of closing.
+    /// </summary>
+    private void MainWindow_Closing(object? sender, CancelEventArgs e)
+    {
+        if (!_isRealClose)
+        {
+            e.Cancel = true;
+            Hide();
+        }
     }
 
     /// <summary>
@@ -54,6 +72,7 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     private void TrayClose_Click(object sender, RoutedEventArgs e)
     {
+        _isRealClose = true;
         Application.Current.Shutdown();
     }
 }
