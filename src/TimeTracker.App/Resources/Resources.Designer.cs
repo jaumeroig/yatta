@@ -475,7 +475,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mostrar archivados.
+        ///   Looks up a localized string similar to Mostrar archivadas.
         /// </summary>
         internal static string Filter_ShowArchived {
             get {
@@ -1146,6 +1146,15 @@ namespace TimeTracker.App.Resources {
         internal static string Status_Active {
             get {
                 return ResourceManager.GetString("Status_Active", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archivada.
+        /// </summary>
+        internal static string Status_Archive {
+            get {
+                return ResourceManager.GetString("Status_Archive", resourceCulture);
             }
         }
         
