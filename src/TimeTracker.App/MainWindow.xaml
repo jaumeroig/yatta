@@ -94,6 +94,7 @@
             Grid.Row="0"
             FocusOnLeftClick="True"
             MenuOnRightClick="True"
+            LeftClick="TrayOpen_Click"
             TooltipText="{local:Localize App_Title}">
             <tray:NotifyIcon.Menu>
                 <ContextMenu>

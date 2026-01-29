@@ -339,9 +339,6 @@
   <data name="Page_Settings_Subtitle" xml:space="preserve">
     <value>Configuració de l'aplicació</value>
   </data>
-  <data name="Section_Appearance" xml:space="preserve">
-    <value>Aparença</value>
-  </data>
   <data name="Label_AppTheme" xml:space="preserve">
     <value>Tema de l'aplicació</value>
   </data>
@@ -381,7 +378,7 @@
   <data name="Button_Save" xml:space="preserve">
     <value>Desar</value>
   </data>
-  <data name="Section_About" xml:space="preserve">
+  <data name="Settings_Section_About" xml:space="preserve">
     <value>Sobre l'aplicació</value>
   </data>
   <data name="Label_Application" xml:space="preserve">
@@ -543,7 +540,16 @@
   <data name="Tray_Close" xml:space="preserve">
     <value>Tancar</value>
   </data>
+  <data name="Label_MinimizeToTray" xml:space="preserve">
+    <value>Minimitzar a la safata del sistema</value>
+  </data>
+  <data name="Description_MinimizeToTray" xml:space="preserve">
+    <value>En tancar la finestra, minimitza l'aplicació a la safata en lloc de sortir</value>
+  </data>
   <data name="App_Title" xml:space="preserve">
     <value>Yatta</value>
+  </data>
+  <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
+    <value>Aparença i comportament</value>
   </data>
 </root>

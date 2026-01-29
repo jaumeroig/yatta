@@ -86,7 +86,7 @@
             <ui:Button Grid.Column="2"
                        Appearance="Primary"
                        Command="{Binding NavigateToNewActivityCommand}"
-                       Margin="32,0,0,0"
+                       Margin="42,0,0,0"
                        Padding="16,6"
                        HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">

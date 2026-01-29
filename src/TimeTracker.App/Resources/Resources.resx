@@ -333,9 +333,6 @@
   <data name="Page_Settings_Subtitle" xml:space="preserve">
     <value>Configuración de la aplicación</value>
   </data>
-  <data name="Section_Appearance" xml:space="preserve">
-    <value>Apariencia</value>
-  </data>
   <data name="Label_AppTheme" xml:space="preserve">
     <value>Tema de la aplicación</value>
   </data>
@@ -375,7 +372,7 @@
   <data name="Button_Save" xml:space="preserve">
     <value>Guardar</value>
   </data>
-  <data name="Section_About" xml:space="preserve">
+  <data name="Settings_Section_About" xml:space="preserve">
     <value>Sobre la aplicación</value>
   </data>
   <data name="Label_Application" xml:space="preserve">
@@ -539,5 +536,14 @@
   </data>
   <data name="Tray_Close" xml:space="preserve">
     <value>Cerrar</value>
+  </data>
+  <data name="Label_MinimizeToTray" xml:space="preserve">
+    <value>Minimizar a la bandeja del sistema</value>
+  </data>
+  <data name="Description_MinimizeToTray" xml:space="preserve">
+    <value>Al cerrar la ventana, minimiza la aplicación a la bandeja en lugar de salir</value>
+  </data>
+  <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
+    <value>Apariencia y comportamiento</value>
   </data>
 </root>
