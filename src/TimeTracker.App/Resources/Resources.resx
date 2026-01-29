@@ -481,13 +481,13 @@
     <value>Atrás</value>
   </data>
   <data name="Activities_Subtitle" xml:space="preserve">
-    <value>{0} registros · {1}</value>
+    <value>{0:n0} registros · {1}</value>
   </data>
   <data name="Activity_SingleRecord" xml:space="preserve">
     <value>1 registro</value>
   </data>
   <data name="Activity_MultipleRecords" xml:space="preserve">
-    <value>{0} registros</value>
+    <value>{0:n0} registros</value>
   </data>
   <data name="Activity_NoRecords" xml:space="preserve">
     <value>Sin registros</value>
