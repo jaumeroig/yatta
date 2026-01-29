@@ -526,7 +526,10 @@
     <value>Desarchivar</value>
   </data>
   <data name="Filter_ShowArchived" xml:space="preserve">
-    <value>Mostrar archivados</value>
+    <value>Mostrar archivadas</value>
+  </data>
+  <data name="Status_Archive" xml:space="preserve">
+    <value>Archivada</value>
   </data>
   <data name="App_Title" xml:space="preserve">
     <value>Yatta</value>

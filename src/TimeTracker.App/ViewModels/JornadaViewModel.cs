@@ -73,6 +73,16 @@ public partial class JornadaViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<DateTime> _datesWithRecords = [];
 
+    // Dates categorized by location for calendar indicators
+    [ObservableProperty]
+    private ObservableCollection<DateTime> _teleworkDates = [];
+
+    [ObservableProperty]
+    private ObservableCollection<DateTime> _officeDates = [];
+
+    [ObservableProperty]
+    private ObservableCollection<DateTime> _bothDates = [];
+
     public JornadaViewModel(
         IWorkdaySlotRepository workdaySlotRepository,
         IWorkdayService workdayService,
@@ -107,7 +117,36 @@ public partial class JornadaViewModel : ObservableObject
         var lastDay = firstDay.AddMonths(1).AddDays(-1);
 
         var dates = await _workdaySlotRepository.GetDatesWithSlotsAsync(firstDay, lastDay);
+        var monthSlots = await _workdaySlotRepository.GetByDateRangeAsync(firstDay, lastDay);
+
+        var telework = new HashSet<DateTime>();
+        var office = new HashSet<DateTime>();
+        var both = new HashSet<DateTime>();
+
+        foreach (var slot in monthSlots)
+        {
+            var dt = slot.Date.ToDateTime(TimeOnly.MinValue);
+            if (slot.Telework)
+            {
+                if (office.Contains(dt)) both.Add(dt); else telework.Add(dt);
+            }
+            else
+            {
+                if (telework.Contains(dt)) both.Add(dt); else office.Add(dt);
+            }
+        }
+
+        // Remove dates from single sets if they are in both
+        foreach (var dt in both)
+        {
+            telework.Remove(dt);
+            office.Remove(dt);
+        }
+
         DatesWithRecords = new ObservableCollection<DateTime>(dates.Select(d => d.ToDateTime(TimeOnly.MinValue)));
+        TeleworkDates = new ObservableCollection<DateTime>(telework.OrderBy(d => d));
+        OfficeDates = new ObservableCollection<DateTime>(office.OrderBy(d => d));
+        BothDates = new ObservableCollection<DateTime>(both.OrderBy(d => d));
     }
 
     partial void OnSelectedDateChanged(DateTime value)
@@ -359,10 +398,11 @@ public partial class JornadaViewModel : ObservableObject
         UpdateSlotsDisplay();
         UpdateDailySummary();
         await UpdateMonthlySummaryAsync();
+        await LoadDatesWithRecordsAsync();
     }
 
     [RelayCommand]
-    private async Task DeleteSlotAsync(WorkdaySlotDisplay slot)
+    private async Task DeleteSlot(WorkdaySlotDisplay slot)
     {
         await _workdaySlotRepository.DeleteAsync(slot.Id);
         var index = _allSlots.FindIndex(s => s.Id == slot.Id);
@@ -370,6 +410,7 @@ public partial class JornadaViewModel : ObservableObject
         UpdateSlotsDisplay();
         UpdateDailySummary();
         await UpdateMonthlySummaryAsync();
+        await LoadDatesWithRecordsAsync();
     }
 }
 

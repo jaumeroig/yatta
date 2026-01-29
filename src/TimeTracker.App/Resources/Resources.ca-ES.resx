@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Window_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
+  <data name="TitleBar_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
   <data name="TitleBar_Subtitle" xml:space="preserve">
     <value>Control de temps</value>
   </data>
@@ -526,7 +532,10 @@
     <value>Desarxivar</value>
   </data>
   <data name="Filter_ShowArchived" xml:space="preserve">
-    <value>Mostrar arxivats</value>
+    <value>Mostrar arxivades</value>
+  </data>
+  <data name="Status_Archive" xml:space="preserve">
+    <value>Arxivada</value>
   </data>
   <data name="Tray_Open" xml:space="preserve">
     <value>Obrir</value>
