@@ -52,6 +52,9 @@ namespace TimeTracker.Data.Migrations
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("MinimizeToTray")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("Notifications")
                         .HasColumnType("INTEGER");
 

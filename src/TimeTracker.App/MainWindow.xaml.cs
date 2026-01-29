@@ -4,6 +4,7 @@ using Wpf.Ui.Controls;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
+using TimeTracker.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.ComponentModel;
@@ -13,12 +14,15 @@ using System.ComponentModel;
 /// </summary>
 public partial class MainWindow : FluentWindow
 {
+    private readonly ISettingsRepository _settingsRepository;
     private bool _isRealClose = false;
 
-    public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel)
+    public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
         InitializeComponent();
         DataContext = viewModel;
+        
+        _settingsRepository = settingsRepository;
         
         NavigationView.SetServiceProvider(serviceProvider);
         
@@ -43,12 +47,18 @@ public partial class MainWindow : FluentWindow
     /// <summary>
     /// Handles the window closing event to minimize to tray instead of closing.
     /// </summary>
-    private void MainWindow_Closing(object? sender, CancelEventArgs e)
+    private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
         if (!_isRealClose)
         {
-            e.Cancel = true;
-            Hide();
+            // Check if minimize to tray is enabled
+            var settings = await _settingsRepository.GetAsync();
+            if (settings.MinimizeToTray)
+            {
+                e.Cancel = true;
+                Hide();
+            }
+            // If MinimizeToTray is false, allow the window to close normally (exit the app)
         }
     }
 

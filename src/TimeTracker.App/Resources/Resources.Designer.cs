@@ -1319,5 +1319,23 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Tray_Close", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimizar a la bandeja del sistema.
+        /// </summary>
+        internal static string Label_MinimizeToTray {
+            get {
+                return ResourceManager.GetString("Label_MinimizeToTray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Al cerrar la ventana, minimiza la aplicación a la bandeja en lugar de salir.
+        /// </summary>
+        internal static string Description_MinimizeToTray {
+            get {
+                return ResourceManager.GetString("Description_MinimizeToTray", resourceCulture);
+            }
+        }
     }
 }

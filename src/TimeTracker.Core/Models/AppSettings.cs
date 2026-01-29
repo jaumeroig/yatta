@@ -30,4 +30,10 @@ public class AppSettings
     /// If null, the system language is used.
     /// </summary>
     public string? Language { get; set; }
+
+    /// <summary>
+    /// Indicates if the application should minimize to tray when closing the window.
+    /// If false, closing the window will exit the application.
+    /// </summary>
+    public bool MinimizeToTray { get; set; } = true;
 }

@@ -537,4 +537,10 @@
   <data name="Tray_Close" xml:space="preserve">
     <value>Cerrar</value>
   </data>
+  <data name="Label_MinimizeToTray" xml:space="preserve">
+    <value>Minimizar a la bandeja del sistema</value>
+  </data>
+  <data name="Description_MinimizeToTray" xml:space="preserve">
+    <value>Al cerrar la ventana, minimiza la aplicación a la bandeja en lugar de salir</value>
+  </data>
 </root>

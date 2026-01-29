@@ -116,6 +116,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private bool _notificationsEnabled;
 
     /// <summary>
+    /// Indicates if the application should minimize to tray when closing.
+    /// </summary>
+    [ObservableProperty]
+    private bool _minimizeToTrayEnabled;
+
+    /// <summary>
     /// Hours of the total workday.
     /// </summary>
     [ObservableProperty]
@@ -187,6 +193,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
+    /// Enables or disables minimize to tray.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleMinimizeToTrayAsync()
+    {
+        await SaveMinimizeToTrayAsync(MinimizeToTrayEnabled);
+    }
+
+    /// <summary>
     /// Saves the total workday time.
     /// </summary>
     [RelayCommand]
@@ -226,6 +241,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Update notifications
         NotificationsEnabled = _currentSettings.Notifications;
+
+        // Update minimize to tray
+        MinimizeToTrayEnabled = _currentSettings.MinimizeToTray;
 
         // Update workday time
         WorkdayHours = _currentSettings.WorkdayTotalTime.Hours;
@@ -273,6 +291,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
 
         _currentSettings.Notifications = enabled;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Saves the minimize to tray configuration.
+    /// </summary>
+    private async Task SaveMinimizeToTrayAsync(bool enabled)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.MinimizeToTray = enabled;
         await _settingsRepository.UpdateAsync(_currentSettings);
     }
 

@@ -73,6 +73,25 @@
                                      Command="{Binding ToggleNotificationsCommand}" />
                 </ui:CardControl>
 
+                <!-- Minimitzar a la safata -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="ArrowMinimize24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_MinimizeToTray}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_MinimizeToTray}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding MinimizeToTrayEnabled, Mode=TwoWay}"
+                                     Command="{Binding ToggleMinimizeToTrayCommand}" />
+                </ui:CardControl>
+
                 <!-- Jornada laboral -->
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>
