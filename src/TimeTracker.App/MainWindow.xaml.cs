@@ -56,6 +56,7 @@ public partial class MainWindow : FluentWindow
             if (settings.MinimizeToTray)
             {
                 e.Cancel = true;
+                ShowInTaskbar = false;
                 Hide();
             }
             // If MinimizeToTray is false, allow the window to close normally (exit the app)
@@ -72,6 +73,7 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     private void TrayOpen_Click(object sender, RoutedEventArgs e)
     {
+        ShowInTaskbar = true;
         Show();
         WindowState = WindowState.Normal;
         Activate();
