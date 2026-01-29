@@ -8,6 +8,7 @@ using TimeTracker.Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.ComponentModel;
+using System;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -42,6 +43,8 @@ public partial class MainWindow : FluentWindow
         
         // Handle window closing to minimize to tray instead of closing
         Closing += MainWindow_Closing;
+        StateChanged += MainWindow_StateChanged;
+
     }
 
     /// <summary>
@@ -60,6 +63,19 @@ public partial class MainWindow : FluentWindow
                 Hide();
             }
             // If MinimizeToTray is false, allow the window to close normally (exit the app)
+        }
+    }
+
+    private async void MainWindow_StateChanged(object? sender, EventArgs e)
+    {
+        if (WindowState == WindowState.Minimized)
+        {
+            var settings = await _settingsRepository.GetAsync();
+            if (settings.MinimizeToTray)
+            {
+                ShowInTaskbar = false;
+                Hide();
+            }
         }
     }
 

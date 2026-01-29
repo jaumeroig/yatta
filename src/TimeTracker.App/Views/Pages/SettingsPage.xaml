@@ -12,27 +12,14 @@
     Title="{local:Localize Page_Settings_Title}"
     Loaded="Page_Loaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="42,12,42,12">
+        <Grid Margin="32,12,42,12">
             <StackPanel VerticalAlignment="Top" MaxWidth="800">
-                <!-- Tema -->
-                <ui:CardControl Margin="0,0,0,4">
-                    <ui:CardControl.Icon>
-                        <ui:SymbolIcon Symbol="ColorBackground24" />
-                    </ui:CardControl.Icon>
-                    <ui:CardControl.Header>
-                        <StackPanel>
-                            <TextBlock Text="{local:Localize Label_AppTheme}"
-                                       FontWeight="SemiBold" />
-                            <TextBlock Text="{local:Localize Label_ThemeDescription}"
-                                       FontSize="12"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                        </StackPanel>
-                    </ui:CardControl.Header>
-                    <ComboBox Width="200"
-                              ItemsSource="{Binding ThemeOptions}"
-                              SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
-                              DisplayMemberPath="DisplayName" />
-                </ui:CardControl>
+
+                <TextBlock Text="{local:Localize Settings_Section_AppearanceBehavior}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,12" />
 
                 <!-- Idioma -->
                 <ui:CardControl Margin="0,0,0,4">
@@ -54,24 +41,28 @@
                               SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
                               DisplayMemberPath="DisplayName" />
                 </ui:CardControl>
-
-                <!-- Notificacions -->
+                
+                <!-- Tema -->
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>
-                        <ui:SymbolIcon Symbol="Alert24" />
+                        <ui:SymbolIcon Symbol="ColorBackground24" />
                     </ui:CardControl.Icon>
                     <ui:CardControl.Header>
                         <StackPanel>
-                            <TextBlock Text="{local:Localize Label_EnableNotifications}"
+                            <TextBlock Text="{local:Localize Label_AppTheme}"
                                        FontWeight="SemiBold" />
-                            <TextBlock Text="{local:Localize Description_Notifications}"
+                            <TextBlock Text="{local:Localize Label_ThemeDescription}"
                                        FontSize="12"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
                     </ui:CardControl.Header>
-                    <ui:ToggleSwitch IsChecked="{Binding NotificationsEnabled, Mode=TwoWay}"
-                                     Command="{Binding ToggleNotificationsCommand}" />
+                    <ComboBox Width="200"
+                              ItemsSource="{Binding ThemeOptions}"
+                              SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
+                              DisplayMemberPath="DisplayName" />
                 </ui:CardControl>
+
+
 
                 <!-- Minimitzar a la safata -->
                 <ui:CardControl Margin="0,0,0,4">
@@ -91,6 +82,32 @@
                     <ui:ToggleSwitch IsChecked="{Binding MinimizeToTrayEnabled, Mode=TwoWay}"
                                      Command="{Binding ToggleMinimizeToTrayCommand}" />
                 </ui:CardControl>
+
+                <TextBlock Text="{local:Localize Settings_Section_AppearanceBehavior}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,42,0,12" />
+                
+                <!-- Notificacions -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Alert24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_EnableNotifications}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_Notifications}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding NotificationsEnabled, Mode=TwoWay}"
+                                     Command="{Binding ToggleNotificationsCommand}" />
+                </ui:CardControl>
+
+
 
                 <!-- Jornada laboral -->
                 <ui:CardControl Margin="0,0,0,4">
@@ -126,15 +143,12 @@
                     </StackPanel>
                 </ui:CardControl>
 
-                <!-- Separador -->
-                <Separator Margin="0,20,0,20" />
-
                 <!-- Sobre l'aplicació -->
-                <TextBlock Text="{local:Localize Section_About}"
+                <TextBlock Text="{local:Localize Settings_Section_About}"
                            FontSize="14"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           Margin="0,0,0,12" />
+                           Margin="0,42,0,12" />
 
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>
