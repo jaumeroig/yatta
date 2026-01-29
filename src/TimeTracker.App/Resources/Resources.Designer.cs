@@ -1301,5 +1301,23 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir.
+        /// </summary>
+        internal static string Tray_Open {
+            get {
+                return ResourceManager.GetString("Tray_Open", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cerrar.
+        /// </summary>
+        internal static string Tray_Close {
+            get {
+                return ResourceManager.GetString("Tray_Close", resourceCulture);
+            }
+        }
     }
 }
