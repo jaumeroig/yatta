@@ -1,6 +1,8 @@
 namespace TimeTracker.App.Converters;
 
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -306,7 +308,7 @@ public class SelectedColorToBorderThicknessConverter : IValueConverter
             // Normalize colors for comparison (uppercase)
             var current = currentColor.ToUpperInvariant();
             var target = TargetColor.ToUpperInvariant();
-            
+
             return current == target ? new Thickness(3) : new Thickness(0);
         }
         return new Thickness(0);
@@ -360,6 +362,95 @@ public class BarWidthConverter : IValueConverter
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Multivalue converter: returns Visible if the provided date exists in ANY of the provided collections.
+/// values[0] = DateTime (day button date), values[1..n] = IEnumerable<DateTime> (dates collections).
+/// </summary>
+public class DateInMultipleCollectionsToVisibilityConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        try
+        {
+            if (values.Length >= 2)
+            {
+                DateTime? maybeDate = values[0] as DateTime?;
+                if (maybeDate.HasValue)
+                {
+                    // Check if the date exists in any of the provided collections (values[1..n])
+                    for (int i = 1; i < values.Length; i++)
+                    {
+                        if (values[i] is IEnumerable<DateTime> dates)
+                        {
+                            if (dates.Any(d => d.Date == maybeDate.Value.Date))
+                            {
+                                return Visibility.Visible;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // ignore
+        }
+        return Visibility.Collapsed;
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+
+/// <summary>
+/// Returns a SolidColorBrush for the calendar indicator dot based on date membership in
+/// Telework, Office or Both collections. Priority: Both (purple) > Telework (blue) > Office (green) > Transparent.
+/// values[0] = DateTime (day date), values[1] = IEnumerable<DateTime> TeleworkDates,
+/// values[2] = IEnumerable<DateTime> OfficeDates, values[3] = IEnumerable<DateTime> BothDates.
+/// </summary>
+public class DateToIndicatorBrushConverter : IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    {
+        try
+        {
+            var date = values.Length > 0 ? values[0] as DateTime? : null;
+            if (!date.HasValue) return new SolidColorBrush(Colors.Transparent);
+
+            var tele = values.Length > 1 ? values[1] as IEnumerable<DateTime> : null;
+            var off = values.Length > 2 ? values[2] as IEnumerable<DateTime> : null;
+            var both = values.Length > 3 ? values[3] as IEnumerable<DateTime> : null;
+
+            var d = date.Value.Date;
+            if (both != null && both.Any(x => x.Date == d))
+            {
+                return new SolidColorBrush(Color.FromRgb(0x9C, 0x27, 0xB0)); // purple
+            }
+            if (tele != null && tele.Any(x => x.Date == d))
+            {
+                return new SolidColorBrush(Color.FromRgb(0x21, 0x96, 0xF3)); // blue
+            }
+            if (off != null && off.Any(x => x.Date == d))
+            {
+                return new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50)); // green
+            }
+        }
+        catch
+        {
+            // ignore
+        }
+        return new SolidColorBrush(Colors.Transparent);
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }

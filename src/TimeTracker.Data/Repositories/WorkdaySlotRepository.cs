@@ -65,8 +65,19 @@ public class WorkdaySlotRepository : IWorkdaySlotRepository
 
     public async Task UpdateAsync(WorkdaySlot workdaySlot)
     {
-        _context.WorkdaySlots.Update(workdaySlot);
+        var existingSlot = await _context.WorkdaySlots.FindAsync(workdaySlot.Id);
+
+        if (existingSlot is null)
+            return;
+
+        existingSlot.Date = workdaySlot.Date;
+        existingSlot.StartTime = workdaySlot.StartTime;
+        existingSlot.EndTime = workdaySlot.EndTime;
+        existingSlot.Telework = workdaySlot.Telework;
         await _context.SaveChangesAsync();
+
+        //_context.WorkdaySlots.Update(workdaySlot); --- Peta al editar jornada por change tracker EF
+        //await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid id)
