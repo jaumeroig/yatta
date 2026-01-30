@@ -1,15 +1,16 @@
 <Page x:Class="TimeTracker.App.Views.Pages.JornadaPage"
-    x:Name="WorkdayPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
-    xmlns:converters="clr-namespace:TimeTracker.App.Converters"
-    xmlns:local="clr-namespace:TimeTracker.App.Markup"
-    d:DataContext="{d:DesignInstance vm:JornadaViewModel}"
-    mc:Ignorable="d"
+x:Name="WorkdayPage"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
+xmlns:converters="clr-namespace:TimeTracker.App.Converters"
+xmlns:controls="clr-namespace:TimeTracker.App.Controls"
+xmlns:local="clr-namespace:TimeTracker.App.Markup"
+d:DataContext="{d:DesignInstance vm:JornadaViewModel}"
+mc:Ignorable="d"
     d:DesignHeight="700" d:DesignWidth="1100"
     Title="Jornada"
     Loaded="Page_Loaded"
@@ -359,6 +360,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
@@ -508,8 +510,18 @@
                             </Grid>
                         </ui:Card>
 
+                        <!-- Timeline bar visual -->
+                        <controls:WorkdayTimelineBar
+                            Grid.Row="1"
+                            Margin="0,0,0,16"
+                            BarHeight="24"
+                            CornerRadius="6"
+                            WorkdayStart="{Binding SelectedDate, Converter={StaticResource DateToWorkdayStartConverter}}"
+                            WorkdayEnd="{Binding SelectedDate, Converter={StaticResource DateToWorkdayEndConverter}}"
+                            Segments="{Binding TimelineSegments}" />
+
                         <!-- Títol de la llista de franges -->
-                        <TextBlock Grid.Row="1"
+                        <TextBlock Grid.Row="2"
                                    Text="{local:Localize Section_TimeSlots}"
                                    FontSize="16"
                                    FontWeight="SemiBold"
@@ -517,7 +529,7 @@
                                    Margin="0,0,0,12" />
 
                         <!-- Llista de franges -->
-                        <Grid Grid.Row="2">
+                        <Grid Grid.Row="3">
                             <!-- Llista de franges quan n'hi ha -->
                             <ScrollViewer VerticalScrollBarVisibility="Auto"
                                           HorizontalScrollBarVisibility="Disabled">

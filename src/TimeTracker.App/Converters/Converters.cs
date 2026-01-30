@@ -456,3 +456,43 @@ public class DateToIndicatorBrushConverter : IMultiValueConverter
     }
 }
 
+/// <summary>
+/// Converts a DateTime to the workday start time (same date at 07:00).
+/// </summary>
+public class DateToWorkdayStartConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DateTime date)
+        {
+            return date.Date.AddHours(7);
+        }
+        return DateTime.Today.AddHours(7);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts a DateTime to the workday end time (same date at 20:00).
+/// </summary>
+public class DateToWorkdayEndConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DateTime date)
+        {
+            return date.Date.AddHours(20);
+        }
+        return DateTime.Today.AddHours(20);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+

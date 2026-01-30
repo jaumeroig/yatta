@@ -1,8 +1,10 @@
 namespace TimeTracker.App.ViewModels;
 
 using System.Collections.ObjectModel;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Controls;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -68,6 +70,10 @@ public partial class JornadaViewModel : ObservableObject
 
     [ObservableProperty]
     private double _teleworkBarWidth;
+
+    // Timeline segments for WorkdayTimelineBar
+    [ObservableProperty]
+    private ObservableCollection<TimeSegment> _timelineSegments = [];
 
     // Dates with records (for calendar)
     [ObservableProperty]
@@ -181,6 +187,30 @@ public partial class JornadaViewModel : ObservableObject
             });
 
         Slots = new ObservableCollection<WorkdaySlotDisplay>(slotDisplays);
+        UpdateTimelineSegments();
+    }
+
+    private void UpdateTimelineSegments()
+    {
+        var segments = _allSlots
+            .OrderBy(s => s.StartTime)
+            .Select(slot =>
+            {
+                var date = DateOnly.FromDateTime(SelectedDate);
+                return new TimeSegment
+                {
+                    Label = slot.Telework
+                        ? Resources.Resources.Location_Telework
+                        : Resources.Resources.Location_Office,
+                    Start = date.ToDateTime(slot.StartTime),
+                    End = date.ToDateTime(slot.EndTime),
+                    Color = slot.Telework
+                        ? Color.FromRgb(0x21, 0x96, 0xF3)  // #2196F3 blue
+                        : Color.FromRgb(0x4C, 0xAF, 0x50)  // #4CAF50 green
+                };
+            });
+
+        TimelineSegments = new ObservableCollection<TimeSegment>(segments);
     }
 
     private void UpdateDailySummary()
