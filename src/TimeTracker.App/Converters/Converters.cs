@@ -496,3 +496,43 @@ public class DateToWorkdayEndConverter : IValueConverter
     }
 }
 
+/// <summary>
+/// Converts a DateOnly to the workday start time (same date at 07:00).
+/// </summary>
+public class DateOnlyToWorkdayStartConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DateOnly date)
+        {
+            return date.ToDateTime(new TimeOnly(7, 0));
+        }
+        return DateTime.Today.AddHours(7);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts a DateOnly to the workday end time (same date at 20:00).
+/// </summary>
+public class DateOnlyToWorkdayEndConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is DateOnly date)
+        {
+            return date.ToDateTime(new TimeOnly(20, 0));
+        }
+        return DateTime.Today.AddHours(20);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
