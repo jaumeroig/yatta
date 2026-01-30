@@ -1,8 +1,10 @@
 namespace TimeTracker.App.ViewModels;
 
 using System.Collections.ObjectModel;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.Core.Interfaces;
@@ -120,7 +122,11 @@ public partial class TimeRecordViewModel : ObservableObject
                 DateDisplay = FormatDate(g.Key),
                 TotalWorked = FormatDuration(_timeCalculatorService.CalculateTotalHours(g)),
                 Records = new ObservableCollection<TimeRecordDisplay>(
-                    g.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r)))
+                    g.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r))),
+                TimelineSegments = new ObservableCollection<TimeSegment>(
+                    g.Where(r => r.EndTime.HasValue)
+                     .OrderBy(r => r.StartTime)
+                     .Select(r => CreateTimelineSegment(r, g.Key)))
             });
 
         GroupedRecords = new ObservableCollection<DayGroup>(groups);
@@ -143,6 +149,31 @@ public partial class TimeRecordViewModel : ObservableObject
             EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
             Duration = FormatDuration(duration),
             Date = record.Date
+        };
+    }
+
+    private TimeSegment CreateTimelineSegment(TimeRecord record, DateOnly date)
+    {
+        var activity = _allActivities.FirstOrDefault(a => a.Id == record.ActivityId);
+        var color = Colors.Gray;
+        if (activity?.Color != null)
+        {
+            try
+            {
+                color = (Color)ColorConverter.ConvertFromString(activity.Color);
+            }
+            catch
+            {
+                // Keep default gray
+            }
+        }
+
+        return new TimeSegment
+        {
+            Label = activity?.Name ?? Resources.Resources.Activity_Unknown,
+            Start = date.ToDateTime(record.StartTime),
+            End = date.ToDateTime(record.EndTime!.Value),
+            Color = color
         };
     }
 
@@ -204,6 +235,7 @@ public class DayGroup
     public string DateDisplay { get; set; } = string.Empty;
     public string TotalWorked { get; set; } = string.Empty;
     public ObservableCollection<TimeRecordDisplay> Records { get; set; } = [];
+    public ObservableCollection<TimeSegment> TimelineSegments { get; set; } = [];
 }
 
 /// <summary>
