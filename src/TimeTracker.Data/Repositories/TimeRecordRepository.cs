@@ -55,26 +55,50 @@ public class TimeRecordRepository : ITimeRecordRepository
             .ToListAsync();
     }
 
+    public async Task<TimeRecord?> GetActiveAsync()
+    {
+        return await _context.TimeRecords
+            .Where(tr => tr.EndTime == null)
+            .OrderByDescending(tr => tr.Date)
+            .ThenByDescending(tr => tr.StartTime)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<TimeRecord> AddAsync(TimeRecord timeRecord)
     {
         _context.TimeRecords.Add(timeRecord);
+
         await _context.SaveChangesAsync();
+
         return timeRecord;
     }
 
     public async Task UpdateAsync(TimeRecord timeRecord)
     {
-        _context.TimeRecords.Update(timeRecord);
+        // Load the existing tracked entity and update its properties to avoid
+        // identity conflicts when a different instance with the same key
+        // is provided (EF Core throws if two instances with same key are tracked).
+
+        var existing = await _context.TimeRecords.FindAsync(timeRecord.Id) ?? 
+            throw new InvalidOperationException($"TimeRecord with Id '{timeRecord.Id}' not found.");
+
+        existing.ActivityId = timeRecord.ActivityId;
+        existing.Date = timeRecord.Date;
+        existing.StartTime = timeRecord.StartTime;
+        existing.EndTime = timeRecord.EndTime;
+        existing.Notes = timeRecord.Notes;
+
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid id)
     {
         var timeRecord = await GetByIdAsync(id);
-        if (timeRecord != null)
-        {
-            _context.TimeRecords.Remove(timeRecord);
-            await _context.SaveChangesAsync();
-        }
+
+        if (timeRecord is null)
+            return;
+
+        _context.TimeRecords.Remove(timeRecord);
+        await _context.SaveChangesAsync();
     }
 }

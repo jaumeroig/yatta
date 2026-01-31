@@ -3,6 +3,7 @@ namespace TimeTracker.App.Views.Pages;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using TimeTracker.App.Models;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using Wpf.Ui.Controls;
@@ -39,9 +40,29 @@ public partial class TimeRecordDetailPage : Page
             _isSubscribedToChanges = true;
         }
 
-        // Obtenir el paràmetre de navegació (l'ID del registre)
-        var recordId = _navigationService.CurrentParameter as Guid?;
-        await _viewModel.InitializeAsync(recordId);
+        // Get navigation parameter (can be Guid? or TimeRecordNavigationParameter)
+        Guid? recordId = null;
+        var fromNotification = false;
+
+        if (_navigationService.CurrentParameter is TimeRecordNavigationParameter navParam)
+        {
+            recordId = navParam.RecordId;
+            fromNotification = navParam.FromNotification;
+        }
+        else if (_navigationService.CurrentParameter is Guid guid)
+        {
+            recordId = guid;
+        }
+
+        await _viewModel.InitializeAsync(recordId, fromNotification);
+
+        // Focus on EndTime field if coming from notification
+        if (_viewModel.ShouldFocusEndTime)
+        {
+            EndTimeTextBox.Focus();
+            EndTimeTextBox.SelectAll();
+            _viewModel.ShouldFocusEndTime = false;
+        }
     }
 
     private void Page_Unloaded(object sender, RoutedEventArgs e)

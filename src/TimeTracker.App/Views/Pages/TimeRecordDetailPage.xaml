@@ -139,7 +139,8 @@
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,8" />
-                        <ui:TextBox PlaceholderText="HH:mm"
+                        <ui:TextBox x:Name="EndTimeTextBox"
+                                    PlaceholderText="HH:mm"
                                     Text="{Binding EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     MinWidth="120" />
                     </StackPanel>

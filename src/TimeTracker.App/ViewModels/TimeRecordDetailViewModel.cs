@@ -60,6 +60,9 @@ public partial class TimeRecordDetailViewModel : ObservableObject
     [ObservableProperty]
     private string _timeError = string.Empty;
 
+    [ObservableProperty]
+    private bool _shouldFocusEndTime;
+
     /// <summary>
     /// Indicates if the record already exists (not new).
     /// </summary>
@@ -90,7 +93,7 @@ public partial class TimeRecordDetailViewModel : ObservableObject
     /// <summary>
     /// Initializes the ViewModel with the record data.
     /// </summary>
-    public async Task InitializeAsync(Guid? recordId)
+    public async Task InitializeAsync(Guid? recordId, bool fromNotification = false)
     {
         // Load active activities
         var activeActivities = await _activityRepository.GetActiveAsync();
@@ -102,6 +105,13 @@ public partial class TimeRecordDetailViewModel : ObservableObject
             _isNewRecord = false;
             OnPropertyChanged(nameof(IsExistingRecord));
             await LoadRecordAsync();
+
+            // If coming from notification, set current time as end time
+            if (fromNotification)
+            {
+                EndTimeText = DateTime.Now.ToString("HH:mm");
+                ShouldFocusEndTime = true;
+            }
         }
         else
         {

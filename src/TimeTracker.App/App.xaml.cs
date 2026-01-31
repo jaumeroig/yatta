@@ -11,6 +11,8 @@ using TimeTracker.Data.Repositories;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
+using TimeTracker.App.Models;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 /// <summary>
 /// Interaction logic for App.xaml
@@ -39,14 +41,69 @@ public partial class App : Application
         InitializeLocalization();
 
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
-        
-        
+
+
         // Load and apply theme after creating the main window
         // This ensures that the system theme is detected correctly
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
         mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
-        
+
+        // Initialize notification service
+        InitializeNotificationService();
+
         mainWindow.Show();
+    }
+
+    /// <summary>
+    /// Initializes the notification service with saved settings.
+    /// </summary>
+    private void InitializeNotificationService()
+    {
+        var notificationService = _serviceProvider!.GetRequiredService<INotificationService>();
+
+        // Connect event to bring window to foreground and navigate to edit record
+        notificationService.OnChangeActivity += OnNotificationChangeActivity;
+
+        // Load settings and enable if notifications are enabled
+        using var scope = _serviceProvider!.CreateScope();
+        var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+
+        try
+        {
+            var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
+            notificationService.IsEnabled = settings.Notifications;
+        }
+        catch
+        {
+            // If there's an error, leave notifications disabled
+        }
+    }
+
+    /// <summary>
+    /// Handles the notification change activity event.
+    /// Brings window to foreground and navigates to edit the active record.
+    /// </summary>
+    private void OnNotificationChangeActivity(object? sender, Guid recordId)
+    {
+        Current.Dispatcher.Invoke(() =>
+        {
+            var mainWindow = Current.MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.ShowInTaskbar = true;
+                mainWindow.Show();
+                mainWindow.WindowState = WindowState.Normal;
+                mainWindow.Activate();
+            }
+
+            var navigationService = _serviceProvider!.GetRequiredService<INavigationService>();
+            var navParam = new TimeRecordNavigationParameter
+            {
+                RecordId = recordId,
+                FromNotification = true
+            };
+            navigationService.Navigate<TimeRecordDetailPage>(navParam);
+        });
     }
 
     /// <summary>
@@ -123,6 +180,7 @@ public partial class App : Application
         services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IBreadcrumbService, BreadcrumbService>();
+        services.AddSingleton<INotificationService, NotificationService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
@@ -147,6 +205,17 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        // Cleanup notification service
+        try
+        {
+            var notificationService = _serviceProvider?.GetService<INotificationService>();
+            notificationService?.Dispose();
+        }
+        catch
+        {
+            // Ignore cleanup errors
+        }
+
         _serviceProvider?.Dispose();
         base.OnExit(e);
     }

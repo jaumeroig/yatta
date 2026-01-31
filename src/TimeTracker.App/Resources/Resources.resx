@@ -354,6 +354,15 @@
   <data name="Description_Notifications" xml:space="preserve">
     <value>Muestra notificaciones para recordarte registrar las horas</value>
   </data>
+  <data name="Label_NotificationInterval" xml:space="preserve">
+    <value>Intervalo de notificaciones</value>
+  </data>
+  <data name="Description_NotificationInterval" xml:space="preserve">
+    <value>Tiempo en minutos entre cada notificación (mínimo 15, máximo 480)</value>
+  </data>
+  <data name="Label_Minutes" xml:space="preserve">
+    <value>minutos</value>
+  </data>
   <data name="Section_WorkdaySettings" xml:space="preserve">
     <value>Jornada laboral</value>
   </data>
@@ -545,5 +554,38 @@
   </data>
   <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
     <value>Apariencia y comportamiento</value>
+  </data>
+  <data name="Notification_StillWorking" xml:space="preserve">
+    <value>¿Sigues trabajando en: {0}?</value>
+  </data>
+  <data name="Notification_Duration" xml:space="preserve">
+    <value>Tiempo transcurrido: {0}</value>
+  </data>
+  <data name="Notification_Continue" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="Notification_ChangeActivity" xml:space="preserve">
+    <value>Cambiar actividad</value>
+  </data>
+  <data name="Notification_Snooze" xml:space="preserve">
+    <value>Posponer</value>
+  </data>
+  <data name="Notification_15min" xml:space="preserve">
+    <value>15 minutos</value>
+  </data>
+  <data name="Notification_30min" xml:space="preserve">
+    <value>30 minutos</value>
+  </data>
+  <data name="Notification_1hour" xml:space="preserve">
+    <value>1 hora</value>
+  </data>
+  <data name="Notification_2hours" xml:space="preserve">
+    <value>2 horas</value>
+  </data>
+  <data name="Notification_UnknownActivity" xml:space="preserve">
+    <value>Actividad desconocida</value>
+  </data>
+  <data name="Settings_Section_User_Config" xml:space="preserve">
+    <value>Configuración de usuario</value>
   </data>
 </root>

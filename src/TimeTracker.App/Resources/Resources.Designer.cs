@@ -304,6 +304,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Al cerrar la ventana, minimiza la aplicación a la bandeja en lugar de salir.
+        /// </summary>
+        internal static string Description_MinimizeToTray {
+            get {
+                return ResourceManager.GetString("Description_MinimizeToTray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo en minutos entre cada notificación (mínimo 15, máximo 480).
+        /// </summary>
+        internal static string Description_NotificationInterval {
+            get {
+                return ResourceManager.GetString("Description_NotificationInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Muestra notificaciones para recordarte registrar las horas.
         /// </summary>
         internal static string Description_Notifications {
@@ -576,9 +594,9 @@ namespace TimeTracker.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
-        internal static string Label_DateDisplayXXX {
+        internal static string Label_DateDisplay {
             get {
-                return ResourceManager.GetString("Label_DateDisplayXXX", resourceCulture);
+                return ResourceManager.GetString("Label_DateDisplay", resourceCulture);
             }
         }
         
@@ -619,11 +637,38 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimizar a la bandeja del sistema.
+        /// </summary>
+        internal static string Label_MinimizeToTray {
+            get {
+                return ResourceManager.GetString("Label_MinimizeToTray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to minutos.
+        /// </summary>
+        internal static string Label_Minutes {
+            get {
+                return ResourceManager.GetString("Label_Minutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notas (opcional).
         /// </summary>
         internal static string Label_Notes {
             get {
                 return ResourceManager.GetString("Label_Notes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intervalo de notificaciones.
+        /// </summary>
+        internal static string Label_NotificationInterval {
+            get {
+                return ResourceManager.GetString("Label_NotificationInterval", resourceCulture);
             }
         }
         
@@ -822,6 +867,96 @@ namespace TimeTracker.App.Resources {
         internal static string Nav_Workday {
             get {
                 return ResourceManager.GetString("Nav_Workday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 15 minutos.
+        /// </summary>
+        internal static string Notification_15min {
+            get {
+                return ResourceManager.GetString("Notification_15min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 hora.
+        /// </summary>
+        internal static string Notification_1hour {
+            get {
+                return ResourceManager.GetString("Notification_1hour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 horas.
+        /// </summary>
+        internal static string Notification_2hours {
+            get {
+                return ResourceManager.GetString("Notification_2hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30 minutos.
+        /// </summary>
+        internal static string Notification_30min {
+            get {
+                return ResourceManager.GetString("Notification_30min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar actividad.
+        /// </summary>
+        internal static string Notification_ChangeActivity {
+            get {
+                return ResourceManager.GetString("Notification_ChangeActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continuar.
+        /// </summary>
+        internal static string Notification_Continue {
+            get {
+                return ResourceManager.GetString("Notification_Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo transcurrido: {0}.
+        /// </summary>
+        internal static string Notification_Duration {
+            get {
+                return ResourceManager.GetString("Notification_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Posponer.
+        /// </summary>
+        internal static string Notification_Snooze {
+            get {
+                return ResourceManager.GetString("Notification_Snooze", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Sigues trabajando en: {0}?.
+        /// </summary>
+        internal static string Notification_StillWorking {
+            get {
+                return ResourceManager.GetString("Notification_StillWorking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actividad desconocida.
+        /// </summary>
+        internal static string Notification_UnknownActivity {
+            get {
+                return ResourceManager.GetString("Notification_UnknownActivity", resourceCulture);
             }
         }
         
@@ -1033,24 +1168,6 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sobre la aplicación.
-        /// </summary>
-        internal static string Section_About {
-            get {
-                return ResourceManager.GetString("Section_About", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Apariencia.
-        /// </summary>
-        internal static string Section_Appearance {
-            get {
-                return ResourceManager.GetString("Section_Appearance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Idioma.
         /// </summary>
         internal static string Section_Language {
@@ -1092,6 +1209,33 @@ namespace TimeTracker.App.Resources {
         internal static string Section_WorkdaySettings {
             get {
                 return ResourceManager.GetString("Section_WorkdaySettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sobre la aplicación.
+        /// </summary>
+        internal static string Settings_Section_About {
+            get {
+                return ResourceManager.GetString("Settings_Section_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apariencia y comportamiento.
+        /// </summary>
+        internal static string Settings_Section_AppearanceBehavior {
+            get {
+                return ResourceManager.GetString("Settings_Section_AppearanceBehavior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configuración de usuario.
+        /// </summary>
+        internal static string Settings_Section_User_Config {
+            get {
+                return ResourceManager.GetString("Settings_Section_User_Config", resourceCulture);
             }
         }
         
@@ -1326,24 +1470,6 @@ namespace TimeTracker.App.Resources {
         internal static string Value_Technology {
             get {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Minimizar a la bandeja del sistema.
-        /// </summary>
-        internal static string Label_MinimizeToTray {
-            get {
-                return ResourceManager.GetString("Label_MinimizeToTray", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Al cerrar la ventana, minimiza la aplicación a la bandeja en lugar de salir.
-        /// </summary>
-        internal static string Description_MinimizeToTray {
-            get {
-                return ResourceManager.GetString("Description_MinimizeToTray", resourceCulture);
             }
         }
     }

@@ -51,7 +51,9 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.Notifications = settings.Notifications;
             existingSettings.WorkdayTotalTime = settings.WorkdayTotalTime;
             existingSettings.Language = settings.Language;
-            
+            existingSettings.MinimizeToTray = settings.MinimizeToTray;
+            existingSettings.NotificationIntervalMinutes = settings.NotificationIntervalMinutes;
+
             _context.AppSettings.Update(existingSettings);
         }
         else

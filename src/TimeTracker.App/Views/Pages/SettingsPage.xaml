@@ -83,7 +83,7 @@
                                      Command="{Binding ToggleMinimizeToTrayCommand}" />
                 </ui:CardControl>
 
-                <TextBlock Text="{local:Localize Settings_Section_AppearanceBehavior}"
+                <TextBlock Text="{local:Localize Settings_Section_User_Config}"
                            FontSize="14"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -107,7 +107,35 @@
                                      Command="{Binding ToggleNotificationsCommand}" />
                 </ui:CardControl>
 
-
+                <!-- Intervalo de notificaciones -->
+                <ui:CardControl Margin="0,0,0,4"
+                                IsEnabled="{Binding NotificationsEnabled}">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Timer24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_NotificationInterval}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_NotificationInterval}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:TextBox Text="{Binding NotificationIntervalMinutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="80"
+                                    Margin="0,0,4,0" />
+                        <TextBlock Text="{local:Localize Label_Minutes}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,12,0" />
+                        <ui:Button Content="{local:Localize Button_Save}"
+                                   Command="{Binding SaveNotificationIntervalCommand}"
+                                   Appearance="Primary"
+                                   Padding="16,6" />
+                    </StackPanel>
+                </ui:CardControl>
 
                 <!-- Jornada laboral -->
                 <ui:CardControl Margin="0,0,0,4">
