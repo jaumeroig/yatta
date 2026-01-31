@@ -8,14 +8,15 @@
         xmlns:pages="clr-namespace:TimeTracker.App.Views.Pages"
         xmlns:local="clr-namespace:TimeTracker.App.Markup"
         mc:Ignorable="d"
-        Title="{local:Localize App_Title}" 
-        Height="700" 
+        Title="{local:Localize App_Title}"
+        Height="700"
         Width="1100"
         MinHeight="500"
         MinWidth="800"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
-        WindowCornerPreference="Round">
+        WindowCornerPreference="Round"
+        Icon="/Resources/Logo.ico">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -95,7 +96,8 @@
             FocusOnLeftClick="True"
             MenuOnRightClick="True"
             LeftClick="TrayOpen_Click"
-            TooltipText="{local:Localize App_Title}">
+            TooltipText="{local:Localize App_Title}"
+            Icon="/Resources/Logo.ico">
             <tray:NotifyIcon.Menu>
                 <ContextMenu>
                     <MenuItem Header="{local:Localize Tray_Open}" Click="TrayOpen_Click">

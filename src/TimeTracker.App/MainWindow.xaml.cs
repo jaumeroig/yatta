@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.ComponentModel;
 using System;
+using System.Windows.Input;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -16,15 +17,17 @@ using System;
 public partial class MainWindow : FluentWindow
 {
     private readonly ISettingsRepository _settingsRepository;
+    private readonly IServiceProvider _serviceProvider;
     private bool _isRealClose = false;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
         InitializeComponent();
         DataContext = viewModel;
-        
+
         _settingsRepository = settingsRepository;
-        
+        _serviceProvider = serviceProvider;
+
         NavigationView.SetServiceProvider(serviceProvider);
         
         
@@ -45,6 +48,23 @@ public partial class MainWindow : FluentWindow
         Closing += MainWindow_Closing;
         StateChanged += MainWindow_StateChanged;
 
+        // DEBUG: Keyboard shortcut to test notifications (Ctrl+Shift+T)
+        KeyDown += MainWindow_KeyDown;
+    }
+
+    /// <summary>
+    /// DEBUG: Handles keyboard shortcuts for testing.
+    /// Ctrl+Shift+T = Force show notification
+    /// </summary>
+    private async void MainWindow_KeyDown(object sender, KeyEventArgs e)
+    {
+        // Ctrl+Shift+T to test notification
+        if (e.Key == Key.T && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+        {
+            var notificationService = _serviceProvider.GetRequiredService<INotificationService>();
+            await notificationService.ForceShowNotificationAsync();
+            e.Handled = true;
+        }
     }
 
     /// <summary>

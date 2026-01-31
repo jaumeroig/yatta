@@ -117,12 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Window_Title" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
-  <data name="TitleBar_Title" xml:space="preserve">
-    <value>TimeTracker</value>
-  </data>
   <data name="TitleBar_Subtitle" xml:space="preserve">
     <value>Control de temps</value>
   </data>
@@ -360,6 +354,15 @@
   <data name="Description_Notifications" xml:space="preserve">
     <value>Mostra notificacions per recordar-te registrar les hores</value>
   </data>
+  <data name="Label_NotificationInterval" xml:space="preserve">
+    <value>Interval de notificacions</value>
+  </data>
+  <data name="Description_NotificationInterval" xml:space="preserve">
+    <value>Temps en minuts entre cada notificació (mínim 15, màxim 480)</value>
+  </data>
+  <data name="Label_Minutes" xml:space="preserve">
+    <value>minuts</value>
+  </data>
   <data name="Section_WorkdaySettings" xml:space="preserve">
     <value>Jornada laboral</value>
   </data>
@@ -534,6 +537,9 @@
   <data name="Status_Archive" xml:space="preserve">
     <value>Arxivada</value>
   </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Yatta</value>
+  </data>
   <data name="Tray_Open" xml:space="preserve">
     <value>Obrir</value>
   </data>
@@ -546,10 +552,46 @@
   <data name="Description_MinimizeToTray" xml:space="preserve">
     <value>En tancar la finestra, minimitza l'aplicació a la safata en lloc de sortir</value>
   </data>
-  <data name="App_Title" xml:space="preserve">
-    <value>Yatta</value>
-  </data>
   <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
     <value>Aparença i comportament</value>
+  </data>
+  <data name="Notification_StillWorking" xml:space="preserve">
+    <value>Continues treballant en: {0}?</value>
+  </data>
+  <data name="Notification_Duration" xml:space="preserve">
+    <value>Temps transcorregut: {0}</value>
+  </data>
+  <data name="Notification_Continue" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="Notification_ChangeActivity" xml:space="preserve">
+    <value>Canviar activitat</value>
+  </data>
+  <data name="Notification_Snooze" xml:space="preserve">
+    <value>Posposar</value>
+  </data>
+  <data name="Notification_15min" xml:space="preserve">
+    <value>15 minuts</value>
+  </data>
+  <data name="Notification_30min" xml:space="preserve">
+    <value>30 minuts</value>
+  </data>
+  <data name="Notification_1hour" xml:space="preserve">
+    <value>1 hora</value>
+  </data>
+  <data name="Notification_2hours" xml:space="preserve">
+    <value>2 hores</value>
+  </data>
+  <data name="Notification_UnknownActivity" xml:space="preserve">
+    <value>Activitat desconeguda</value>
+  </data>
+  <data name="Window_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
+  <data name="TitleBar_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
+  <data name="Settings_Section_User_Config" xml:space="preserve">
+    <value>User settings</value>
   </data>
 </root>

@@ -36,4 +36,10 @@ public class AppSettings
     /// If false, closing the window will exit the application.
     /// </summary>
     public bool MinimizeToTray { get; set; } = true;
+
+    /// <summary>
+    /// Interval in minutes between notification reminders when there is an active time record.
+    /// Default is 120 minutes (2 hours).
+    /// </summary>
+    public int NotificationIntervalMinutes { get; set; } = 120;
 }

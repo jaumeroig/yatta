@@ -33,6 +33,12 @@ public interface ITimeRecordRepository
     Task<IEnumerable<TimeRecord>> GetByActivityIdAsync(Guid activityId);
 
     /// <summary>
+    /// Gets the currently active time record (EndTime is null).
+    /// Returns the most recent active record if multiple exist.
+    /// </summary>
+    Task<TimeRecord?> GetActiveAsync();
+
+    /// <summary>
     /// Adds a new time record.
     /// </summary>
     Task<TimeRecord> AddAsync(TimeRecord timeRecord);

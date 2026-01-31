@@ -47,6 +47,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly ISettingsRepository _settingsRepository;
     private readonly IThemeService _themeService;
     private readonly ILocalizationService _localizationService;
+    private readonly INotificationService _notificationService;
     private AppSettings? _currentSettings;
     private CancellationTokenSource? _languageSaveCts;
     private CancellationTokenSource? _themeSaveCts;
@@ -54,11 +55,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public SettingsViewModel(
         ISettingsRepository settingsRepository,
         IThemeService themeService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        INotificationService notificationService)
     {
         _settingsRepository = settingsRepository;
         _themeService = themeService;
         _localizationService = localizationService;
+        _notificationService = notificationService;
 
 
         // Initialize theme options
@@ -138,6 +141,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     private string _appVersion = string.Empty;
+
+    /// <summary>
+    /// Interval in minutes between notification reminders.
+    /// </summary>
+    [ObservableProperty]
+    private int _notificationIntervalMinutes;
 
     #endregion
 
@@ -222,6 +231,25 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         await SaveWorkdayTotalTimeAsync(totalTime);
     }
 
+    /// <summary>
+    /// Saves the notification interval.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveNotificationIntervalAsync()
+    {
+        // Validate that interval is valid (between 15 and 480 minutes = 8 hours)
+        if (NotificationIntervalMinutes < 15)
+        {
+            NotificationIntervalMinutes = 15;
+        }
+        else if (NotificationIntervalMinutes > 480)
+        {
+            NotificationIntervalMinutes = 480;
+        }
+
+        await SaveNotificationIntervalMinutesAsync(NotificationIntervalMinutes);
+    }
+
     #endregion
 
     #region Private Methods
@@ -248,6 +276,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         // Update workday time
         WorkdayHours = _currentSettings.WorkdayTotalTime.Hours;
         WorkdayMinutes = _currentSettings.WorkdayTotalTime.Minutes;
+
+        // Update notification interval
+        NotificationIntervalMinutes = _currentSettings.NotificationIntervalMinutes;
     }
 
     /// <summary>
@@ -281,7 +312,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Saves the notifications configuration.
+    /// Saves the notifications configuration and syncs with the notification service.
     /// </summary>
     private async Task SaveNotificationsAsync(bool enabled)
     {
@@ -292,6 +323,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         _currentSettings.Notifications = enabled;
         await _settingsRepository.UpdateAsync(_currentSettings);
+
+        // Sync with notification service
+        _notificationService.IsEnabled = enabled;
     }
 
     /// <summary>
@@ -319,6 +353,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
 
         _currentSettings.WorkdayTotalTime = totalTime;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Saves the notification interval in minutes.
+    /// </summary>
+    private async Task SaveNotificationIntervalMinutesAsync(int intervalMinutes)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.NotificationIntervalMinutes = intervalMinutes;
         await _settingsRepository.UpdateAsync(_currentSettings);
     }
 
