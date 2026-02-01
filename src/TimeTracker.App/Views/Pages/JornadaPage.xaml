@@ -13,6 +13,7 @@ d:DataContext="{d:DesignInstance vm:JornadaViewModel}"
 mc:Ignorable="d"
     d:DesignHeight="700" d:DesignWidth="1100"
     Title="Jornada"
+    ScrollViewer.CanContentScroll="False"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded">
 
