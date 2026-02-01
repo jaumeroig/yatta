@@ -42,4 +42,9 @@ public class AppSettings
     /// Default is 120 minutes (2 hours).
     /// </summary>
     public int NotificationIntervalMinutes { get; set; } = 120;
+
+    /// <summary>
+    /// Indicates if the application should start automatically when Windows starts.
+    /// </summary>
+    public bool StartWithWindows { get; set; } = false;
 }

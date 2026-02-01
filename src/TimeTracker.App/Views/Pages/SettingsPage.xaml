@@ -86,6 +86,25 @@
                                      Command="{Binding ToggleMinimizeToTrayCommand}" />
                 </ui:CardControl>
 
+                <!-- Iniciar con Windows -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Power24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_StartWithWindows}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_StartWithWindows}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding StartWithWindowsEnabled, Mode=TwoWay}"
+                                     Command="{Binding ToggleStartWithWindowsCommand}" />
+                </ui:CardControl>
+
                 <TextBlock Text="{local:Localize Settings_Section_User_Config}"
                            FontSize="14"
                            FontWeight="SemiBold"

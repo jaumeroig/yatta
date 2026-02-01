@@ -53,6 +53,7 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.Language = settings.Language;
             existingSettings.MinimizeToTray = settings.MinimizeToTray;
             existingSettings.NotificationIntervalMinutes = settings.NotificationIntervalMinutes;
+            existingSettings.StartWithWindows = settings.StartWithWindows;
 
             _context.AppSettings.Update(existingSettings);
         }
