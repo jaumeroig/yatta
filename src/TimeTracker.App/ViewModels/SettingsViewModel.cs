@@ -48,6 +48,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IThemeService _themeService;
     private readonly ILocalizationService _localizationService;
     private readonly INotificationService _notificationService;
+    private readonly IStartupService _startupService;
     private AppSettings? _currentSettings;
     private CancellationTokenSource? _languageSaveCts;
     private CancellationTokenSource? _themeSaveCts;
@@ -56,12 +57,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         ISettingsRepository settingsRepository,
         IThemeService themeService,
         ILocalizationService localizationService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IStartupService startupService)
     {
         _settingsRepository = settingsRepository;
         _themeService = themeService;
         _localizationService = localizationService;
         _notificationService = notificationService;
+        _startupService = startupService;
 
 
         // Initialize theme options
@@ -148,6 +151,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private int _notificationIntervalMinutes;
 
+    /// <summary>
+    /// Indicates if the application should start with Windows.
+    /// </summary>
+    [ObservableProperty]
+    private bool _startWithWindowsEnabled;
+
     #endregion
 
     #region Property Changed Handlers
@@ -208,6 +217,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ToggleMinimizeToTrayAsync()
     {
         await SaveMinimizeToTrayAsync(MinimizeToTrayEnabled);
+    }
+
+    /// <summary>
+    /// Enables or disables start with Windows.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleStartWithWindowsAsync()
+    {
+        await SaveStartWithWindowsAsync(StartWithWindowsEnabled);
     }
 
     /// <summary>
@@ -272,6 +290,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Update minimize to tray
         MinimizeToTrayEnabled = _currentSettings.MinimizeToTray;
+
+        // Update start with Windows
+        StartWithWindowsEnabled = _currentSettings.StartWithWindows;
 
         // Update workday time
         WorkdayHours = _currentSettings.WorkdayTotalTime.Hours;
@@ -340,6 +361,30 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         _currentSettings.MinimizeToTray = enabled;
         await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Saves the start with Windows configuration and updates the registry.
+    /// </summary>
+    private async Task SaveStartWithWindowsAsync(bool enabled)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.StartWithWindows = enabled;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+
+        // Update Windows registry
+        if (enabled)
+        {
+            _startupService.EnableStartup();
+        }
+        else
+        {
+            _startupService.DisableStartup();
+        }
     }
 
     /// <summary>

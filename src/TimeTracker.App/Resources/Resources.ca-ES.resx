@@ -552,6 +552,12 @@
   <data name="Description_MinimizeToTray" xml:space="preserve">
     <value>En tancar la finestra, minimitza l'aplicació a la safata en lloc de sortir</value>
   </data>
+  <data name="Label_StartWithWindows" xml:space="preserve">
+    <value>Obrir en iniciar</value>
+  </data>
+  <data name="Description_StartWithWindows" xml:space="preserve">
+    <value>Obrir automàticament l'aplicació en iniciar la sessió</value>
+  </data>
   <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
     <value>Aparença i comportament</value>
   </data>
