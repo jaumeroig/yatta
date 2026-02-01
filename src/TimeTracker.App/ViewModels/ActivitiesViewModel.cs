@@ -17,6 +17,7 @@ public partial class ActivitiesViewModel : ObservableObject
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly INavigationService _navigationService;
+    private readonly IPageStateService _pageStateService;
     private List<Activity> _allActivities = [];
     private List<TimeRecord> _allRecords = [];
 
@@ -34,6 +35,7 @@ public partial class ActivitiesViewModel : ObservableObject
     /// </summary>
     partial void OnSearchTextChanged(string value)
     {
+        _pageStateService.ActivitiesPage.SearchText = value;
         ApplyFilters();
     }
 
@@ -42,6 +44,7 @@ public partial class ActivitiesViewModel : ObservableObject
     /// </summary>
     partial void OnShowInactiveChanged(bool value)
     {
+        _pageStateService.ActivitiesPage.ShowInactive = value;
         ApplyFilters();
     }
 
@@ -49,12 +52,18 @@ public partial class ActivitiesViewModel : ObservableObject
         IActivityRepository activityRepository,
         ITimeRecordRepository timeRecordRepository,
         ITimeCalculatorService timeCalculatorService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        IPageStateService pageStateService)
     {
         _activityRepository = activityRepository;
         _timeRecordRepository = timeRecordRepository;
         _timeCalculatorService = timeCalculatorService;
         _navigationService = navigationService;
+        _pageStateService = pageStateService;
+
+        // Restore filter state from previous session
+        SearchText = _pageStateService.ActivitiesPage.SearchText;
+        ShowInactive = _pageStateService.ActivitiesPage.ShowInactive;
     }
 
     /// <summary>
