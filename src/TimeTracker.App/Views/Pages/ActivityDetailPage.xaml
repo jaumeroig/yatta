@@ -68,14 +68,16 @@
                                Appearance="Secondary"
                                Command="{Binding CancelDeleteCommand}"
                                HorizontalAlignment="Stretch"
-                               Padding="16,10" />
+                               Height="40"
+                               Padding="16,0" />
 
                     <ui:Button Grid.Column="2"
                                Content="{local:Localize Button_Delete}"
                                Appearance="Danger"
                                Command="{Binding ConfirmDeleteCommand}"
                                HorizontalAlignment="Stretch"
-                               Padding="16,10" />
+                               Height="40"
+                               Padding="16,0" />
                 </Grid>
             </StackPanel>
         </DataTemplate>
@@ -100,6 +102,7 @@
                            Margin="0,0,0,8" />
                 <ui:TextBox x:Name="ActivityName" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             PlaceholderText="{local:Localize Placeholder_ActivityName}"
+                            Height="40"
                             Margin="0,0,0,4" />
                 <TextBlock Text="{Binding NameError}"
                            Foreground="#EF4444"
@@ -298,7 +301,8 @@
             <ui:Button Grid.Column="0"
                        Appearance="Danger"
                        Command="{Binding RequestDeleteCommand}"
-                       Padding="16,10">
+                       Height="40"
+                       Padding="16,0">
                 <ui:Button.Style>
                     <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
                         <Setter Property="Visibility" Value="Collapsed" />
@@ -320,26 +324,43 @@
             </ui:Button>
 
             <ui:Button Grid.Column="1"
-                       Visibility="{Binding IsExistingActivity, Converter={StaticResource BooleanToVisibilityConverter}}"
                        Icon="{Binding ArchiveButtonIcon}"
                        Content="{Binding ArchiveButtonText}"
                        Appearance="{Binding ArchiveButtonAppearance}"
                        Command="{Binding ToggleArchiveCommand}"
-                       Padding="16,10"
-                       MinWidth="120" />
+                       Height="40"
+                       Padding="16,0"
+                       MinWidth="120">
+                <ui:Button.Style>
+                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsExistingActivity}" Value="True" />
+                                    <Condition Binding="{Binding RecordCount, Converter={StaticResource PositiveCountToBooleanConverter}, FallbackValue=False}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ui:Button.Style>
+            </ui:Button>
 
             <ui:Button Grid.Column="2"
                        Content="{local:Localize Button_Cancel}"
                        Appearance="Secondary"
                        Command="{Binding CancelCommand}"
-                       Padding="16,10"
+                       Height="40"
+                       Padding="16,0"
                        MinWidth="120" />
 
             <ui:Button Grid.Column="4"
                        Content="{local:Localize Button_Save}"
                        Appearance="Primary"
                        Command="{Binding SaveCommand}"
-                       Padding="16,10"
+                       Height="40"
+                       Padding="16,0"
                        MinWidth="120" />
         </Grid>
     </Grid>

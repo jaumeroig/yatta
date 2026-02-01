@@ -46,14 +46,16 @@
                                Appearance="Secondary"
                                Command="{Binding CancelDeleteCommand}"
                                HorizontalAlignment="Stretch"
-                               Padding="16,10" />
+                               Height="40"
+                               Padding="16,0" />
 
                     <ui:Button Grid.Column="2"
                                Content="{local:Localize Button_Delete}"
                                Appearance="Danger"
                                Command="{Binding ConfirmDeleteCommand}"
                                HorizontalAlignment="Stretch"
-                               Padding="16,10" />
+                               Height="40"
+                               Padding="16,0" />
                 </Grid>
             </StackPanel>
         </DataTemplate>
@@ -80,6 +82,7 @@
                           SelectedValue="{Binding ActivityId}"
                           SelectedValuePath="Id"
                           Margin="0,0,0,4"
+                          Height="40"
                           HorizontalAlignment="Stretch"
                           MinWidth="300">
                     <ComboBox.ItemTemplate>
@@ -114,6 +117,7 @@
                 <DatePicker SelectedDate="{Binding Date}"
                             HorizontalAlignment="Left"
                             MinWidth="200"
+                            Height="40"
                             Margin="0,0,0,24" />
 
                 <!-- Hores (inici i fi) -->
@@ -131,6 +135,7 @@
                                    Margin="0,0,0,8" />
                         <ui:TextBox PlaceholderText="HH:mm"
                                     Text="{Binding StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Height="40"
                                     MinWidth="120" />
                     </StackPanel>
 
@@ -142,6 +147,7 @@
                         <ui:TextBox x:Name="EndTimeTextBox"
                                     PlaceholderText="HH:mm"
                                     Text="{Binding EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Height="40"
                                     MinWidth="120" />
                     </StackPanel>
                 </Grid>
@@ -191,7 +197,8 @@
             <ui:Button Grid.Column="0"
                        Appearance="Danger"
                        Command="{Binding RequestDeleteCommand}"
-                       Padding="16,10"
+                       Height="40"
+                       Padding="16,0"
                        Visibility="{Binding IsExistingRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon Symbol="Delete24" Margin="0,0,8,0" />
@@ -203,14 +210,16 @@
                        Content="{local:Localize Button_Cancel}"
                        Appearance="Secondary"
                        Command="{Binding CancelCommand}"
-                       Padding="16,10"
+                       Height="40"
+                       Padding="16,0"
                        MinWidth="120" />
 
             <ui:Button Grid.Column="4"
                        Content="{local:Localize Button_Save}"
                        Appearance="Primary"
                        Command="{Binding SaveCommand}"
-                       Padding="16,10"
+                       Height="40"
+                       Padding="16,0"
                        MinWidth="120" />
         </Grid>
     </Grid>

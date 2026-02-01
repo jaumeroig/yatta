@@ -181,6 +181,7 @@ public partial class App : Application
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IBreadcrumbService, BreadcrumbService>();
         services.AddSingleton<INotificationService, NotificationService>();
+        services.AddSingleton<IPageStateService, PageStateService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();

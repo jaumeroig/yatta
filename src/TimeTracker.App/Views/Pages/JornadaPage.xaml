@@ -51,7 +51,8 @@ mc:Ignorable="d"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,8" />
                         <ui:TextBox PlaceholderText="HH:mm"
-                                    Text="{Binding EditingSlot.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding EditingSlot.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Height="40" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="2">
@@ -59,7 +60,8 @@ mc:Ignorable="d"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,8" />
                         <ui:TextBox PlaceholderText="HH:mm"
-                                    Text="{Binding EditingSlot.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    Text="{Binding EditingSlot.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Height="40" />
                     </StackPanel>
                 </Grid>
 
@@ -93,7 +95,8 @@ mc:Ignorable="d"
                            Appearance="Primary"
                            HorizontalAlignment="Stretch"
                            Command="{Binding SaveSlotCommand}"
-                           Padding="16,12" />
+                           Height="40"
+                           Padding="16,0" />
             </StackPanel>
         </DataTemplate>
         
@@ -239,7 +242,8 @@ mc:Ignorable="d"
                 <Grid Grid.Row="0" Margin="0,0,0,24">
                     <ui:Button Appearance="Primary"
                                Command="{Binding OpenNewSlotDialogCommand}"
-                               Padding="16,6"
+                               Height="40"
+                               Padding="16,0"
                                HorizontalAlignment="Right">
                         <StackPanel Orientation="Horizontal">
                             <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
@@ -309,7 +313,8 @@ mc:Ignorable="d"
                                        Command="{Binding TodayCommand}"
                                        HorizontalAlignment="Stretch"
                                        Margin="0,12,0,0"
-                                       Padding="12,8" />
+                                       Height="40"
+                                       Padding="12,0" />
 
                             <!-- Resum mensual -->
                             <Border Margin="0,16,0,0"

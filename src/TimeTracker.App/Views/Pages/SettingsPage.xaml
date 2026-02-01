@@ -37,6 +37,7 @@
                         </StackPanel>
                     </ui:CardControl.Header>
                     <ComboBox Width="200"
+                              Height="40"
                               ItemsSource="{Binding LanguageOptions}"
                               SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
                               DisplayMemberPath="DisplayName" />
@@ -57,6 +58,7 @@
                         </StackPanel>
                     </ui:CardControl.Header>
                     <ComboBox Width="200"
+                              Height="40"
                               ItemsSource="{Binding ThemeOptions}"
                               SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"
                               DisplayMemberPath="DisplayName" />
@@ -126,6 +128,7 @@
                     <StackPanel Orientation="Horizontal">
                         <ui:TextBox Text="{Binding NotificationIntervalMinutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Width="80"
+                                    Height="40"
                                     Margin="0,0,4,0" />
                         <TextBlock Text="{local:Localize Label_Minutes}"
                                    VerticalAlignment="Center"
@@ -133,7 +136,8 @@
                         <ui:Button Content="{local:Localize Button_Save}"
                                    Command="{Binding SaveNotificationIntervalCommand}"
                                    Appearance="Primary"
-                                   Padding="16,6" />
+                                   Height="40"
+                                   Padding="16,0" />
                     </StackPanel>
                 </ui:CardControl>
 
@@ -154,12 +158,14 @@
                     <StackPanel Orientation="Horizontal">
                         <ui:TextBox Text="{Binding WorkdayHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Width="60"
+                                    Height="40"
                                     Margin="0,0,4,0" />
                         <TextBlock Text="h"
                                    VerticalAlignment="Center"
                                    Margin="0,0,12,0" />
                         <ui:TextBox Text="{Binding WorkdayMinutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Width="60"
+                                    Height="40"
                                     Margin="0,0,4,0" />
                         <TextBlock Text="m"
                                    VerticalAlignment="Center"
@@ -167,7 +173,8 @@
                         <ui:Button Content="{local:Localize Button_Save}"
                                    Command="{Binding SaveWorkdayTimeCommand}"
                                    Appearance="Primary"
-                                   Padding="16,6" />
+                                   Height="40"
+                                   Padding="16,0" />
                     </StackPanel>
                 </ui:CardControl>
 

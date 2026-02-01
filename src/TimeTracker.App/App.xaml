@@ -18,6 +18,7 @@
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
             <converters:InverseCountToVisibilityConverter x:Key="InverseCountToVisibilityConverter" />
             <converters:PositiveCountToVisibilityConverter x:Key="PositiveCountToVisibilityConverter" />
+            <converters:PositiveCountToBooleanConverter x:Key="PositiveCountToBooleanConverter" />
             <converters:EditingToTitleConverter x:Key="EditingToTitleConverter" />
             <converters:EditingToButtonTextConverter x:Key="EditingToButtonTextConverter" />
             <converters:ActivityEditingToTitleConverter x:Key="ActivityEditingToTitleConverter" />
