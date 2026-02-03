@@ -871,6 +871,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Novedades.
+        /// </summary>
+        internal static string Nav_WhatsNew {
+            get {
+                return ResourceManager.GetString("Nav_WhatsNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 15 minutos.
         /// </summary>
         internal static string Notification_15min {
@@ -1002,6 +1011,15 @@ namespace TimeTracker.App.Resources {
         internal static string Page_Settings_Title {
             get {
                 return ResourceManager.GetString("Page_Settings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Novedades.
+        /// </summary>
+        internal static string Page_WhatsNew_Title {
+            get {
+                return ResourceManager.GetString("Page_WhatsNew_Title", resourceCulture);
             }
         }
         

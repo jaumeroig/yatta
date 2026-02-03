@@ -192,6 +192,7 @@ public partial class App : Application
         services.AddTransient<ActivitiesViewModel>();
         services.AddTransient<ActivityDetailViewModel>();
         services.AddTransient<SettingsViewModel>();
+        services.AddTransient<WhatsNewViewModel>();
 
         // Register Pages
         services.AddTransient<TimeRecordsPage>();
@@ -200,6 +201,7 @@ public partial class App : Application
         services.AddTransient<ActivitiesPage>();
         services.AddTransient<ActivityDetailPage>();
         services.AddTransient<SettingsPage>();
+        services.AddTransient<WhatsNewPage>();
 
         // Register windows
         services.AddSingleton<MainWindow>();

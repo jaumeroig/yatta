@@ -600,4 +600,10 @@
   <data name="Settings_Section_User_Config" xml:space="preserve">
     <value>User settings</value>
   </data>
+  <data name="Nav_WhatsNew" xml:space="preserve">
+    <value>Novetats</value>
+  </data>
+  <data name="Page_WhatsNew_Title" xml:space="preserve">
+    <value>Novetats</value>
+  </data>
 </root>
