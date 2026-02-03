@@ -29,6 +29,11 @@ public class TimeTrackerDbContext : DbContext
     /// </summary>
     public DbSet<AppSettings> AppSettings { get; set; } = null!;
 
+    /// <summary>
+    /// DbSet for day configurations.
+    /// </summary>
+    public DbSet<Workday> Workdays { get; set; } = null!;
+
     public TimeTrackerDbContext(DbContextOptions<TimeTrackerDbContext> options)
         : base(options)
     {
@@ -43,5 +48,6 @@ public class TimeTrackerDbContext : DbContext
         modelBuilder.ApplyConfiguration(new TimeRecordConfiguration());
         modelBuilder.ApplyConfiguration(new WorkdaySlotConfiguration());
         modelBuilder.ApplyConfiguration(new AppSettingsConfiguration());
+        modelBuilder.ApplyConfiguration(new WorkdayEntityConfiguration());
     }
 }
