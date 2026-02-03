@@ -7,6 +7,7 @@
     xmlns:md="http://schemas.lepo.co/wpfui/2022/xaml/markdown"
     xmlns:vm="clr-namespace:TimeTracker.App.ViewModels"
     xmlns:local="clr-namespace:TimeTracker.App.Markup"
+    xmlns:behaviors="clr-namespace:TimeTracker.App.Behaviors"
     d:DataContext="{d:DesignInstance vm:WhatsNewViewModel}"
     mc:Ignorable="d"
     d:DesignHeight="450" d:DesignWidth="800"
@@ -15,7 +16,9 @@
     Loaded="Page_Loaded">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="32,12,42,12">
-            <md:MarkdownViewer Markdown="{Binding MarkdownContent}" />
+            <md:MarkdownViewer 
+                Markdown="{Binding MarkdownContent}"
+                behaviors:ScrollParentBehavior.BubbleScroll="True" />
         </Grid>
     </ScrollViewer>
 </Page>
