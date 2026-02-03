@@ -96,11 +96,11 @@
                                    FontSize="14"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,4"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <TextBlock Grid.Row="3" Grid.Column="0"
                                    Text="{Binding TargetDuration}"
                                    FontSize="16"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- Remaining Time (only for working days) -->
                         <TextBlock Grid.Row="2" Grid.Column="1"
@@ -108,11 +108,11 @@
                                    FontSize="14"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,4"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <TextBlock Grid.Row="3" Grid.Column="1"
                                    Text="{Binding RemainingTime}"
                                    FontSize="16"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                         <!-- Workday Start Time (only for working days) -->
                         <TextBlock Grid.Row="2" Grid.Column="0"
@@ -120,11 +120,11 @@
                                    FontSize="14"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,4"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Collapsed}"/>
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Collapsed}"/>
                         <TextBlock Grid.Row="3" Grid.Column="0"
                                    Text="{Binding WorkdayStartTime}"
                                    FontSize="16"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Collapsed}"/>
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Collapsed}"/>
                     </Grid>
                 </StackPanel>
             </Border>
@@ -154,7 +154,7 @@
                     CornerRadius="8"
                     Padding="24"
                     Margin="0,0,0,24"
-                    Visibility="{Binding HasActiveRecord, Converter={StaticResource BoolToVisibilityConverter}}">
+                    Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel>
                     <Grid Margin="0,0,0,16">
                         <StackPanel Orientation="Horizontal">
@@ -240,7 +240,7 @@
                     CornerRadius="8"
                     Padding="24"
                     Margin="0,0,0,24"
-                    Visibility="{Binding CanPlay, Converter={StaticResource BoolToVisibilityConverter}}">
+                    Visibility="{Binding CanPlay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <ui:Button Content="{local:Localize Button_Play}"
                            Appearance="Primary"
                            HorizontalAlignment="Center"
@@ -269,7 +269,7 @@
                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                HorizontalAlignment="Center"
                                Margin="0,32,0,32"
-                               Visibility="{Binding CompletedRecords.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=Zero}"/>
+                               Visibility="{Binding CompletedRecords.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
 
                     <!-- Records List -->
                     <ItemsControl ItemsSource="{Binding CompletedRecords}">
