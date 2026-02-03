@@ -16,29 +16,51 @@
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
+        WindowStartupLocation="CenterScreen"
         Icon="/Resources/Logo.ico">
     
     <Grid>
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        
+        </Grid.RowDefinitions>-->
+
         <ui:TitleBar
+            
             x:Name="TitleBar"
             Grid.Row="0"
             Title="{local:Localize App_Title}"
             ShowMaximize="True"
-            ShowMinimize="True" />
-        
+            ShowMinimize="True" >
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/Resources/Logo.png" />
+            </ui:TitleBar.Icon>
+
+        </ui:TitleBar>
+
         <ui:NavigationView
             x:Name="NavigationView"
-            Grid.Row="1"
             PaneDisplayMode="Left"
+            Margin="0,50,0,0"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleVisible="True"
+            IsTopSeparatorVisible="false"
+            IsFooterSeparatorVisible="false"
             OpenPaneLength="200">
-            
+
+            <ui:NavigationView.Header>
+                <StackPanel Margin="42,32,42,20">
+                    <ui:BreadcrumbBar x:Name="BreadcrumbBar">
+                        <ui:BreadcrumbBar.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" 
+                                           FontSize="28" 
+                                           FontWeight="SemiBold" />
+                            </DataTemplate>
+                        </ui:BreadcrumbBar.ItemTemplate>
+                    </ui:BreadcrumbBar>
+                </StackPanel>
+            </ui:NavigationView.Header>
             <!--<ui:NavigationView.Header>
                 <StackPanel Orientation="Horizontal" Margin="16,8">
                     <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
@@ -79,20 +101,8 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
-            
-            <ui:NavigationView.Header>
-                <StackPanel Margin="42,32,42,20">
-                    <ui:BreadcrumbBar x:Name="BreadcrumbBar">
-                        <ui:BreadcrumbBar.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding}" 
-                                           FontSize="28" 
-                                           FontWeight="SemiBold" />
-                            </DataTemplate>
-                        </ui:BreadcrumbBar.ItemTemplate>
-                    </ui:BreadcrumbBar>
-                </StackPanel>
-            </ui:NavigationView.Header>
+
+
             
         </ui:NavigationView>
 
