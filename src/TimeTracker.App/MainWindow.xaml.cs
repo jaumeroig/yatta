@@ -41,8 +41,8 @@ public partial class MainWindow : FluentWindow
         breadcrumbService.SetBreadcrumbBar(BreadcrumbBar);
         
         
-        // Navigate to the Records page by default
-        Loaded += (_, _) => NavigationView.Navigate(typeof(TimeRecordsPage));
+        // Navigate to the Hoy page by default
+        Loaded += (_, _) => NavigationView.Navigate(typeof(HoyPage));
         
         // Handle window closing to minimize to tray instead of closing
         Closing += MainWindow_Closing;

@@ -188,6 +188,7 @@ public partial class App : Application
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
+        services.AddTransient<HoyViewModel>();
         services.AddTransient<TimeRecordViewModel>();
         services.AddTransient<TimeRecordDetailViewModel>();
         services.AddTransient<JornadaViewModel>();
@@ -197,6 +198,7 @@ public partial class App : Application
         services.AddTransient<WhatsNewViewModel>();
 
         // Register Pages
+        services.AddTransient<HoyPage>();
         services.AddTransient<TimeRecordsPage>();
         services.AddTransient<TimeRecordDetailPage>();
         services.AddTransient<JornadaPage>();

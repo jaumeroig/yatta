@@ -251,6 +251,7 @@ public class TimeRecordDisplay
     public string EndTime { get; set; } = string.Empty;
     public string Duration { get; set; } = string.Empty;
     public DateOnly Date { get; set; }
+    public bool IsActive { get; set; }
 
     /// <summary>
     /// Returns the color as a SolidColorBrush to facilitate binding.

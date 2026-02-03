@@ -72,6 +72,11 @@
             </ui:NavigationView.Header>-->
             
             <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Content="{local:Localize Nav_Today}" TargetPageType="{x:Type pages:HoyPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="CalendarDay24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:TimeRecordsPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Document24" />
