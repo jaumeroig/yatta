@@ -113,18 +113,6 @@
                                    Text="{Binding RemainingTime}"
                                    FontSize="16"
                                    Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-                        <!-- Workday Start Time (only for working days) -->
-                        <TextBlock Grid.Row="2" Grid.Column="0"
-                                   Text="{local:Localize Today_WorkdayStartTime}"
-                                   FontSize="14"
-                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                   Margin="0,0,0,4"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Collapsed}"/>
-                        <TextBlock Grid.Row="3" Grid.Column="0"
-                                   Text="{Binding WorkdayStartTime}"
-                                   FontSize="16"
-                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Collapsed}"/>
                     </Grid>
                 </StackPanel>
             </Border>

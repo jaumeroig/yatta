@@ -230,29 +230,26 @@ public partial class HoyViewModel : ObservableObject
         ElapsedTime = FormatDuration(elapsed);
     }
 
-    private void UpdateRemainingTime()
+    private async void UpdateRemainingTime()
     {
         if (!IsWorkingDay) return;
 
         var today = DateOnly.FromDateTime(DateTime.Today);
-        _timeRecordRepository.GetByDateAsync(today).ContinueWith(async task =>
+        var records = (await _timeRecordRepository.GetByDateAsync(today)).ToList();
+        var workedHours = _timeCalculatorService.CalculateTotalHours(records);
+
+        var activeRecord = records.FirstOrDefault(r => r.EndTime == null);
+        if (activeRecord != null)
         {
-            var records = task.Result.ToList();
-            var workedHours = _timeCalculatorService.CalculateTotalHours(records);
+            var now = TimeOnly.FromDateTime(DateTime.Now);
+            var elapsed = _timeCalculatorService.CalculateDuration(activeRecord.StartTime, now);
+            workedHours += elapsed;
+        }
 
-            var activeRecord = records.FirstOrDefault(r => r.EndTime == null);
-            if (activeRecord != null)
-            {
-                var now = TimeOnly.FromDateTime(DateTime.Now);
-                var elapsed = _timeCalculatorService.CalculateDuration(activeRecord.StartTime, now);
-                workedHours += elapsed;
-            }
+        var workedDuration = TimeSpan.FromHours(workedHours);
+        var remaining = await _workdayConfigService.GetRemainingWorkTimeAsync(today, workedDuration);
 
-            var workedDuration = TimeSpan.FromHours(workedHours);
-            var remaining = await _workdayConfigService.GetRemainingWorkTimeAsync(today, workedDuration);
-
-            RemainingTime = remaining > TimeSpan.Zero ? FormatTimeSpan(remaining) : "0h 0m";
-        });
+        RemainingTime = remaining > TimeSpan.Zero ? FormatTimeSpan(remaining) : "0h 0m";
     }
 
     private void UpdateWorkdayStartTime(List<TimeRecord> records)
