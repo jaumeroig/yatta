@@ -169,11 +169,13 @@ public partial class App : Application
         services.AddScoped<ITimeRecordRepository, TimeRecordRepository>();
         services.AddScoped<IWorkdaySlotRepository, WorkdaySlotRepository>();
         services.AddScoped<ISettingsRepository, SettingsRepository>();
+        services.AddScoped<IWorkdayRepository, WorkdayRepository>();
 
         // Register services
         services.AddScoped<ITimeCalculatorService, TimeCalculatorService>();
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IWorkdayService, WorkdayService>();
+        services.AddScoped<IWorkdayConfigService, WorkdayConfigService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
