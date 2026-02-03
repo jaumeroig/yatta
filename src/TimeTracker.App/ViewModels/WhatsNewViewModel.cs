@@ -46,9 +46,13 @@ public partial class WhatsNewViewModel : ObservableObject
                 MarkdownContent = "# No content available";
             }
         }
-        catch
+        catch (FileNotFoundException)
         {
-            MarkdownContent = "# Error loading changelog";
+            MarkdownContent = "# Changelog file not found";
+        }
+        catch (IOException)
+        {
+            MarkdownContent = "# Error reading changelog";
         }
     }
 }
