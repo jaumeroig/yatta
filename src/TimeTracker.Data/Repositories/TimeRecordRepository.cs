@@ -102,6 +102,7 @@ public class TimeRecordRepository : ITimeRecordRepository
         await _context.SaveChangesAsync();
     }
 
+    /// <inheritdoc/>
     public async Task<int> CountBeforeDateAsync(DateOnly date)
     {
         return await _context.TimeRecords
@@ -109,20 +110,11 @@ public class TimeRecordRepository : ITimeRecordRepository
             .CountAsync();
     }
 
+    /// <inheritdoc/>
     public async Task<int> DeleteBeforeDateAsync(DateOnly date)
     {
-        var records = await _context.TimeRecords
+        return await _context.TimeRecords
             .Where(tr => tr.Date < date)
-            .ToListAsync();
-
-        if (records.Count == 0)
-        {
-            return 0;
-        }
-
-        _context.TimeRecords.RemoveRange(records);
-        await _context.SaveChangesAsync();
-
-        return records.Count;
+            .ExecuteDeleteAsync();
     }
 }

@@ -79,7 +79,7 @@ public partial class SettingsPage : Page
         }
 
         // Build confirmation message
-        var message = string.Format(TimeTracker.App.Resources.Resources.Dialog_Purge_Message, cutoffDate.Value.ToString("dd/MM/yyyy"))
+        var message = string.Format(TimeTracker.App.Resources.Resources.Dialog_Purge_Message, cutoffDate.Value.ToString("d"))
             + "\n\n" + string.Format(TimeTracker.App.Resources.Resources.Dialog_Purge_RecordCount, timeRecordCount, workdayCount)
             + "\n\n" + TimeTracker.App.Resources.Resources.Dialog_Purge_Warning;
 
