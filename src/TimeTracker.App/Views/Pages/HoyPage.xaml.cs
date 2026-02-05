@@ -1,8 +1,11 @@
 namespace TimeTracker.App.Views.Pages;
 
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
+using Wpf.Ui.Controls;
 
 /// <summary>
 /// Interaction logic for HoyPage.xaml
@@ -11,11 +14,15 @@ public partial class HoyPage : Page
 {
     private readonly HoyViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
+    private readonly IDialogService _dialogService;
+    private ContentDialog? _configureDayDialog;
+    private bool _isSubscribedToChanges;
 
-    public HoyPage(HoyViewModel viewModel, IBreadcrumbService breadcrumbService)
+    public HoyPage(HoyViewModel viewModel, IBreadcrumbService breadcrumbService, IDialogService dialogService)
     {
         _viewModel = viewModel;
         _breadcrumbService = breadcrumbService;
+        _dialogService = dialogService;
         
         DataContext = _viewModel;
         InitializeComponent();
@@ -24,6 +31,73 @@ public partial class HoyPage : Page
     private async void Page_Loaded(object sender, System.Windows.RoutedEventArgs e)
     {
         _breadcrumbService.SetItems(TimeTracker.App.Resources.Resources.Page_Today_Title);
+        
+        if (!_isSubscribedToChanges)
+        {
+            _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+            _isSubscribedToChanges = true;
+        }
+        
         await _viewModel.LoadDataAsync();
+    }
+
+    private void Page_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (_isSubscribedToChanges)
+        {
+            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+            _isSubscribedToChanges = false;
+        }
+
+        DisposeDialog();
+    }
+
+    private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(HoyViewModel.IsConfigureDayDialogOpen))
+        {
+            if (_viewModel.IsConfigureDayDialogOpen)
+            {
+                _ = ShowConfigureDayDialogAsync();
+            }
+            else
+            {
+                _configureDayDialog?.Hide();
+            }
+        }
+    }
+
+    private async Task ShowConfigureDayDialogAsync()
+    {
+        if (_configureDayDialog != null)
+        {
+            return;
+        }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        var template = (DataTemplate)Resources["ConfigureDayDialogTemplate"];
+        var content = template.LoadContent();
+        ((FrameworkElement)content).DataContext = _viewModel;
+
+        _configureDayDialog = new ContentDialog(dialogHost)
+        {
+            Content = content
+        };
+
+        await _configureDayDialog.ShowAsync();
+        DisposeDialog();
+    }
+
+    private void DisposeDialog()
+    {
+        if (_configureDayDialog != null)
+        {
+            _configureDayDialog = null;
+        }
     }
 }

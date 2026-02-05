@@ -684,4 +684,22 @@
   <data name="Today_InProgress" xml:space="preserve">
     <value>En curs</value>
   </data>
+  <data name="Dialog_ConfigureDay_Title" xml:space="preserve">
+    <value>Configurar dia</value>
+  </data>
+  <data name="Label_DayType" xml:space="preserve">
+    <value>Tipus de dia</value>
+  </data>
+  <data name="Label_TargetDuration" xml:space="preserve">
+    <value>Durada objectiu (hores)</value>
+  </data>
+  <data name="Placeholder_TargetDuration" xml:space="preserve">
+    <value>Ex: 8</value>
+  </data>
+  <data name="Validation_TargetDurationRequired" xml:space="preserve">
+    <value>La durada objectiu és obligatòria per a dies laborables.</value>
+  </data>
+  <data name="Validation_TargetDurationInvalid" xml:space="preserve">
+    <value>La durada objectiu ha de ser un número vàlid més gran que 0.</value>
+  </data>
 </root>

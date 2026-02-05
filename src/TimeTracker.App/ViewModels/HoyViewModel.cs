@@ -63,6 +63,12 @@ public partial class HoyViewModel : ObservableObject
     [ObservableProperty]
     private bool _canPlay;
 
+    [ObservableProperty]
+    private bool _isConfigureDayDialogOpen;
+
+    [ObservableProperty]
+    private ConfigureDayModel _configureDayModel = new();
+
     public HoyViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
@@ -342,9 +348,116 @@ public partial class HoyViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ConfigureDay()
+    private async Task ConfigureDayAsync()
     {
-        // TODO: Open configure day dialog
-        // This will be implemented when the configure day dialog is created
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var currentConfig = await _workdayConfigService.GetEffectiveConfigurationAsync(today);
+        
+        ConfigureDayModel = new ConfigureDayModel
+        {
+            Date = today,
+            DayType = currentConfig.DayType,
+            TargetDurationHours = currentConfig.TargetDuration.TotalHours,
+            ValidationError = string.Empty
+        };
+        
+        IsConfigureDayDialogOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseConfigureDayDialog()
+    {
+        IsConfigureDayDialogOpen = false;
+    }
+
+    [RelayCommand]
+    private async Task SaveConfigureDayAsync()
+    {
+        // Validate
+        var isWorkingDay = ConfigureDayModel.DayType == DayType.WorkDay || 
+                          ConfigureDayModel.DayType == DayType.IntensiveDay;
+        
+        if (isWorkingDay)
+        {
+            if (ConfigureDayModel.TargetDurationHours <= 0)
+            {
+                ConfigureDayModel.ValidationError = TimeTracker.App.Resources.Resources.Validation_TargetDurationInvalid;
+                return;
+            }
+        }
+        
+        // Save configuration
+        var targetDuration = isWorkingDay 
+            ? TimeSpan.FromHours(ConfigureDayModel.TargetDurationHours) 
+            : TimeSpan.Zero;
+            
+        await _workdayConfigService.SetConfigurationAsync(
+            ConfigureDayModel.Date,
+            ConfigureDayModel.DayType,
+            targetDuration);
+        
+        // Close dialog and reload
+        IsConfigureDayDialogOpen = false;
+        await LoadDayConfigurationAsync();
+    }
+}
+
+/// <summary>
+/// Model for the Configure Day dialog.
+/// </summary>
+public partial class ConfigureDayModel : ObservableObject
+{
+    [ObservableProperty]
+    private DateOnly _date;
+
+    [ObservableProperty]
+    private DayType _dayType;
+
+    [ObservableProperty]
+    private double _targetDurationHours = 8;
+
+    [ObservableProperty]
+    private string _validationError = string.Empty;
+
+    public bool IsWorkDay
+    {
+        get => DayType == DayType.WorkDay;
+        set { if (value) DayType = DayType.WorkDay; }
+    }
+
+    public bool IsIntensiveDay
+    {
+        get => DayType == DayType.IntensiveDay;
+        set { if (value) DayType = DayType.IntensiveDay; }
+    }
+
+    public bool IsHoliday
+    {
+        get => DayType == DayType.Holiday;
+        set { if (value) DayType = DayType.Holiday; }
+    }
+
+    public bool IsFreeChoice
+    {
+        get => DayType == DayType.FreeChoice;
+        set { if (value) DayType = DayType.FreeChoice; }
+    }
+
+    public bool IsVacation
+    {
+        get => DayType == DayType.Vacation;
+        set { if (value) DayType = DayType.Vacation; }
+    }
+
+    public bool IsWorkingDayType => DayType == DayType.WorkDay || DayType == DayType.IntensiveDay;
+
+    partial void OnDayTypeChanged(DayType value)
+    {
+        OnPropertyChanged(nameof(IsWorkDay));
+        OnPropertyChanged(nameof(IsIntensiveDay));
+        OnPropertyChanged(nameof(IsHoliday));
+        OnPropertyChanged(nameof(IsFreeChoice));
+        OnPropertyChanged(nameof(IsVacation));
+        OnPropertyChanged(nameof(IsWorkingDayType));
     }
 }

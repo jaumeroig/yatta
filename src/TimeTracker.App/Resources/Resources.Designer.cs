@@ -1562,5 +1562,59 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Today_DayType_Vacation", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurar día.
+        /// </summary>
+        internal static string Dialog_ConfigureDay_Title {
+            get {
+                return ResourceManager.GetString("Dialog_ConfigureDay_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tipo de día.
+        /// </summary>
+        internal static string Label_DayType {
+            get {
+                return ResourceManager.GetString("Label_DayType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duración objetivo (horas).
+        /// </summary>
+        internal static string Label_TargetDuration {
+            get {
+                return ResourceManager.GetString("Label_TargetDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ej: 8.
+        /// </summary>
+        internal static string Placeholder_TargetDuration {
+            get {
+                return ResourceManager.GetString("Placeholder_TargetDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to La duración objetivo es obligatoria para días laborables..
+        /// </summary>
+        internal static string Validation_TargetDurationRequired {
+            get {
+                return ResourceManager.GetString("Validation_TargetDurationRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to La duración objetivo debe ser un número válido mayor que 0..
+        /// </summary>
+        internal static string Validation_TargetDurationInvalid {
+            get {
+                return ResourceManager.GetString("Validation_TargetDurationInvalid", resourceCulture);
+            }
+        }
     }
 }
