@@ -16,6 +16,7 @@ public partial class HoyPage : Page
     private readonly IBreadcrumbService _breadcrumbService;
     private readonly IDialogService _dialogService;
     private ContentDialog? _configureDayDialog;
+    private ContentDialog? _changeActivityDialog;
     private bool _isSubscribedToChanges;
 
     public HoyPage(HoyViewModel viewModel, IBreadcrumbService breadcrumbService, IDialogService dialogService)
@@ -49,7 +50,7 @@ public partial class HoyPage : Page
             _isSubscribedToChanges = false;
         }
 
-        DisposeDialog();
+        DisposeDialogs();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -63,6 +64,17 @@ public partial class HoyPage : Page
             else
             {
                 _configureDayDialog?.Hide();
+            }
+        }
+        else if (e.PropertyName == nameof(HoyViewModel.IsChangeActivityDialogOpen))
+        {
+            if (_viewModel.IsChangeActivityDialogOpen)
+            {
+                _ = ShowChangeActivityDialogAsync();
+            }
+            else
+            {
+                _changeActivityDialog?.Hide();
             }
         }
     }
@@ -90,14 +102,38 @@ public partial class HoyPage : Page
         };
 
         await _configureDayDialog.ShowAsync();
-        DisposeDialog();
+        DisposeDialogs();
     }
 
-    private void DisposeDialog()
+    private async Task ShowChangeActivityDialogAsync()
     {
-        if (_configureDayDialog != null)
+        if (_changeActivityDialog != null)
         {
-            _configureDayDialog = null;
+            return;
         }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        var template = (DataTemplate)Resources["ChangeActivityDialogTemplate"];
+        var content = template.LoadContent();
+        ((FrameworkElement)content).DataContext = _viewModel;
+
+        _changeActivityDialog = new ContentDialog(dialogHost)
+        {
+            Content = content
+        };
+
+        await _changeActivityDialog.ShowAsync();
+        DisposeDialogs();
+    }
+
+    private void DisposeDialogs()
+    {
+        _configureDayDialog = null;
+        _changeActivityDialog = null;
     }
 }

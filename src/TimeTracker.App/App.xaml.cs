@@ -29,11 +29,12 @@ public partial class App : Application
         ConfigureServices(services);
         _serviceProvider = services.BuildServiceProvider();
 
-        // Apply database migrations
+        // Apply database migrations and pending schema updates
         using (var scope = _serviceProvider.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
             dbContext.Database.Migrate();
+            ApplyPendingSchemaUpdates(dbContext);
         }
 
         // IMPORTANT: Initialize localization BEFORE creating the MainWindow
@@ -155,6 +156,44 @@ public partial class App : Application
             CultureInfo.CurrentUICulture = defaultCulture;
             CultureInfo.CurrentCulture = defaultCulture;
             TimeTracker.App.Resources.Resources.Culture = defaultCulture;
+        }
+    }
+
+    /// <summary>
+    /// Applies schema updates that are not covered by EF Core migrations.
+    /// Each update is idempotent and safe to run multiple times.
+    /// </summary>
+    private static void ApplyPendingSchemaUpdates(TimeTrackerDbContext dbContext)
+    {
+        var connection = dbContext.Database.GetDbConnection();
+        connection.Open();
+
+        // Check if Telework column already exists on TimeRecords
+        // PRAGMA table_info returns: cid, name, type, notnull, dflt_value, pk
+        const string columnNameField = "name";
+        const string targetColumn = "Telework";
+
+        using var checkCmd = connection.CreateCommand();
+        checkCmd.CommandText = "PRAGMA table_info('TimeRecords')";
+        var hasTeleworkColumn = false;
+        using (var reader = checkCmd.ExecuteReader())
+        {
+            var nameOrdinal = reader.GetOrdinal(columnNameField);
+            while (reader.Read())
+            {
+                if (string.Equals(reader.GetString(nameOrdinal), targetColumn, StringComparison.OrdinalIgnoreCase))
+                {
+                    hasTeleworkColumn = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasTeleworkColumn)
+        {
+            using var alterCmd = connection.CreateCommand();
+            alterCmd.CommandText = "ALTER TABLE \"TimeRecords\" ADD COLUMN \"Telework\" INTEGER NOT NULL DEFAULT 0";
+            alterCmd.ExecuteNonQuery();
         }
     }
 

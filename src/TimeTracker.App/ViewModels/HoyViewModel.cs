@@ -69,6 +69,12 @@ public partial class HoyViewModel : ObservableObject
     [ObservableProperty]
     private ConfigureDayModel _configureDayModel = new();
 
+    [ObservableProperty]
+    private bool _isChangeActivityDialogOpen;
+
+    [ObservableProperty]
+    private ChangeActivityModel _changeActivityModel = new();
+
     public HoyViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
@@ -318,33 +324,114 @@ public partial class HoyViewModel : ObservableObject
     [RelayCommand]
     private async Task PlayRecordAsync()
     {
-        // Get the last completed record to inherit its properties
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var records = (await _timeRecordRepository.GetByDateAsync(today)).OrderByDescending(r => r.StartTime).ToList();
-        var lastRecord = records.FirstOrDefault(r => r.EndTime != null);
-
-        if (lastRecord == null) return;
-
-        // Create new record with same properties as last record
-        var newRecord = new TimeRecord
-        {
-            Id = Guid.NewGuid(),
-            Date = today,
-            StartTime = TimeOnly.FromDateTime(DateTime.Now),
-            EndTime = null,
-            ActivityId = lastRecord.ActivityId,
-            Notes = lastRecord.Notes
-        };
-
-        await _timeRecordRepository.AddAsync(newRecord);
-        await LoadTodayRecordsAsync();
+        // Open the change activity dialog to start a new record
+        await OpenChangeActivityDialogAsync();
     }
 
     [RelayCommand]
-    private void ChangeActivity()
+    private async Task ChangeActivityAsync()
     {
-        // TODO: Open change activity dialog
-        // This will be implemented when the change activity dialog is created
+        await OpenChangeActivityDialogAsync();
+    }
+
+    /// <summary>
+    /// Opens the change/start activity dialog, pre-populating from the active record if one exists.
+    /// </summary>
+    private async Task OpenChangeActivityDialogAsync()
+    {
+        var now = DateTime.Now;
+        var model = new ChangeActivityModel
+        {
+            AvailableActivities = new ObservableCollection<Activity>(_allActivities),
+            StartDate = now.Date,
+            StartTimeText = now.ToString("HH:mm"),
+            Notes = string.Empty,
+            Telework = false,
+            ValidationError = string.Empty
+        };
+
+        if (ActiveRecord != null)
+        {
+            // Pre-select the current activity and copy its properties
+            var activeTimeRecord = await _timeRecordRepository.GetActiveAsync();
+            if (activeTimeRecord != null)
+            {
+                model.SelectedActivityId = activeTimeRecord.ActivityId;
+                model.Telework = activeTimeRecord.Telework;
+                model.Notes = activeTimeRecord.Notes ?? string.Empty;
+
+                // Store original values to detect changes
+                model.OriginalActivityId = activeTimeRecord.ActivityId;
+                model.OriginalTelework = activeTimeRecord.Telework;
+                model.OriginalNotes = activeTimeRecord.Notes ?? string.Empty;
+                model.OriginalStartTimeText = now.ToString("HH:mm");
+            }
+
+            model.HasActiveRecord = true;
+        }
+        else
+        {
+            model.HasActiveRecord = false;
+            model.SelectedActivityId = Guid.Empty;
+        }
+
+        ChangeActivityModel = model;
+        IsChangeActivityDialogOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseChangeActivityDialog()
+    {
+        IsChangeActivityDialogOpen = false;
+    }
+
+    [RelayCommand]
+    private async Task SaveChangeActivityAsync()
+    {
+        // Validate that an activity is selected
+        if (ChangeActivityModel.SelectedActivityId == Guid.Empty)
+        {
+            ChangeActivityModel.ValidationError = Resources.Resources.Validation_ActivityRequired;
+            return;
+        }
+
+        // Parse the start time
+        if (!TimeOnly.TryParse(ChangeActivityModel.StartTimeText, out var switchTime))
+        {
+            ChangeActivityModel.ValidationError = Resources.Resources.Validation_InvalidStartTime;
+            return;
+        }
+
+        var switchDate = DateOnly.FromDateTime(ChangeActivityModel.StartDate);
+
+        // If there's an active record, finalize it with the switch time as EndTime
+        if (ChangeActivityModel.HasActiveRecord)
+        {
+            var activeRecord = await _timeRecordRepository.GetActiveAsync();
+            if (activeRecord != null)
+            {
+                activeRecord.EndTime = switchTime;
+                await _timeRecordRepository.UpdateAsync(activeRecord);
+            }
+        }
+
+        // Create the new time record
+        var newRecord = new TimeRecord
+        {
+            Id = Guid.NewGuid(),
+            Date = switchDate,
+            StartTime = switchTime,
+            EndTime = null,
+            ActivityId = ChangeActivityModel.SelectedActivityId,
+            Notes = string.IsNullOrWhiteSpace(ChangeActivityModel.Notes) ? null : ChangeActivityModel.Notes,
+            Telework = ChangeActivityModel.Telework
+        };
+
+        await _timeRecordRepository.AddAsync(newRecord);
+
+        // Close dialog and reload data
+        IsChangeActivityDialogOpen = false;
+        await LoadTodayRecordsAsync();
     }
 
     [RelayCommand]
@@ -459,5 +546,107 @@ public partial class ConfigureDayModel : ObservableObject
         OnPropertyChanged(nameof(IsFreeChoice));
         OnPropertyChanged(nameof(IsVacation));
         OnPropertyChanged(nameof(IsWorkingDayType));
+    }
+}
+
+/// <summary>
+/// Model for the Change/Start Activity dialog.
+/// Holds the state for switching or starting a new time record.
+/// </summary>
+public partial class ChangeActivityModel : ObservableObject
+{
+    [ObservableProperty]
+    private ObservableCollection<Activity> _availableActivities = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasChanges))]
+    private Guid _selectedActivityId;
+
+    [ObservableProperty]
+    private DateTime _startDate = DateTime.Today;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasChanges))]
+    private string _startTimeText = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasChanges))]
+    private bool _telework;
+
+    /// <summary>
+    /// Inverse of Telework for radio button binding (office mode).
+    /// </summary>
+    public bool IsOffice
+    {
+        get => !Telework;
+        set
+        {
+            if (value)
+            {
+                Telework = false;
+            }
+        }
+    }
+
+    partial void OnTeleworkChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsOffice));
+    }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasChanges))]
+    private string _notes = string.Empty;
+
+    [ObservableProperty]
+    private string _validationError = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasActiveRecord;
+
+    // Original values to detect if any field was modified
+    public Guid OriginalActivityId { get; set; }
+    public bool OriginalTelework { get; set; }
+    public string OriginalNotes { get; set; } = string.Empty;
+    public string OriginalStartTimeText { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Returns the dialog title based on whether there is an active record.
+    /// </summary>
+    public string DialogTitle => HasActiveRecord
+        ? TimeTracker.App.Resources.Resources.Dialog_ChangeActivity_Title
+        : TimeTracker.App.Resources.Resources.Dialog_StartActivity_Title;
+
+    /// <summary>
+    /// Returns the primary button text based on whether there is an active record.
+    /// </summary>
+    public string PrimaryButtonText => HasActiveRecord
+        ? TimeTracker.App.Resources.Resources.Button_Change
+        : TimeTracker.App.Resources.Resources.Button_Start;
+
+    /// <summary>
+    /// Determines if any field has been modified relative to the original active record values.
+    /// When no active record exists, always returns true (enabling "Start").
+    /// </summary>
+    public bool HasChanges
+    {
+        get
+        {
+            if (!HasActiveRecord)
+            {
+                return true;
+            }
+
+            return SelectedActivityId != OriginalActivityId
+                || Telework != OriginalTelework
+                || !string.Equals(Notes, OriginalNotes, StringComparison.Ordinal)
+                || !string.Equals(StartTimeText, OriginalStartTimeText, StringComparison.Ordinal);
+        }
+    }
+
+    partial void OnHasActiveRecordChanged(bool value)
+    {
+        OnPropertyChanged(nameof(DialogTitle));
+        OnPropertyChanged(nameof(PrimaryButtonText));
+        OnPropertyChanged(nameof(HasChanges));
     }
 }
