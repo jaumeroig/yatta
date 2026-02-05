@@ -539,36 +539,12 @@ public partial class JornadaViewModel : ObservableObject
 
     private static string FormatDurationForEdit(TimeSpan duration)
     {
-        var totalMinutes = (int)duration.TotalMinutes;
-        var hours = totalMinutes / 60;
-        var minutes = totalMinutes % 60;
-        return $"{hours:D2}:{minutes:D2}";
+        return WorkdayConfigEditModel.FormatDuration(duration);
     }
 
     private static TimeSpan? ParseDuration(string text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return null;
-        }
-
-        var parts = text.Split(':');
-        if (parts.Length != 2)
-        {
-            return null;
-        }
-
-        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
-        {
-            return null;
-        }
-
-        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59)
-        {
-            return null;
-        }
-
-        return new TimeSpan(hours, minutes, 0);
+        return WorkdayConfigEditModel.ParseDuration(text);
     }
 }
 
@@ -730,7 +706,22 @@ public partial class WorkdayConfigEditModel : ObservableObject
         OnPropertyChanged(nameof(HasChanges));
     }
 
-    private static TimeSpan? ParseDuration(string text)
+    /// <summary>
+    /// Formats a TimeSpan as HH:mm for display in edit controls.
+    /// </summary>
+    public static string FormatDuration(TimeSpan duration)
+    {
+        var totalMinutes = (int)duration.TotalMinutes;
+        var hours = totalMinutes / 60;
+        var minutes = totalMinutes % 60;
+        return $"{hours:D2}:{minutes:D2}";
+    }
+
+    /// <summary>
+    /// Parses a duration string in HH:mm format to TimeSpan.
+    /// Returns null if the format is invalid.
+    /// </summary>
+    public static TimeSpan? ParseDuration(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
