@@ -121,6 +121,11 @@ namespace TimeTracker.Data.Migrations
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Telework")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.HasKey("Id");
 
                     b.HasIndex("Date", "StartTime");

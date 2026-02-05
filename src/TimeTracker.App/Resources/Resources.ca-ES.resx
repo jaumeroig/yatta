@@ -702,4 +702,16 @@
   <data name="Validation_TargetDurationInvalid" xml:space="preserve">
     <value>La durada objectiu ha de ser un número vàlid més gran que 0.</value>
   </data>
+  <data name="Dialog_ChangeActivity_Title" xml:space="preserve">
+    <value>Canviar activitat</value>
+  </data>
+  <data name="Dialog_StartActivity_Title" xml:space="preserve">
+    <value>Iniciar activitat</value>
+  </data>
+  <data name="Label_StartDateTime" xml:space="preserve">
+    <value>Data i hora d'inici</value>
+  </data>
+  <data name="Button_Start" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
 </root>

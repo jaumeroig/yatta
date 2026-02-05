@@ -1616,5 +1616,50 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Validation_TargetDurationInvalid", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar actividad.
+        /// </summary>
+        internal static string Dialog_ChangeActivity_Title {
+            get {
+                return ResourceManager.GetString("Dialog_ChangeActivity_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iniciar actividad.
+        /// </summary>
+        internal static string Dialog_StartActivity_Title {
+            get {
+                return ResourceManager.GetString("Dialog_StartActivity_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fecha y hora de inicio.
+        /// </summary>
+        internal static string Label_StartDateTime {
+            get {
+                return ResourceManager.GetString("Label_StartDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iniciar.
+        /// </summary>
+        internal static string Button_Start {
+            get {
+                return ResourceManager.GetString("Button_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar.
+        /// </summary>
+        internal static string Button_Change {
+            get {
+                return ResourceManager.GetString("Button_Change", resourceCulture);
+            }
+        }
     }
 }

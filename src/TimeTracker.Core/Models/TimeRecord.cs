@@ -34,4 +34,9 @@ public class TimeRecord
     /// Additional notes for the record (optional).
     /// </summary>
     public string? Notes { get; set; }
+
+    /// <summary>
+    /// Indicates if the record is telework.
+    /// </summary>
+    public bool Telework { get; set; } = false;
 }
