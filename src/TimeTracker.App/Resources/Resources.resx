@@ -600,4 +600,100 @@
   <data name="Page_WhatsNew_Title" xml:space="preserve">
     <value>Novedades</value>
   </data>
+  <data name="Nav_Today" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="Page_Today_Title" xml:space="preserve">
+    <value>Hoy</value>
+  </data>
+  <data name="Today_CurrentDate" xml:space="preserve">
+    <value>Fecha actual</value>
+  </data>
+  <data name="Today_DayInfo" xml:space="preserve">
+    <value>Información del día</value>
+  </data>
+  <data name="Today_DayType" xml:space="preserve">
+    <value>Tipo de día</value>
+  </data>
+  <data name="Today_DayType_WorkDay" xml:space="preserve">
+    <value>Laborable</value>
+  </data>
+  <data name="Today_DayType_IntensiveDay" xml:space="preserve">
+    <value>Jornada intensiva</value>
+  </data>
+  <data name="Today_DayType_Holiday" xml:space="preserve">
+    <value>Festivo</value>
+  </data>
+  <data name="Today_DayType_FreeChoice" xml:space="preserve">
+    <value>Libre elección</value>
+  </data>
+  <data name="Today_DayType_Vacation" xml:space="preserve">
+    <value>Vacaciones</value>
+  </data>
+  <data name="Today_TargetDuration" xml:space="preserve">
+    <value>Duración objetivo</value>
+  </data>
+  <data name="Today_WorkdayStartTime" xml:space="preserve">
+    <value>Hora de inicio</value>
+  </data>
+  <data name="Today_RemainingTime" xml:space="preserve">
+    <value>Tiempo restante</value>
+  </data>
+  <data name="Today_WorkedTime" xml:space="preserve">
+    <value>Tiempo trabajado</value>
+  </data>
+  <data name="Today_NoWorkingDay" xml:space="preserve">
+    <value>No aplica jornada laboral</value>
+  </data>
+  <data name="Today_ConfigureDay" xml:space="preserve">
+    <value>Configurar día</value>
+  </data>
+  <data name="Today_ActivityTimeline" xml:space="preserve">
+    <value>Línea temporal de actividades</value>
+  </data>
+  <data name="Today_Records" xml:space="preserve">
+    <value>Registros de hoy</value>
+  </data>
+  <data name="Today_ActiveRecord" xml:space="preserve">
+    <value>Registro en curso</value>
+  </data>
+  <data name="Today_NoRecords" xml:space="preserve">
+    <value>No hay registros para hoy</value>
+  </data>
+  <data name="Today_StartTracking" xml:space="preserve">
+    <value>Comenzar a registrar</value>
+  </data>
+  <data name="Button_Stop" xml:space="preserve">
+    <value>Detener</value>
+  </data>
+  <data name="Button_Play" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="Button_Change" xml:space="preserve">
+    <value>Cambiar</value>
+  </data>
+  <data name="Today_ElapsedTime" xml:space="preserve">
+    <value>Tiempo transcurrido</value>
+  </data>
+  <data name="Today_InProgress" xml:space="preserve">
+    <value>En curso</value>
+  </data>
+  <data name="Dialog_ConfigureDay_Title" xml:space="preserve">
+    <value>Configurar día</value>
+  </data>
+  <data name="Label_DayType" xml:space="preserve">
+    <value>Tipo de día</value>
+  </data>
+  <data name="Label_TargetDuration" xml:space="preserve">
+    <value>Duración objetivo (horas)</value>
+  </data>
+  <data name="Placeholder_TargetDuration" xml:space="preserve">
+    <value>Ej: 8</value>
+  </data>
+  <data name="Validation_TargetDurationRequired" xml:space="preserve">
+    <value>La duración objetivo es obligatoria para días laborables.</value>
+  </data>
+  <data name="Validation_TargetDurationInvalid" xml:space="preserve">
+    <value>La duración objetivo debe ser un número válido mayor que 0.</value>
+  </data>
 </root>

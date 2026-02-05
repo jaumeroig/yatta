@@ -1,0 +1,397 @@
+<Page x:Class="TimeTracker.App.Views.Pages.HoyPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:TimeTracker.App.Controls"
+      xmlns:local="clr-namespace:TimeTracker.App.Markup"
+      mc:Ignorable="d"
+      d:DesignHeight="800" d:DesignWidth="900"
+      Loaded="Page_Loaded"
+      Unloaded="Page_Unloaded">
+
+    <Page.Resources>
+        <!-- Configure Day Dialog Template -->
+        <DataTemplate x:Key="ConfigureDayDialogTemplate">
+            <StackPanel Width="480">
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="{local:Localize Dialog_ConfigureDay_Title}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <ui:Button HorizontalAlignment="Right"
+                               Appearance="Transparent"
+                               Command="{Binding CloseConfigureDayDialogCommand}"
+                               Padding="4">
+                        <ui:SymbolIcon Symbol="Dismiss24" />
+                    </ui:Button>
+                </Grid>
+
+                <TextBlock Text="{local:Localize Label_DayType}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+                <StackPanel Margin="0,0,0,16">
+                    <RadioButton Content="{local:Localize Today_DayType_WorkDay}"
+                                 IsChecked="{Binding ConfigureDayModel.IsWorkDay}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize Today_DayType_IntensiveDay}"
+                                 IsChecked="{Binding ConfigureDayModel.IsIntensiveDay}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize Today_DayType_Holiday}"
+                                 IsChecked="{Binding ConfigureDayModel.IsHoliday}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize Today_DayType_FreeChoice}"
+                                 IsChecked="{Binding ConfigureDayModel.IsFreeChoice}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize Today_DayType_Vacation}"
+                                 IsChecked="{Binding ConfigureDayModel.IsVacation}"
+                                 GroupName="DayType" />
+                </StackPanel>
+
+                <!-- Target Duration (only for working days) -->
+                <StackPanel Margin="0,0,0,16"
+                            Visibility="{Binding ConfigureDayModel.IsWorkingDayType, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{local:Localize Label_TargetDuration}"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8" />
+                    <ui:TextBox PlaceholderText="{local:Localize Placeholder_TargetDuration}"
+                                Text="{Binding ConfigureDayModel.TargetDurationHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Height="40" />
+                </StackPanel>
+
+                <!-- Validation error message -->
+                <Border Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8"
+                        Margin="0,0,0,16"
+                        Visibility="{Binding ConfigureDayModel.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{Binding ConfigureDayModel.ValidationError}"
+                               Foreground="White"
+                               TextWrapping="Wrap"
+                               FontSize="13" />
+                </Border>
+
+                <ui:Button Content="{local:Localize Button_SaveChanges}"
+                           Appearance="Primary"
+                           HorizontalAlignment="Stretch"
+                           Command="{Binding SaveConfigureDayCommand}"
+                           Height="40"
+                           Padding="16,0" />
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="42,0,42,42" MaxWidth="800">
+            
+            <!-- Current Date and Time -->
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24"
+                    Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="{Binding CurrentDate}"
+                               FontSize="24"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,8"/>
+                    <TextBlock Text="{Binding CurrentTime}"
+                               FontSize="48"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Day Information -->
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24"
+                    Margin="0,0,0,24">
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <TextBlock Text="{local:Localize Today_DayInfo}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+                        <ui:Button Content="{local:Localize Today_ConfigureDay}"
+                                   HorizontalAlignment="Right"
+                                   Command="{Binding ConfigureDayCommand}">
+                            <ui:Button.Icon>
+                                <ui:SymbolIcon Symbol="Settings24"/>
+                            </ui:Button.Icon>
+                        </ui:Button>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Day Type -->
+                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                   Text="{local:Localize Today_DayType}"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <ui:Badge Grid.Row="1" Grid.Column="0"
+                                  Content="{Binding DayTypeDisplay}"
+                                  Appearance="Secondary"
+                                  HorizontalAlignment="Left"
+                                  Margin="0,0,0,16"/>
+
+                        <!-- Worked Time -->
+                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                   Text="{local:Localize Today_WorkedTime}"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding WorkedTime}"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,16"/>
+
+                        <!-- Target Duration (only for working days) -->
+                        <TextBlock Grid.Row="2" Grid.Column="0"
+                                   Text="{local:Localize Today_TargetDuration}"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Margin="0,0,0,4"
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0"
+                                   Text="{Binding TargetDuration}"
+                                   FontSize="16"
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <!-- Remaining Time (only for working days) -->
+                        <TextBlock Grid.Row="2" Grid.Column="1"
+                                   Text="{local:Localize Today_RemainingTime}"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   Margin="0,0,0,4"
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1"
+                                   Text="{Binding RemainingTime}"
+                                   FontSize="16"
+                                   Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Timeline -->
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24"
+                    Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="{local:Localize Today_ActivityTimeline}"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,16"/>
+                    <controls:WorkdayTimelineBar Segments="{Binding TimelineSegments}"
+                                                  Height="60"
+                                                  Margin="0,0,0,8"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Active Record -->
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource SystemAccentColorPrimaryBrush}"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="24"
+                    Margin="0,0,0,24"
+                    Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,16">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:Badge Content="{local:Localize Today_InProgress}"
+                                      Appearance="Primary"
+                                      Margin="0,0,8,0"/>
+                            <TextBlock Text="{local:Localize Today_ActiveRecord}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Activity Color Indicator -->
+                        <Border Grid.Column="0"
+                                Width="8"
+                                Height="60"
+                                Background="{Binding ActiveRecord.ActivityColorBrush}"
+                                CornerRadius="4"
+                                Margin="0,0,16,0"/>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{Binding ActiveRecord.ActivityName}"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding ActiveRecord.Notes}"
+                                       FontSize="14"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding ActiveRecord.Notes, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Elapsed Time -->
+                    <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+                            CornerRadius="4"
+                            Padding="12"
+                            Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Today_ElapsedTime}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="{Binding ElapsedTime}"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Action Buttons -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Content="{local:Localize Button_Change}"
+                                   Appearance="Secondary"
+                                   Margin="0,0,8,0"
+                                   Command="{Binding ChangeActivityCommand}">
+                            <ui:Button.Icon>
+                                <ui:SymbolIcon Symbol="ArrowSwap24"/>
+                            </ui:Button.Icon>
+                        </ui:Button>
+                        <ui:Button Content="{local:Localize Button_Stop}"
+                                   Appearance="Primary"
+                                   Command="{Binding StopRecordCommand}">
+                            <ui:Button.Icon>
+                                <ui:SymbolIcon Symbol="Stop24"/>
+                            </ui:Button.Icon>
+                        </ui:Button>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Play Button (when last record was stopped) -->
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24"
+                    Margin="0,0,0,24"
+                    Visibility="{Binding CanPlay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ui:Button Content="{local:Localize Button_Play}"
+                           Appearance="Primary"
+                           HorizontalAlignment="Center"
+                           Command="{Binding PlayRecordCommand}">
+                    <ui:Button.Icon>
+                        <ui:SymbolIcon Symbol="Play24"/>
+                    </ui:Button.Icon>
+                </ui:Button>
+            </Border>
+
+            <!-- Completed Records -->
+            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24">
+                <StackPanel>
+                    <TextBlock Text="{local:Localize Today_Records}"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,16"/>
+
+                    <!-- No Records Message -->
+                    <TextBlock Text="{local:Localize Today_NoRecords}"
+                               FontSize="14"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               HorizontalAlignment="Center"
+                               Margin="0,32,0,32"
+                               Visibility="{Binding CompletedRecords.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+
+                    <!-- Records List -->
+                    <ItemsControl ItemsSource="{Binding CompletedRecords}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                        CornerRadius="4"
+                                        Padding="16"
+                                        Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Activity Color -->
+                                        <Border Grid.Column="0"
+                                                Width="6"
+                                                Height="40"
+                                                Background="{Binding ActivityColorBrush}"
+                                                CornerRadius="3"
+                                                Margin="0,0,12,0"/>
+
+                                        <!-- Record Info -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ActivityName}"
+                                                       FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,2"/>
+                                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                                                <Run Text="{Binding StartTime}"/>
+                                                <Run Text=" - "/>
+                                                <Run Text="{Binding EndTime}"/>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding Notes}"
+                                                       FontSize="12"
+                                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,2,0,0"
+                                                       Visibility="{Binding Notes, Converter={StaticResource StringToVisibilityConverter}}"/>
+                                        </StackPanel>
+
+                                        <!-- Duration -->
+                                        <TextBlock Grid.Column="2"
+                                                   Text="{Binding Duration}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center"
+                                                   Margin="16,0,0,0"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
