@@ -322,22 +322,22 @@ public partial class HoyViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void PlayRecord()
+    private async Task PlayRecordAsync()
     {
         // Open the change activity dialog to start a new record
-        OpenChangeActivityDialog();
+        await OpenChangeActivityDialogAsync();
     }
 
     [RelayCommand]
-    private void ChangeActivity()
+    private async Task ChangeActivityAsync()
     {
-        OpenChangeActivityDialog();
+        await OpenChangeActivityDialogAsync();
     }
 
     /// <summary>
     /// Opens the change/start activity dialog, pre-populating from the active record if one exists.
     /// </summary>
-    private void OpenChangeActivityDialog()
+    private async Task OpenChangeActivityDialogAsync()
     {
         var now = DateTime.Now;
         var model = new ChangeActivityModel
@@ -353,7 +353,7 @@ public partial class HoyViewModel : ObservableObject
         if (ActiveRecord != null)
         {
             // Pre-select the current activity and copy its properties
-            var activeTimeRecord = GetActiveTimeRecordAsync().GetAwaiter().GetResult();
+            var activeTimeRecord = await _timeRecordRepository.GetActiveAsync();
             if (activeTimeRecord != null)
             {
                 model.SelectedActivityId = activeTimeRecord.ActivityId;
@@ -377,14 +377,6 @@ public partial class HoyViewModel : ObservableObject
 
         ChangeActivityModel = model;
         IsChangeActivityDialogOpen = true;
-    }
-
-    /// <summary>
-    /// Returns the currently active TimeRecord entity from the repository.
-    /// </summary>
-    private async Task<TimeRecord?> GetActiveTimeRecordAsync()
-    {
-        return await _timeRecordRepository.GetActiveAsync();
     }
 
     [RelayCommand]
@@ -415,7 +407,7 @@ public partial class HoyViewModel : ObservableObject
         // If there's an active record, finalize it with the switch time as EndTime
         if (ChangeActivityModel.HasActiveRecord)
         {
-            var activeRecord = await GetActiveTimeRecordAsync();
+            var activeRecord = await _timeRecordRepository.GetActiveAsync();
             if (activeRecord != null)
             {
                 activeRecord.EndTime = switchTime;

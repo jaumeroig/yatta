@@ -169,14 +169,19 @@ public partial class App : Application
         connection.Open();
 
         // Check if Telework column already exists on TimeRecords
+        // PRAGMA table_info returns: cid, name, type, notnull, dflt_value, pk
+        const string columnNameField = "name";
+        const string targetColumn = "Telework";
+
         using var checkCmd = connection.CreateCommand();
         checkCmd.CommandText = "PRAGMA table_info('TimeRecords')";
         var hasTeleworkColumn = false;
         using (var reader = checkCmd.ExecuteReader())
         {
+            var nameOrdinal = reader.GetOrdinal(columnNameField);
             while (reader.Read())
             {
-                if (string.Equals(reader.GetString(1), "Telework", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(reader.GetString(nameOrdinal), targetColumn, StringComparison.OrdinalIgnoreCase))
                 {
                     hasTeleworkColumn = true;
                     break;
