@@ -52,6 +52,9 @@ public partial class App : Application
         // Initialize notification service
         InitializeNotificationService();
 
+        // Execute automatic purge if enabled
+        ExecuteAutoPurge();
+
         mainWindow.Show();
     }
 
@@ -105,6 +108,38 @@ public partial class App : Application
             };
             navigationService.Navigate<TimeRecordDetailPage>(navParam);
         });
+    }
+
+    /// <summary>
+    /// Executes automatic data purge if enabled in settings.
+    /// </summary>
+    private void ExecuteAutoPurge()
+    {
+        using var scope = _serviceProvider!.CreateScope();
+        var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+        var dataPurgeService = scope.ServiceProvider.GetRequiredService<IDataPurgeService>();
+
+        try
+        {
+            var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
+
+            if (!settings.AutoPurgeEnabled || settings.RetentionPolicy == Core.Models.RetentionPolicy.Forever)
+            {
+                return;
+            }
+
+            var cutoffDate = dataPurgeService.CalculateCutoffDate(
+                settings.RetentionPolicy, settings.CustomRetentionDays);
+
+            if (cutoffDate.HasValue)
+            {
+                dataPurgeService.ExecutePurgeAsync(cutoffDate.Value).GetAwaiter().GetResult();
+            }
+        }
+        catch
+        {
+            // If there's an error during auto-purge, continue startup normally
+        }
     }
 
     /// <summary>
@@ -195,6 +230,44 @@ public partial class App : Application
             alterCmd.CommandText = "ALTER TABLE \"TimeRecords\" ADD COLUMN \"Telework\" INTEGER NOT NULL DEFAULT 0";
             alterCmd.ExecuteNonQuery();
         }
+
+        // Add RetentionPolicy, CustomRetentionDays and AutoPurgeEnabled columns to AppSettings
+        using var checkSettingsCmd = connection.CreateCommand();
+        checkSettingsCmd.CommandText = "PRAGMA table_info('AppSettings')";
+        var hasRetentionPolicyColumn = false;
+        using (var reader = checkSettingsCmd.ExecuteReader())
+        {
+            var nameOrdinal = reader.GetOrdinal(columnNameField);
+            while (reader.Read())
+            {
+                if (string.Equals(reader.GetString(nameOrdinal), "RetentionPolicy", StringComparison.OrdinalIgnoreCase))
+                {
+                    hasRetentionPolicyColumn = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasRetentionPolicyColumn)
+        {
+            using var alterCmd = connection.CreateCommand();
+            alterCmd.CommandText = """
+                ALTER TABLE "AppSettings" ADD COLUMN "RetentionPolicy" INTEGER NOT NULL DEFAULT 0;
+                """;
+            alterCmd.ExecuteNonQuery();
+
+            using var alterCmd2 = connection.CreateCommand();
+            alterCmd2.CommandText = """
+                ALTER TABLE "AppSettings" ADD COLUMN "CustomRetentionDays" INTEGER NOT NULL DEFAULT 365;
+                """;
+            alterCmd2.ExecuteNonQuery();
+
+            using var alterCmd3 = connection.CreateCommand();
+            alterCmd3.CommandText = """
+                ALTER TABLE "AppSettings" ADD COLUMN "AutoPurgeEnabled" INTEGER NOT NULL DEFAULT 0;
+                """;
+            alterCmd3.ExecuteNonQuery();
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -215,6 +288,7 @@ public partial class App : Application
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IWorkdayService, WorkdayService>();
         services.AddScoped<IWorkdayConfigService, WorkdayConfigService>();
+        services.AddScoped<IDataPurgeService, DataPurgeService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();

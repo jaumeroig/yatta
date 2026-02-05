@@ -708,4 +708,70 @@
   <data name="Button_Start" xml:space="preserve">
     <value>Iniciar</value>
   </data>
+  <data name="Settings_Section_DataRetention" xml:space="preserve">
+    <value>Retención de datos</value>
+  </data>
+  <data name="Label_RetentionPolicy" xml:space="preserve">
+    <value>Conservar historial durante</value>
+  </data>
+  <data name="Description_RetentionPolicy" xml:space="preserve">
+    <value>Define cuánto tiempo se conservan los datos históricos</value>
+  </data>
+  <data name="RetentionPolicy_Forever" xml:space="preserve">
+    <value>Para siempre</value>
+  </data>
+  <data name="RetentionPolicy_OneYear" xml:space="preserve">
+    <value>1 año</value>
+  </data>
+  <data name="RetentionPolicy_TwoYears" xml:space="preserve">
+    <value>2 años</value>
+  </data>
+  <data name="RetentionPolicy_ThreeYears" xml:space="preserve">
+    <value>3 años</value>
+  </data>
+  <data name="RetentionPolicy_Custom" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="Label_CustomRetentionDays" xml:space="preserve">
+    <value>Retención personalizada</value>
+  </data>
+  <data name="Description_CustomRetentionDays" xml:space="preserve">
+    <value>Número de días a conservar (mayor que 0)</value>
+  </data>
+  <data name="Label_Days" xml:space="preserve">
+    <value>días</value>
+  </data>
+  <data name="Label_AutoPurge" xml:space="preserve">
+    <value>Purgado automático</value>
+  </data>
+  <data name="Description_AutoPurge" xml:space="preserve">
+    <value>Ejecutar el purgado automáticamente al iniciar la aplicación</value>
+  </data>
+  <data name="Button_PurgeNow" xml:space="preserve">
+    <value>Ejecutar purgado ahora</value>
+  </data>
+  <data name="Dialog_Purge_Title" xml:space="preserve">
+    <value>Confirmar purgado</value>
+  </data>
+  <data name="Dialog_Purge_Message" xml:space="preserve">
+    <value>Se eliminarán los datos anteriores al {0}.</value>
+  </data>
+  <data name="Dialog_Purge_RecordCount" xml:space="preserve">
+    <value>Registros de actividad: {0} · Configuraciones de día: {1}</value>
+  </data>
+  <data name="Dialog_Purge_Warning" xml:space="preserve">
+    <value>Esta acción es irreversible.</value>
+  </data>
+  <data name="Button_Purge" xml:space="preserve">
+    <value>Purgar</value>
+  </data>
+  <data name="Dialog_Purge_Success" xml:space="preserve">
+    <value>Purgado completado correctamente. Se han eliminado {0} registros de actividad y {1} configuraciones de día.</value>
+  </data>
+  <data name="Dialog_Purge_NothingToPurge" xml:space="preserve">
+    <value>No hay datos que purgar con la política de retención actual.</value>
+  </data>
+  <data name="Dialog_Purge_RetentionForever" xml:space="preserve">
+    <value>La política de retención está configurada como "Para siempre". No se ejecutará el purgado.</value>
+  </data>
 </root>

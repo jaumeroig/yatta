@@ -198,6 +198,104 @@
                     </StackPanel>
                 </ui:CardControl>
 
+                <!-- Data Retention Section -->
+                <TextBlock Text="{local:Localize Settings_Section_DataRetention}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,42,0,12" />
+
+                <!-- Retention Policy -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="History24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_RetentionPolicy}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_RetentionPolicy}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ComboBox Width="200"
+                              Height="40"
+                              ItemsSource="{Binding RetentionPolicyOptions}"
+                              SelectedItem="{Binding SelectedRetentionPolicy, Mode=TwoWay}"
+                              DisplayMemberPath="DisplayName" />
+                </ui:CardControl>
+
+                <!-- Custom Retention Days -->
+                <ui:CardControl Margin="0,0,0,4"
+                                Visibility="{Binding IsCustomRetentionVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="CalendarEdit24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_CustomRetentionDays}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_CustomRetentionDays}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:TextBox Text="{Binding CustomRetentionDays, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="80"
+                                    Height="40"
+                                    Margin="0,0,4,0" />
+                        <TextBlock Text="{local:Localize Label_Days}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,12,0" />
+                        <ui:Button Content="{local:Localize Button_Save}"
+                                   Command="{Binding SaveCustomRetentionDaysCommand}"
+                                   Appearance="Primary"
+                                   Height="40"
+                                   Padding="16,0" />
+                    </StackPanel>
+                </ui:CardControl>
+
+                <!-- Auto Purge -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="ArrowSync24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_AutoPurge}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_AutoPurge}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding AutoPurgeEnabled, Mode=TwoWay}"
+                                     Command="{Binding ToggleAutoPurgeCommand}" />
+                </ui:CardControl>
+
+                <!-- Purge Now Button -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Delete24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Button_PurgeNow}"
+                                       FontWeight="SemiBold" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:Button Content="{local:Localize Button_PurgeNow}"
+                               Appearance="Danger"
+                               Height="40"
+                               Padding="16,0"
+                               Click="PurgeNow_Click" />
+                </ui:CardControl>
+
                 <!-- Sobre l'aplicació -->
                 <TextBlock Text="{local:Localize Settings_Section_About}"
                            FontSize="14"

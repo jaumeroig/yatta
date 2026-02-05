@@ -90,4 +90,30 @@ public class WorkdayRepository : IWorkdayRepository
             await _context.SaveChangesAsync();
         }
     }
+
+    /// <inheritdoc/>
+    public async Task<int> CountBeforeDateAsync(DateOnly date)
+    {
+        return await _context.Workdays
+            .Where(w => w.Date < date)
+            .CountAsync();
+    }
+
+    /// <inheritdoc/>
+    public async Task<int> DeleteBeforeDateAsync(DateOnly date)
+    {
+        var workdays = await _context.Workdays
+            .Where(w => w.Date < date)
+            .ToListAsync();
+
+        if (workdays.Count == 0)
+        {
+            return 0;
+        }
+
+        _context.Workdays.RemoveRange(workdays);
+        await _context.SaveChangesAsync();
+
+        return workdays.Count;
+    }
 }

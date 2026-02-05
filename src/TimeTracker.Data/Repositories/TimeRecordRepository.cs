@@ -101,4 +101,28 @@ public class TimeRecordRepository : ITimeRecordRepository
         _context.TimeRecords.Remove(timeRecord);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<int> CountBeforeDateAsync(DateOnly date)
+    {
+        return await _context.TimeRecords
+            .Where(tr => tr.Date < date)
+            .CountAsync();
+    }
+
+    public async Task<int> DeleteBeforeDateAsync(DateOnly date)
+    {
+        var records = await _context.TimeRecords
+            .Where(tr => tr.Date < date)
+            .ToListAsync();
+
+        if (records.Count == 0)
+        {
+            return 0;
+        }
+
+        _context.TimeRecords.RemoveRange(records);
+        await _context.SaveChangesAsync();
+
+        return records.Count;
+    }
 }

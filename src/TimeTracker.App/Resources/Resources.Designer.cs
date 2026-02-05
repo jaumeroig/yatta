@@ -1661,5 +1661,203 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Button_Change", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retención de datos.
+        /// </summary>
+        internal static string Settings_Section_DataRetention {
+            get {
+                return ResourceManager.GetString("Settings_Section_DataRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conservar historial durante.
+        /// </summary>
+        internal static string Label_RetentionPolicy {
+            get {
+                return ResourceManager.GetString("Label_RetentionPolicy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define cuánto tiempo se conservan los datos históricos.
+        /// </summary>
+        internal static string Description_RetentionPolicy {
+            get {
+                return ResourceManager.GetString("Description_RetentionPolicy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Para siempre.
+        /// </summary>
+        internal static string RetentionPolicy_Forever {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_Forever", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 año.
+        /// </summary>
+        internal static string RetentionPolicy_OneYear {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_OneYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 años.
+        /// </summary>
+        internal static string RetentionPolicy_TwoYears {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_TwoYears", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3 años.
+        /// </summary>
+        internal static string RetentionPolicy_ThreeYears {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_ThreeYears", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Personalizado.
+        /// </summary>
+        internal static string RetentionPolicy_Custom {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_Custom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retención personalizada.
+        /// </summary>
+        internal static string Label_CustomRetentionDays {
+            get {
+                return ResourceManager.GetString("Label_CustomRetentionDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Número de días a conservar (mayor que 0).
+        /// </summary>
+        internal static string Description_CustomRetentionDays {
+            get {
+                return ResourceManager.GetString("Description_CustomRetentionDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to días.
+        /// </summary>
+        internal static string Label_Days {
+            get {
+                return ResourceManager.GetString("Label_Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purgado automático.
+        /// </summary>
+        internal static string Label_AutoPurge {
+            get {
+                return ResourceManager.GetString("Label_AutoPurge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ejecutar el purgado automáticamente al iniciar la aplicación.
+        /// </summary>
+        internal static string Description_AutoPurge {
+            get {
+                return ResourceManager.GetString("Description_AutoPurge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ejecutar purgado ahora.
+        /// </summary>
+        internal static string Button_PurgeNow {
+            get {
+                return ResourceManager.GetString("Button_PurgeNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmar purgado.
+        /// </summary>
+        internal static string Dialog_Purge_Title {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Se eliminarán los datos anteriores al {0}..
+        /// </summary>
+        internal static string Dialog_Purge_Message {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registros de actividad: {0} · Configuraciones de día: {1}.
+        /// </summary>
+        internal static string Dialog_Purge_RecordCount {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_RecordCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esta acción es irreversible..
+        /// </summary>
+        internal static string Dialog_Purge_Warning {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purgar.
+        /// </summary>
+        internal static string Button_Purge {
+            get {
+                return ResourceManager.GetString("Button_Purge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purgado completado correctamente. Se han eliminado {0} registros de actividad y {1} configuraciones de día..
+        /// </summary>
+        internal static string Dialog_Purge_Success {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No hay datos que purgar con la política de retención actual..
+        /// </summary>
+        internal static string Dialog_Purge_NothingToPurge {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_NothingToPurge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to La política de retención está configurada como "Para siempre". No se ejecutará el purgado..
+        /// </summary>
+        internal static string Dialog_Purge_RetentionForever {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_RetentionForever", resourceCulture);
+            }
+        }
     }
 }
