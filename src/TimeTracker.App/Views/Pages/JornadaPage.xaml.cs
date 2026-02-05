@@ -18,7 +18,9 @@ public partial class JornadaPage : Page
     private readonly IDialogService _dialogService;
     private readonly IBreadcrumbService _breadcrumbService;
     private ContentDialog? _slotDialog;
+    private ContentDialog? _configDialog;
     private bool _isSlotDialogVisible;
+    private bool _isConfigDialogVisible;
     private bool _isSubscribedToChanges;
     private bool _isUpdatingCalendar;
 
@@ -69,6 +71,17 @@ public partial class JornadaPage : Page
             else
             {
                 _slotDialog?.Hide();
+            }
+        }
+        else if (e.PropertyName == nameof(JornadaViewModel.IsConfigDialogOpen))
+        {
+            if (_viewModel.IsConfigDialogOpen)
+            {
+                _ = ShowConfigDialogAsync();
+            }
+            else
+            {
+                _configDialog?.Hide();
             }
         }
         else if (e.PropertyName == nameof(JornadaViewModel.SelectedDate))
@@ -171,20 +184,79 @@ public partial class JornadaPage : Page
 
     private void DisposeDialog()
     {
-        if (_slotDialog == null)
+        if (_slotDialog != null)
         {
-            return;
+            _slotDialog.Closed -= OnSlotDialogClosed;
+            _slotDialog.Hide();
+            _slotDialog = null;
+            _isSlotDialogVisible = false;
         }
 
-        _slotDialog.Closed -= OnSlotDialogClosed;
-        _slotDialog.Hide();
-        _slotDialog = null;
-        _isSlotDialogVisible = false;
+        if (_configDialog != null)
+        {
+            _configDialog.Closed -= OnConfigDialogClosed;
+            _configDialog.Hide();
+            _configDialog = null;
+            _isConfigDialogVisible = false;
+        }
     }
 
     private void OnSlotDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
     {
         _viewModel.IsDialogOpen = false;
         _isSlotDialogVisible = false;
+    }
+
+    private async Task ShowConfigDialogAsync()
+    {
+        if (_configDialog == null)
+        {
+            _configDialog = BuildConfigDialog();
+            _configDialog.Closed += OnConfigDialogClosed;
+        }
+
+        if (_isConfigDialogVisible)
+        {
+            return;
+        }
+
+        try
+        {
+            _isConfigDialogVisible = true;
+            await _configDialog.ShowAsync();
+        }
+        finally
+        {
+            _isConfigDialogVisible = false;
+        }
+    }
+
+    private ContentDialog BuildConfigDialog()
+    {
+        var dialogContent = LoadConfigDialogContent();
+        var host = _dialogService.GetDialogHost();
+        
+        return new ContentDialog(host)
+        {
+            Content = dialogContent
+        };
+    }
+
+    private FrameworkElement LoadConfigDialogContent()
+    {
+        if (Resources["ConfigDayDialogTemplate"] is DataTemplate templateResource && 
+            templateResource.LoadContent() is FrameworkElement contentElement)
+        {
+            contentElement.DataContext = _viewModel;
+            return contentElement;
+        }
+
+        throw new InvalidOperationException("Dialog template 'ConfigDayDialogTemplate' not found.");
+    }
+
+    private void OnConfigDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    {
+        _viewModel.IsConfigDialogOpen = false;
+        _isConfigDialogVisible = false;
     }
 }

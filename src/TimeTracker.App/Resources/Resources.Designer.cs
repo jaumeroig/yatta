@@ -1490,5 +1490,113 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurar día.
+        /// </summary>
+        internal static string Button_ConfigureDay {
+            get {
+                return ResourceManager.GetString("Button_ConfigureDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurar día.
+        /// </summary>
+        internal static string Dialog_ConfigureDay_Title {
+            get {
+                return ResourceManager.GetString("Dialog_ConfigureDay_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tipo de día.
+        /// </summary>
+        internal static string Label_DayType {
+            get {
+                return ResourceManager.GetString("Label_DayType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duración objetivo de la jornada.
+        /// </summary>
+        internal static string Label_TargetDuration {
+            get {
+                return ResourceManager.GetString("Label_TargetDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Laborable (normal).
+        /// </summary>
+        internal static string DayType_WorkDay {
+            get {
+                return ResourceManager.GetString("DayType_WorkDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Laborable (intensiva).
+        /// </summary>
+        internal static string DayType_IntensiveDay {
+            get {
+                return ResourceManager.GetString("DayType_IntensiveDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Festivo.
+        /// </summary>
+        internal static string DayType_Holiday {
+            get {
+                return ResourceManager.GetString("DayType_Holiday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Libre elección.
+        /// </summary>
+        internal static string DayType_FreeChoice {
+            get {
+                return ResourceManager.GetString("DayType_FreeChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vacaciones.
+        /// </summary>
+        internal static string DayType_Vacation {
+            get {
+                return ResourceManager.GetString("DayType_Vacation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restablecer valores por defecto.
+        /// </summary>
+        internal static string Button_ResetToDefaults {
+            get {
+                return ResourceManager.GetString("Button_ResetToDefaults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No aplica.
+        /// </summary>
+        internal static string Label_NotApplicable {
+            get {
+                return ResourceManager.GetString("Label_NotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to La duración no es válida. Use el formato HH:mm (ejemplo: 08:00).
+        /// </summary>
+        internal static string Validation_InvalidDuration {
+            get {
+                return ResourceManager.GetString("Validation_InvalidDuration", resourceCulture);
+            }
+        }
     }
 }

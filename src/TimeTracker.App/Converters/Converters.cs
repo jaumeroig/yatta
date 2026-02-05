@@ -557,3 +557,30 @@ public class DateOnlyToWorkdayEndConverter : IValueConverter
     }
 }
 
+/// <summary>
+/// Converts a DayType enum value to its localized string representation.
+/// </summary>
+public class DayTypeToStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is Core.Models.DayType dayType)
+        {
+            return dayType switch
+            {
+                Core.Models.DayType.WorkDay => Resources.Resources.DayType_WorkDay,
+                Core.Models.DayType.IntensiveDay => Resources.Resources.DayType_IntensiveDay,
+                Core.Models.DayType.Holiday => Resources.Resources.DayType_Holiday,
+                Core.Models.DayType.FreeChoice => Resources.Resources.DayType_FreeChoice,
+                Core.Models.DayType.Vacation => Resources.Resources.DayType_Vacation,
+                _ => string.Empty
+            };
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

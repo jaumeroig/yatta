@@ -600,4 +600,40 @@
   <data name="Page_WhatsNew_Title" xml:space="preserve">
     <value>Novedades</value>
   </data>
+  <data name="Button_ConfigureDay" xml:space="preserve">
+    <value>Configurar día</value>
+  </data>
+  <data name="Dialog_ConfigureDay_Title" xml:space="preserve">
+    <value>Configurar día</value>
+  </data>
+  <data name="Label_DayType" xml:space="preserve">
+    <value>Tipo de día</value>
+  </data>
+  <data name="Label_TargetDuration" xml:space="preserve">
+    <value>Duración objetivo de la jornada</value>
+  </data>
+  <data name="DayType_WorkDay" xml:space="preserve">
+    <value>Laborable (normal)</value>
+  </data>
+  <data name="DayType_IntensiveDay" xml:space="preserve">
+    <value>Laborable (intensiva)</value>
+  </data>
+  <data name="DayType_Holiday" xml:space="preserve">
+    <value>Festivo</value>
+  </data>
+  <data name="DayType_FreeChoice" xml:space="preserve">
+    <value>Libre elección</value>
+  </data>
+  <data name="DayType_Vacation" xml:space="preserve">
+    <value>Vacaciones</value>
+  </data>
+  <data name="Button_ResetToDefaults" xml:space="preserve">
+    <value>Restablecer valores por defecto</value>
+  </data>
+  <data name="Label_NotApplicable" xml:space="preserve">
+    <value>No aplica</value>
+  </data>
+  <data name="Validation_InvalidDuration" xml:space="preserve">
+    <value>La duración no es válida. Use el formato HH:mm (ejemplo: 08:00)</value>
+  </data>
 </root>

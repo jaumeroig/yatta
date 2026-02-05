@@ -101,6 +101,101 @@ mc:Ignorable="d"
             </StackPanel>
         </DataTemplate>
         
+        <!-- Plantilla del diàleg per configurar el dia -->
+        <DataTemplate x:Key="ConfigDayDialogTemplate">
+            <StackPanel Width="520">
+                <Grid Margin="0,0,0,20">
+                    <TextBlock Text="{local:Localize Dialog_ConfigureDay_Title}"
+                               FontSize="20"
+                               FontWeight="SemiBold" />
+                    <ui:Button HorizontalAlignment="Right"
+                               Appearance="Transparent"
+                               Command="{Binding CloseConfigDialogCommand}"
+                               Padding="4">
+                        <ui:SymbolIcon Symbol="Dismiss24" />
+                    </ui:Button>
+                </Grid>
+
+                <TextBlock Text="Data"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <TextBlock Text="{Binding EditingConfig.Date, StringFormat='D'}"
+                           FontSize="14"
+                           Margin="0,0,0,16"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+                <TextBlock Text="{local:Localize Label_DayType}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12" />
+                <StackPanel Margin="0,0,0,16">
+                    <RadioButton Content="{local:Localize DayType_WorkDay}"
+                                 IsChecked="{Binding EditingConfig.IsNormalWorkDay, Mode=TwoWay}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize DayType_IntensiveDay}"
+                                 IsChecked="{Binding EditingConfig.IsIntensiveWorkDay, Mode=TwoWay}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize DayType_Holiday}"
+                                 IsChecked="{Binding EditingConfig.IsHolidayDay, Mode=TwoWay}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize DayType_FreeChoice}"
+                                 IsChecked="{Binding EditingConfig.IsFreeChoiceDay, Mode=TwoWay}"
+                                 GroupName="DayType"
+                                 Margin="0,0,0,8" />
+                    <RadioButton Content="{local:Localize DayType_Vacation}"
+                                 IsChecked="{Binding EditingConfig.IsVacationDay, Mode=TwoWay}"
+                                 GroupName="DayType" />
+                </StackPanel>
+
+                <TextBlock Text="{local:Localize Label_TargetDuration}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,8" />
+                <ui:TextBox PlaceholderText="HH:mm"
+                            Text="{Binding EditingConfig.TargetDurationText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{Binding EditingConfig.IsWorkingDay}"
+                            Height="40"
+                            Margin="0,0,0,4" />
+                <TextBlock Text="{local:Localize Label_NotApplicable}"
+                           FontSize="12"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,16"
+                           Visibility="{Binding EditingConfig.IsWorkingDay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+
+                <!-- Missatge d'error de validació -->
+                <Border Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12,8"
+                        Margin="0,0,0,16"
+                        Visibility="{Binding EditingConfig.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+                    <TextBlock Text="{Binding EditingConfig.ValidationError}"
+                               Foreground="White"
+                               TextWrapping="Wrap"
+                               FontSize="13" />
+                </Border>
+
+                <StackPanel>
+                    <ui:Button Content="{local:Localize Button_SaveChanges}"
+                               Appearance="Primary"
+                               HorizontalAlignment="Stretch"
+                               Command="{Binding SaveDayConfigurationCommand}"
+                               IsEnabled="{Binding EditingConfig.HasChanges}"
+                               Height="40"
+                               Padding="16,0"
+                               Margin="0,0,0,8" />
+                    <ui:Button Content="{local:Localize Button_ResetToDefaults}"
+                               Appearance="Secondary"
+                               HorizontalAlignment="Stretch"
+                               Command="{Binding ResetDayConfigurationCommand}"
+                               Visibility="{Binding EditingConfig.HasSpecificConfiguration, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Height="40"
+                               Padding="16,0" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        
         <!-- Estil personalitzat per als dies del calendari amb indicadors -->
         <Style x:Key="CalendarDayButtonStyleWithIndicator" TargetType="CalendarDayButton">
             <Setter Property="MinWidth" Value="40" />
@@ -241,16 +336,27 @@ mc:Ignorable="d"
 
                 <!-- Capçalera -->
                 <Grid Grid.Row="0" Margin="0,0,0,24">
-                    <ui:Button Appearance="Primary"
-                               Command="{Binding OpenNewSlotDialogCommand}"
-                               Height="40"
-                               Padding="16,0"
-                               HorizontalAlignment="Right">
-                        <StackPanel Orientation="Horizontal">
-                            <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
-                            <TextBlock Text="{local:Localize Button_AddSlot}" />
-                        </StackPanel>
-                    </ui:Button>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Appearance="Secondary"
+                                   Command="{Binding OpenConfigureDayCommand}"
+                                   Height="40"
+                                   Padding="16,0"
+                                   Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Settings24" Margin="0,0,8,0" />
+                                <TextBlock Text="{local:Localize Button_ConfigureDay}" />
+                            </StackPanel>
+                        </ui:Button>
+                        <ui:Button Appearance="Primary"
+                                   Command="{Binding OpenNewSlotDialogCommand}"
+                                   Height="40"
+                                   Padding="16,0">
+                            <StackPanel Orientation="Horizontal">
+                                <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
+                                <TextBlock Text="{local:Localize Button_AddSlot}" />
+                            </StackPanel>
+                        </ui:Button>
+                    </StackPanel>
                 </Grid>
 
                 <!-- Contingut principal amb dues columnes -->

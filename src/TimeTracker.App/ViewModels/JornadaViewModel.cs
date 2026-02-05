@@ -17,6 +17,7 @@ public partial class JornadaViewModel : ObservableObject
     private readonly IWorkdayService _workdayService;
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly ILocalizationService _localizationService;
+    private readonly IWorkdayConfigService _workdayConfigService;
     private List<WorkdaySlot> _allSlots = [];
 
     [ObservableProperty]
@@ -89,16 +90,25 @@ public partial class JornadaViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<DateTime> _bothDates = [];
 
+    // Properties for day configuration dialog
+    [ObservableProperty]
+    private bool _isConfigDialogOpen;
+
+    [ObservableProperty]
+    private WorkdayConfigEditModel _editingConfig = new();
+
     public JornadaViewModel(
         IWorkdaySlotRepository workdaySlotRepository,
         IWorkdayService workdayService,
         ITimeCalculatorService timeCalculatorService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IWorkdayConfigService workdayConfigService)
     {
         _workdaySlotRepository = workdaySlotRepository;
         _workdayService = workdayService;
         _timeCalculatorService = timeCalculatorService;
         _localizationService = localizationService;
+        _workdayConfigService = workdayConfigService;
 
         UpdateDateDisplay();
         UpdateMonthYearDisplay();
@@ -442,6 +452,124 @@ public partial class JornadaViewModel : ObservableObject
         await UpdateMonthlySummaryAsync();
         await LoadDatesWithRecordsAsync();
     }
+
+    [RelayCommand]
+    private async Task OpenConfigureDay()
+    {
+        var date = DateOnly.FromDateTime(SelectedDate);
+        var config = await _workdayConfigService.GetEffectiveConfigurationAsync(date);
+        var hasSpecificConfig = config.Id != Guid.Empty;
+
+        EditingConfig = new WorkdayConfigEditModel
+        {
+            Date = SelectedDate,
+            DayType = config.DayType,
+            HasSpecificConfiguration = hasSpecificConfig,
+            ValidationError = string.Empty
+        };
+
+        // Set the target duration text
+        if (config.TargetDuration > TimeSpan.Zero)
+        {
+            EditingConfig.TargetDurationText = FormatDurationForEdit(config.TargetDuration);
+        }
+        else
+        {
+            EditingConfig.TargetDurationText = "00:00";
+        }
+
+        // Store original values for change detection
+        EditingConfig.OriginalDayType = config.DayType;
+        EditingConfig.OriginalTargetDuration = config.TargetDuration;
+
+        IsConfigDialogOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseConfigDialog()
+    {
+        IsConfigDialogOpen = false;
+    }
+
+    [RelayCommand]
+    private async Task SaveDayConfiguration()
+    {
+        var date = DateOnly.FromDateTime(EditingConfig.Date);
+        var dayType = EditingConfig.DayType;
+
+        TimeSpan? targetDuration = null;
+
+        // Only parse duration for working days
+        if (dayType == DayType.WorkDay || dayType == DayType.IntensiveDay)
+        {
+            var parsedDuration = ParseDuration(EditingConfig.TargetDurationText);
+            if (!parsedDuration.HasValue)
+            {
+                EditingConfig.ValidationError = Resources.Resources.Validation_InvalidDuration;
+                return;
+            }
+            targetDuration = parsedDuration.Value;
+        }
+
+        try
+        {
+            await _workdayConfigService.SetConfigurationAsync(date, dayType, targetDuration);
+            IsConfigDialogOpen = false;
+            
+            // Refresh the view if needed
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            EditingConfig.ValidationError = ex.Message;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ResetDayConfiguration()
+    {
+        var date = DateOnly.FromDateTime(EditingConfig.Date);
+        await _workdayConfigService.ResetConfigurationAsync(date);
+        
+        IsConfigDialogOpen = false;
+        
+        // Refresh the view
+        await LoadDataAsync();
+    }
+
+    private static string FormatDurationForEdit(TimeSpan duration)
+    {
+        var totalMinutes = (int)duration.TotalMinutes;
+        var hours = totalMinutes / 60;
+        var minutes = totalMinutes % 60;
+        return $"{hours:D2}:{minutes:D2}";
+    }
+
+    private static TimeSpan? ParseDuration(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+
+        var parts = text.Split(':');
+        if (parts.Length != 2)
+        {
+            return null;
+        }
+
+        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
+        {
+            return null;
+        }
+
+        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59)
+        {
+            return null;
+        }
+
+        return new TimeSpan(hours, minutes, 0);
+    }
 }
 
 /// <summary>
@@ -503,5 +631,128 @@ public partial class WorkdaySlotEditModel : ObservableObject
     public void SetEndTime(TimeOnly time)
     {
         EndTimeText = time.ToString("HH:mm");
+    }
+}
+
+/// <summary>
+/// Edit model for workday configuration.
+/// </summary>
+public partial class WorkdayConfigEditModel : ObservableObject
+{
+    [ObservableProperty]
+    private DateTime _date = DateTime.Today;
+
+    [ObservableProperty]
+    private DayType _dayType = DayType.WorkDay;
+
+    [ObservableProperty]
+    private string _targetDurationText = "08:00";
+
+    [ObservableProperty]
+    private bool _hasSpecificConfiguration;
+
+    [ObservableProperty]
+    private string _validationError = string.Empty;
+
+    // For change detection
+    public DayType OriginalDayType { get; set; }
+    public TimeSpan OriginalTargetDuration { get; set; }
+
+    public bool HasChanges
+    {
+        get
+        {
+            if (DayType != OriginalDayType)
+            {
+                return true;
+            }
+
+            // Only check duration changes for working days
+            if (DayType == DayType.WorkDay || DayType == DayType.IntensiveDay)
+            {
+                var currentDuration = ParseDuration(TargetDurationText);
+                if (currentDuration.HasValue && currentDuration.Value != OriginalTargetDuration)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    public bool IsWorkingDay => DayType == DayType.WorkDay || DayType == DayType.IntensiveDay;
+
+    // Radio button properties
+    public bool IsNormalWorkDay
+    {
+        get => DayType == DayType.WorkDay;
+        set { if (value) DayType = DayType.WorkDay; }
+    }
+
+    public bool IsIntensiveWorkDay
+    {
+        get => DayType == DayType.IntensiveDay;
+        set { if (value) DayType = DayType.IntensiveDay; }
+    }
+
+    public bool IsHolidayDay
+    {
+        get => DayType == DayType.Holiday;
+        set { if (value) DayType = DayType.Holiday; }
+    }
+
+    public bool IsFreeChoiceDay
+    {
+        get => DayType == DayType.FreeChoice;
+        set { if (value) DayType = DayType.FreeChoice; }
+    }
+
+    public bool IsVacationDay
+    {
+        get => DayType == DayType.Vacation;
+        set { if (value) DayType = DayType.Vacation; }
+    }
+
+    partial void OnDayTypeChanged(DayType value)
+    {
+        OnPropertyChanged(nameof(IsWorkingDay));
+        OnPropertyChanged(nameof(HasChanges));
+        OnPropertyChanged(nameof(IsNormalWorkDay));
+        OnPropertyChanged(nameof(IsIntensiveWorkDay));
+        OnPropertyChanged(nameof(IsHolidayDay));
+        OnPropertyChanged(nameof(IsFreeChoiceDay));
+        OnPropertyChanged(nameof(IsVacationDay));
+    }
+
+    partial void OnTargetDurationTextChanged(string value)
+    {
+        OnPropertyChanged(nameof(HasChanges));
+    }
+
+    private static TimeSpan? ParseDuration(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return null;
+        }
+
+        var parts = text.Split(':');
+        if (parts.Length != 2)
+        {
+            return null;
+        }
+
+        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
+        {
+            return null;
+        }
+
+        if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59)
+        {
+            return null;
+        }
+
+        return new TimeSpan(hours, minutes, 0);
     }
 }
