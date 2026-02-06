@@ -259,25 +259,6 @@
                     </StackPanel>
                 </ui:CardControl>
 
-                <!-- Auto Purge -->
-                <ui:CardControl Margin="0,0,0,4">
-                    <ui:CardControl.Icon>
-                        <ui:SymbolIcon Symbol="ArrowSync24" />
-                    </ui:CardControl.Icon>
-                    <ui:CardControl.Header>
-                        <StackPanel>
-                            <TextBlock Text="{local:Localize Label_AutoPurge}"
-                                       FontWeight="SemiBold" />
-                            <TextBlock Text="{local:Localize Description_AutoPurge}"
-                                       FontSize="12"
-                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                    </ui:CardControl.Header>
-                    <ui:ToggleSwitch IsChecked="{Binding AutoPurgeEnabled, Mode=TwoWay}"
-                                     Command="{Binding ToggleAutoPurgeCommand}" />
-                </ui:CardControl>
-
                 <!-- Purge Now Button -->
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>

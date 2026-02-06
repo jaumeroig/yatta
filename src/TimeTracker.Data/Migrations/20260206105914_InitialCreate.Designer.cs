@@ -11,8 +11,8 @@ using TimeTracker.Data;
 namespace TimeTracker.Data.Migrations
 {
     [DbContext(typeof(TimeTrackerDbContext))]
-    [Migration("20260201120432_AddStartWithWindowsToAppSettings")]
-    partial class AddStartWithWindowsToAppSettings
+    [Migration("20260206105914_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,11 @@ namespace TimeTracker.Data.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CustomRetentionDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(365);
+
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");
 
@@ -63,6 +68,11 @@ namespace TimeTracker.Data.Migrations
 
                     b.Property<bool>("Notifications")
                         .HasColumnType("INTEGER");
+
+                    b.Property<int>("RetentionPolicy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0);
 
                     b.Property<bool>("StartWithWindows")
                         .HasColumnType("INTEGER");
@@ -101,11 +111,39 @@ namespace TimeTracker.Data.Migrations
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Telework")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.HasKey("Id");
 
                     b.HasIndex("Date", "StartTime");
 
                     b.ToTable("TimeRecords", (string)null);
+                });
+
+            modelBuilder.Entity("TimeTracker.Core.Models.Workday", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DayType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeSpan>("TargetDuration")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date")
+                        .IsUnique();
+
+                    b.ToTable("Workdays", (string)null);
                 });
 
             modelBuilder.Entity("TimeTracker.Core.Models.WorkdaySlot", b =>

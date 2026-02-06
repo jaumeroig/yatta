@@ -29,5 +29,13 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
 
         builder.Property(s => s.WorkdayTotalTime)
             .IsRequired();
+
+        builder.Property(s => s.RetentionPolicy)
+            .IsRequired()
+            .HasDefaultValue(RetentionPolicy.Forever);
+
+        builder.Property(s => s.CustomRetentionDays)
+            .IsRequired()
+            .HasDefaultValue(365);
     }
 }

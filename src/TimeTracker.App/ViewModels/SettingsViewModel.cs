@@ -346,15 +346,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Enables or disables automatic purge.
-    /// </summary>
-    [RelayCommand]
-    private async Task ToggleAutoPurgeAsync()
-    {
-        await SaveAutoPurgeAsync(AutoPurgeEnabled);
-    }
-
-    /// <summary>
     /// Saves the custom retention days.
     /// </summary>
     [RelayCommand]
@@ -448,7 +439,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         // Update retention policy
         SelectedRetentionPolicy = RetentionPolicyOptions.FirstOrDefault(r => r.Value == _currentSettings.RetentionPolicy) ?? RetentionPolicyOptions[0];
         CustomRetentionDays = _currentSettings.CustomRetentionDays;
-        AutoPurgeEnabled = _currentSettings.AutoPurgeEnabled;
         IsCustomRetentionVisible = _currentSettings.RetentionPolicy == RetentionPolicy.Custom;
     }
 
@@ -576,20 +566,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
 
         _currentSettings.RetentionPolicy = policy;
-        await _settingsRepository.UpdateAsync(_currentSettings);
-    }
-
-    /// <summary>
-    /// Saves the automatic purge configuration.
-    /// </summary>
-    private async Task SaveAutoPurgeAsync(bool enabled)
-    {
-        if (_currentSettings == null)
-        {
-            return;
-        }
-
-        _currentSettings.AutoPurgeEnabled = enabled;
         await _settingsRepository.UpdateAsync(_currentSettings);
     }
 

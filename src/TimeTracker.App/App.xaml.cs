@@ -34,7 +34,6 @@ public partial class App : Application
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
             dbContext.Database.Migrate();
-            ApplyPendingSchemaUpdates(dbContext);
         }
 
         // IMPORTANT: Initialize localization BEFORE creating the MainWindow
@@ -123,18 +122,16 @@ public partial class App : Application
         {
             var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
 
-            if (!settings.AutoPurgeEnabled || settings.RetentionPolicy == Core.Models.RetentionPolicy.Forever)
-            {
+            if (settings.RetentionPolicy == Core.Models.RetentionPolicy.Forever)
                 return;
-            }
 
             var cutoffDate = dataPurgeService.CalculateCutoffDate(
                 settings.RetentionPolicy, settings.CustomRetentionDays);
 
-            if (cutoffDate.HasValue)
-            {
-                dataPurgeService.ExecutePurgeAsync(cutoffDate.Value).GetAwaiter().GetResult();
-            }
+            if (!cutoffDate.HasValue)
+                return;
+
+            dataPurgeService.ExecutePurgeAsync(cutoffDate.Value).GetAwaiter().GetResult();
         }
         catch
         {
@@ -150,12 +147,12 @@ public partial class App : Application
     {
         using var scope = _serviceProvider!.CreateScope();
         var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
-        
+
         try
         {
             var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
             CultureInfo culture;
-            
+
             if (settings != null && !string.IsNullOrEmpty(settings.Language))
             {
                 // Usar l'idioma guardat
@@ -169,14 +166,14 @@ public partial class App : Application
                     ? systemCulture
                     : new CultureInfo("es-ES");
             }
-            
+
             // Aplicar la cultura a tot el sistema
             CultureInfo.CurrentUICulture = culture;
             CultureInfo.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
             Thread.CurrentThread.CurrentCulture = culture;
             TimeTracker.App.Resources.Resources.Culture = culture;
-            
+
             // Actualitzar el LocalizationService amb la cultura correcta
             if (_serviceProvider != null)
             {
@@ -191,82 +188,6 @@ public partial class App : Application
             CultureInfo.CurrentUICulture = defaultCulture;
             CultureInfo.CurrentCulture = defaultCulture;
             TimeTracker.App.Resources.Resources.Culture = defaultCulture;
-        }
-    }
-
-    /// <summary>
-    /// Applies schema updates that are not covered by EF Core migrations.
-    /// Each update is idempotent and safe to run multiple times.
-    /// </summary>
-    private static void ApplyPendingSchemaUpdates(TimeTrackerDbContext dbContext)
-    {
-        var connection = dbContext.Database.GetDbConnection();
-        connection.Open();
-
-        // Check if Telework column already exists on TimeRecords
-        // PRAGMA table_info returns: cid, name, type, notnull, dflt_value, pk
-        const string columnNameField = "name";
-        const string targetColumn = "Telework";
-
-        using var checkCmd = connection.CreateCommand();
-        checkCmd.CommandText = "PRAGMA table_info('TimeRecords')";
-        var hasTeleworkColumn = false;
-        using (var reader = checkCmd.ExecuteReader())
-        {
-            var nameOrdinal = reader.GetOrdinal(columnNameField);
-            while (reader.Read())
-            {
-                if (string.Equals(reader.GetString(nameOrdinal), targetColumn, StringComparison.OrdinalIgnoreCase))
-                {
-                    hasTeleworkColumn = true;
-                    break;
-                }
-            }
-        }
-
-        if (!hasTeleworkColumn)
-        {
-            using var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = "ALTER TABLE \"TimeRecords\" ADD COLUMN \"Telework\" INTEGER NOT NULL DEFAULT 0";
-            alterCmd.ExecuteNonQuery();
-        }
-
-        // Add RetentionPolicy, CustomRetentionDays and AutoPurgeEnabled columns to AppSettings
-        using var checkSettingsCmd = connection.CreateCommand();
-        checkSettingsCmd.CommandText = "PRAGMA table_info('AppSettings')";
-        var hasRetentionPolicyColumn = false;
-        using (var reader = checkSettingsCmd.ExecuteReader())
-        {
-            var nameOrdinal = reader.GetOrdinal(columnNameField);
-            while (reader.Read())
-            {
-                if (string.Equals(reader.GetString(nameOrdinal), "RetentionPolicy", StringComparison.OrdinalIgnoreCase))
-                {
-                    hasRetentionPolicyColumn = true;
-                    break;
-                }
-            }
-        }
-
-        if (!hasRetentionPolicyColumn)
-        {
-            using var alterCmd = connection.CreateCommand();
-            alterCmd.CommandText = """
-                ALTER TABLE "AppSettings" ADD COLUMN "RetentionPolicy" INTEGER NOT NULL DEFAULT 0;
-                """;
-            alterCmd.ExecuteNonQuery();
-
-            using var alterCmd2 = connection.CreateCommand();
-            alterCmd2.CommandText = """
-                ALTER TABLE "AppSettings" ADD COLUMN "CustomRetentionDays" INTEGER NOT NULL DEFAULT 365;
-                """;
-            alterCmd2.ExecuteNonQuery();
-
-            using var alterCmd3 = connection.CreateCommand();
-            alterCmd3.CommandText = """
-                ALTER TABLE "AppSettings" ADD COLUMN "AutoPurgeEnabled" INTEGER NOT NULL DEFAULT 0;
-                """;
-            alterCmd3.ExecuteNonQuery();
         }
     }
 

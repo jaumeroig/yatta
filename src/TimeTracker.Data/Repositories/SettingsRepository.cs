@@ -56,7 +56,6 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.StartWithWindows = settings.StartWithWindows;
             existingSettings.RetentionPolicy = settings.RetentionPolicy;
             existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
-            existingSettings.AutoPurgeEnabled = settings.AutoPurgeEnabled;
 
             _context.AppSettings.Update(existingSettings);
         }

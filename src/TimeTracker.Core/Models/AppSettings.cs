@@ -57,9 +57,4 @@ public class AppSettings
     /// Custom retention period in days. Only used when RetentionPolicy is Custom.
     /// </summary>
     public int CustomRetentionDays { get; set; } = 365;
-
-    /// <summary>
-    /// Indicates if automatic purging is enabled.
-    /// </summary>
-    public bool AutoPurgeEnabled { get; set; } = false;
 }
