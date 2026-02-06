@@ -714,4 +714,70 @@
   <data name="Button_Start" xml:space="preserve">
     <value>Iniciar</value>
   </data>
+  <data name="Settings_Section_DataRetention" xml:space="preserve">
+    <value>Retenció de dades</value>
+  </data>
+  <data name="Label_RetentionPolicy" xml:space="preserve">
+    <value>Conservar historial durant</value>
+  </data>
+  <data name="Description_RetentionPolicy" xml:space="preserve">
+    <value>Defineix quant de temps es conserven les dades històriques</value>
+  </data>
+  <data name="RetentionPolicy_Forever" xml:space="preserve">
+    <value>Per sempre</value>
+  </data>
+  <data name="RetentionPolicy_OneYear" xml:space="preserve">
+    <value>1 any</value>
+  </data>
+  <data name="RetentionPolicy_TwoYears" xml:space="preserve">
+    <value>2 anys</value>
+  </data>
+  <data name="RetentionPolicy_ThreeYears" xml:space="preserve">
+    <value>3 anys</value>
+  </data>
+  <data name="RetentionPolicy_Custom" xml:space="preserve">
+    <value>Personalitzat</value>
+  </data>
+  <data name="Label_CustomRetentionDays" xml:space="preserve">
+    <value>Retenció personalitzada</value>
+  </data>
+  <data name="Description_CustomRetentionDays" xml:space="preserve">
+    <value>Nombre de dies a conservar (més gran que 0)</value>
+  </data>
+  <data name="Label_Days" xml:space="preserve">
+    <value>dies</value>
+  </data>
+  <data name="Label_AutoPurge" xml:space="preserve">
+    <value>Purgat automàtic</value>
+  </data>
+  <data name="Description_AutoPurge" xml:space="preserve">
+    <value>Executar el purgat automàticament en iniciar l'aplicació</value>
+  </data>
+  <data name="Button_PurgeNow" xml:space="preserve">
+    <value>Executar purgat ara</value>
+  </data>
+  <data name="Dialog_Purge_Title" xml:space="preserve">
+    <value>Confirmar purgat</value>
+  </data>
+  <data name="Dialog_Purge_Message" xml:space="preserve">
+    <value>S'eliminaran les dades anteriors al {0}.</value>
+  </data>
+  <data name="Dialog_Purge_RecordCount" xml:space="preserve">
+    <value>Registres d'activitat: {0} · Configuracions de dia: {1}</value>
+  </data>
+  <data name="Dialog_Purge_Warning" xml:space="preserve">
+    <value>Aquesta acció és irreversible.</value>
+  </data>
+  <data name="Button_Purge" xml:space="preserve">
+    <value>Purgar</value>
+  </data>
+  <data name="Dialog_Purge_Success" xml:space="preserve">
+    <value>Purgat completat correctament. S'han eliminat {0} registres d'activitat i {1} configuracions de dia.</value>
+  </data>
+  <data name="Dialog_Purge_NothingToPurge" xml:space="preserve">
+    <value>No hi ha dades per purgar amb la política de retenció actual.</value>
+  </data>
+  <data name="Dialog_Purge_RetentionForever" xml:space="preserve">
+    <value>La política de retenció està configurada com "Per sempre". No s'executarà el purgat.</value>
+  </data>
 </root>

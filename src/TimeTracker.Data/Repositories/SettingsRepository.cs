@@ -54,6 +54,8 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.MinimizeToTray = settings.MinimizeToTray;
             existingSettings.NotificationIntervalMinutes = settings.NotificationIntervalMinutes;
             existingSettings.StartWithWindows = settings.StartWithWindows;
+            existingSettings.RetentionPolicy = settings.RetentionPolicy;
+            existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
 
             _context.AppSettings.Update(existingSettings);
         }

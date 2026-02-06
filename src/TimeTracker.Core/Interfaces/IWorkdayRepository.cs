@@ -52,4 +52,18 @@ public interface IWorkdayRepository
     /// </summary>
     /// <param name="date">The date to delete configuration for.</param>
     Task DeleteAsync(DateOnly date);
+
+    /// <summary>
+    /// Counts workday configurations before the specified date.
+    /// </summary>
+    /// <param name="date">The cutoff date (exclusive).</param>
+    /// <returns>The number of workdays before the date.</returns>
+    Task<int> CountBeforeDateAsync(DateOnly date);
+
+    /// <summary>
+    /// Deletes all workday configurations before the specified date.
+    /// </summary>
+    /// <param name="date">The cutoff date (exclusive).</param>
+    /// <returns>The number of deleted workdays.</returns>
+    Task<int> DeleteBeforeDateAsync(DateOnly date);
 }

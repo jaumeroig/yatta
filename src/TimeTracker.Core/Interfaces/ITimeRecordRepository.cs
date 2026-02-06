@@ -52,4 +52,18 @@ public interface ITimeRecordRepository
     /// Deletes a time record.
     /// </summary>
     Task DeleteAsync(Guid id);
+
+    /// <summary>
+    /// Counts time records before the specified date.
+    /// </summary>
+    /// <param name="date">The cutoff date (exclusive).</param>
+    /// <returns>The number of records before the date.</returns>
+    Task<int> CountBeforeDateAsync(DateOnly date);
+
+    /// <summary>
+    /// Deletes all time records before the specified date.
+    /// </summary>
+    /// <param name="date">The cutoff date (exclusive).</param>
+    /// <returns>The number of deleted records.</returns>
+    Task<int> DeleteBeforeDateAsync(DateOnly date);
 }

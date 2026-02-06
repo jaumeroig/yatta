@@ -40,6 +40,22 @@ public class LanguageOption
 }
 
 /// <summary>
+/// Represents a retention policy option for the dropdown.
+/// </summary>
+public class RetentionPolicyOption
+{
+    /// <summary>
+    /// Retention policy value.
+    /// </summary>
+    public RetentionPolicy Value { get; set; }
+
+    /// <summary>
+    /// Name to display in the UI.
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
+}
+
+/// <summary>
 /// ViewModel for the settings and configuration page.
 /// </summary>
 public partial class SettingsViewModel : ObservableObject, IDisposable
@@ -49,6 +65,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly ILocalizationService _localizationService;
     private readonly INotificationService _notificationService;
     private readonly IStartupService _startupService;
+    private readonly IDataPurgeService _dataPurgeService;
     private AppSettings? _currentSettings;
     private CancellationTokenSource? _languageSaveCts;
     private CancellationTokenSource? _themeSaveCts;
@@ -58,13 +75,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IThemeService themeService,
         ILocalizationService localizationService,
         INotificationService notificationService,
-        IStartupService startupService)
+        IStartupService startupService,
+        IDataPurgeService dataPurgeService)
     {
         _settingsRepository = settingsRepository;
         _themeService = themeService;
         _localizationService = localizationService;
         _notificationService = notificationService;
         _startupService = startupService;
+        _dataPurgeService = dataPurgeService;
 
 
         // Initialize theme options
@@ -83,9 +102,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             new LanguageOption { Value = "ca-ES", DisplayName = Resources.Resources.RadioButton_Catalan }
         ];
 
+        // Initialize retention policy options
+        RetentionPolicyOptions =
+        [
+            new RetentionPolicyOption { Value = RetentionPolicy.Forever, DisplayName = Resources.Resources.RetentionPolicy_Forever },
+            new RetentionPolicyOption { Value = RetentionPolicy.OneYear, DisplayName = Resources.Resources.RetentionPolicy_OneYear },
+            new RetentionPolicyOption { Value = RetentionPolicy.TwoYears, DisplayName = Resources.Resources.RetentionPolicy_TwoYears },
+            new RetentionPolicyOption { Value = RetentionPolicy.ThreeYears, DisplayName = Resources.Resources.RetentionPolicy_ThreeYears },
+            new RetentionPolicyOption { Value = RetentionPolicy.Custom, DisplayName = Resources.Resources.RetentionPolicy_Custom }
+        ];
+
         // Default values
         _selectedTheme = ThemeOptions[0];
         _selectedLanguage = LanguageOptions[0];
+        _selectedRetentionPolicy = RetentionPolicyOptions[0];
         NotificationsEnabled = false;
         WorkdayHours = 8;
         WorkdayMinutes = 0;
@@ -102,6 +132,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// Available language options.
     /// </summary>
     public ObservableCollection<LanguageOption> LanguageOptions { get; }
+
+    /// <summary>
+    /// Available retention policy options.
+    /// </summary>
+    public ObservableCollection<RetentionPolicyOption> RetentionPolicyOptions { get; }
 
     /// <summary>
     /// Selected theme.
@@ -157,6 +192,36 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _startWithWindowsEnabled;
 
+    /// <summary>
+    /// Selected retention policy.
+    /// </summary>
+    [ObservableProperty]
+    private RetentionPolicyOption _selectedRetentionPolicy;
+
+    /// <summary>
+    /// Custom retention days.
+    /// </summary>
+    [ObservableProperty]
+    private int _customRetentionDays;
+
+    /// <summary>
+    /// Indicates if automatic purge is enabled.
+    /// </summary>
+    [ObservableProperty]
+    private bool _autoPurgeEnabled;
+
+    /// <summary>
+    /// Indicates if the custom retention days field should be visible.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isCustomRetentionVisible;
+
+    /// <summary>
+    /// Message to display after a purge operation.
+    /// </summary>
+    [ObservableProperty]
+    private string _purgeResultMessage = string.Empty;
+
     #endregion
 
     #region Property Changed Handlers
@@ -184,6 +249,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             ResetCancellationTokenSource(ref _languageSaveCts);
             var token = _languageSaveCts!.Token;
             _ = SaveLanguageAsync(value.Value, token);
+        }
+    }
+
+    /// <summary>
+    /// Executes when the selected retention policy changes.
+    /// </summary>
+    partial void OnSelectedRetentionPolicyChanged(RetentionPolicyOption value)
+    {
+        if (_currentSettings != null && value != null)
+        {
+            IsCustomRetentionVisible = value.Value == RetentionPolicy.Custom;
+            _ = SaveRetentionPolicyAsync(value.Value);
         }
     }
 
@@ -268,6 +345,64 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         await SaveNotificationIntervalMinutesAsync(NotificationIntervalMinutes);
     }
 
+    /// <summary>
+    /// Saves the custom retention days.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveCustomRetentionDaysAsync()
+    {
+        if (CustomRetentionDays < 1)
+        {
+            CustomRetentionDays = 1;
+        }
+
+        await SaveCustomRetentionDaysValueAsync(CustomRetentionDays);
+    }
+
+    /// <summary>
+    /// Calculates purge preview information for the confirmation dialog.
+    /// Returns the cutoff date, time record count and workday count.
+    /// </summary>
+    public async Task<(DateOnly? CutoffDate, int TimeRecordCount, int WorkdayCount)> GetPurgePreviewAsync()
+    {
+        if (_currentSettings == null)
+        {
+            return (null, 0, 0);
+        }
+
+        var cutoffDate = _dataPurgeService.CalculateCutoffDate(
+            _currentSettings.RetentionPolicy, _currentSettings.CustomRetentionDays);
+
+        if (!cutoffDate.HasValue)
+        {
+            return (null, 0, 0);
+        }
+
+        var (timeRecordCount, workdayCount) = await _dataPurgeService.GetPurgeableCountAsync(cutoffDate.Value);
+        return (cutoffDate, timeRecordCount, workdayCount);
+    }
+
+    /// <summary>
+    /// Executes the purge operation.
+    /// </summary>
+    public async Task<(int TimeRecordsDeleted, int WorkdaysDeleted)> ExecutePurgeAsync()
+    {
+        if (_currentSettings == null)
+        {
+            return (0, 0);
+        }
+
+        var cutoffDate = _dataPurgeService.CalculateCutoffDate(
+            _currentSettings.RetentionPolicy, _currentSettings.CustomRetentionDays);
+
+        if (!cutoffDate.HasValue)
+        {
+            return (0, 0);
+        }
+
+        return await _dataPurgeService.ExecutePurgeAsync(cutoffDate.Value);
+    }
+
     #endregion
 
     #region Private Methods
@@ -300,6 +435,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Update notification interval
         NotificationIntervalMinutes = _currentSettings.NotificationIntervalMinutes;
+
+        // Update retention policy
+        SelectedRetentionPolicy = RetentionPolicyOptions.FirstOrDefault(r => r.Value == _currentSettings.RetentionPolicy) ?? RetentionPolicyOptions[0];
+        CustomRetentionDays = _currentSettings.CustomRetentionDays;
+        IsCustomRetentionVisible = _currentSettings.RetentionPolicy == RetentionPolicy.Custom;
     }
 
     /// <summary>
@@ -412,6 +552,34 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
 
         _currentSettings.NotificationIntervalMinutes = intervalMinutes;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Saves the retention policy.
+    /// </summary>
+    private async Task SaveRetentionPolicyAsync(RetentionPolicy policy)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.RetentionPolicy = policy;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Saves the custom retention days value.
+    /// </summary>
+    private async Task SaveCustomRetentionDaysValueAsync(int days)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.CustomRetentionDays = days;
         await _settingsRepository.UpdateAsync(_currentSettings);
     }
 

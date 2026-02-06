@@ -47,4 +47,14 @@ public class AppSettings
     /// Indicates if the application should start automatically when Windows starts.
     /// </summary>
     public bool StartWithWindows { get; set; } = false;
+
+    /// <summary>
+    /// Data retention policy.
+    /// </summary>
+    public RetentionPolicy RetentionPolicy { get; set; } = RetentionPolicy.Forever;
+
+    /// <summary>
+    /// Custom retention period in days. Only used when RetentionPolicy is Custom.
+    /// </summary>
+    public int CustomRetentionDays { get; set; } = 365;
 }

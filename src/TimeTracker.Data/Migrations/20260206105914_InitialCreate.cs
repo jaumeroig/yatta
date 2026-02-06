@@ -32,7 +32,13 @@ namespace TimeTracker.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
                     Theme = table.Column<string>(type: "TEXT", nullable: false),
                     Notifications = table.Column<bool>(type: "INTEGER", nullable: false),
-                    WorkdayTotalTime = table.Column<TimeSpan>(type: "TEXT", nullable: false)
+                    WorkdayTotalTime = table.Column<TimeSpan>(type: "TEXT", nullable: false),
+                    Language = table.Column<string>(type: "TEXT", nullable: true),
+                    MinimizeToTray = table.Column<bool>(type: "INTEGER", nullable: false),
+                    NotificationIntervalMinutes = table.Column<int>(type: "INTEGER", nullable: false),
+                    StartWithWindows = table.Column<bool>(type: "INTEGER", nullable: false),
+                    RetentionPolicy = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
+                    CustomRetentionDays = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 365)
                 },
                 constraints: table =>
                 {
@@ -48,11 +54,26 @@ namespace TimeTracker.Data.Migrations
                     StartTime = table.Column<TimeOnly>(type: "TEXT", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "TEXT", nullable: true),
                     ActivityId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true)
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    Telework = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TimeRecords", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Workdays",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Date = table.Column<DateOnly>(type: "TEXT", nullable: false),
+                    DayType = table.Column<int>(type: "INTEGER", nullable: false),
+                    TargetDuration = table.Column<TimeSpan>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workdays", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,6 +103,12 @@ namespace TimeTracker.Data.Migrations
                 columns: new[] { "Date", "StartTime" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Workdays_Date",
+                table: "Workdays",
+                column: "Date",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WorkdaySlots_Date",
                 table: "WorkdaySlots",
                 column: "Date");
@@ -98,6 +125,9 @@ namespace TimeTracker.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "TimeRecords");
+
+            migrationBuilder.DropTable(
+                name: "Workdays");
 
             migrationBuilder.DropTable(
                 name: "WorkdaySlots");
