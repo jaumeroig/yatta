@@ -57,4 +57,11 @@ public class AppSettings
     /// Custom retention period in days. Only used when RetentionPolicy is Custom.
     /// </summary>
     public int CustomRetentionDays { get; set; } = 365;
+
+    /// <summary>
+    /// Global hotkey combination to open the change activity dialog.
+    /// Format: "Modifiers+Key" (e.g., "Control+Alt+A").
+    /// If null or empty, the default hotkey is used.
+    /// </summary>
+    public string? GlobalHotkey { get; set; }
 }

@@ -66,6 +66,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly INotificationService _notificationService;
     private readonly IStartupService _startupService;
     private readonly IDataPurgeService _dataPurgeService;
+    private readonly IGlobalHotkeyService _globalHotkeyService;
     private AppSettings? _currentSettings;
     private CancellationTokenSource? _languageSaveCts;
     private CancellationTokenSource? _themeSaveCts;
@@ -76,7 +77,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         ILocalizationService localizationService,
         INotificationService notificationService,
         IStartupService startupService,
-        IDataPurgeService dataPurgeService)
+        IDataPurgeService dataPurgeService,
+        IGlobalHotkeyService globalHotkeyService)
     {
         _settingsRepository = settingsRepository;
         _themeService = themeService;
@@ -84,6 +86,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _notificationService = notificationService;
         _startupService = startupService;
         _dataPurgeService = dataPurgeService;
+        _globalHotkeyService = globalHotkeyService;
 
 
         // Initialize theme options
@@ -221,6 +224,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     private string _purgeResultMessage = string.Empty;
+
+    /// <summary>
+    /// Global hotkey combination string.
+    /// </summary>
+    [ObservableProperty]
+    private string _globalHotkey = string.Empty;
+
+    /// <summary>
+    /// Message to display after hotkey registration attempt.
+    /// </summary>
+    [ObservableProperty]
+    private string _hotkeyMessage = string.Empty;
 
     #endregion
 
@@ -360,6 +375,49 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
+    /// Saves the global hotkey configuration and registers it.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveGlobalHotkeyAsync()
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        // Validate the hotkey
+        if (!_globalHotkeyService.ValidateHotkey(GlobalHotkey, out string errorMessage))
+        {
+            HotkeyMessage = errorMessage;
+            return;
+        }
+
+        // Try to register the hotkey
+        bool registered = _globalHotkeyService.RegisterHotkey(GlobalHotkey);
+        if (!registered)
+        {
+            HotkeyMessage = Resources.Resources.Message_HotkeyRegistrationFailed;
+            return;
+        }
+
+        // Save to database
+        _currentSettings.GlobalHotkey = GlobalHotkey;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+        
+        HotkeyMessage = Resources.Resources.Message_HotkeyRegistered;
+    }
+
+    /// <summary>
+    /// Resets the global hotkey to the default value.
+    /// </summary>
+    [RelayCommand]
+    private void ResetGlobalHotkey()
+    {
+        GlobalHotkey = _globalHotkeyService.GetDefaultHotkey();
+        HotkeyMessage = string.Empty;
+    }
+
+    /// <summary>
     /// Calculates purge preview information for the confirmation dialog.
     /// Returns the cutoff date, time record count and workday count.
     /// </summary>
@@ -440,6 +498,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         SelectedRetentionPolicy = RetentionPolicyOptions.FirstOrDefault(r => r.Value == _currentSettings.RetentionPolicy) ?? RetentionPolicyOptions[0];
         CustomRetentionDays = _currentSettings.CustomRetentionDays;
         IsCustomRetentionVisible = _currentSettings.RetentionPolicy == RetentionPolicy.Custom;
+
+        // Update global hotkey
+        GlobalHotkey = _currentSettings.GlobalHotkey ?? _globalHotkeyService.GetDefaultHotkey();
     }
 
     /// <summary>

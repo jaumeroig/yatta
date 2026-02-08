@@ -105,6 +105,47 @@
                                      Command="{Binding ToggleStartWithWindowsCommand}" />
                 </ui:CardControl>
 
+                <!-- Atajo de teclado global -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Keyboard24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_GlobalHotkey}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_GlobalHotkey}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <ui:TextBox Text="{Binding GlobalHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        PlaceholderText="{local:Localize Placeholder_HotkeyExample}"
+                                        Width="180"
+                                        Height="40"
+                                        Margin="0,0,8,0" />
+                            <ui:Button Content="{local:Localize Button_Save}"
+                                       Command="{Binding SaveGlobalHotkeyCommand}"
+                                       Appearance="Primary"
+                                       Height="40"
+                                       Padding="16,0"
+                                       Margin="0,0,8,0" />
+                            <ui:Button Content="{local:Localize Button_ResetHotkey}"
+                                       Command="{Binding ResetGlobalHotkeyCommand}"
+                                       Height="40"
+                                       Padding="16,0" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding HotkeyMessage}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding HotkeyMessage, Converter={StaticResource StringToVisibilityConverter}}" />
+                    </StackPanel>
+                </ui:CardControl>
+
                 <TextBlock Text="{local:Localize Settings_Section_User_Config}"
                            FontSize="14"
                            FontWeight="SemiBold"

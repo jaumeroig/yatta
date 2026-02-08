@@ -123,4 +123,27 @@ public partial class MainWindow : FluentWindow
         _isRealClose = true;
         Application.Current.Shutdown();
     }
+
+    /// <summary>
+    /// Shows the change activity dialog from the global hotkey.
+    /// Brings the window to the foreground if needed and opens the dialog.
+    /// </summary>
+    public void ShowChangeActivityDialog()
+    {
+        // Get the HoyPage instance
+        var hoyPage = _serviceProvider.GetService<HoyPage>();
+        if (hoyPage == null)
+        {
+            // Navigate to HoyPage first if not available
+            NavigationView.Navigate(typeof(HoyPage));
+            hoyPage = _serviceProvider.GetService<HoyPage>();
+        }
+
+        // Get the HoyViewModel and trigger the change activity dialog
+        if (hoyPage?.DataContext is HoyViewModel viewModel)
+        {
+            // Execute the ChangeActivityCommand which opens the dialog
+            viewModel.ChangeActivityCommand.Execute(null);
+        }
+    }
 }

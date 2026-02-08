@@ -774,4 +774,31 @@
   <data name="Dialog_Purge_RetentionForever" xml:space="preserve">
     <value>La política de retención está configurada como "Para siempre". No se ejecutará el purgado.</value>
   </data>
+  <data name="Label_GlobalHotkey" xml:space="preserve">
+    <value>Atajo de teclado global</value>
+  </data>
+  <data name="Description_GlobalHotkey" xml:space="preserve">
+    <value>Define un atajo de teclado para abrir el diálogo de cambio de actividad desde cualquier aplicación.</value>
+  </data>
+  <data name="Button_ResetHotkey" xml:space="preserve">
+    <value>Restablecer por defecto</value>
+  </data>
+  <data name="Validation_HotkeyRequired" xml:space="preserve">
+    <value>Debes especificar un atajo de teclado.</value>
+  </data>
+  <data name="Validation_HotkeyInvalid" xml:space="preserve">
+    <value>El atajo de teclado no es válido. Use el formato: Control+Alt+Letra</value>
+  </data>
+  <data name="Validation_HotkeyNeedsModifier" xml:space="preserve">
+    <value>El atajo de teclado debe incluir al menos un modificador (Control, Alt, Shift).</value>
+  </data>
+  <data name="Message_HotkeyRegistrationFailed" xml:space="preserve">
+    <value>No se ha podido registrar el atajo. Puede estar en uso por otra aplicación.</value>
+  </data>
+  <data name="Message_HotkeyRegistered" xml:space="preserve">
+    <value>Atajo de teclado registrado correctamente.</value>
+  </data>
+  <data name="Placeholder_HotkeyExample" xml:space="preserve">
+    <value>Ej: Control+Alt+A</value>
+  </data>
 </root>

@@ -780,4 +780,31 @@
   <data name="Dialog_Purge_RetentionForever" xml:space="preserve">
     <value>La política de retenció està configurada com "Per sempre". No s'executarà el purgat.</value>
   </data>
+  <data name="Label_GlobalHotkey" xml:space="preserve">
+    <value>Drecera de teclat global</value>
+  </data>
+  <data name="Description_GlobalHotkey" xml:space="preserve">
+    <value>Defineix una drecera de teclat per obrir el diàleg de canvi d'activitat des de qualsevol aplicació.</value>
+  </data>
+  <data name="Button_ResetHotkey" xml:space="preserve">
+    <value>Restablir per defecte</value>
+  </data>
+  <data name="Validation_HotkeyRequired" xml:space="preserve">
+    <value>Has d'especificar una drecera de teclat.</value>
+  </data>
+  <data name="Validation_HotkeyInvalid" xml:space="preserve">
+    <value>La drecera de teclat no és vàlida. Utilitza el format: Control+Alt+Lletra</value>
+  </data>
+  <data name="Validation_HotkeyNeedsModifier" xml:space="preserve">
+    <value>La drecera de teclat ha d'incloure almenys un modificador (Control, Alt, Shift).</value>
+  </data>
+  <data name="Message_HotkeyRegistrationFailed" xml:space="preserve">
+    <value>No s'ha pogut registrar la drecera. Pot estar en ús per una altra aplicació.</value>
+  </data>
+  <data name="Message_HotkeyRegistered" xml:space="preserve">
+    <value>Drecera de teclat registrada correctament.</value>
+  </data>
+  <data name="Placeholder_HotkeyExample" xml:space="preserve">
+    <value>Ex: Control+Alt+A</value>
+  </data>
 </root>

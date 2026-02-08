@@ -1859,5 +1859,86 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Dialog_Purge_RetentionForever", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Atajo de teclado global.
+        /// </summary>
+        internal static string Label_GlobalHotkey {
+            get {
+                return ResourceManager.GetString("Label_GlobalHotkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define un atajo de teclado para abrir el diálogo de cambio de actividad desde cualquier aplicación..
+        /// </summary>
+        internal static string Description_GlobalHotkey {
+            get {
+                return ResourceManager.GetString("Description_GlobalHotkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restablecer por defecto.
+        /// </summary>
+        internal static string Button_ResetHotkey {
+            get {
+                return ResourceManager.GetString("Button_ResetHotkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debes especificar un atajo de teclado..
+        /// </summary>
+        internal static string Validation_HotkeyRequired {
+            get {
+                return ResourceManager.GetString("Validation_HotkeyRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El atajo de teclado no es válido. Use el formato: Control+Alt+Letra.
+        /// </summary>
+        internal static string Validation_HotkeyInvalid {
+            get {
+                return ResourceManager.GetString("Validation_HotkeyInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El atajo de teclado debe incluir al menos un modificador (Control, Alt, Shift)..
+        /// </summary>
+        internal static string Validation_HotkeyNeedsModifier {
+            get {
+                return ResourceManager.GetString("Validation_HotkeyNeedsModifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No se ha podido registrar el atajo. Puede estar en uso por otra aplicación..
+        /// </summary>
+        internal static string Message_HotkeyRegistrationFailed {
+            get {
+                return ResourceManager.GetString("Message_HotkeyRegistrationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Atajo de teclado registrado correctamente..
+        /// </summary>
+        internal static string Message_HotkeyRegistered {
+            get {
+                return ResourceManager.GetString("Message_HotkeyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ej: Control+Alt+A.
+        /// </summary>
+        internal static string Placeholder_HotkeyExample {
+            get {
+                return ResourceManager.GetString("Placeholder_HotkeyExample", resourceCulture);
+            }
+        }
     }
 }
