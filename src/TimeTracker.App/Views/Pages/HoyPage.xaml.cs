@@ -109,6 +109,7 @@ public partial class HoyPage : Page
     {
         if (_changeActivityDialog != null)
         {
+            // Dialog is already open, just make sure the window is visible
             return;
         }
 
@@ -129,6 +130,26 @@ public partial class HoyPage : Page
 
         await _changeActivityDialog.ShowAsync();
         DisposeDialogs();
+    }
+
+    /// <summary>
+    /// Brings the change activity dialog to the front if it's already open,
+    /// or opens it if it's not.
+    /// </summary>
+    public void BringChangeActivityDialogToFront()
+    {
+        if (_changeActivityDialog != null && _viewModel.IsChangeActivityDialogOpen)
+        {
+            // Dialog is already open, focus is already on it
+            // The window activation in MainWindow will handle bringing it to front
+            return;
+        }
+
+        // Open the dialog if it's not already open
+        if (!_viewModel.IsChangeActivityDialogOpen)
+        {
+            _viewModel.ChangeActivityCommand.Execute(null);
+        }
     }
 
     private void DisposeDialogs()
