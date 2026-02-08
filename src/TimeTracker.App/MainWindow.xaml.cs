@@ -157,10 +157,20 @@ public partial class MainWindow : FluentWindow
         Topmost = false;
         Focus();
 
-        // Navigate to HoyPage if needed
-        NavigationView.Navigate(typeof(HoyPage));
+        // Navigate to HoyPage only if not already there
+        bool needsNavigation = true;
+        if (_hoyPage != null && _hoyPage.IsLoaded)
+        {
+            // HoyPage is already loaded, no need to navigate
+            needsNavigation = false;
+        }
 
-        // Give the navigation a moment to complete, then trigger the dialog
+        if (needsNavigation)
+        {
+            NavigationView.Navigate(typeof(HoyPage));
+        }
+
+        // Give the navigation a moment to complete if needed, then trigger the dialog
         Dispatcher.InvokeAsync(() =>
         {
             _hoyPage?.BringChangeActivityDialogToFront();

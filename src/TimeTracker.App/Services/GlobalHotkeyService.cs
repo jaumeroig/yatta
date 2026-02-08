@@ -38,6 +38,7 @@ public class GlobalHotkeyService : IGlobalHotkeyService, IDisposable
 
     /// <summary>
     /// Initializes the service with the main window handle.
+    /// This method must be called before RegisterHotkey.
     /// </summary>
     /// <param name="window">The main window to use for receiving hotkey messages.</param>
     public void Initialize(Window window)
@@ -52,8 +53,14 @@ public class GlobalHotkeyService : IGlobalHotkeyService, IDisposable
     /// </summary>
     /// <param name="hotkeyString">Hotkey combination (e.g., "Control+Alt+A").</param>
     /// <returns>True if registration was successful, false otherwise.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if Initialize has not been called.</exception>
     public bool RegisterHotkey(string? hotkeyString)
     {
+        if (_windowHandle == IntPtr.Zero)
+        {
+            throw new InvalidOperationException("GlobalHotkeyService must be initialized before registering a hotkey. Call Initialize() first.");
+        }
+
         // Unregister any existing hotkey first
         UnregisterHotkey();
 
@@ -63,11 +70,6 @@ public class GlobalHotkeyService : IGlobalHotkeyService, IDisposable
         }
 
         if (!ParseHotkey(hotkeyString, out uint modifiers, out uint key))
-        {
-            return false;
-        }
-
-        if (_windowHandle == IntPtr.Zero)
         {
             return false;
         }
@@ -143,7 +145,8 @@ public class GlobalHotkeyService : IGlobalHotkeyService, IDisposable
         key = 0;
 
         var parts = hotkeyString.Split('+');
-        if (parts.Length == 0)
+        // Need at least one modifier and one key
+        if (parts.Length < 2)
         {
             return false;
         }
