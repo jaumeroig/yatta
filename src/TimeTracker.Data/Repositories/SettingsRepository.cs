@@ -56,6 +56,7 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.StartWithWindows = settings.StartWithWindows;
             existingSettings.RetentionPolicy = settings.RetentionPolicy;
             existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
+            existingSettings.GlobalHotkey = settings.GlobalHotkey;
 
             _context.AppSettings.Update(existingSettings);
         }

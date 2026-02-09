@@ -11,7 +11,7 @@ using TimeTracker.Data;
 namespace TimeTracker.Data.Migrations
 {
     [DbContext(typeof(TimeTrackerDbContext))]
-    [Migration("20260206105914_InitialCreate")]
+    [Migration("20260209103804_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -56,6 +56,9 @@ namespace TimeTracker.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(365);
+
+                    b.Property<string>("GlobalHotkey")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");

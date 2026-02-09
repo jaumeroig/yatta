@@ -54,6 +54,9 @@ namespace TimeTracker.Data.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(365);
 
+                    b.Property<string>("GlobalHotkey")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Language")
                         .HasColumnType("TEXT");
 

@@ -780,4 +780,91 @@
   <data name="Dialog_Purge_RetentionForever" xml:space="preserve">
     <value>La política de retenció està configurada com "Per sempre". No s'executarà el purgat.</value>
   </data>
+  <data name="Label_GlobalHotkey" xml:space="preserve">
+    <value>Drecera de teclat global</value>
+  </data>
+  <data name="Description_GlobalHotkey" xml:space="preserve">
+    <value>Defineix una drecera de teclat per obrir el diàleg de canvi d'activitat des de qualsevol aplicació.</value>
+  </data>
+  <data name="Button_ResetHotkey" xml:space="preserve">
+    <value>Restablir per defecte</value>
+  </data>
+  <data name="Validation_HotkeyRequired" xml:space="preserve">
+    <value>Has d'especificar una drecera de teclat.</value>
+  </data>
+  <data name="Validation_HotkeyInvalid" xml:space="preserve">
+    <value>La drecera de teclat no és vàlida. Utilitza el format: Control+Alt+Lletra</value>
+  </data>
+  <data name="Validation_HotkeyNeedsModifier" xml:space="preserve">
+    <value>La drecera de teclat ha d'incloure almenys un modificador (Control, Alt, Shift).</value>
+  </data>
+  <data name="Message_HotkeyRegistrationFailed" xml:space="preserve">
+    <value>No s'ha pogut registrar la drecera. Pot estar en ús per una altra aplicació.</value>
+  </data>
+  <data name="Message_HotkeyRegistered" xml:space="preserve">
+    <value>Drecera de teclat registrada correctament.</value>
+  </data>
+  <data name="Placeholder_HotkeyExample" xml:space="preserve">
+    <value>Ex: Control+Alt+A</value>
+  </data>
+  <data name="Placeholder_PressKeys" xml:space="preserve">
+    <value>Prem les tecles...</value>
+  </data>
+  <data name="Key_Control" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="Key_Alt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="Key_Shift" xml:space="preserve">
+    <value>Maj</value>
+  </data>
+  <data name="Key_Win" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="Key_Space" xml:space="preserve">
+    <value>Espai</value>
+  </data>
+  <data name="Key_Enter" xml:space="preserve">
+    <value>Retorn</value>
+  </data>
+  <data name="Key_Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Key_Escape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="Key_Backspace" xml:space="preserve">
+    <value>Retrocés</value>
+  </data>
+  <data name="Key_Delete" xml:space="preserve">
+    <value>Supr</value>
+  </data>
+  <data name="Key_Insert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Key_Home" xml:space="preserve">
+    <value>Inici</value>
+  </data>
+  <data name="Key_End" xml:space="preserve">
+    <value>Fi</value>
+  </data>
+  <data name="Key_PageUp" xml:space="preserve">
+    <value>Re Pàg</value>
+  </data>
+  <data name="Key_PageDown" xml:space="preserve">
+    <value>Av Pàg</value>
+  </data>
+  <data name="Key_Left" xml:space="preserve">
+    <value>Esquerra</value>
+  </data>
+  <data name="Key_Up" xml:space="preserve">
+    <value>Amunt</value>
+  </data>
+  <data name="Key_Right" xml:space="preserve">
+    <value>Dreta</value>
+  </data>
+  <data name="Key_Down" xml:space="preserve">
+    <value>Avall</value>
+  </data>
 </root>

@@ -42,6 +42,10 @@
             
             <converters:DateInMultipleCollectionsToVisibilityConverter x:Key="DateInMultipleCollectionsToVisibilityConverter" />
             <!-- calendar converters registered above -->
+            
+            <!-- HotkeyTextBox Style -->
+            <Style TargetType="{x:Type local:Controls.HotkeyTextBox}" BasedOn="{StaticResource {x:Type ui:TextBox}}" />
+            
             <!-- Color Button Style -->
             <Style x:Key="ColorButtonStyle" TargetType="Button">
                 <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorSecondaryBrush}" />

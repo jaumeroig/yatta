@@ -32,8 +32,36 @@ public partial class App : Application
         // Apply database migrations and pending schema updates
         using (var scope = _serviceProvider.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
-            dbContext.Database.Migrate();
+            try
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
+                
+                // Log pending migrations before applying
+                var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
+                if (pendingMigrations.Any())
+                {
+                    System.Diagnostics.Debug.WriteLine($"Applying {pendingMigrations.Count} pending migrations:");
+                    foreach (var migration in pendingMigrations)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"  - {migration}");
+                    }
+                }
+                
+                dbContext.Database.Migrate();
+                
+                // Verify migration was applied
+                var appliedMigrations = dbContext.Database.GetAppliedMigrations().ToList();
+                System.Diagnostics.Debug.WriteLine($"Total applied migrations: {appliedMigrations.Count}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Database migration failed:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
+                    "Migration Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                throw;
+            }
         }
 
         // IMPORTANT: Initialize localization BEFORE creating the MainWindow
@@ -48,6 +76,9 @@ public partial class App : Application
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
         mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
 
+        // Initialize global hotkey service AFTER window handle is created
+        mainWindow.SourceInitialized += (_, _) => InitializeGlobalHotkey(mainWindow);
+
         // Initialize notification service
         InitializeNotificationService();
 
@@ -55,6 +86,55 @@ public partial class App : Application
         ExecuteAutoPurge();
 
         mainWindow.Show();
+    }
+
+    /// <summary>
+    /// Initializes the global hotkey service with saved settings.
+    /// </summary>
+    private void InitializeGlobalHotkey(MainWindow mainWindow)
+    {
+        var hotkeyService = _serviceProvider!.GetRequiredService<IGlobalHotkeyService>();
+        
+        // Initialize the service with the main window handle
+        if (hotkeyService is GlobalHotkeyService service)
+        {
+            service.Initialize(mainWindow);
+        }
+
+        // Connect event to show the change activity dialog
+        hotkeyService.HotkeyPressed += OnGlobalHotkeyPressed;
+
+        // Load settings and register the hotkey
+        using var scope = _serviceProvider!.CreateScope();
+        var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+
+        try
+        {
+            var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
+            var hotkeyString = settings.GlobalHotkey ?? hotkeyService.GetDefaultHotkey();
+            hotkeyService.RegisterHotkey(hotkeyString);
+        }
+        catch
+        {
+            // If there's an error, try to register the default hotkey
+            hotkeyService.RegisterHotkey(hotkeyService.GetDefaultHotkey());
+        }
+    }
+
+    /// <summary>
+    /// Handles the global hotkey pressed event.
+    /// Shows the change activity dialog.
+    /// </summary>
+    private void OnGlobalHotkeyPressed(object? sender, EventArgs e)
+    {
+        Current.Dispatcher.Invoke(() =>
+        {
+            var mainWindow = Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.ShowChangeActivityDialog();
+            }
+        });
     }
 
     /// <summary>
@@ -219,6 +299,7 @@ public partial class App : Application
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IStartupService, StartupService>();
         services.AddSingleton<IPageStateService, PageStateService>();
+        services.AddSingleton<IGlobalHotkeyService, GlobalHotkeyService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
@@ -251,7 +332,30 @@ public partial class App : Application
         try
         {
             var notificationService = _serviceProvider?.GetService<INotificationService>();
+            if (notificationService != null)
+            {
+                notificationService.OnChangeActivity -= OnNotificationChangeActivity;
+            }
             notificationService?.Dispose();
+        }
+        catch
+        {
+            // Ignore cleanup errors
+        }
+
+        // Cleanup global hotkey service
+        try
+        {
+            var hotkeyService = _serviceProvider?.GetService<IGlobalHotkeyService>();
+            if (hotkeyService != null)
+            {
+                hotkeyService.HotkeyPressed -= OnGlobalHotkeyPressed;
+                hotkeyService.UnregisterHotkey();
+                if (hotkeyService is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
         }
         catch
         {

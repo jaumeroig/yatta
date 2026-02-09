@@ -38,7 +38,8 @@ namespace TimeTracker.Data.Migrations
                     NotificationIntervalMinutes = table.Column<int>(type: "INTEGER", nullable: false),
                     StartWithWindows = table.Column<bool>(type: "INTEGER", nullable: false),
                     RetentionPolicy = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
-                    CustomRetentionDays = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 365)
+                    CustomRetentionDays = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 365),
+                    GlobalHotkey = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

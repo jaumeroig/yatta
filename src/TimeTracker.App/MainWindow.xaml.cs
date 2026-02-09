@@ -19,6 +19,7 @@ public partial class MainWindow : FluentWindow
     private readonly ISettingsRepository _settingsRepository;
     private readonly IServiceProvider _serviceProvider;
     private bool _isRealClose = false;
+    private HoyPage? _hoyPage;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
@@ -42,7 +43,19 @@ public partial class MainWindow : FluentWindow
         
         
         // Navigate to the Hoy page by default
-        Loaded += (_, _) => NavigationView.Navigate(typeof(HoyPage));
+        Loaded += (_, _) => 
+        {
+            NavigationView.Navigate(typeof(HoyPage));
+        };
+        
+        // Track when navigating to HoyPage
+        NavigationView.Navigated += (_, args) =>
+        {
+            if (args.Page is HoyPage hoyPage)
+            {
+                _hoyPage = hoyPage;
+            }
+        };
         
         // Handle window closing to minimize to tray instead of closing
         Closing += MainWindow_Closing;
@@ -122,5 +135,45 @@ public partial class MainWindow : FluentWindow
     {
         _isRealClose = true;
         Application.Current.Shutdown();
+    }
+
+    /// <summary>
+    /// Shows the change activity dialog from the global hotkey.
+    /// Brings the window to the foreground if needed and opens the dialog.
+    /// </summary>
+    public void ShowChangeActivityDialog()
+    {
+        // First, bring the main window to the foreground if hidden or minimized
+        if (!IsVisible || WindowState == WindowState.Minimized)
+        {
+            ShowInTaskbar = true;
+            Show();
+            WindowState = WindowState.Normal;
+        }
+        
+        // Activate and bring to front
+        Activate();
+        Topmost = true;
+        Topmost = false;
+        Focus();
+
+        // Navigate to HoyPage only if not already there
+        bool needsNavigation = true;
+        if (_hoyPage != null && _hoyPage.IsLoaded)
+        {
+            // HoyPage is already loaded, no need to navigate
+            needsNavigation = false;
+        }
+
+        if (needsNavigation)
+        {
+            NavigationView.Navigate(typeof(HoyPage));
+        }
+
+        // Give the navigation a moment to complete if needed, then trigger the dialog
+        Dispatcher.InvokeAsync(() =>
+        {
+            _hoyPage?.BringChangeActivityDialogToFront();
+        }, System.Windows.Threading.DispatcherPriority.Background);
     }
 }

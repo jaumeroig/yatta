@@ -205,6 +205,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cambiar.
+        /// </summary>
+        internal static string Button_Change {
+            get {
+                return ResourceManager.GetString("Button_Change", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crear actividad.
         /// </summary>
         internal static string Button_CreateActivity {
@@ -241,6 +250,42 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Iniciar.
+        /// </summary>
+        internal static string Button_Play {
+            get {
+                return ResourceManager.GetString("Button_Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purgar.
+        /// </summary>
+        internal static string Button_Purge {
+            get {
+                return ResourceManager.GetString("Button_Purge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ejecutar purgado ahora.
+        /// </summary>
+        internal static string Button_PurgeNow {
+            get {
+                return ResourceManager.GetString("Button_PurgeNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restablecer por defecto.
+        /// </summary>
+        internal static string Button_ResetHotkey {
+            get {
+                return ResourceManager.GetString("Button_ResetHotkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Guardar.
         /// </summary>
         internal static string Button_Save {
@@ -255,6 +300,24 @@ namespace TimeTracker.App.Resources {
         internal static string Button_SaveChanges {
             get {
                 return ResourceManager.GetString("Button_SaveChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iniciar.
+        /// </summary>
+        internal static string Button_Start {
+            get {
+                return ResourceManager.GetString("Button_Start", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detener.
+        /// </summary>
+        internal static string Button_Stop {
+            get {
+                return ResourceManager.GetString("Button_Stop", resourceCulture);
             }
         }
         
@@ -282,6 +345,33 @@ namespace TimeTracker.App.Resources {
         internal static string CheckBox_ActivityActive {
             get {
                 return ResourceManager.GetString("CheckBox_ActivityActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ejecutar el purgado automáticamente al iniciar la aplicación.
+        /// </summary>
+        internal static string Description_AutoPurge {
+            get {
+                return ResourceManager.GetString("Description_AutoPurge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Número de días a conservar (mayor que 0).
+        /// </summary>
+        internal static string Description_CustomRetentionDays {
+            get {
+                return ResourceManager.GetString("Description_CustomRetentionDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define un atajo de teclado para abrir el diálogo de cambio de actividad desde cualquier aplicación..
+        /// </summary>
+        internal static string Description_GlobalHotkey {
+            get {
+                return ResourceManager.GetString("Description_GlobalHotkey", resourceCulture);
             }
         }
         
@@ -331,11 +421,47 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Define cuánto tiempo se conservan los datos históricos.
+        /// </summary>
+        internal static string Description_RetentionPolicy {
+            get {
+                return ResourceManager.GetString("Description_RetentionPolicy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir automáticamente la aplicación al iniciar sesión.
+        /// </summary>
+        internal static string Description_StartWithWindows {
+            get {
+                return ResourceManager.GetString("Description_StartWithWindows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Define la duración esperada de tu jornada laboral diaria.
         /// </summary>
         internal static string Description_WorkdayDuration {
             get {
                 return ResourceManager.GetString("Description_WorkdayDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar actividad.
+        /// </summary>
+        internal static string Dialog_ChangeActivity_Title {
+            get {
+                return ResourceManager.GetString("Dialog_ChangeActivity_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurar día.
+        /// </summary>
+        internal static string Dialog_ConfigureDay_Title {
+            get {
+                return ResourceManager.GetString("Dialog_ConfigureDay_Title", resourceCulture);
             }
         }
         
@@ -417,6 +543,78 @@ namespace TimeTracker.App.Resources {
         internal static string Dialog_NewSlot_Title {
             get {
                 return ResourceManager.GetString("Dialog_NewSlot_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Se eliminarán los datos anteriores al {0}..
+        /// </summary>
+        internal static string Dialog_Purge_Message {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No hay datos que purgar con la política de retención actual..
+        /// </summary>
+        internal static string Dialog_Purge_NothingToPurge {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_NothingToPurge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registros de actividad: {0} · Configuraciones de día: {1}.
+        /// </summary>
+        internal static string Dialog_Purge_RecordCount {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_RecordCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to La política de retención está configurada como &quot;Para siempre&quot;. No se ejecutará el purgado..
+        /// </summary>
+        internal static string Dialog_Purge_RetentionForever {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_RetentionForever", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purgado completado correctamente. Se han eliminado {0} registros de actividad y {1} configuraciones de día..
+        /// </summary>
+        internal static string Dialog_Purge_Success {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Success", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmar purgado.
+        /// </summary>
+        internal static string Dialog_Purge_Title {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esta acción es irreversible..
+        /// </summary>
+        internal static string Dialog_Purge_Warning {
+            get {
+                return ResourceManager.GetString("Dialog_Purge_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iniciar actividad.
+        /// </summary>
+        internal static string Dialog_StartActivity_Title {
+            get {
+                return ResourceManager.GetString("Dialog_StartActivity_Title", resourceCulture);
             }
         }
         
@@ -574,11 +772,29 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purgado automático.
+        /// </summary>
+        internal static string Label_AutoPurge {
+            get {
+                return ResourceManager.GetString("Label_AutoPurge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
         internal static string Label_Color {
             get {
                 return ResourceManager.GetString("Label_Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retención personalizada.
+        /// </summary>
+        internal static string Label_CustomRetentionDays {
+            get {
+                return ResourceManager.GetString("Label_CustomRetentionDays", resourceCulture);
             }
         }
         
@@ -601,6 +817,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to días.
+        /// </summary>
+        internal static string Label_Days {
+            get {
+                return ResourceManager.GetString("Label_Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tipo de día.
+        /// </summary>
+        internal static string Label_DayType {
+            get {
+                return ResourceManager.GetString("Label_DayType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Activar notificaciones.
         /// </summary>
         internal static string Label_EnableNotifications {
@@ -615,6 +849,15 @@ namespace TimeTracker.App.Resources {
         internal static string Label_EndTime {
             get {
                 return ResourceManager.GetString("Label_EndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Atajo de teclado global.
+        /// </summary>
+        internal static string Label_GlobalHotkey {
+            get {
+                return ResourceManager.GetString("Label_GlobalHotkey", resourceCulture);
             }
         }
         
@@ -682,6 +925,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Conservar historial durante.
+        /// </summary>
+        internal static string Label_RetentionPolicy {
+            get {
+                return ResourceManager.GetString("Label_RetentionPolicy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
         internal static string Label_SelectedDay {
@@ -691,11 +943,38 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fecha y hora de inicio.
+        /// </summary>
+        internal static string Label_StartDateTime {
+            get {
+                return ResourceManager.GetString("Label_StartDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hora inicio.
         /// </summary>
         internal static string Label_StartTime {
             get {
                 return ResourceManager.GetString("Label_StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir al iniciar.
+        /// </summary>
+        internal static string Label_StartWithWindows {
+            get {
+                return ResourceManager.GetString("Label_StartWithWindows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duración objetivo (horas).
+        /// </summary>
+        internal static string Label_TargetDuration {
+            get {
+                return ResourceManager.GetString("Label_TargetDuration", resourceCulture);
             }
         }
         
@@ -835,6 +1114,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Atajo de teclado registrado correctamente..
+        /// </summary>
+        internal static string Message_HotkeyRegistered {
+            get {
+                return ResourceManager.GetString("Message_HotkeyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No se ha podido registrar el atajo. Puede estar en uso por otra aplicación..
+        /// </summary>
+        internal static string Message_HotkeyRegistrationFailed {
+            get {
+                return ResourceManager.GetString("Message_HotkeyRegistrationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actividades.
         /// </summary>
         internal static string Nav_Activities {
@@ -862,11 +1159,11 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Jornada.
+        ///   Looks up a localized string similar to Hoy.
         /// </summary>
-        internal static string Nav_Workday {
+        internal static string Nav_Today {
             get {
-                return ResourceManager.GetString("Nav_Workday", resourceCulture);
+                return ResourceManager.GetString("Nav_Today", resourceCulture);
             }
         }
         
@@ -876,6 +1173,15 @@ namespace TimeTracker.App.Resources {
         internal static string Nav_WhatsNew {
             get {
                 return ResourceManager.GetString("Nav_WhatsNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jornada.
+        /// </summary>
+        internal static string Nav_Workday {
+            get {
+                return ResourceManager.GetString("Nav_Workday", resourceCulture);
             }
         }
         
@@ -1015,6 +1321,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hoy.
+        /// </summary>
+        internal static string Page_Today_Title {
+            get {
+                return ResourceManager.GetString("Page_Today_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Novedades.
         /// </summary>
         internal static string Page_WhatsNew_Title {
@@ -1060,6 +1375,24 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ej: Control+Alt+A.
+        /// </summary>
+        internal static string Placeholder_HotkeyExample {
+            get {
+                return ResourceManager.GetString("Placeholder_HotkeyExample", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pulsa las teclas....
+        /// </summary>
+        internal static string Placeholder_PressKeys {
+            get {
+                return ResourceManager.GetString("Placeholder_PressKeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Añade notas sobre esta entrada....
         /// </summary>
         internal static string Placeholder_RecordNotes {
@@ -1083,6 +1416,15 @@ namespace TimeTracker.App.Resources {
         internal static string Placeholder_SelectActivity {
             get {
                 return ResourceManager.GetString("Placeholder_SelectActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ej: 8.
+        /// </summary>
+        internal static string Placeholder_TargetDuration {
+            get {
+                return ResourceManager.GetString("Placeholder_TargetDuration", resourceCulture);
             }
         }
         
@@ -1186,6 +1528,51 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Personalizado.
+        /// </summary>
+        internal static string RetentionPolicy_Custom {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_Custom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Para siempre.
+        /// </summary>
+        internal static string RetentionPolicy_Forever {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_Forever", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 año.
+        /// </summary>
+        internal static string RetentionPolicy_OneYear {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_OneYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3 años.
+        /// </summary>
+        internal static string RetentionPolicy_ThreeYears {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_ThreeYears", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2 años.
+        /// </summary>
+        internal static string RetentionPolicy_TwoYears {
+            get {
+                return ResourceManager.GetString("RetentionPolicy_TwoYears", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Idioma.
         /// </summary>
         internal static string Section_Language {
@@ -1245,6 +1632,15 @@ namespace TimeTracker.App.Resources {
         internal static string Settings_Section_AppearanceBehavior {
             get {
                 return ResourceManager.GetString("Settings_Section_AppearanceBehavior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retención de datos.
+        /// </summary>
+        internal static string Settings_Section_DataRetention {
+            get {
+                return ResourceManager.GetString("Settings_Section_DataRetention", resourceCulture);
             }
         }
         
@@ -1348,6 +1744,195 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registro en curso.
+        /// </summary>
+        internal static string Today_ActiveRecord {
+            get {
+                return ResourceManager.GetString("Today_ActiveRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Línea temporal de actividades.
+        /// </summary>
+        internal static string Today_ActivityTimeline {
+            get {
+                return ResourceManager.GetString("Today_ActivityTimeline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurar día.
+        /// </summary>
+        internal static string Today_ConfigureDay {
+            get {
+                return ResourceManager.GetString("Today_ConfigureDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fecha actual.
+        /// </summary>
+        internal static string Today_CurrentDate {
+            get {
+                return ResourceManager.GetString("Today_CurrentDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Información del día.
+        /// </summary>
+        internal static string Today_DayInfo {
+            get {
+                return ResourceManager.GetString("Today_DayInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tipo de día.
+        /// </summary>
+        internal static string Today_DayType {
+            get {
+                return ResourceManager.GetString("Today_DayType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Libre elección.
+        /// </summary>
+        internal static string Today_DayType_FreeChoice {
+            get {
+                return ResourceManager.GetString("Today_DayType_FreeChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Festivo.
+        /// </summary>
+        internal static string Today_DayType_Holiday {
+            get {
+                return ResourceManager.GetString("Today_DayType_Holiday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jornada intensiva.
+        /// </summary>
+        internal static string Today_DayType_IntensiveDay {
+            get {
+                return ResourceManager.GetString("Today_DayType_IntensiveDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vacaciones.
+        /// </summary>
+        internal static string Today_DayType_Vacation {
+            get {
+                return ResourceManager.GetString("Today_DayType_Vacation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Laborable.
+        /// </summary>
+        internal static string Today_DayType_WorkDay {
+            get {
+                return ResourceManager.GetString("Today_DayType_WorkDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo transcurrido.
+        /// </summary>
+        internal static string Today_ElapsedTime {
+            get {
+                return ResourceManager.GetString("Today_ElapsedTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to En curso.
+        /// </summary>
+        internal static string Today_InProgress {
+            get {
+                return ResourceManager.GetString("Today_InProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No hay registros para hoy.
+        /// </summary>
+        internal static string Today_NoRecords {
+            get {
+                return ResourceManager.GetString("Today_NoRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No aplica jornada laboral.
+        /// </summary>
+        internal static string Today_NoWorkingDay {
+            get {
+                return ResourceManager.GetString("Today_NoWorkingDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registros de hoy.
+        /// </summary>
+        internal static string Today_Records {
+            get {
+                return ResourceManager.GetString("Today_Records", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo restante.
+        /// </summary>
+        internal static string Today_RemainingTime {
+            get {
+                return ResourceManager.GetString("Today_RemainingTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comenzar a registrar.
+        /// </summary>
+        internal static string Today_StartTracking {
+            get {
+                return ResourceManager.GetString("Today_StartTracking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duración objetivo.
+        /// </summary>
+        internal static string Today_TargetDuration {
+            get {
+                return ResourceManager.GetString("Today_TargetDuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hora de inicio.
+        /// </summary>
+        internal static string Today_WorkdayStartTime {
+            get {
+                return ResourceManager.GetString("Today_WorkdayStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo trabajado.
+        /// </summary>
+        internal static string Today_WorkedTime {
+            get {
+                return ResourceManager.GetString("Today_WorkedTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cerrar.
         /// </summary>
         internal static string Tray_Close {
@@ -1438,6 +2023,33 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El atajo de teclado no es válido. Use el formato: Control+Alt+Letra.
+        /// </summary>
+        internal static string Validation_HotkeyInvalid {
+            get {
+                return ResourceManager.GetString("Validation_HotkeyInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El atajo de teclado debe incluir al menos un modificador (Control, Alt, Shift)..
+        /// </summary>
+        internal static string Validation_HotkeyNeedsModifier {
+            get {
+                return ResourceManager.GetString("Validation_HotkeyNeedsModifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debes especificar un atajo de teclado..
+        /// </summary>
+        internal static string Validation_HotkeyRequired {
+            get {
+                return ResourceManager.GetString("Validation_HotkeyRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to La hora de fin no es válida..
         /// </summary>
         internal static string Validation_InvalidEndTime {
@@ -1483,119 +2095,11 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .NET 10, WPF, SQLite.
+        ///   Looks up a localized string similar to La duración objetivo debe ser un número válido mayor que 0..
         /// </summary>
-        internal static string Value_Technology {
+        internal static string Validation_TargetDurationInvalid {
             get {
-                return ResourceManager.GetString("Value_Technology", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hoy.
-        /// </summary>
-        internal static string Nav_Today {
-            get {
-                return ResourceManager.GetString("Nav_Today", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hoy.
-        /// </summary>
-        internal static string Page_Today_Title {
-            get {
-                return ResourceManager.GetString("Page_Today_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No aplica jornada laboral.
-        /// </summary>
-        internal static string Today_NoWorkingDay {
-            get {
-                return ResourceManager.GetString("Today_NoWorkingDay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Laborable.
-        /// </summary>
-        internal static string Today_DayType_WorkDay {
-            get {
-                return ResourceManager.GetString("Today_DayType_WorkDay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Jornada intensiva.
-        /// </summary>
-        internal static string Today_DayType_IntensiveDay {
-            get {
-                return ResourceManager.GetString("Today_DayType_IntensiveDay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Festivo.
-        /// </summary>
-        internal static string Today_DayType_Holiday {
-            get {
-                return ResourceManager.GetString("Today_DayType_Holiday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Libre elección.
-        /// </summary>
-        internal static string Today_DayType_FreeChoice {
-            get {
-                return ResourceManager.GetString("Today_DayType_FreeChoice", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Vacaciones.
-        /// </summary>
-        internal static string Today_DayType_Vacation {
-            get {
-                return ResourceManager.GetString("Today_DayType_Vacation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configurar día.
-        /// </summary>
-        internal static string Dialog_ConfigureDay_Title {
-            get {
-                return ResourceManager.GetString("Dialog_ConfigureDay_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tipo de día.
-        /// </summary>
-        internal static string Label_DayType {
-            get {
-                return ResourceManager.GetString("Label_DayType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Duración objetivo (horas).
-        /// </summary>
-        internal static string Label_TargetDuration {
-            get {
-                return ResourceManager.GetString("Label_TargetDuration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ej: 8.
-        /// </summary>
-        internal static string Placeholder_TargetDuration {
-            get {
-                return ResourceManager.GetString("Placeholder_TargetDuration", resourceCulture);
+                return ResourceManager.GetString("Validation_TargetDurationInvalid", resourceCulture);
             }
         }
         
@@ -1609,254 +2113,11 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to La duración objetivo debe ser un número válido mayor que 0..
+        ///   Looks up a localized string similar to .NET 10, WPF, SQLite.
         /// </summary>
-        internal static string Validation_TargetDurationInvalid {
+        internal static string Value_Technology {
             get {
-                return ResourceManager.GetString("Validation_TargetDurationInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cambiar actividad.
-        /// </summary>
-        internal static string Dialog_ChangeActivity_Title {
-            get {
-                return ResourceManager.GetString("Dialog_ChangeActivity_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Iniciar actividad.
-        /// </summary>
-        internal static string Dialog_StartActivity_Title {
-            get {
-                return ResourceManager.GetString("Dialog_StartActivity_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fecha y hora de inicio.
-        /// </summary>
-        internal static string Label_StartDateTime {
-            get {
-                return ResourceManager.GetString("Label_StartDateTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Iniciar.
-        /// </summary>
-        internal static string Button_Start {
-            get {
-                return ResourceManager.GetString("Button_Start", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cambiar.
-        /// </summary>
-        internal static string Button_Change {
-            get {
-                return ResourceManager.GetString("Button_Change", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retención de datos.
-        /// </summary>
-        internal static string Settings_Section_DataRetention {
-            get {
-                return ResourceManager.GetString("Settings_Section_DataRetention", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Conservar historial durante.
-        /// </summary>
-        internal static string Label_RetentionPolicy {
-            get {
-                return ResourceManager.GetString("Label_RetentionPolicy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Define cuánto tiempo se conservan los datos históricos.
-        /// </summary>
-        internal static string Description_RetentionPolicy {
-            get {
-                return ResourceManager.GetString("Description_RetentionPolicy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Para siempre.
-        /// </summary>
-        internal static string RetentionPolicy_Forever {
-            get {
-                return ResourceManager.GetString("RetentionPolicy_Forever", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 1 año.
-        /// </summary>
-        internal static string RetentionPolicy_OneYear {
-            get {
-                return ResourceManager.GetString("RetentionPolicy_OneYear", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2 años.
-        /// </summary>
-        internal static string RetentionPolicy_TwoYears {
-            get {
-                return ResourceManager.GetString("RetentionPolicy_TwoYears", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 3 años.
-        /// </summary>
-        internal static string RetentionPolicy_ThreeYears {
-            get {
-                return ResourceManager.GetString("RetentionPolicy_ThreeYears", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Personalizado.
-        /// </summary>
-        internal static string RetentionPolicy_Custom {
-            get {
-                return ResourceManager.GetString("RetentionPolicy_Custom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retención personalizada.
-        /// </summary>
-        internal static string Label_CustomRetentionDays {
-            get {
-                return ResourceManager.GetString("Label_CustomRetentionDays", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Número de días a conservar (mayor que 0).
-        /// </summary>
-        internal static string Description_CustomRetentionDays {
-            get {
-                return ResourceManager.GetString("Description_CustomRetentionDays", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to días.
-        /// </summary>
-        internal static string Label_Days {
-            get {
-                return ResourceManager.GetString("Label_Days", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Purgado automático.
-        /// </summary>
-        internal static string Label_AutoPurge {
-            get {
-                return ResourceManager.GetString("Label_AutoPurge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ejecutar el purgado automáticamente al iniciar la aplicación.
-        /// </summary>
-        internal static string Description_AutoPurge {
-            get {
-                return ResourceManager.GetString("Description_AutoPurge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ejecutar purgado ahora.
-        /// </summary>
-        internal static string Button_PurgeNow {
-            get {
-                return ResourceManager.GetString("Button_PurgeNow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Confirmar purgado.
-        /// </summary>
-        internal static string Dialog_Purge_Title {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Se eliminarán los datos anteriores al {0}..
-        /// </summary>
-        internal static string Dialog_Purge_Message {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_Message", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Registros de actividad: {0} · Configuraciones de día: {1}.
-        /// </summary>
-        internal static string Dialog_Purge_RecordCount {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_RecordCount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Esta acción es irreversible..
-        /// </summary>
-        internal static string Dialog_Purge_Warning {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_Warning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Purgar.
-        /// </summary>
-        internal static string Button_Purge {
-            get {
-                return ResourceManager.GetString("Button_Purge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Purgado completado correctamente. Se han eliminado {0} registros de actividad y {1} configuraciones de día..
-        /// </summary>
-        internal static string Dialog_Purge_Success {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_Success", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No hay datos que purgar con la política de retención actual..
-        /// </summary>
-        internal static string Dialog_Purge_NothingToPurge {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_NothingToPurge", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La política de retención está configurada como "Para siempre". No se ejecutará el purgado..
-        /// </summary>
-        internal static string Dialog_Purge_RetentionForever {
-            get {
-                return ResourceManager.GetString("Dialog_Purge_RetentionForever", resourceCulture);
+                return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
     }
