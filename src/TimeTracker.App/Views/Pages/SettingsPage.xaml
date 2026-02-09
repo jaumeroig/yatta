@@ -125,6 +125,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                             <controls:HotkeyTextBox Hotkey="{Binding GlobalHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Width="180"
+                                                    VerticalContentAlignment="Center"
                                          Height="40"
                                          Margin="0,0,8,0" />
                             <ui:Button Content="{local:Localize Button_Save}"

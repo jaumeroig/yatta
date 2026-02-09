@@ -2,14 +2,13 @@ namespace TimeTracker.App.Controls;
 
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 /// <summary>
 /// A TextBox control that captures keyboard shortcuts automatically.
 /// When focused, it captures key combinations and displays them in the proper format.
 /// </summary>
-public class HotkeyTextBox : TextBox
+public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
 {
     /// <summary>
     /// Dependency property for the captured hotkey.
@@ -128,7 +127,7 @@ public class HotkeyTextBox : TextBox
         }
     }
 
-    private string BuildHotkeyString(Key key, ModifierKeys modifiers)
+    private static string BuildHotkeyString(Key key, ModifierKeys modifiers)
     {
         var parts = new StringBuilder();
 
@@ -159,7 +158,7 @@ public class HotkeyTextBox : TextBox
         return parts.ToString();
     }
 
-    private string GetKeyName(Key key)
+    private static string GetKeyName(Key key)
     {
         // Handle special keys
         return key switch
