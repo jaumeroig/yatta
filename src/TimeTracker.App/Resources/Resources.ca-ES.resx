@@ -807,4 +807,7 @@
   <data name="Placeholder_HotkeyExample" xml:space="preserve">
     <value>Ex: Control+Alt+A</value>
   </data>
+  <data name="Placeholder_PressKeys" xml:space="preserve">
+    <value>Prem les tecles...</value>
+  </data>
 </root>

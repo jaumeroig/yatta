@@ -1384,6 +1384,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pulsa las teclas....
+        /// </summary>
+        internal static string Placeholder_PressKeys {
+            get {
+                return ResourceManager.GetString("Placeholder_PressKeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Añade notas sobre esta entrada....
         /// </summary>
         internal static string Placeholder_RecordNotes {

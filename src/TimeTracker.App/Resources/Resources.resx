@@ -801,4 +801,7 @@
   <data name="Placeholder_HotkeyExample" xml:space="preserve">
     <value>Ej: Control+Alt+A</value>
   </data>
+  <data name="Placeholder_PressKeys" xml:space="preserve">
+    <value>Pulsa las teclas...</value>
+  </data>
 </root>
