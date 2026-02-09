@@ -32,8 +32,36 @@ public partial class App : Application
         // Apply database migrations and pending schema updates
         using (var scope = _serviceProvider.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
-            dbContext.Database.Migrate();
+            try
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
+                
+                // Log pending migrations before applying
+                var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
+                if (pendingMigrations.Any())
+                {
+                    System.Diagnostics.Debug.WriteLine($"Applying {pendingMigrations.Count} pending migrations:");
+                    foreach (var migration in pendingMigrations)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"  - {migration}");
+                    }
+                }
+                
+                dbContext.Database.Migrate();
+                
+                // Verify migration was applied
+                var appliedMigrations = dbContext.Database.GetAppliedMigrations().ToList();
+                System.Diagnostics.Debug.WriteLine($"Total applied migrations: {appliedMigrations.Count}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Database migration failed:\n\n{ex.Message}\n\nStack Trace:\n{ex.StackTrace}",
+                    "Migration Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                throw;
+            }
         }
 
         // IMPORTANT: Initialize localization BEFORE creating the MainWindow
@@ -48,8 +76,8 @@ public partial class App : Application
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
         mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
 
-        // Initialize global hotkey service
-        InitializeGlobalHotkey(mainWindow);
+        // Initialize global hotkey service AFTER window handle is created
+        mainWindow.SourceInitialized += (_, _) => InitializeGlobalHotkey(mainWindow);
 
         // Initialize notification service
         InitializeNotificationService();

@@ -37,5 +37,8 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
         builder.Property(s => s.CustomRetentionDays)
             .IsRequired()
             .HasDefaultValue(365);
+
+        builder.Property(s => s.GlobalHotkey)
+            .IsRequired(false); // Nullable property
     }
 }
