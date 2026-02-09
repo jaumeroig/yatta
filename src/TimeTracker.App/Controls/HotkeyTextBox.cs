@@ -47,7 +47,9 @@ public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
     {
         if (d is HotkeyTextBox textBox)
         {
-            textBox.Text = e.NewValue as string ?? string.Empty;
+            var hotkeyValue = e.NewValue as string ?? string.Empty;
+            // Display the localized version
+            textBox.Text = string.IsNullOrEmpty(hotkeyValue) ? string.Empty : GetLocalizedHotkey(hotkeyValue);
         }
     }
 
@@ -60,6 +62,11 @@ public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
         {
             Text = TimeTracker.App.Resources.Resources.Placeholder_PressKeys;
         }
+        else
+        {
+            // Show localized hotkey
+            Text = GetLocalizedHotkey(Hotkey);
+        }
     }
 
     private void OnLostFocus(object sender, RoutedEventArgs e)
@@ -69,7 +76,7 @@ public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
         // Restore the hotkey text if it was set
         if (!string.IsNullOrEmpty(Hotkey))
         {
-            Text = Hotkey;
+            Text = GetLocalizedHotkey(Hotkey);
         }
         else
         {
@@ -112,7 +119,7 @@ public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
         {
             // Cancel capture and restore original value
             _isCapturing = false;
-            Text = Hotkey;
+            Text = GetLocalizedHotkey(Hotkey);
             MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
             return;
         }
@@ -123,7 +130,8 @@ public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
         if (!string.IsNullOrEmpty(hotkeyString))
         {
             Hotkey = hotkeyString;
-            Text = hotkeyString;
+            // Display the localized version
+            Text = GetLocalizedHotkey(hotkeyString);
         }
     }
 
@@ -207,5 +215,42 @@ public class HotkeyTextBox : Wpf.Ui.Controls.TextBox
             Key.Decimal => "Decimal",
             _ => key.ToString()
         };
+    }
+
+    /// <summary>
+    /// Converts a hotkey string from English to the current UI language.
+    /// The hotkey is always stored in English internally but displayed in the user's language.
+    /// </summary>
+    private static string GetLocalizedHotkey(string hotkey)
+    {
+        if (string.IsNullOrEmpty(hotkey))
+        {
+            return string.Empty;
+        }
+
+        var parts = hotkey.Split('+');
+        var localizedParts = new string[parts.Length];
+
+        for (int i = 0; i < parts.Length; i++)
+        {
+            localizedParts[i] = GetLocalizedKeyName(parts[i]);
+        }
+
+        return string.Join("+", localizedParts);
+    }
+
+    /// <summary>
+    /// Gets the localized name for a key.
+    /// </summary>
+    private static string GetLocalizedKeyName(string keyName)
+    {
+        var resources = TimeTracker.App.Resources.Resources.ResourceManager;
+        var resourceKey = $"Key_{keyName}";
+
+        // Try to get the localized key name from resources
+        var localizedName = resources.GetString(resourceKey);
+        
+        // If not found in resources, return the original key name
+        return localizedName ?? keyName;
     }
 }

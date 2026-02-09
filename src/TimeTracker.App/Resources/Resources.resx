@@ -804,4 +804,61 @@
   <data name="Placeholder_PressKeys" xml:space="preserve">
     <value>Pulsa las teclas...</value>
   </data>
+  <data name="Key_Control" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="Key_Alt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="Key_Shift" xml:space="preserve">
+    <value>Mayús</value>
+  </data>
+  <data name="Key_Win" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="Key_Space" xml:space="preserve">
+    <value>Espacio</value>
+  </data>
+  <data name="Key_Enter" xml:space="preserve">
+    <value>Intro</value>
+  </data>
+  <data name="Key_Tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="Key_Escape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="Key_Backspace" xml:space="preserve">
+    <value>Retroceso</value>
+  </data>
+  <data name="Key_Delete" xml:space="preserve">
+    <value>Supr</value>
+  </data>
+  <data name="Key_Insert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="Key_Home" xml:space="preserve">
+    <value>Inicio</value>
+  </data>
+  <data name="Key_End" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="Key_PageUp" xml:space="preserve">
+    <value>Re Pág</value>
+  </data>
+  <data name="Key_PageDown" xml:space="preserve">
+    <value>Av Pág</value>
+  </data>
+  <data name="Key_Left" xml:space="preserve">
+    <value>Izquierda</value>
+  </data>
+  <data name="Key_Up" xml:space="preserve">
+    <value>Arriba</value>
+  </data>
+  <data name="Key_Right" xml:space="preserve">
+    <value>Derecha</value>
+  </data>
+  <data name="Key_Down" xml:space="preserve">
+    <value>Abajo</value>
+  </data>
 </root>
