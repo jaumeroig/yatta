@@ -121,7 +121,7 @@
     <value>Control de tiempo</value>
   </data>
   <data name="Nav_Records" xml:space="preserve">
-    <value>Registros</value>
+    <value>Histórico</value>
   </data>
   <data name="Nav_Workday" xml:space="preserve">
     <value>Jornada</value>
@@ -178,7 +178,7 @@
     <value>Nueva actividad</value>
   </data>
   <data name="Message_DeleteActivityWarning" xml:space="preserve">
-    <value>Esta actividad tiene {0} registros asociados. Si la eliminas, se perderán todos los datos.</value>
+    <value>Esta actividad tiene {0} entradas asociadas. Si la eliminas, se perderán todos los datos.</value>
   </data>
   <data name="Menu_Edit" xml:space="preserve">
     <value>Editar</value>
@@ -199,7 +199,7 @@
     <value>Crea tu primera actividad</value>
   </data>
   <data name="Page_Records_Title" xml:space="preserve">
-    <value>Registros de tiempo</value>
+    <value>Histórico de tiempo</value>
   </data>
   <data name="Dialog_NewRecord_Title" xml:space="preserve">
     <value>Añadir nueva entrada</value>
@@ -253,10 +253,10 @@
     <value>{0}</value>
   </data>
   <data name="Empty_NoRecords" xml:space="preserve">
-    <value>No hay registros</value>
+    <value>No hay entradas</value>
   </data>
   <data name="Empty_CreateFirstRecord" xml:space="preserve">
-    <value>Crea tu primer registro de tiempo</value>
+    <value>Crea tu primera entrada de tiempo</value>
   </data>
   <data name="Page_Workday_Title" xml:space="preserve">
     <value>Jornada laboral</value>
@@ -478,25 +478,25 @@
     <value>Estadísticas</value>
   </data>
   <data name="ActivityDetail_RecordCount" xml:space="preserve">
-    <value>Registros</value>
+    <value>Entradas</value>
   </data>
   <data name="ActivityDetail_DeleteWarning" xml:space="preserve">
-    <value>Esta actividad tiene {0} registros asociados. Si la eliminas, se perderán todos los datos.</value>
+    <value>Esta actividad tiene {0} entradas asociadas. Si la eliminas, se perderán todos los datos.</value>
   </data>
   <data name="Button_Back" xml:space="preserve">
     <value>Atrás</value>
   </data>
   <data name="Activities_Subtitle" xml:space="preserve">
-    <value>{0:n0} registros · {1}</value>
+    <value>{0:n0} entradas · {1}</value>
   </data>
   <data name="Activity_SingleRecord" xml:space="preserve">
-    <value>1 registro</value>
+    <value>1 entrada</value>
   </data>
   <data name="Activity_MultipleRecords" xml:space="preserve">
-    <value>{0:n0} registros</value>
+    <value>{0:n0} entradas</value>
   </data>
   <data name="Activity_NoRecords" xml:space="preserve">
-    <value>Sin registros</value>
+    <value>Sin entradas</value>
   </data>
   <data name="Filter_SearchByName" xml:space="preserve">
     <value>Buscar por nombre...</value>
@@ -508,22 +508,22 @@
     <value>Buscar por actividad o notas...</value>
   </data>
   <data name="RecordDetail_NewTitle" xml:space="preserve">
-    <value>Nuevo registro</value>
+    <value>Nueva entrada</value>
   </data>
   <data name="RecordDetail_EditTitle" xml:space="preserve">
-    <value>Editar registro</value>
+    <value>Editar entrada</value>
   </data>
   <data name="Dialog_DeleteRecord_Title" xml:space="preserve">
-    <value>¿Eliminar registro?</value>
+    <value>¿Eliminar entrada?</value>
   </data>
   <data name="Dialog_DeleteRecord_Message" xml:space="preserve">
-    <value>¿Estás seguro de que quieres eliminar este registro? Esta acción no se puede deshacer.</value>
+    <value>¿Estás seguro de que quieres eliminar esta entrada? Esta acción no se puede deshacer.</value>
   </data>
   <data name="Validation_ActivityRequired" xml:space="preserve">
     <value>Debes seleccionar una actividad.</value>
   </data>
   <data name="Validation_RecordSaveError" xml:space="preserve">
-    <value>Error al guardar el registro. Inténtalo de nuevo.</value>
+    <value>Error al guardar la entrada. Inténtalo de nuevo.</value>
   </data>
   <data name="Button_Archive" xml:space="preserve">
     <value>Archivar</value>
@@ -652,13 +652,13 @@
     <value>Línea temporal de actividades</value>
   </data>
   <data name="Today_Records" xml:space="preserve">
-    <value>Registros de hoy</value>
+    <value>Histórico de hoy</value>
   </data>
   <data name="Today_ActiveRecord" xml:space="preserve">
     <value>Registro en curso</value>
   </data>
   <data name="Today_NoRecords" xml:space="preserve">
-    <value>No hay registros para hoy</value>
+    <value>No hay entradas para hoy</value>
   </data>
   <data name="Today_StartTracking" xml:space="preserve">
     <value>Comenzar a registrar</value>
@@ -757,7 +757,7 @@
     <value>Se eliminarán los datos anteriores al {0}.</value>
   </data>
   <data name="Dialog_Purge_RecordCount" xml:space="preserve">
-    <value>Registros de actividad: {0} · Configuraciones de día: {1}</value>
+    <value>Entradas de actividad: {0} · Configuraciones de día: {1}</value>
   </data>
   <data name="Dialog_Purge_Warning" xml:space="preserve">
     <value>Esta acción es irreversible.</value>
@@ -766,7 +766,7 @@
     <value>Purgar</value>
   </data>
   <data name="Dialog_Purge_Success" xml:space="preserve">
-    <value>Purgado completado correctamente. Se han eliminado {0} registros de actividad y {1} configuraciones de día.</value>
+    <value>Purgado completado correctamente. Se han eliminado {0} entradas de actividad y {1} configuraciones de día.</value>
   </data>
   <data name="Dialog_Purge_NothingToPurge" xml:space="preserve">
     <value>No hay datos que purgar con la política de retención actual.</value>

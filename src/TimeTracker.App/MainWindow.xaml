@@ -77,7 +77,7 @@
                         <ui:SymbolIcon Symbol="CalendarDay24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:TimeRecordsPage}">
+                <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:HistoricPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Document24" />
                     </ui:NavigationViewItem.Icon>
