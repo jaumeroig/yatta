@@ -13,7 +13,7 @@ using TimeTracker.Core.Models;
 /// <summary>
 /// ViewModel for time records management.
 /// </summary>
-public partial class TimeRecordViewModel : ObservableObject
+public partial class HistoricViewModel : ObservableObject
 {
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
@@ -40,7 +40,7 @@ public partial class TimeRecordViewModel : ObservableObject
     [ObservableProperty]
     private string _todayWorkedTime = "0h 0m";
 
-    public TimeRecordViewModel(
+    public HistoricViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         ITimeCalculatorService timeCalculatorService,
@@ -205,7 +205,7 @@ public partial class TimeRecordViewModel : ObservableObject
     [RelayCommand]
     private void NavigateToNewRecord()
     {
-        _navigationService.Navigate<TimeRecordDetailPage>(null);
+        _navigationService.Navigate<HistoricDetailPage>(null);
     }
 
     /// <summary>
@@ -214,7 +214,7 @@ public partial class TimeRecordViewModel : ObservableObject
     [RelayCommand]
     private void NavigateToRecord(TimeRecordDisplay record)
     {
-        _navigationService.Navigate<TimeRecordDetailPage>(record.Id);
+        _navigationService.Navigate<HistoricDetailPage>(record.Id);
     }
 
     [RelayCommand]

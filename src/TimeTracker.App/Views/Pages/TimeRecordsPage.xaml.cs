@@ -8,12 +8,12 @@ using TimeTracker.App.ViewModels;
 /// <summary>
 /// Page for time records management.
 /// </summary>
-public partial class TimeRecordsPage : Page
+public partial class HistoricPage : Page
 {
-    private readonly TimeRecordViewModel _viewModel;
+    private readonly HistoricViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
 
-    public TimeRecordsPage(TimeRecordViewModel viewModel, IBreadcrumbService breadcrumbService)
+    public HistoricPage(HistoricViewModel viewModel, IBreadcrumbService breadcrumbService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));

@@ -180,12 +180,12 @@ public partial class App : Application
             }
 
             var navigationService = _serviceProvider!.GetRequiredService<INavigationService>();
-            var navParam = new TimeRecordNavigationParameter
+            var navParam = new HistoricNavigationParameter
             {
                 RecordId = recordId,
                 FromNotification = true
             };
-            navigationService.Navigate<TimeRecordDetailPage>(navParam);
+            navigationService.Navigate<HistoricDetailPage>(navParam);
         });
     }
 
@@ -304,8 +304,8 @@ public partial class App : Application
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<HoyViewModel>();
-        services.AddTransient<TimeRecordViewModel>();
-        services.AddTransient<TimeRecordDetailViewModel>();
+        services.AddTransient<HistoricViewModel>();
+        services.AddTransient<HistoricDetailViewModel>();
         services.AddTransient<JornadaViewModel>();
         services.AddTransient<ActivitiesViewModel>();
         services.AddTransient<ActivityDetailViewModel>();
@@ -314,8 +314,8 @@ public partial class App : Application
 
         // Register Pages
         services.AddTransient<HoyPage>();
-        services.AddTransient<TimeRecordsPage>();
-        services.AddTransient<TimeRecordDetailPage>();
+        services.AddTransient<HistoricPage>();
+        services.AddTransient<HistoricDetailPage>();
         services.AddTransient<JornadaPage>();
         services.AddTransient<ActivitiesPage>();
         services.AddTransient<ActivityDetailPage>();
