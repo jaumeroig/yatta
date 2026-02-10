@@ -19,8 +19,10 @@ public partial class HistoricViewModel : ObservableObject
     private readonly IActivityRepository _activityRepository;
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly INavigationService _navigationService;
+    private readonly ISettingsRepository _settingsRepository;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
+    private bool _isLoading;
 
     [ObservableProperty]
     private ObservableCollection<DayGroup> _groupedRecords = [];
@@ -40,16 +42,21 @@ public partial class HistoricViewModel : ObservableObject
     [ObservableProperty]
     private string _todayWorkedTime = "0h 0m";
 
+    [ObservableProperty]
+    private bool _sortAscending = false;
+
     public HistoricViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         ITimeCalculatorService timeCalculatorService,
-        INavigationService navigationService)
+        INavigationService navigationService,
+        ISettingsRepository settingsRepository)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
         _timeCalculatorService = timeCalculatorService;
         _navigationService = navigationService;
+        _settingsRepository = settingsRepository;
     }
 
     /// <summary>
@@ -57,6 +64,11 @@ public partial class HistoricViewModel : ObservableObject
     /// </summary>
     public async Task LoadDataAsync()
     {
+        // Load sort preference (flag prevents saving back to DB during initial load)
+        var settings = await _settingsRepository.GetAsync();
+        
+        SortAscending = settings.HistoricSortAscending;
+
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
 
         // Add "All activities" option at the beginning
@@ -86,6 +98,34 @@ public partial class HistoricViewModel : ObservableObject
         ApplyFilters();
     }
 
+    /// <summary>
+    /// Executes when the sort direction changes.
+    /// </summary>
+    partial void OnSortAscendingChanged(bool value)
+    {
+        if (!_isLoading)
+        {
+            _ = SaveSortPreferenceAsync(value);
+        }
+
+        ApplyFilters();
+    }
+
+    private async Task SaveSortPreferenceAsync(bool sortAscending)
+    {
+        try
+        {
+            var settings = await _settingsRepository.GetAsync();
+            settings.HistoricSortAscending = sortAscending;
+            await _settingsRepository.UpdateAsync(settings);
+        }
+        catch (Exception ex)
+        {
+            // Log error silently - don't block UI
+            System.Diagnostics.Debug.WriteLine($"Error saving sort preference: {ex.Message}");
+        }
+    }
+
     private void ApplyFilters()
     {
         var filtered = _allRecords.AsEnumerable();
@@ -113,23 +153,27 @@ public partial class HistoricViewModel : ObservableObject
         }
 
         // Group by day
-        var groups = filtered
-            .GroupBy(r => r.Date)
-            .OrderByDescending(g => g.Key)
-            .Select(g => new DayGroup
-            {
-                Date = g.Key,
-                DateDisplay = FormatDate(g.Key),
-                TotalWorked = FormatDuration(_timeCalculatorService.CalculateTotalHours(g)),
-                Records = new ObservableCollection<TimeRecordDisplay>(
-                    g.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r))),
-                TimelineSegments = new ObservableCollection<TimeSegment>(
-                    g.Where(r => r.EndTime.HasValue)
-                     .OrderBy(r => r.StartTime)
-                     .Select(r => CreateTimelineSegment(r, g.Key)))
-            });
+        var groups = filtered.GroupBy(r => r.Date);
 
-        GroupedRecords = new ObservableCollection<DayGroup>(groups);
+        // Apply sorting based on preference
+        var orderedGroups = SortAscending
+            ? groups.OrderBy(g => g.Key)           // Ascending: oldest first
+            : groups.OrderByDescending(g => g.Key); // Descending: newest first
+
+        var groupsList = orderedGroups.Select(g => new DayGroup
+        {
+            Date = g.Key,
+            DateDisplay = FormatDate(g.Key),
+            TotalWorked = FormatDuration(_timeCalculatorService.CalculateTotalHours(g)),
+            Records = new ObservableCollection<TimeRecordDisplay>(
+                g.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r))),
+            TimelineSegments = new ObservableCollection<TimeSegment>(
+                g.Where(r => r.EndTime.HasValue)
+                 .OrderBy(r => r.StartTime)
+                 .Select(r => CreateTimelineSegment(r, g.Key)))
+        });
+
+        GroupedRecords = new ObservableCollection<DayGroup>(groupsList);
     }
 
     private TimeRecordDisplay CreateRecordDisplay(TimeRecord record)

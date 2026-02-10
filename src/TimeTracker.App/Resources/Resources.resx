@@ -507,6 +507,15 @@
   <data name="Filter_SearchByActivityOrNotes" xml:space="preserve">
     <value>Buscar por actividad o notas...</value>
   </data>
+  <data name="Filter_Sort_Ascending" xml:space="preserve">
+    <value>Más antiguos primero</value>
+  </data>
+  <data name="Filter_Sort_Descending" xml:space="preserve">
+    <value>Más recientes primero</value>
+  </data>
+  <data name="Filter_Sort_Tooltip" xml:space="preserve">
+    <value>Cambiar orden cronológico</value>
+  </data>
   <data name="RecordDetail_NewTitle" xml:space="preserve">
     <value>Nueva entrada</value>
   </data>

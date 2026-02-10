@@ -30,6 +30,7 @@ mc:Ignorable="d"
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <ui:TextBox Grid.Column="0"
@@ -71,14 +72,76 @@ mc:Ignorable="d"
             </ComboBox>
 
             <DatePicker Grid.Column="2"
-                        Width="150"
+                        Width="130"
                         Height="40"
+                        VerticalAlignment="Center"
                         VerticalContentAlignment="Center"
                         Margin="12,0,0,0"
                         SelectedDateFormat="Short"
                         SelectedDate="{Binding SelectedDate}" />
 
-            <ui:Button Grid.Column="3"
+            <!-- Sort Direction Toggle -->
+            <ToggleButton Grid.Column="3"
+                          IsChecked="{Binding SortAscending}"
+                          VerticalAlignment="Center"
+                          Margin="12,0,0,0"
+                          Height="35"
+                          Width="35"
+                          Padding="0,0"
+                          ToolTip="{local:Localize Filter_Sort_Tooltip}">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorSecondaryBrush}" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Bd"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="6"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSecondaryBackgroundBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Style>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Icon changes based on state -->
+                    <ui:SymbolIcon Margin="0,0,0,0">
+                        <ui:SymbolIcon.Style>
+                            <Style TargetType="ui:SymbolIcon">
+                                <!-- Default: descending (arrow down) -->
+                                <Setter Property="Symbol" Value="ArrowDown24" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SortAscending}" Value="True">
+                                        <!-- Ascending: arrow up -->
+                                        <Setter Property="Symbol" Value="ArrowUp24" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ui:SymbolIcon.Style>
+                    </ui:SymbolIcon>
+                   
+                </StackPanel>
+            </ToggleButton>
+
+            <ui:Button Grid.Column="4"
                        Appearance="Primary"
                        Command="{Binding NavigateToNewRecordCommand}"
                        Height="40"
