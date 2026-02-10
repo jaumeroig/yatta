@@ -11,17 +11,17 @@ using Wpf.Ui.Controls;
 /// <summary>
 /// Detail page to edit or create a time record.
 /// </summary>
-public partial class TimeRecordDetailPage : Page
+public partial class HistoricDetailPage : Page
 {
-    private readonly TimeRecordDetailViewModel _viewModel;
+    private readonly HistoricDetailViewModel _viewModel;
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
     private ContentDialog? _deleteDialog;
     private bool _isDeleteDialogVisible;
     private bool _isSubscribedToChanges;
 
-    public TimeRecordDetailPage(
-        TimeRecordDetailViewModel viewModel,
+    public HistoricDetailPage(
+        HistoricDetailViewModel viewModel,
         INavigationService navigationService,
         IDialogService dialogService)
     {
@@ -40,11 +40,11 @@ public partial class TimeRecordDetailPage : Page
             _isSubscribedToChanges = true;
         }
 
-        // Get navigation parameter (can be Guid? or TimeRecordNavigationParameter)
+        // Get navigation parameter (can be Guid? or HistoricNavigationParameter)
         Guid? recordId = null;
         var fromNotification = false;
 
-        if (_navigationService.CurrentParameter is TimeRecordNavigationParameter navParam)
+        if (_navigationService.CurrentParameter is HistoricNavigationParameter navParam)
         {
             recordId = navParam.RecordId;
             fromNotification = navParam.FromNotification;
@@ -79,7 +79,7 @@ public partial class TimeRecordDetailPage : Page
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(TimeRecordDetailViewModel.IsDeleteConfirmationOpen))
+        if (e.PropertyName == nameof(HistoricDetailViewModel.IsDeleteConfirmationOpen))
         {
             if (_viewModel.IsDeleteConfirmationOpen)
             {

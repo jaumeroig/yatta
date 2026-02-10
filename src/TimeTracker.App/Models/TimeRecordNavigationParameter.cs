@@ -1,9 +1,9 @@
 namespace TimeTracker.App.Models;
 
 /// <summary>
-/// Navigation parameter for the TimeRecordDetailPage.
+/// Navigation parameter for the HistoricDetailPage.
 /// </summary>
-public class TimeRecordNavigationParameter
+public class HistoricNavigationParameter
 {
     /// <summary>
     /// The ID of the time record to edit.

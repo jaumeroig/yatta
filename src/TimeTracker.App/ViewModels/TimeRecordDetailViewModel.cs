@@ -11,7 +11,7 @@ using TimeTracker.Core.Models;
 /// <summary>
 /// ViewModel for the time record detail page.
 /// </summary>
-public partial class TimeRecordDetailViewModel : ObservableObject
+public partial class HistoricDetailViewModel : ObservableObject
 {
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
@@ -76,7 +76,7 @@ public partial class TimeRecordDetailViewModel : ObservableObject
                            TimeOnly.TryParse(StartTimeText, out _) &&
                            (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _));
 
-    public TimeRecordDetailViewModel(
+    public HistoricDetailViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         INavigationService navigationService,
