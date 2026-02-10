@@ -87,14 +87,17 @@
                         <ui:SymbolIcon Symbol="CalendarLtr24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+            
+            <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Activities}" TargetPageType="{x:Type pages:ActivitiesPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="AppsList24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-            </ui:NavigationView.MenuItems>
-            
-            <ui:NavigationView.FooterMenuItems>
+                
+                <Separator />
+
                 <ui:NavigationViewItem Content="{local:Localize Nav_WhatsNew}" TargetPageType="{x:Type pages:WhatsNewPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Megaphone24" />
