@@ -64,4 +64,10 @@ public class AppSettings
     /// If null or empty, the default hotkey is used.
     /// </summary>
     public string? GlobalHotkey { get; set; }
+
+    /// <summary>
+    /// Indicates if the historic records should be sorted in ascending order (oldest first).
+    /// If false (default), records are sorted in descending order (newest first).
+    /// </summary>
+    public bool HistoricSortAscending { get; set; } = false;
 }

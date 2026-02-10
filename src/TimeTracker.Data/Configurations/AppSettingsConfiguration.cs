@@ -40,5 +40,9 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
 
         builder.Property(s => s.GlobalHotkey)
             .IsRequired(false); // Nullable property
+
+        builder.Property(s => s.HistoricSortAscending)
+            .IsRequired()
+            .HasDefaultValue(false);
     }
 }
