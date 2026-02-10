@@ -195,6 +195,7 @@
                     <TextBlock Text="{Binding CurrentDate}"
                                FontSize="24"
                                FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                Margin="0,0,0,8"/>
                     <TextBlock Text="{Binding CurrentTime}"
                                FontSize="48"
@@ -215,6 +216,7 @@
                         <TextBlock Text="{local:Localize Today_DayInfo}"
                                    FontSize="18"
                                    FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    VerticalAlignment="Center"/>
                         <ui:Button Content="{local:Localize Today_ConfigureDay}"
                                    HorizontalAlignment="Right"
@@ -246,6 +248,7 @@
                         <ui:Badge Grid.Row="1" Grid.Column="0"
                                   Content="{Binding DayTypeDisplay}"
                                   Appearance="Secondary"
+                                  Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                   HorizontalAlignment="Left"
                                   Margin="0,0,0,16"/>
 
@@ -257,6 +260,7 @@
                                    Margin="0,0,0,4"/>
                         <TextBlock Grid.Row="1" Grid.Column="1"
                                    Text="{Binding WorkedTime}"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    FontSize="18"
                                    FontWeight="SemiBold"
                                    Margin="0,0,0,16"/>
@@ -269,6 +273,7 @@
                                    Margin="0,0,0,4"
                                    Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         <TextBlock Grid.Row="3" Grid.Column="0"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Text="{Binding TargetDuration}"
                                    FontSize="16"
                                    Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -283,6 +288,7 @@
                         <TextBlock Grid.Row="3" Grid.Column="1"
                                    Text="{Binding RemainingTime}"
                                    FontSize="16"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </Grid>
                 </StackPanel>
@@ -299,6 +305,7 @@
                     <TextBlock Text="{local:Localize Today_ActivityTimeline}"
                                FontSize="18"
                                FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                Margin="0,0,0,16"/>
                     <controls:WorkdayTimelineBar Segments="{Binding TimelineSegments}"
                                                   Height="60"
