@@ -167,6 +167,7 @@ mc:Ignorable="d"
                             <!-- Day Header (separador amb label de data) -->
                             <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
@@ -176,6 +177,13 @@ mc:Ignorable="d"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                                 <TextBlock Grid.Column="1"
+                                               Text="{Binding TimeAgo}"
+                                               FontSize="13"
+                                               FontStyle="Italic"
+                                               Margin="12,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                <TextBlock Grid.Column="2"
                                                Text="{Binding TotalWorked}"
                                                FontSize="14"
                                                FontWeight="SemiBold"

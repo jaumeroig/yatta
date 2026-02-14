@@ -117,7 +117,7 @@ public partial class HoyViewModel : ObservableObject
     {
         var now = DateTime.Now;
         CurrentDate = now.ToString("D");
-        CurrentTime = now.ToString("HH:mm:ss");
+        CurrentTime = now.ToString("HH:mm");
     }
 
     private async Task LoadDayConfigurationAsync()

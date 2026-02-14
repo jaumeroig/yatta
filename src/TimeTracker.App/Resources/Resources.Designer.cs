@@ -61,7 +61,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:n0} registros · {1}.
+        ///   Looks up a localized string similar to {0:n0} entradas · {1}.
         /// </summary>
         internal static string Activities_Subtitle {
             get {
@@ -70,7 +70,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0:n0} registros.
+        ///   Looks up a localized string similar to {0:n0} entradas.
         /// </summary>
         internal static string Activity_MultipleRecords {
             get {
@@ -79,7 +79,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sin registros.
+        ///   Looks up a localized string similar to Sin entradas.
         /// </summary>
         internal static string Activity_NoRecords {
             get {
@@ -88,7 +88,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1 registro.
+        ///   Looks up a localized string similar to 1 entrada.
         /// </summary>
         internal static string Activity_SingleRecord {
             get {
@@ -106,7 +106,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Esta actividad tiene {0} registros asociados. Si la eliminas, se perderán todos los datos..
+        ///   Looks up a localized string similar to Esta actividad tiene {0} entradas asociadas. Si la eliminas, se perderán todos los datos..
         /// </summary>
         internal static string ActivityDetail_DeleteWarning {
             get {
@@ -124,7 +124,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registros.
+        ///   Looks up a localized string similar to Entradas.
         /// </summary>
         internal static string ActivityDetail_RecordCount {
             get {
@@ -475,7 +475,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ¿Estás seguro de que quieres eliminar este registro? Esta acción no se puede deshacer..
+        ///   Looks up a localized string similar to ¿Estás seguro de que quieres eliminar esta entrada? Esta acción no se puede deshacer..
         /// </summary>
         internal static string Dialog_DeleteRecord_Message {
             get {
@@ -484,7 +484,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ¿Eliminar registro?.
+        ///   Looks up a localized string similar to ¿Eliminar entrada?.
         /// </summary>
         internal static string Dialog_DeleteRecord_Title {
             get {
@@ -565,7 +565,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registros de actividad: {0} · Configuraciones de día: {1}.
+        ///   Looks up a localized string similar to Entradas de actividad: {0} · Configuraciones de día: {1}.
         /// </summary>
         internal static string Dialog_Purge_RecordCount {
             get {
@@ -583,7 +583,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Purgado completado correctamente. Se han eliminado {0} registros de actividad y {1} configuraciones de día..
+        ///   Looks up a localized string similar to Purgado completado correctamente. Se han eliminado {0} entradas de actividad y {1} configuraciones de día..
         /// </summary>
         internal static string Dialog_Purge_Success {
             get {
@@ -637,7 +637,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Crea tu primer registro de tiempo.
+        ///   Looks up a localized string similar to Crea tu primera entrada de tiempo.
         /// </summary>
         internal static string Empty_CreateFirstRecord {
             get {
@@ -655,7 +655,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No hay registros.
+        ///   Looks up a localized string similar to No hay entradas.
         /// </summary>
         internal static string Empty_NoRecords {
             get {
@@ -718,11 +718,209 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Más antiguos primero.
+        /// </summary>
+        internal static string Filter_Sort_Ascending {
+            get {
+                return ResourceManager.GetString("Filter_Sort_Ascending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Más recientes primero.
+        /// </summary>
+        internal static string Filter_Sort_Descending {
+            get {
+                return ResourceManager.GetString("Filter_Sort_Descending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar orden cronológico.
+        /// </summary>
+        internal static string Filter_Sort_Tooltip {
+            get {
+                return ResourceManager.GetString("Filter_Sort_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}h {1}m.
         /// </summary>
         internal static string Format_Duration {
             get {
                 return ResourceManager.GetString("Format_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt.
+        /// </summary>
+        internal static string Key_Alt {
+            get {
+                return ResourceManager.GetString("Key_Alt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retroceso.
+        /// </summary>
+        internal static string Key_Backspace {
+            get {
+                return ResourceManager.GetString("Key_Backspace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Control.
+        /// </summary>
+        internal static string Key_Control {
+            get {
+                return ResourceManager.GetString("Key_Control", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supr.
+        /// </summary>
+        internal static string Key_Delete {
+            get {
+                return ResourceManager.GetString("Key_Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abajo.
+        /// </summary>
+        internal static string Key_Down {
+            get {
+                return ResourceManager.GetString("Key_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fin.
+        /// </summary>
+        internal static string Key_End {
+            get {
+                return ResourceManager.GetString("Key_End", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intro.
+        /// </summary>
+        internal static string Key_Enter {
+            get {
+                return ResourceManager.GetString("Key_Enter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esc.
+        /// </summary>
+        internal static string Key_Escape {
+            get {
+                return ResourceManager.GetString("Key_Escape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inicio.
+        /// </summary>
+        internal static string Key_Home {
+            get {
+                return ResourceManager.GetString("Key_Home", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert.
+        /// </summary>
+        internal static string Key_Insert {
+            get {
+                return ResourceManager.GetString("Key_Insert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Izquierda.
+        /// </summary>
+        internal static string Key_Left {
+            get {
+                return ResourceManager.GetString("Key_Left", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Av Pág.
+        /// </summary>
+        internal static string Key_PageDown {
+            get {
+                return ResourceManager.GetString("Key_PageDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re Pág.
+        /// </summary>
+        internal static string Key_PageUp {
+            get {
+                return ResourceManager.GetString("Key_PageUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Derecha.
+        /// </summary>
+        internal static string Key_Right {
+            get {
+                return ResourceManager.GetString("Key_Right", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mayús.
+        /// </summary>
+        internal static string Key_Shift {
+            get {
+                return ResourceManager.GetString("Key_Shift", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Espacio.
+        /// </summary>
+        internal static string Key_Space {
+            get {
+                return ResourceManager.GetString("Key_Space", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tab.
+        /// </summary>
+        internal static string Key_Tab {
+            get {
+                return ResourceManager.GetString("Key_Tab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arriba.
+        /// </summary>
+        internal static string Key_Up {
+            get {
+                return ResourceManager.GetString("Key_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Win.
+        /// </summary>
+        internal static string Key_Win {
+            get {
+                return ResourceManager.GetString("Key_Win", resourceCulture);
             }
         }
         
@@ -1105,7 +1303,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Esta actividad tiene {0} registros asociados. Si la eliminas, se perderán todos los datos..
+        ///   Looks up a localized string similar to Esta actividad tiene {0} entradas asociadas. Si la eliminas, se perderán todos los datos..
         /// </summary>
         internal static string Message_DeleteActivityWarning {
             get {
@@ -1141,7 +1339,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registros.
+        ///   Looks up a localized string similar to Histórico.
         /// </summary>
         internal static string Nav_Records {
             get {
@@ -1294,7 +1492,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registros de tiempo.
+        ///   Looks up a localized string similar to Histórico de tiempo.
         /// </summary>
         internal static string Page_Records_Title {
             get {
@@ -1510,7 +1708,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Editar registro.
+        ///   Looks up a localized string similar to Editar entrada.
         /// </summary>
         internal static string RecordDetail_EditTitle {
             get {
@@ -1519,7 +1717,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nuevo registro.
+        ///   Looks up a localized string similar to Nueva entrada.
         /// </summary>
         internal static string RecordDetail_NewTitle {
             get {
@@ -1744,6 +1942,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TimeTracker.
+        /// </summary>
+        internal static string TitleBar_Title {
+            get {
+                return ResourceManager.GetString("TitleBar_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Registro en curso.
         /// </summary>
         internal static string Today_ActiveRecord {
@@ -1861,7 +2068,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No hay registros para hoy.
+        ///   Looks up a localized string similar to No hay entradas para hoy.
         /// </summary>
         internal static string Today_NoRecords {
             get {
@@ -1879,7 +2086,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Registros de hoy.
+        ///   Looks up a localized string similar to Histórico de hoy.
         /// </summary>
         internal static string Today_Records {
             get {
@@ -2086,7 +2293,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error al guardar el registro. Inténtalo de nuevo..
+        ///   Looks up a localized string similar to Error al guardar la entrada. Inténtalo de nuevo..
         /// </summary>
         internal static string Validation_RecordSaveError {
             get {

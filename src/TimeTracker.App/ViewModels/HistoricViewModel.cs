@@ -1,14 +1,17 @@
 namespace TimeTracker.App.ViewModels;
 
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Humanizer;
 using TimeTracker.App.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
+using AppResources = TimeTracker.App.Resources.Resources;
 
 /// <summary>
 /// ViewModel for time records management.
@@ -72,7 +75,7 @@ public partial class HistoricViewModel : ObservableObject
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
 
         // Add "All activities" option at the beginning
-        var allActivitiesText = Resources.Resources.Filter_AllActivities;
+        var allActivitiesText = AppResources.Filter_AllActivities;
         var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
         var activitiesWithAll = new List<Activity> { allActivitiesOption };
         activitiesWithAll.AddRange(_allActivities);
@@ -164,6 +167,7 @@ public partial class HistoricViewModel : ObservableObject
         {
             Date = g.Key,
             DateDisplay = FormatDate(g.Key),
+            TimeAgo = FormatTimeAgo(g.Key),
             TotalWorked = FormatDuration(_timeCalculatorService.CalculateTotalHours(g)),
             Records = new ObservableCollection<TimeRecordDisplay>(
                 g.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r))),
@@ -186,7 +190,7 @@ public partial class HistoricViewModel : ObservableObject
         return new TimeRecordDisplay
         {
             Id = record.Id,
-            ActivityName = activity?.Name ?? Resources.Resources.Activity_Unknown,
+            ActivityName = activity?.Name ?? AppResources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
@@ -214,7 +218,7 @@ public partial class HistoricViewModel : ObservableObject
 
         return new TimeSegment
         {
-            Label = activity?.Name ?? Resources.Resources.Activity_Unknown,
+            Label = activity?.Name ?? AppResources.Activity_Unknown,
             Start = date.ToDateTime(record.StartTime),
             End = date.ToDateTime(record.EndTime!.Value),
             Color = color
@@ -223,7 +227,16 @@ public partial class HistoricViewModel : ObservableObject
 
     private static string FormatDate(DateOnly date)
     {
-        return date.ToLongDateString();
+        var culture = AppResources.Culture ?? CultureInfo.CurrentCulture;
+        var longDate = date.ToString("D", culture);
+        return char.ToUpper(longDate[0], culture) + longDate[1..];
+    }
+
+    private static string FormatTimeAgo(DateOnly date)
+    {
+        var culture = AppResources.Culture ?? CultureInfo.CurrentCulture;
+        var dateTime = date.ToDateTime(TimeOnly.MinValue);
+        return dateTime.Humanize(culture: culture);
     }
 
     private static string FormatDuration(double hours)
@@ -231,7 +244,7 @@ public partial class HistoricViewModel : ObservableObject
         var totalMinutes = (int)(hours * 60);
         var h = totalMinutes / 60;
         var m = totalMinutes % 60;
-        var format = Resources.Resources.Format_Duration;
+        var format = AppResources.Format_Duration;
         return string.Format(format, h, m);
     }
 
@@ -277,6 +290,7 @@ public class DayGroup
 {
     public DateOnly Date { get; set; }
     public string DateDisplay { get; set; } = string.Empty;
+    public string TimeAgo { get; set; } = string.Empty;
     public string TotalWorked { get; set; } = string.Empty;
     public ObservableCollection<TimeRecordDisplay> Records { get; set; } = [];
     public ObservableCollection<TimeSegment> TimelineSegments { get; set; } = [];
