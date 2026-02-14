@@ -121,8 +121,8 @@ public partial class HistoricDetailViewModel : ObservableObject
             PageTitle = Resources.Resources.RecordDetail_NewTitle;
             ActivityId = Guid.Empty;
             Date = DateTime.Today;
-            StartTimeText = "09:00";
-            EndTimeText = "10:00";
+            StartTimeText = await GetDefaultStartTimeAsync(DateOnly.FromDateTime(Date));
+            EndTimeText = "";
             Notes = string.Empty;
         }
 
@@ -153,6 +153,27 @@ public partial class HistoricDetailViewModel : ObservableObject
         StartTimeText = record.StartTime.ToString("HH:mm");
         EndTimeText = record.EndTime?.ToString("HH:mm") ?? "";
         Notes = record.Notes ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Gets the default start time for a new record on the given date.
+    /// If there are existing records, returns the end time of the last one.
+    /// Otherwise, returns the current time.
+    /// </summary>
+    private async Task<string> GetDefaultStartTimeAsync(DateOnly date)
+    {
+        var records = await _timeRecordRepository.GetByDateAsync(date);
+        var lastRecord = records
+            .Where(r => r.EndTime.HasValue)
+            .OrderByDescending(r => r.EndTime)
+            .FirstOrDefault();
+
+        if (lastRecord?.EndTime != null)
+        {
+            return lastRecord.EndTime.Value.ToString("HH:mm");
+        }
+
+        return DateTime.Now.ToString("HH:mm");
     }
 
     /// <summary>
