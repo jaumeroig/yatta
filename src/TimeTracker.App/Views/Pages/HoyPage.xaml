@@ -299,10 +299,11 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Timeline bar -->
+                    <!-- Timeline bar (drag segment edges to resize) -->
                     <controls:WorkdayTimelineBar Segments="{Binding TimelineSegments}"
                                                  WorkdayStart="{Binding WorkdayStart}"
                                                  WorkdayEnd="{Binding WorkdayEnd}"
+                                                 SegmentResizedCommand="{Binding SegmentResizedCommand}"
                                                  BarHeight="28"
                                                  CornerRadius="6"
                                                  Margin="0,0,0,16"/>
