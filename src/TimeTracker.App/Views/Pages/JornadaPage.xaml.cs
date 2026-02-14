@@ -5,28 +5,23 @@ using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
-using Wpf.Ui.Controls;
 
 namespace TimeTracker.App.Views.Pages;
 
 /// <summary>
-/// Page to manage the workday with calendar and time slots.
+/// Page to manage the workday with calendar and time records (read-only view).
 /// </summary>
 public partial class JornadaPage : Page
 {
     private readonly JornadaViewModel _viewModel;
-    private readonly IDialogService _dialogService;
     private readonly IBreadcrumbService _breadcrumbService;
-    private ContentDialog? _slotDialog;
-    private bool _isSlotDialogVisible;
     private bool _isSubscribedToChanges;
     private bool _isUpdatingCalendar;
 
-    public JornadaPage(JornadaViewModel viewModel, IDialogService dialogService, IBreadcrumbService breadcrumbService)
+    public JornadaPage(JornadaViewModel viewModel, IBreadcrumbService breadcrumbService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
-        _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         _breadcrumbService = breadcrumbService ?? throw new ArgumentNullException(nameof(breadcrumbService));
         DataContext = viewModel;
     }
@@ -54,24 +49,11 @@ public partial class JornadaPage : Page
             _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
             _isSubscribedToChanges = false;
         }
-
-        DisposeDialog();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(JornadaViewModel.IsDialogOpen))
-        {
-            if (_viewModel.IsDialogOpen)
-            {
-                _ = ShowSlotDialogAsync();
-            }
-            else
-            {
-                _slotDialog?.Hide();
-            }
-        }
-        else if (e.PropertyName == nameof(JornadaViewModel.SelectedDate))
+        if (e.PropertyName == nameof(JornadaViewModel.SelectedDate))
         {
             // Sincronitzar el calendari quan canvia la data des del ViewModel
             if (!_isUpdatingCalendar && WorkdayCalendar.SelectedDate != _viewModel.SelectedDate)
@@ -121,70 +103,5 @@ public partial class JornadaPage : Page
             // Si el mes canvia, actualitzar el ViewModel per refrescar el resum mensual
             _viewModel.SelectedDate = newDate;
         }
-    }
-
-    private async Task ShowSlotDialogAsync()
-    {
-        if (_slotDialog == null)
-        {
-            _slotDialog = CreateDialog();
-            _slotDialog.Closed += OnSlotDialogClosed;
-        }
-
-        if (_isSlotDialogVisible)
-        {
-            return;
-        }
-
-        try
-        {
-            _isSlotDialogVisible = true;
-            await _slotDialog.ShowAsync();
-        }
-        finally
-        {
-            _isSlotDialogVisible = false;
-        }
-    }
-
-    private ContentDialog CreateDialog()
-    {
-        var content = CreateDialogContent();
-        var dialogHost = _dialogService.GetDialogHost();
-        
-        return new ContentDialog(dialogHost)
-        {
-            Content = content
-        };
-    }
-
-    private FrameworkElement CreateDialogContent()
-    {
-        if (Resources["SlotDialogTemplate"] is DataTemplate template && template.LoadContent() is FrameworkElement element)
-        {
-            element.DataContext = _viewModel;
-            return element;
-        }
-
-        throw new InvalidOperationException("Dialog template 'SlotDialogTemplate' not found.");
-    }
-
-    private void DisposeDialog()
-    {
-        if (_slotDialog == null)
-        {
-            return;
-        }
-
-        _slotDialog.Closed -= OnSlotDialogClosed;
-        _slotDialog.Hide();
-        _slotDialog = null;
-        _isSlotDialogVisible = false;
-    }
-
-    private void OnSlotDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-    {
-        _viewModel.IsDialogOpen = false;
-        _isSlotDialogVisible = false;
     }
 }

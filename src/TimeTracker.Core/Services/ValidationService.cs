@@ -4,7 +4,7 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// Implementation of the service for validating records and workday slots.
+/// Implementation of the service for validating time records.
 /// Note: Error messages should be translated through the localization service.
 /// </summary>
 public class ValidationService : IValidationService
@@ -79,43 +79,6 @@ public class ValidationService : IValidationService
     }
 
     /// <inheritdoc/>
-    public bool ValidateNoOverlap(WorkdaySlot slot, IEnumerable<WorkdaySlot> existingSlots)
-    {
-        return ValidateNoOverlap(slot, existingSlots, out _);
-    }
-
-    /// <inheritdoc/>
-    public bool ValidateNoOverlap(WorkdaySlot slot, IEnumerable<WorkdaySlot> existingSlots, out string errorMessage)
-    {
-        errorMessage = string.Empty;
-
-        foreach (var existing in existingSlots)
-        {
-            // Do not validate against the same slot
-            if (existing.Id == slot.Id)
-            {
-                continue;
-            }
-
-            // Check if there is overlap
-            // Overlap if:
-            // - The start of the new slot is between the start and end of an existing one
-            // - The end of the new slot is between the start and end of an existing one
-            // - The new slot completely surrounds an existing one
-            if ((slot.StartTime >= existing.StartTime && slot.StartTime < existing.EndTime) ||
-                (slot.EndTime > existing.StartTime && slot.EndTime <= existing.EndTime) ||
-                (slot.StartTime <= existing.StartTime && slot.EndTime >= existing.EndTime))
-            {
-                // Resource key: Validation_OverlappingSlot (with format of 2 arguments: startTime, endTime)
-                errorMessage = $"Validation_OverlappingSlot|{existing.StartTime:HH\\:mm}|{existing.EndTime:HH\\:mm}";
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /// <inheritdoc/>
     public bool ValidateTimeRecord(TimeRecord record)
     {
         return ValidateTimeRecord(record, out _);
@@ -134,18 +97,5 @@ public class ValidationService : IValidationService
 
         // Validate that end time is after start time
         return ValidateTimeRange(record.StartTime, record.EndTime.Value, out errorMessage);
-    }
-
-    /// <inheritdoc/>
-    public bool ValidateWorkdaySlot(WorkdaySlot slot)
-    {
-        return ValidateWorkdaySlot(slot, out _);
-    }
-
-    /// <inheritdoc/>
-    public bool ValidateWorkdaySlot(WorkdaySlot slot, out string errorMessage)
-    {
-        // Validate that end time is after start time
-        return ValidateTimeRange(slot.StartTime, slot.EndTime, out errorMessage);
     }
 }

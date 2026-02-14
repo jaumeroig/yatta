@@ -238,17 +238,10 @@
                     Margin="0,0,0,20">
                 <StackPanel>
 
-                    <!-- Timeline bar -->
-                    <controls:WorkdayTimelineBar Segments="{Binding TimelineSegments}"
-                                                 WorkdayStart="{Binding WorkdayStart}"
-                                                 WorkdayEnd="{Binding WorkdayEnd}"
-                                                 BarHeight="28"
-                                                 CornerRadius="6"
-                                                 Margin="0,0,0,16"/>
-
-                    <!-- Stats row: Worked / Target / Remaining -->
+                    <!-- Stats row: Worked / Target / Remaining / End Time -->
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -291,7 +284,29 @@
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
+
+                        <!-- Estimated end time (working days only) -->
+                        <StackPanel Grid.Column="3"
+                                    Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="{local:Localize Today_EstimatedEndTime}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding EstimatedEndTime}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
                     </Grid>
+
+                    <!-- Timeline bar -->
+                    <controls:WorkdayTimelineBar Segments="{Binding TimelineSegments}"
+                                                 WorkdayStart="{Binding WorkdayStart}"
+                                                 WorkdayEnd="{Binding WorkdayEnd}"
+                                                 BarHeight="28"
+                                                 CornerRadius="6"
+                                                 Margin="0,0,0,16"/>
+
 
                     <!-- Active Record (when tracking) -->
                     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"

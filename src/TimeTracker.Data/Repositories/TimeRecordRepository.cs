@@ -87,6 +87,7 @@ public class TimeRecordRepository : ITimeRecordRepository
         existing.StartTime = timeRecord.StartTime;
         existing.EndTime = timeRecord.EndTime;
         existing.Notes = timeRecord.Notes;
+        existing.Telework = timeRecord.Telework;
 
         await _context.SaveChangesAsync();
     }

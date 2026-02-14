@@ -40,6 +40,9 @@ public partial class HoyViewModel : ObservableObject
     private string _remainingTime = string.Empty;
 
     [ObservableProperty]
+    private string _estimatedEndTime = "--:--";
+
+    [ObservableProperty]
     private string _workedTime = "0h 0m";
 
     [ObservableProperty]
@@ -116,6 +119,7 @@ public partial class HoyViewModel : ObservableObject
     {
         UpdateDateTime();
         UpdateElapsedTime();
+        UpdateWorkedTime();
         UpdateRemainingTime();
         UpdateActiveSegmentEnd();
     }
@@ -235,32 +239,18 @@ public partial class HoyViewModel : ObservableObject
 
         TimelineSegments = new ObservableCollection<TimeSegment>(segments);
 
-        // Calculate dynamic WorkdayStart/WorkdayEnd from actual records
+        // Set WorkdayStart/WorkdayEnd to match the actual records exactly
         if (records.Count > 0)
         {
             var minStart = records.Min(r => r.StartTime);
             var maxEnd = records.Max(r => r.EndTime ?? TimeOnly.FromDateTime(DateTime.Now));
 
-            // Add 30min padding and clamp to 6:00-23:00.
-            // Use DateTime arithmetic to avoid TimeOnly wrap-around (e.g., 00:10 - 30min => 23:40).
-            var paddedStart = today.ToDateTime(minStart).AddMinutes(-30);
-            var paddedEnd = today.ToDateTime(maxEnd).AddMinutes(30);
-
-            var clampMin = today.ToDateTime(new TimeOnly(6, 0));
-            var clampMax = today.ToDateTime(new TimeOnly(23, 0));
-
-            WorkdayStart = paddedStart < clampMin ? clampMin : paddedStart;
-            WorkdayEnd = paddedEnd > clampMax ? clampMax : paddedEnd;
+            WorkdayStart = today.ToDateTime(minStart);
+            WorkdayEnd = today.ToDateTime(maxEnd);
 
             if (WorkdayEnd <= WorkdayStart)
             {
-                WorkdayStart = today.ToDateTime(minStart);
-                WorkdayEnd = today.ToDateTime(maxEnd);
-
-                if (WorkdayEnd <= WorkdayStart)
-                {
-                    WorkdayEnd = WorkdayStart.AddMinutes(30);
-                }
+                WorkdayEnd = WorkdayStart.AddMinutes(30);
             }
         }
         else
@@ -272,8 +262,32 @@ public partial class HoyViewModel : ObservableObject
 
     private void CalculateWorkedTime(List<TimeRecord> records)
     {
-        var totalHours = _timeCalculatorService.CalculateTotalHours(records);
+        var totalHours = CalculateTotalHoursIncludingActive(records);
         WorkedTime = FormatDuration(totalHours);
+    }
+
+    private async void UpdateWorkedTime()
+    {
+        if (!HasActiveRecord) return;
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var records = (await _timeRecordRepository.GetByDateAsync(today)).ToList();
+        var totalHours = CalculateTotalHoursIncludingActive(records);
+        WorkedTime = FormatDuration(totalHours);
+    }
+
+    private double CalculateTotalHoursIncludingActive(List<TimeRecord> records)
+    {
+        var totalHours = _timeCalculatorService.CalculateTotalHours(records);
+
+        var activeRecord = records.FirstOrDefault(r => r.EndTime == null);
+        if (activeRecord != null)
+        {
+            var now = TimeOnly.FromDateTime(DateTime.Now);
+            totalHours += _timeCalculatorService.CalculateDuration(activeRecord.StartTime, now);
+        }
+
+        return totalHours;
     }
 
     private void UpdateElapsedTime()
@@ -298,12 +312,9 @@ public partial class HoyViewModel : ObservableObject
         {
             lastSegment.End = newEnd;
 
-            // Update WorkdayEnd if needed
-            var paddedEnd = newEnd.AddMinutes(30);
-            var clampMax = DateTime.Today.AddHours(23);
-            var candidateEnd = paddedEnd > clampMax ? clampMax : paddedEnd;
-            if (candidateEnd > WorkdayEnd)
-                WorkdayEnd = candidateEnd;
+            // Update WorkdayEnd to match the active segment end
+            if (newEnd > WorkdayEnd)
+                WorkdayEnd = newEnd;
 
             // Force re-render by replacing the collection
             TimelineSegments = new ObservableCollection<TimeSegment>(TimelineSegments);
@@ -316,20 +327,24 @@ public partial class HoyViewModel : ObservableObject
 
         var today = DateOnly.FromDateTime(DateTime.Today);
         var records = (await _timeRecordRepository.GetByDateAsync(today)).ToList();
-        var workedHours = _timeCalculatorService.CalculateTotalHours(records);
-
-        var activeRecord = records.FirstOrDefault(r => r.EndTime == null);
-        if (activeRecord != null)
-        {
-            var now = TimeOnly.FromDateTime(DateTime.Now);
-            var elapsed = _timeCalculatorService.CalculateDuration(activeRecord.StartTime, now);
-            workedHours += elapsed;
-        }
+        var workedHours = CalculateTotalHoursIncludingActive(records);
 
         var workedDuration = TimeSpan.FromHours(workedHours);
         var remaining = await _workdayConfigService.GetRemainingWorkTimeAsync(today, workedDuration);
 
         RemainingTime = remaining > TimeSpan.Zero ? FormatTimeSpan(remaining) : "0h 0m";
+        if (remaining > TimeSpan.Zero)
+        {
+            var endTime = DateTime.Now.Add(remaining);
+            // Round up to the next minute if there are any remaining seconds
+            if (endTime.Second > 0)
+                endTime = endTime.AddMinutes(1);
+            EstimatedEndTime = endTime.ToString("HH:mm");
+        }
+        else
+        {
+            EstimatedEndTime = "--:--";
+        }
     }
 
     private void UpdateWorkdayStartTime(List<TimeRecord> records)

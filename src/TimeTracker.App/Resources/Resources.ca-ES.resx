@@ -654,6 +654,9 @@
   <data name="Today_RemainingTime" xml:space="preserve">
     <value>Temps restant</value>
   </data>
+  <data name="Today_EstimatedEndTime" xml:space="preserve">
+    <value>Hora de sortida</value>
+  </data>
   <data name="Today_WorkedTime" xml:space="preserve">
     <value>Temps treballat</value>
   </data>

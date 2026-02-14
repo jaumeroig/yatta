@@ -280,7 +280,6 @@ public partial class App : Application
         // Register repositories
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<ITimeRecordRepository, TimeRecordRepository>();
-        services.AddScoped<IWorkdaySlotRepository, WorkdaySlotRepository>();
         services.AddScoped<ISettingsRepository, SettingsRepository>();
         services.AddScoped<IWorkdayRepository, WorkdayRepository>();
 
