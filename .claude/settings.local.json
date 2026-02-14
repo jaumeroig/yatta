@@ -6,7 +6,10 @@
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(powershell -Command:*)",
-      "Bash(dotnet ef migrations add:*)"
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(cmd.exe /c \"rmdir /s /q \"\"C:\\\\Users\\\\nahue\\\\Documents\\\\_Nahuel\\\\Programacion\\\\.___YATTA\\\\time-tracker\\\\src\\\\TimeTracker.App\\\\obj\"\"\")",
+      "Bash(dotnet test:*)"
     ]
   }
 }

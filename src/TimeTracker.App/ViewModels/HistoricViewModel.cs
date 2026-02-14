@@ -163,18 +163,26 @@ public partial class HistoricViewModel : ObservableObject
             ? groups.OrderBy(g => g.Key)           // Ascending: oldest first
             : groups.OrderByDescending(g => g.Key); // Descending: newest first
 
-        var groupsList = orderedGroups.Select(g => new DayGroup
+        var groupsList = orderedGroups.Select(g =>
         {
-            Date = g.Key,
-            DateDisplay = FormatDate(g.Key),
-            TimeAgo = FormatTimeAgo(g.Key),
-            TotalWorked = FormatDuration(_timeCalculatorService.CalculateTotalHours(g)),
-            Records = new ObservableCollection<TimeRecordDisplay>(
-                g.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r))),
-            TimelineSegments = new ObservableCollection<TimeSegment>(
-                g.Where(r => r.EndTime.HasValue)
-                 .OrderBy(r => r.StartTime)
-                 .Select(r => CreateTimelineSegment(r, g.Key)))
+            var records = g.ToList();
+            var workdayStart = g.Key.ToDateTime(records.Min(r => r.StartTime));
+            var workdayEnd = CalculateWorkdayEnd(records, g.Key);
+
+            return new DayGroup
+            {
+                Date = g.Key,
+                DateDisplay = FormatDate(g.Key),
+                TimeAgo = FormatTimeAgo(g.Key),
+                TotalWorked = FormatDuration(CalculateTotalHoursWithEffectiveEnd(records, g.Key)),
+                WorkdayStart = workdayStart,
+                WorkdayEnd = workdayEnd,
+                Records = new ObservableCollection<TimeRecordDisplay>(
+                    records.OrderBy(r => r.StartTime).Select(r => CreateRecordDisplay(r))),
+                TimelineSegments = new ObservableCollection<TimeSegment>(
+                    records.OrderBy(r => r.StartTime)
+                           .Select(r => CreateTimelineSegment(r, g.Key)))
+            };
         });
 
         GroupedRecords = new ObservableCollection<DayGroup>(groupsList);
@@ -183,9 +191,8 @@ public partial class HistoricViewModel : ObservableObject
     private TimeRecordDisplay CreateRecordDisplay(TimeRecord record)
     {
         var activity = _allActivities.FirstOrDefault(a => a.Id == record.ActivityId);
-        var duration = record.EndTime.HasValue
-            ? _timeCalculatorService.CalculateDuration(record.StartTime, record.EndTime.Value)
-            : 0;
+        var effectiveEnd = CalculateEffectiveEnd(record, record.Date);
+        var duration = (effectiveEnd - record.Date.ToDateTime(record.StartTime)).TotalHours;
 
         return new TimeRecordDisplay
         {
@@ -198,6 +205,42 @@ public partial class HistoricViewModel : ObservableObject
             Duration = FormatDuration(duration),
             Date = record.Date
         };
+    }
+
+    private static DateTime CalculateEffectiveEnd(TimeRecord record, DateOnly date)
+    {
+        if (record.EndTime.HasValue)
+            return date.ToDateTime(record.EndTime.Value);
+
+        var isToday = date == DateOnly.FromDateTime(DateTime.Today);
+        if (isToday)
+            return DateTime.Now;
+
+        return date.ToDateTime(record.StartTime).AddHours(1);
+    }
+
+    private static double CalculateTotalHoursWithEffectiveEnd(List<TimeRecord> records, DateOnly date)
+    {
+        double totalHours = 0;
+        foreach (var record in records)
+        {
+            var start = date.ToDateTime(record.StartTime);
+            var end = CalculateEffectiveEnd(record, date);
+            totalHours += (end - start).TotalHours;
+        }
+        return totalHours;
+    }
+
+    private static DateTime CalculateWorkdayEnd(List<TimeRecord> records, DateOnly date)
+    {
+        var maxEnd = DateTime.MinValue;
+        foreach (var record in records)
+        {
+            var end = CalculateEffectiveEnd(record, date);
+            if (end > maxEnd)
+                maxEnd = end;
+        }
+        return maxEnd;
     }
 
     private TimeSegment CreateTimelineSegment(TimeRecord record, DateOnly date)
@@ -220,7 +263,7 @@ public partial class HistoricViewModel : ObservableObject
         {
             Label = activity?.Name ?? AppResources.Activity_Unknown,
             Start = date.ToDateTime(record.StartTime),
-            End = date.ToDateTime(record.EndTime!.Value),
+            End = CalculateEffectiveEnd(record, date),
             Color = color
         };
     }
@@ -292,6 +335,8 @@ public class DayGroup
     public string DateDisplay { get; set; } = string.Empty;
     public string TimeAgo { get; set; } = string.Empty;
     public string TotalWorked { get; set; } = string.Empty;
+    public DateTime WorkdayStart { get; set; }
+    public DateTime WorkdayEnd { get; set; }
     public ObservableCollection<TimeRecordDisplay> Records { get; set; } = [];
     public ObservableCollection<TimeSegment> TimelineSegments { get; set; } = [];
 }
