@@ -229,10 +229,12 @@ public partial class HoyViewModel : ObservableObject
 
                 return new TimeSegment
                 {
+                    RecordId = r.Id,
                     Label = activity?.Name ?? TimeTracker.App.Resources.Resources.Activity_Unknown,
                     Start = today.ToDateTime(r.StartTime),
                     End = today.ToDateTime(endTime),
-                    Color = color
+                    Color = color,
+                    IsActive = r.EndTime == null
                 };
             })
             .ToList();
@@ -402,6 +404,45 @@ public partial class HoyViewModel : ObservableObject
         await _timeRecordRepository.UpdateAsync(record);
 
         await LoadTodayRecordsAsync();
+    }
+
+    [RelayCommand]
+    private async Task SegmentResizedAsync(SegmentResizeResult? result)
+    {
+        if (result?.ResizedSegment.RecordId == null) return;
+
+        // Update the primary resized segment
+        await UpdateSegmentRecordAsync(result.ResizedSegment);
+
+        // Update the affected neighbor if it was pushed/shrunk
+        if (result.AffectedNeighbor?.RecordId != null)
+        {
+            await UpdateSegmentRecordAsync(result.AffectedNeighbor);
+        }
+
+        await LoadTodayRecordsAsync();
+    }
+
+    /// <summary>
+    /// Persists a segment's current Start/End times to the database.
+    /// For active records (EndTime == null), only StartTime is updated.
+    /// </summary>
+    private async Task UpdateSegmentRecordAsync(TimeSegment segment)
+    {
+        if (segment.RecordId == null) return;
+
+        var record = await _timeRecordRepository.GetByIdAsync(segment.RecordId.Value);
+        if (record == null) return;
+
+        record.StartTime = TimeOnly.FromDateTime(segment.Start);
+
+        // Only update EndTime for completed records; active records keep null EndTime
+        if (record.EndTime != null)
+        {
+            record.EndTime = TimeOnly.FromDateTime(segment.End);
+        }
+
+        await _timeRecordRepository.UpdateAsync(record);
     }
 
     [RelayCommand]
