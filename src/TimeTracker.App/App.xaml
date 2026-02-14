@@ -33,8 +33,6 @@
             <converters:BarWidthConverter x:Key="BarWidthConverter" />
             <converters:DateToWorkdayStartConverter x:Key="DateToWorkdayStartConverter" />
             <converters:DateToWorkdayEndConverter x:Key="DateToWorkdayEndConverter" />
-            <converters:DateOnlyToWorkdayStartConverter x:Key="DateOnlyToWorkdayStartConverter" />
-            <converters:DateOnlyToWorkdayEndConverter x:Key="DateOnlyToWorkdayEndConverter" />
             
             <!-- Bar Chart Colors -->
             <SolidColorBrush x:Key="OfficeBarColor">#4CAF50</SolidColorBrush>

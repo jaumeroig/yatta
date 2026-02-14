@@ -195,8 +195,8 @@ mc:Ignorable="d"
                                 Margin="0,0,0,12"
                                 BarHeight="20"
                                 CornerRadius="4"
-                                WorkdayStart="{Binding Date, Converter={StaticResource DateOnlyToWorkdayStartConverter}}"
-                                WorkdayEnd="{Binding Date, Converter={StaticResource DateOnlyToWorkdayEndConverter}}"
+                                WorkdayStart="{Binding WorkdayStart}"
+                                WorkdayEnd="{Binding WorkdayEnd}"
                                 Segments="{Binding TimelineSegments}" />
 
                             <!-- Records for this day -->
