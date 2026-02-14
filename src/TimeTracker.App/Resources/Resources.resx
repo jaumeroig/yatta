@@ -870,4 +870,7 @@
   <data name="Key_Down" xml:space="preserve">
     <value>Abajo</value>
   </data>
+  <data name="TitleBar_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
 </root>

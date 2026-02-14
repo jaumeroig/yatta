@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv:*)",
+      "Bash(dotnet build:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(dotnet ef migrations add:*)"
+    ]
+  }
+}

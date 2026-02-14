@@ -1,6 +1,7 @@
 namespace TimeTracker.App.ViewModels;
 
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -262,12 +263,14 @@ public partial class JornadaViewModel : ObservableObject
 
     private void UpdateDateDisplay()
     {
-        SelectedDateDisplay = SelectedDate.ToString("D");
+        var culture = Resources.Resources.Culture ?? CultureInfo.CurrentCulture;
+        var longDate = SelectedDate.ToString("D", culture);
+        SelectedDateDisplay = char.ToUpper(longDate[0], culture) + longDate[1..];
     }
 
     private void UpdateMonthYearDisplay()
     {
-        var culture = Thread.CurrentThread.CurrentCulture;
+        var culture = Resources.Resources.Culture ?? CultureInfo.CurrentCulture;
         var month = culture.TextInfo.ToTitleCase(SelectedDate.ToString("MMMM", culture));
         MonthYear = $"{month} {SelectedDate.Year}";
     }
