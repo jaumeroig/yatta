@@ -25,7 +25,6 @@ public partial class HistoricViewModel : ObservableObject
     private readonly ISettingsRepository _settingsRepository;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
-    private bool _isLoading;
 
     [ObservableProperty]
     private ObservableCollection<DayGroup> _groupedRecords = [];
@@ -106,11 +105,6 @@ public partial class HistoricViewModel : ObservableObject
     /// </summary>
     partial void OnSortAscendingChanged(bool value)
     {
-        if (!_isLoading)
-        {
-            _ = SaveSortPreferenceAsync(value);
-        }
-
         ApplyFilters();
     }
 

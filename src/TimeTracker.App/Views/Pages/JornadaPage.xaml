@@ -243,7 +243,7 @@ mc:Ignorable="d"
                 <Grid Grid.Row="0" Margin="0,0,0,24">
                     <ui:Button Appearance="Primary"
                                Command="{Binding OpenNewSlotDialogCommand}"
-                               Height="40"
+                               Height="33"
                                Padding="16,0"
                                HorizontalAlignment="Right">
                         <StackPanel Orientation="Horizontal">

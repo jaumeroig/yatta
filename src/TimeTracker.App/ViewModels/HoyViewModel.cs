@@ -55,6 +55,12 @@ public partial class HoyViewModel : ObservableObject
     private ObservableCollection<TimeSegment> _timelineSegments = [];
 
     [ObservableProperty]
+    private DateTime _workdayStart = DateTime.Today.AddHours(9);
+
+    [ObservableProperty]
+    private DateTime _workdayEnd = DateTime.Today.AddHours(18);
+
+    [ObservableProperty]
     private string _elapsedTime = "0h 0m";
 
     [ObservableProperty]
@@ -111,6 +117,7 @@ public partial class HoyViewModel : ObservableObject
         UpdateDateTime();
         UpdateElapsedTime();
         UpdateRemainingTime();
+        UpdateActiveSegmentEnd();
     }
 
     private void UpdateDateTime()
@@ -195,8 +202,8 @@ public partial class HoyViewModel : ObservableObject
     private void UpdateTimelineSegments(List<TimeRecord> records)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
+        var now = TimeOnly.FromDateTime(DateTime.Now);
         var segments = records
-            .Where(r => r.EndTime.HasValue)
             .OrderBy(r => r.StartTime)
             .Select(r =>
             {
@@ -214,16 +221,53 @@ public partial class HoyViewModel : ObservableObject
                     }
                 }
 
+                var endTime = r.EndTime ?? now;
+
                 return new TimeSegment
                 {
                     Label = activity?.Name ?? TimeTracker.App.Resources.Resources.Activity_Unknown,
                     Start = today.ToDateTime(r.StartTime),
-                    End = today.ToDateTime(r.EndTime!.Value),
+                    End = today.ToDateTime(endTime),
                     Color = color
                 };
-            });
+            })
+            .ToList();
 
         TimelineSegments = new ObservableCollection<TimeSegment>(segments);
+
+        // Calculate dynamic WorkdayStart/WorkdayEnd from actual records
+        if (records.Count > 0)
+        {
+            var minStart = records.Min(r => r.StartTime);
+            var maxEnd = records.Max(r => r.EndTime ?? TimeOnly.FromDateTime(DateTime.Now));
+
+            // Add 30min padding and clamp to 6:00-23:00.
+            // Use DateTime arithmetic to avoid TimeOnly wrap-around (e.g., 00:10 - 30min => 23:40).
+            var paddedStart = today.ToDateTime(minStart).AddMinutes(-30);
+            var paddedEnd = today.ToDateTime(maxEnd).AddMinutes(30);
+
+            var clampMin = today.ToDateTime(new TimeOnly(6, 0));
+            var clampMax = today.ToDateTime(new TimeOnly(23, 0));
+
+            WorkdayStart = paddedStart < clampMin ? clampMin : paddedStart;
+            WorkdayEnd = paddedEnd > clampMax ? clampMax : paddedEnd;
+
+            if (WorkdayEnd <= WorkdayStart)
+            {
+                WorkdayStart = today.ToDateTime(minStart);
+                WorkdayEnd = today.ToDateTime(maxEnd);
+
+                if (WorkdayEnd <= WorkdayStart)
+                {
+                    WorkdayEnd = WorkdayStart.AddMinutes(30);
+                }
+            }
+        }
+        else
+        {
+            WorkdayStart = DateTime.Today.AddHours(9);
+            WorkdayEnd = DateTime.Today.AddHours(18);
+        }
     }
 
     private void CalculateWorkedTime(List<TimeRecord> records)
@@ -240,6 +284,30 @@ public partial class HoyViewModel : ObservableObject
         var startTime = TimeOnly.Parse(ActiveRecord.StartTime);
         var elapsed = _timeCalculatorService.CalculateDuration(startTime, now);
         ElapsedTime = FormatDuration(elapsed);
+    }
+
+    private void UpdateActiveSegmentEnd()
+    {
+        if (!HasActiveRecord || TimelineSegments.Count == 0) return;
+
+        var lastSegment = TimelineSegments[^1];
+        var now = DateTime.Now;
+        var newEnd = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+
+        if (lastSegment.End != newEnd)
+        {
+            lastSegment.End = newEnd;
+
+            // Update WorkdayEnd if needed
+            var paddedEnd = newEnd.AddMinutes(30);
+            var clampMax = DateTime.Today.AddHours(23);
+            var candidateEnd = paddedEnd > clampMax ? clampMax : paddedEnd;
+            if (candidateEnd > WorkdayEnd)
+                WorkdayEnd = candidateEnd;
+
+            // Force re-render by replacing the collection
+            TimelineSegments = new ObservableCollection<TimeSegment>(TimelineSegments);
+        }
     }
 
     private async void UpdateRemainingTime()
