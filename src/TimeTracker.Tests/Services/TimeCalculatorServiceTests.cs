@@ -115,7 +115,7 @@ public class TimeCalculatorServiceTests
     /// Verifies that CalculateTotalHours returns zero when there are no records.
     /// </summary>
     [Fact]
-    public void CalculateTotalHours_TimeRecords_WhenEmpty_ShouldReturnZero()
+    public void CalculateTotalHours_WhenEmpty_ShouldReturnZero()
     {
         // Arrange
         var records = Enumerable.Empty<TimeRecord>();
@@ -131,7 +131,7 @@ public class TimeCalculatorServiceTests
     /// Verifies that CalculateTotalHours correctly sums the hours of the records.
     /// </summary>
     [Fact]
-    public void CalculateTotalHours_TimeRecords_ShouldSumAllRecords()
+    public void CalculateTotalHours_ShouldSumAllRecords()
     {
         // Arrange
         var records = new List<TimeRecord>
@@ -163,7 +163,7 @@ public class TimeCalculatorServiceTests
     /// Verifies that CalculateTotalHours ignores records without end time.
     /// </summary>
     [Fact]
-    public void CalculateTotalHours_TimeRecords_ShouldIgnoreRecordsWithoutEndTime()
+    public void CalculateTotalHours_ShouldIgnoreRecordsWithoutEndTime()
     {
         // Arrange
         var records = new List<TimeRecord>
@@ -193,88 +193,34 @@ public class TimeCalculatorServiceTests
 
     #endregion
 
-    #region CalculateTotalHours WorkdaySlot Tests
-
-    /// <summary>
-    /// Verifies that CalculateTotalHours for slots returns zero when there are none.
-    /// </summary>
-    [Fact]
-    public void CalculateTotalHours_WorkdaySlots_WhenEmpty_ShouldReturnZero()
-    {
-        // Arrange
-        var slots = Enumerable.Empty<WorkdaySlot>();
-
-        // Act
-        var result = _sut.CalculateTotalHours(slots);
-
-        // Assert
-        Assert.Equal(0.0, result);
-    }
-
-    /// <summary>
-    /// Verifies that CalculateTotalHours correctly sums the hours of the slots.
-    /// </summary>
-    [Fact]
-    public void CalculateTotalHours_WorkdaySlots_ShouldSumAllSlots()
-    {
-        // Arrange
-        var slots = new List<WorkdaySlot>
-        {
-            new WorkdaySlot
-            {
-                Id = Guid.NewGuid(),
-                Date = DateOnly.FromDateTime(DateTime.Today),
-                StartTime = new TimeOnly(8, 0),
-                EndTime = new TimeOnly(14, 0),
-                Telework = false
-            },
-            new WorkdaySlot
-            {
-                Id = Guid.NewGuid(),
-                Date = DateOnly.FromDateTime(DateTime.Today),
-                StartTime = new TimeOnly(15, 0),
-                EndTime = new TimeOnly(18, 0),
-                Telework = true
-            }
-        };
-
-        // Act
-        var result = _sut.CalculateTotalHours(slots);
-
-        // Assert
-        Assert.Equal(9.0, result);
-    }
-
-    #endregion
-
     #region CalculateTeleworkHours Tests
 
     /// <summary>
-    /// Verifies that CalculateTeleworkHours returns zero when there are no slots.
+    /// Verifies that CalculateTeleworkHours returns zero when there are no records.
     /// </summary>
     [Fact]
     public void CalculateTeleworkHours_WhenEmpty_ShouldReturnZero()
     {
         // Arrange
-        var slots = Enumerable.Empty<WorkdaySlot>();
+        var records = Enumerable.Empty<TimeRecord>();
 
         // Act
-        var result = _sut.CalculateTeleworkHours(slots);
+        var result = _sut.CalculateTeleworkHours(records);
 
         // Assert
         Assert.Equal(0.0, result);
     }
 
     /// <summary>
-    /// Verifies that CalculateTeleworkHours sums only the telework slots.
+    /// Verifies that CalculateTeleworkHours sums only the telework records.
     /// </summary>
     [Fact]
-    public void CalculateTeleworkHours_ShouldSumOnlyTeleworkSlots()
+    public void CalculateTeleworkHours_ShouldSumOnlyTeleworkRecords()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -282,7 +228,7 @@ public class TimeCalculatorServiceTests
                 EndTime = new TimeOnly(14, 0),
                 Telework = false
             },
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -293,7 +239,7 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateTeleworkHours(slots);
+        var result = _sut.CalculateTeleworkHours(records);
 
         // Assert
         Assert.Equal(3.0, result);
@@ -306,9 +252,9 @@ public class TimeCalculatorServiceTests
     public void CalculateTeleworkHours_WhenNoTelework_ShouldReturnZero()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -319,7 +265,33 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateTeleworkHours(slots);
+        var result = _sut.CalculateTeleworkHours(records);
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    /// <summary>
+    /// Verifies that CalculateTeleworkHours ignores records without end time.
+    /// </summary>
+    [Fact]
+    public void CalculateTeleworkHours_ShouldIgnoreRecordsWithoutEndTime()
+    {
+        // Arrange
+        var records = new List<TimeRecord>
+        {
+            new TimeRecord
+            {
+                Id = Guid.NewGuid(),
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                StartTime = new TimeOnly(8, 0),
+                EndTime = null,
+                Telework = true
+            }
+        };
+
+        // Act
+        var result = _sut.CalculateTeleworkHours(records);
 
         // Assert
         Assert.Equal(0.0, result);
@@ -330,31 +302,31 @@ public class TimeCalculatorServiceTests
     #region CalculateOfficeHours Tests
 
     /// <summary>
-    /// Verifies that CalculateOfficeHours returns zero when there are no slots.
+    /// Verifies that CalculateOfficeHours returns zero when there are no records.
     /// </summary>
     [Fact]
     public void CalculateOfficeHours_WhenEmpty_ShouldReturnZero()
     {
         // Arrange
-        var slots = Enumerable.Empty<WorkdaySlot>();
+        var records = Enumerable.Empty<TimeRecord>();
 
         // Act
-        var result = _sut.CalculateOfficeHours(slots);
+        var result = _sut.CalculateOfficeHours(records);
 
         // Assert
         Assert.Equal(0.0, result);
     }
 
     /// <summary>
-    /// Verifies that CalculateOfficeHours sums only the office slots.
+    /// Verifies that CalculateOfficeHours sums only the office records.
     /// </summary>
     [Fact]
-    public void CalculateOfficeHours_ShouldSumOnlyOfficeSlots()
+    public void CalculateOfficeHours_ShouldSumOnlyOfficeRecords()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -362,7 +334,7 @@ public class TimeCalculatorServiceTests
                 EndTime = new TimeOnly(14, 0),
                 Telework = false
             },
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -373,7 +345,7 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateOfficeHours(slots);
+        var result = _sut.CalculateOfficeHours(records);
 
         // Assert
         Assert.Equal(6.0, result);
@@ -386,9 +358,9 @@ public class TimeCalculatorServiceTests
     public void CalculateOfficeHours_WhenAllTelework_ShouldReturnZero()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -399,7 +371,33 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateOfficeHours(slots);
+        var result = _sut.CalculateOfficeHours(records);
+
+        // Assert
+        Assert.Equal(0.0, result);
+    }
+
+    /// <summary>
+    /// Verifies that CalculateOfficeHours ignores records without end time.
+    /// </summary>
+    [Fact]
+    public void CalculateOfficeHours_ShouldIgnoreRecordsWithoutEndTime()
+    {
+        // Arrange
+        var records = new List<TimeRecord>
+        {
+            new TimeRecord
+            {
+                Id = Guid.NewGuid(),
+                Date = DateOnly.FromDateTime(DateTime.Today),
+                StartTime = new TimeOnly(8, 0),
+                EndTime = null,
+                Telework = false
+            }
+        };
+
+        // Act
+        var result = _sut.CalculateOfficeHours(records);
 
         // Assert
         Assert.Equal(0.0, result);
@@ -410,16 +408,16 @@ public class TimeCalculatorServiceTests
     #region CalculateTeleworkPercentage Tests
 
     /// <summary>
-    /// Verifies that CalculateTeleworkPercentage returns zero when there are no slots.
+    /// Verifies that CalculateTeleworkPercentage returns zero when there are no records.
     /// </summary>
     [Fact]
     public void CalculateTeleworkPercentage_WhenEmpty_ShouldReturnZero()
     {
         // Arrange
-        var slots = Enumerable.Empty<WorkdaySlot>();
+        var records = Enumerable.Empty<TimeRecord>();
 
         // Act
-        var result = _sut.CalculateTeleworkPercentage(slots);
+        var result = _sut.CalculateTeleworkPercentage(records);
 
         // Assert
         Assert.Equal(0.0, result);
@@ -432,9 +430,9 @@ public class TimeCalculatorServiceTests
     public void CalculateTeleworkPercentage_ShouldCalculateCorrectPercentage()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -442,7 +440,7 @@ public class TimeCalculatorServiceTests
                 EndTime = new TimeOnly(12, 0),
                 Telework = false
             },
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -453,7 +451,7 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateTeleworkPercentage(slots);
+        var result = _sut.CalculateTeleworkPercentage(records);
 
         // Assert
         Assert.Equal(50.0, result);
@@ -466,9 +464,9 @@ public class TimeCalculatorServiceTests
     public void CalculateTeleworkPercentage_WhenAllTelework_ShouldReturn100()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -479,7 +477,7 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateTeleworkPercentage(slots);
+        var result = _sut.CalculateTeleworkPercentage(records);
 
         // Assert
         Assert.Equal(100.0, result);
@@ -492,9 +490,9 @@ public class TimeCalculatorServiceTests
     public void CalculateTeleworkPercentage_WhenNoTelework_ShouldReturnZero()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -505,7 +503,7 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateTeleworkPercentage(slots);
+        var result = _sut.CalculateTeleworkPercentage(records);
 
         // Assert
         Assert.Equal(0.0, result);
@@ -515,12 +513,12 @@ public class TimeCalculatorServiceTests
     /// Verifies that CalculateTeleworkPercentage correctly calculates with unequal proportions.
     /// </summary>
     [Fact]
-    public void CalculateTeleworkPercentage_WithUnequalSlots_ShouldCalculateCorrectPercentage()
+    public void CalculateTeleworkPercentage_WithUnequalRecords_ShouldCalculateCorrectPercentage()
     {
         // Arrange
-        var slots = new List<WorkdaySlot>
+        var records = new List<TimeRecord>
         {
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -528,7 +526,7 @@ public class TimeCalculatorServiceTests
                 EndTime = new TimeOnly(14, 0), // 6 office hours
                 Telework = false
             },
-            new WorkdaySlot
+            new TimeRecord
             {
                 Id = Guid.NewGuid(),
                 Date = DateOnly.FromDateTime(DateTime.Today),
@@ -539,7 +537,7 @@ public class TimeCalculatorServiceTests
         };
 
         // Act
-        var result = _sut.CalculateTeleworkPercentage(slots);
+        var result = _sut.CalculateTeleworkPercentage(records);
 
         // Assert
         Assert.Equal(25.0, result); // 2/8 = 25%

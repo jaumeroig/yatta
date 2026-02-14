@@ -34,53 +34,40 @@ public class TimeCalculatorService : ITimeCalculatorService
     }
 
     /// <inheritdoc/>
-    public double CalculateTotalHours(IEnumerable<WorkdaySlot> slots)
+    public double CalculateTeleworkPercentage(IEnumerable<TimeRecord> records)
     {
-        double totalHours = 0;
+        var totalHours = CalculateTotalHours(records);
 
-        foreach (var slot in slots)
-        {
-            totalHours += CalculateDuration(slot.StartTime, slot.EndTime);
-        }
-
-        return totalHours;
-    }
-
-    /// <inheritdoc/>
-    public double CalculateTeleworkPercentage(IEnumerable<WorkdaySlot> slots)
-    {
-        var totalHours = CalculateTotalHours(slots);
-        
         if (totalHours == 0)
         {
             return 0;
         }
 
-        var teleworkHours = CalculateTeleworkHours(slots);
+        var teleworkHours = CalculateTeleworkHours(records);
         return (teleworkHours / totalHours) * 100;
     }
 
     /// <inheritdoc/>
-    public double CalculateTeleworkHours(IEnumerable<WorkdaySlot> slots)
+    public double CalculateTeleworkHours(IEnumerable<TimeRecord> records)
     {
         double teleworkHours = 0;
 
-        foreach (var slot in slots.Where(s => s.Telework))
+        foreach (var record in records.Where(r => r.Telework && r.EndTime.HasValue))
         {
-            teleworkHours += CalculateDuration(slot.StartTime, slot.EndTime);
+            teleworkHours += CalculateDuration(record.StartTime, record.EndTime!.Value);
         }
 
         return teleworkHours;
     }
 
     /// <inheritdoc/>
-    public double CalculateOfficeHours(IEnumerable<WorkdaySlot> slots)
+    public double CalculateOfficeHours(IEnumerable<TimeRecord> records)
     {
         double officeHours = 0;
 
-        foreach (var slot in slots.Where(s => !s.Telework))
+        foreach (var record in records.Where(r => !r.Telework && r.EndTime.HasValue))
         {
-            officeHours += CalculateDuration(slot.StartTime, slot.EndTime);
+            officeHours += CalculateDuration(record.StartTime, record.EndTime!.Value);
         }
 
         return officeHours;

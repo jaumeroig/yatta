@@ -11,14 +11,17 @@ using TimeTracker.Core.Models;
 
 /// <summary>
 /// ViewModel for workday management.
+/// Now based on TimeRecord instead of WorkdaySlot.
 /// </summary>
 public partial class JornadaViewModel : ObservableObject
 {
-    private readonly IWorkdaySlotRepository _workdaySlotRepository;
+    private readonly ITimeRecordRepository _timeRecordRepository;
+    private readonly IActivityRepository _activityRepository;
     private readonly IWorkdayService _workdayService;
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly ILocalizationService _localizationService;
-    private List<WorkdaySlot> _allSlots = [];
+    private List<TimeRecord> _allRecords = [];
+    private Dictionary<Guid, Activity> _activitiesCache = [];
 
     [ObservableProperty]
     private DateTime _selectedDate = DateTime.Today;
@@ -27,7 +30,7 @@ public partial class JornadaViewModel : ObservableObject
     private string _selectedDateDisplay = string.Empty;
 
     [ObservableProperty]
-    private ObservableCollection<WorkdaySlotDisplay> _slots = [];
+    private ObservableCollection<WorkdayRecordDisplay> _slots = [];
 
     [ObservableProperty]
     private string _totalWorkedTime = "0h 0m";
@@ -40,15 +43,6 @@ public partial class JornadaViewModel : ObservableObject
 
     [ObservableProperty]
     private string _teleworkTime = "0h 0m";
-
-    [ObservableProperty]
-    private bool _isDialogOpen;
-
-    [ObservableProperty]
-    private bool _isEditing;
-
-    [ObservableProperty]
-    private WorkdaySlotEditModel _editingSlot = new();
 
     [ObservableProperty]
     private string _monthYear = string.Empty;
@@ -76,6 +70,13 @@ public partial class JornadaViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<TimeSegment> _timelineSegments = [];
 
+    // Dynamic start/end for the timeline bar (derived from actual records)
+    [ObservableProperty]
+    private DateTime _timelineStart = DateTime.Today.AddHours(9);
+
+    [ObservableProperty]
+    private DateTime _timelineEnd = DateTime.Today.AddHours(18);
+
     // Dates with records (for calendar)
     [ObservableProperty]
     private ObservableCollection<DateTime> _datesWithRecords = [];
@@ -91,12 +92,14 @@ public partial class JornadaViewModel : ObservableObject
     private ObservableCollection<DateTime> _bothDates = [];
 
     public JornadaViewModel(
-        IWorkdaySlotRepository workdaySlotRepository,
+        ITimeRecordRepository timeRecordRepository,
+        IActivityRepository activityRepository,
         IWorkdayService workdayService,
         ITimeCalculatorService timeCalculatorService,
         ILocalizationService localizationService)
     {
-        _workdaySlotRepository = workdaySlotRepository;
+        _timeRecordRepository = timeRecordRepository;
+        _activityRepository = activityRepository;
         _workdayService = workdayService;
         _timeCalculatorService = timeCalculatorService;
         _localizationService = localizationService;
@@ -110,30 +113,42 @@ public partial class JornadaViewModel : ObservableObject
     /// </summary>
     public async Task LoadDataAsync()
     {
-        await LoadSlotsForDateAsync(SelectedDate);
+        await LoadActivitiesCacheAsync();
+        await LoadRecordsForDateAsync(SelectedDate);
         await UpdateMonthlySummaryAsync();
         await LoadDatesWithRecordsAsync();
     }
 
     /// <summary>
-    /// Loads the dates in the month that have records.
+    /// Loads the activities cache for displaying activity names.
+    /// </summary>
+    private async Task LoadActivitiesCacheAsync()
+    {
+        var activities = await _activityRepository.GetAllAsync();
+        _activitiesCache = activities.ToDictionary(a => a.Id, a => a);
+    }
+
+    /// <summary>
+    /// Loads the dates in the month that have records, categorized by location.
     /// </summary>
     private async Task LoadDatesWithRecordsAsync()
     {
         var firstDay = new DateOnly(SelectedDate.Year, SelectedDate.Month, 1);
         var lastDay = firstDay.AddMonths(1).AddDays(-1);
 
-        var dates = await _workdaySlotRepository.GetDatesWithSlotsAsync(firstDay, lastDay);
-        var monthSlots = await _workdaySlotRepository.GetByDateRangeAsync(firstDay, lastDay);
+        var monthRecords = await _timeRecordRepository.GetByDateRangeAsync(firstDay, lastDay);
 
         var telework = new HashSet<DateTime>();
         var office = new HashSet<DateTime>();
         var both = new HashSet<DateTime>();
+        var allDates = new HashSet<DateTime>();
 
-        foreach (var slot in monthSlots)
+        foreach (var record in monthRecords)
         {
-            var dt = slot.Date.ToDateTime(TimeOnly.MinValue);
-            if (slot.Telework)
+            var dt = record.Date.ToDateTime(TimeOnly.MinValue);
+            allDates.Add(dt);
+
+            if (record.Telework)
             {
                 if (office.Contains(dt)) both.Add(dt); else telework.Add(dt);
             }
@@ -150,7 +165,7 @@ public partial class JornadaViewModel : ObservableObject
             office.Remove(dt);
         }
 
-        DatesWithRecords = new ObservableCollection<DateTime>(dates.Select(d => d.ToDateTime(TimeOnly.MinValue)));
+        DatesWithRecords = new ObservableCollection<DateTime>(allDates.OrderBy(d => d));
         TeleworkDates = new ObservableCollection<DateTime>(telework.OrderBy(d => d));
         OfficeDates = new ObservableCollection<DateTime>(office.OrderBy(d => d));
         BothDates = new ObservableCollection<DateTime>(both.OrderBy(d => d));
@@ -159,67 +174,110 @@ public partial class JornadaViewModel : ObservableObject
     partial void OnSelectedDateChanged(DateTime value)
     {
         UpdateDateDisplay();
-        _ = LoadSlotsForDateAsync(value);
+        _ = LoadRecordsForDateAsync(value);
     }
 
-    private async Task LoadSlotsForDateAsync(DateTime date)
+    private async Task LoadRecordsForDateAsync(DateTime date)
     {
         var dateOnly = DateOnly.FromDateTime(date);
-        _allSlots = (await _workdaySlotRepository.GetByDateAsync(dateOnly)).ToList();
-        UpdateSlotsDisplay();
+        _allRecords = (await _timeRecordRepository.GetByDateAsync(dateOnly)).ToList();
+        UpdateRecordsDisplay();
         UpdateDailySummary();
     }
 
-    private void UpdateSlotsDisplay()
+    private void UpdateRecordsDisplay()
     {
-        var slotDisplays = _allSlots
-            .OrderBy(s => s.StartTime)
-            .Select(slot => new WorkdaySlotDisplay
+        // Group records by location (office / telework) and aggregate times
+        var groups = _allRecords
+            .GroupBy(r => r.Telework)
+            .OrderBy(g => g.Min(r => r.StartTime))
+            .Select(group =>
             {
-                Id = slot.Id,
-                StartTime = slot.StartTime.ToString("HH:mm"),
-                EndTime = slot.EndTime.ToString("HH:mm"),
-                Duration = FormatDuration(_timeCalculatorService.CalculateDuration(slot.StartTime, slot.EndTime)),
-                LocationText = slot.Telework
-                    ? Resources.Resources.Location_Telework
-                    : Resources.Resources.Location_Office,
-                LocationIcon = slot.Telework ? "Home24" : "Building24",
-                Telework = slot.Telework
+                var records = group.OrderBy(r => r.StartTime).ToList();
+                var firstStart = records.First().StartTime;
+                var hasInProgress = records.Any(r => !r.EndTime.HasValue);
+                var lastEnd = hasInProgress
+                    ? (TimeOnly?)null
+                    : records.Max(r => r.EndTime!.Value);
+
+                // Sum total hours for all records (use current time for in-progress ones)
+                var now = TimeOnly.FromDateTime(DateTime.Now);
+                var totalHours = records
+                    .Sum(r => _timeCalculatorService.CalculateDuration(r.StartTime, r.EndTime ?? now));
+
+                var isTelework = group.Key;
+
+                return new WorkdayRecordDisplay
+                {
+                    StartTime = firstStart.ToString("HH:mm"),
+                    EndTime = lastEnd?.ToString("HH:mm") ?? Resources.Resources.Today_InProgress,
+                    Duration = FormatDuration(totalHours),
+                    LocationText = isTelework
+                        ? Resources.Resources.Location_Telework
+                        : Resources.Resources.Location_Office,
+                    LocationIcon = isTelework ? "Home24" : "Building24",
+                    Telework = isTelework
+                };
             });
 
-        Slots = new ObservableCollection<WorkdaySlotDisplay>(slotDisplays);
+        Slots = new ObservableCollection<WorkdayRecordDisplay>(groups);
         UpdateTimelineSegments();
     }
 
     private void UpdateTimelineSegments()
     {
-        var segments = _allSlots
-            .OrderBy(s => s.StartTime)
-            .Select(slot =>
+        var date = DateOnly.FromDateTime(SelectedDate);
+        var now = DateTime.Now;
+
+        // Build segments: include records with EndTime, and also in-progress records (use current time)
+        var segments = _allRecords
+            .OrderBy(r => r.StartTime)
+            .Where(r => r.EndTime.HasValue || date == DateOnly.FromDateTime(now))
+            .Select(record => new TimeSegment
             {
-                var date = DateOnly.FromDateTime(SelectedDate);
-                return new TimeSegment
-                {
-                    Label = slot.Telework
-                        ? Resources.Resources.Location_Telework
-                        : Resources.Resources.Location_Office,
-                    Start = date.ToDateTime(slot.StartTime),
-                    End = date.ToDateTime(slot.EndTime),
-                    Color = slot.Telework
-                        ? Color.FromRgb(0x21, 0x96, 0xF3)  // #2196F3 blue
-                        : Color.FromRgb(0x4C, 0xAF, 0x50)  // #4CAF50 green
-                };
-            });
+                Label = record.Telework
+                    ? Resources.Resources.Location_Telework
+                    : Resources.Resources.Location_Office,
+                Start = date.ToDateTime(record.StartTime),
+                End = record.EndTime.HasValue
+                    ? date.ToDateTime(record.EndTime.Value)
+                    : now,
+                Color = record.Telework
+                    ? Color.FromRgb(0x21, 0x96, 0xF3)  // #2196F3 blue
+                    : Color.FromRgb(0x4C, 0xAF, 0x50)  // #4CAF50 green
+            })
+            .ToList();
 
         TimelineSegments = new ObservableCollection<TimeSegment>(segments);
+
+        // Calculate dynamic timeline bounds from all records (including in-progress)
+        if (_allRecords.Count > 0)
+        {
+            var minStart = _allRecords.Min(r => r.StartTime);
+            var maxEnd = _allRecords.Max(r => r.EndTime ?? TimeOnly.FromDateTime(now));
+
+            TimelineStart = date.ToDateTime(minStart);
+            TimelineEnd = date.ToDateTime(maxEnd);
+
+            if (TimelineEnd <= TimelineStart)
+            {
+                TimelineEnd = TimelineStart.AddMinutes(30);
+            }
+        }
+        else
+        {
+            // Fallback: default range when no records
+            TimelineStart = date.ToDateTime(new TimeOnly(9, 0));
+            TimelineEnd = date.ToDateTime(new TimeOnly(18, 0));
+        }
     }
 
     private void UpdateDailySummary()
     {
-        var totalHours = _timeCalculatorService.CalculateTotalHours(_allSlots);
-        var teleworkHours = _timeCalculatorService.CalculateTeleworkHours(_allSlots);
-        var officeHours = _timeCalculatorService.CalculateOfficeHours(_allSlots);
-        var percentage = _timeCalculatorService.CalculateTeleworkPercentage(_allSlots);
+        var totalHours = _timeCalculatorService.CalculateTotalHours(_allRecords);
+        var teleworkHours = _timeCalculatorService.CalculateTeleworkHours(_allRecords);
+        var officeHours = _timeCalculatorService.CalculateOfficeHours(_allRecords);
+        var percentage = _timeCalculatorService.CalculateTeleworkPercentage(_allRecords);
 
         TotalWorkedTime = FormatDuration(totalHours);
         TeleworkTime = FormatDuration(teleworkHours);
@@ -317,140 +375,12 @@ public partial class JornadaViewModel : ObservableObject
         UpdateMonthYearDisplay();
         _ = UpdateMonthlySummaryAsync();
     }
-
-    [RelayCommand]
-    private void OpenNewSlotDialog()
-    {
-        IsEditing = false;
-        EditingSlot = new WorkdaySlotEditModel
-        {
-            Date = SelectedDate,
-            StartTimeText = "09:00",
-            EndTimeText = "14:00",
-            Telework = false,
-            ValidationError = string.Empty
-        };
-        IsDialogOpen = true;
-    }
-
-    [RelayCommand]
-    private void OpenEditSlotDialog(WorkdaySlotDisplay slot)
-    {
-        var originalSlot = _allSlots.FirstOrDefault(s => s.Id == slot.Id);
-        if (originalSlot == null) return;
-
-        IsEditing = true;
-        var editModel = new WorkdaySlotEditModel
-        {
-            Id = originalSlot.Id,
-            Date = originalSlot.Date.ToDateTime(TimeOnly.MinValue),
-            Telework = originalSlot.Telework,
-            ValidationError = string.Empty
-        };
-        editModel.SetStartTime(originalSlot.StartTime);
-        editModel.SetEndTime(originalSlot.EndTime);
-        EditingSlot = editModel;
-        IsDialogOpen = true;
-    }
-
-    [RelayCommand]
-    private void CloseDialog()
-    {
-        IsDialogOpen = false;
-    }
-
-    [RelayCommand]
-    private async Task SaveSlot()
-    {
-        var startTime = EditingSlot.GetStartTime();
-        if (!startTime.HasValue)
-        {
-            EditingSlot.ValidationError = Resources.Resources.Validation_InvalidStartTime;
-            return;
-        }
-
-        var endTime = EditingSlot.GetEndTime();
-        if (!endTime.HasValue)
-        {
-            EditingSlot.ValidationError = Resources.Resources.Validation_InvalidEndTime;
-            return;
-        }
-
-        // Validate that end time is after start time
-        if (endTime.Value <= startTime.Value)
-        {
-            EditingSlot.ValidationError = Resources.Resources.Validation_EndTimeAfterStartTime;
-            return;
-        }
-
-        var slot = new WorkdaySlot
-        {
-            Id = IsEditing ? EditingSlot.Id : Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(EditingSlot.Date),
-            StartTime = startTime.Value,
-            EndTime = endTime.Value,
-            Telework = EditingSlot.Telework
-        };
-
-        // Validate overlap
-        var (isValid, errorMessage) = await _workdayService.ValidateWorkdaySlotAsync(slot);
-        if (!isValid)
-        {
-            // If errorMessage is a resource key with arguments (pipe-delimited), localize it
-            if (!string.IsNullOrWhiteSpace(errorMessage) && errorMessage.Contains("|"))
-            {
-                var parts = errorMessage.Split('|');
-                var key = parts[0];
-                var args = parts.Skip(1).ToArray();
-                EditingSlot.ValidationError = _localizationService.GetString(key, args);
-            }
-            else if (!string.IsNullOrWhiteSpace(errorMessage))
-            {
-                EditingSlot.ValidationError = _localizationService.GetString(errorMessage);
-            }
-            else
-            {
-                EditingSlot.ValidationError = string.Empty;
-            }
-            return;
-        }
-
-        if (IsEditing)
-        {
-            await _workdaySlotRepository.UpdateAsync(slot);
-            var index = _allSlots.FindIndex(s => s.Id == slot.Id);
-            if (index >= 0) _allSlots[index] = slot;
-        }
-        else
-        {
-            await _workdaySlotRepository.AddAsync(slot);
-            _allSlots.Add(slot);
-        }
-
-        IsDialogOpen = false;
-        UpdateSlotsDisplay();
-        UpdateDailySummary();
-        await UpdateMonthlySummaryAsync();
-        await LoadDatesWithRecordsAsync();
-    }
-
-    [RelayCommand]
-    private async Task DeleteSlot(WorkdaySlotDisplay slot)
-    {
-        await _workdaySlotRepository.DeleteAsync(slot.Id);
-        var index = _allSlots.FindIndex(s => s.Id == slot.Id);
-        if (index >= 0) _allSlots.RemoveAt(index);
-        UpdateSlotsDisplay();
-        UpdateDailySummary();
-        await UpdateMonthlySummaryAsync();
-        await LoadDatesWithRecordsAsync();
-    }
 }
 
 /// <summary>
-/// Display model for a workday slot.
+/// Display model for a time record in the workday view.
 /// </summary>
-public class WorkdaySlotDisplay
+public class WorkdayRecordDisplay
 {
     public Guid Id { get; set; }
     public string StartTime { get; set; } = string.Empty;
@@ -459,52 +389,6 @@ public class WorkdaySlotDisplay
     public string LocationText { get; set; } = string.Empty;
     public string LocationIcon { get; set; } = string.Empty;
     public bool Telework { get; set; }
-}
-
-/// <summary>
-/// Edit model for a workday slot.
-/// </summary>
-public partial class WorkdaySlotEditModel : ObservableObject
-{
-    [ObservableProperty]
-    private Guid _id;
-
-    [ObservableProperty]
-    private DateTime _date = DateTime.Today;
-
-    [ObservableProperty]
-    private string _startTimeText = "09:00";
-
-    [ObservableProperty]
-    private string _endTimeText = "14:00";
-
-    [ObservableProperty]
-    private bool _telework;
-
-    [ObservableProperty]
-    private string _validationError = string.Empty;
-
-    public TimeOnly? GetStartTime()
-    {
-        if (TimeOnly.TryParse(StartTimeText, out var time))
-            return time;
-        return null;
-    }
-
-    public TimeOnly? GetEndTime()
-    {
-        if (TimeOnly.TryParse(EndTimeText, out var time))
-            return time;
-        return null;
-    }
-
-    public void SetStartTime(TimeOnly time)
-    {
-        StartTimeText = time.ToString("HH:mm");
-    }
-
-    public void SetEndTime(TimeOnly time)
-    {
-        EndTimeText = time.ToString("HH:mm");
-    }
+    public string ActivityName { get; set; } = string.Empty;
+    public string ActivityColor { get; set; } = string.Empty;
 }

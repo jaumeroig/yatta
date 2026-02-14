@@ -23,30 +23,23 @@ public interface ITimeCalculatorService
     double CalculateTotalHours(IEnumerable<TimeRecord> records);
 
     /// <summary>
-    /// Calculates the total hours from a list of work slots.
+    /// Calculates the telework percentage over total hours from time records.
     /// </summary>
-    /// <param name="slots">List of work slots.</param>
-    /// <returns>Total hours.</returns>
-    double CalculateTotalHours(IEnumerable<WorkdaySlot> slots);
-
-    /// <summary>
-    /// Calculates the telework percentage over total hours.
-    /// </summary>
-    /// <param name="slots">List of work slots.</param>
+    /// <param name="records">List of time records.</param>
     /// <returns>Telework percentage (0-100).</returns>
-    double CalculateTeleworkPercentage(IEnumerable<WorkdaySlot> slots);
+    double CalculateTeleworkPercentage(IEnumerable<TimeRecord> records);
 
     /// <summary>
-    /// Calculates the total telework hours.
+    /// Calculates the total telework hours from time records.
     /// </summary>
-    /// <param name="slots">List of work slots.</param>
+    /// <param name="records">List of time records.</param>
     /// <returns>Total telework hours.</returns>
-    double CalculateTeleworkHours(IEnumerable<WorkdaySlot> slots);
+    double CalculateTeleworkHours(IEnumerable<TimeRecord> records);
 
     /// <summary>
-    /// Calculates the total office work hours.
+    /// Calculates the total office work hours from time records.
     /// </summary>
-    /// <param name="slots">List of work slots.</param>
+    /// <param name="records">List of time records.</param>
     /// <returns>Total office hours.</returns>
-    double CalculateOfficeHours(IEnumerable<WorkdaySlot> slots);
+    double CalculateOfficeHours(IEnumerable<TimeRecord> records);
 }

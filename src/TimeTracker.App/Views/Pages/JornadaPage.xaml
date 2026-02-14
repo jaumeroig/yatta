@@ -18,89 +18,6 @@ mc:Ignorable="d"
     Unloaded="Page_Unloaded">
 
     <Page.Resources>
-        <!-- Plantilla del diàleg per afegir/editar franges -->
-        <DataTemplate x:Key="SlotDialogTemplate">
-            <StackPanel Width="480">
-                <Grid Margin="0,0,0,20">
-                    <TextBlock Text="{Binding IsEditing, Converter={StaticResource EditingToTitleConverter}, FallbackValue='Afegir franja'}"
-                               FontSize="20"
-                               FontWeight="SemiBold" />
-                    <ui:Button HorizontalAlignment="Right"
-                               Appearance="Transparent"
-                               Command="{Binding CloseDialogCommand}"
-                               Padding="4">
-                        <ui:SymbolIcon Symbol="Dismiss24" />
-                    </ui:Button>
-                </Grid>
-
-                <TextBlock Text="Data"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,8" />
-                <DatePicker SelectedDate="{Binding EditingSlot.Date}"
-                            HorizontalAlignment="Stretch"
-                            Margin="0,0,0,16" />
-
-                <Grid Margin="0,0,0,16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="16" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Hora inici"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,8" />
-                        <ui:TextBox PlaceholderText="HH:mm"
-                                    Text="{Binding EditingSlot.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Height="40" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="Hora fi"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,8" />
-                        <ui:TextBox PlaceholderText="HH:mm"
-                                    Text="{Binding EditingSlot.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Height="40" />
-                    </StackPanel>
-                </Grid>
-
-                <TextBlock Text="Lloc de treball"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,12" />
-                <StackPanel Margin="0,0,0,16">
-                    <RadioButton Content="Oficina"
-                                 IsChecked="{Binding EditingSlot.Telework, Converter={StaticResource BoolInverterConverter}}"
-                                 GroupName="Location"
-                                 Margin="0,0,0,8" />
-                    <RadioButton Content="{local:Localize RadioButton_Telework}"
-                                 IsChecked="{Binding EditingSlot.Telework}"
-                                 GroupName="Location" />
-                </StackPanel>
-
-                <!-- Missatge d'error de validació -->
-                <Border Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
-                        BorderThickness="1"
-                        CornerRadius="4"
-                        Padding="12,8"
-                        Margin="0,0,0,16"
-                        Visibility="{Binding EditingSlot.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
-                    <TextBlock Text="{Binding EditingSlot.ValidationError}"
-                               Foreground="White"
-                               TextWrapping="Wrap"
-                               FontSize="13" />
-                </Border>
-
-                <ui:Button Content="{Binding IsEditing, Converter={StaticResource EditingToButtonTextConverter}, FallbackValue='Afegir franja'}"
-                           Appearance="Primary"
-                           HorizontalAlignment="Stretch"
-                           Command="{Binding SaveSlotCommand}"
-                           Height="40"
-                           Padding="16,0" />
-            </StackPanel>
-        </DataTemplate>
-        
         <!-- Estil personalitzat per als dies del calendari amb indicadors -->
         <Style x:Key="CalendarDayButtonStyleWithIndicator" TargetType="CalendarDayButton">
             <Setter Property="MinWidth" Value="40" />
@@ -238,20 +155,6 @@ mc:Ignorable="d"
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-
-                <!-- Capçalera -->
-                <Grid Grid.Row="0" Margin="0,0,0,24">
-                    <ui:Button Appearance="Primary"
-                               Command="{Binding OpenNewSlotDialogCommand}"
-                               Height="33"
-                               Padding="16,0"
-                               HorizontalAlignment="Right">
-                        <StackPanel Orientation="Horizontal">
-                            <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
-                            <TextBlock Text="{local:Localize Button_AddSlot}" />
-                        </StackPanel>
-                    </ui:Button>
-                </Grid>
 
                 <!-- Contingut principal amb dues columnes -->
                 <Grid Grid.Row="1">
@@ -522,11 +425,11 @@ mc:Ignorable="d"
                             Margin="0,0,0,16"
                             BarHeight="24"
                             CornerRadius="6"
-                            WorkdayStart="{Binding SelectedDate, Converter={StaticResource DateToWorkdayStartConverter}}"
-                            WorkdayEnd="{Binding SelectedDate, Converter={StaticResource DateToWorkdayEndConverter}}"
+                            WorkdayStart="{Binding TimelineStart}"
+                            WorkdayEnd="{Binding TimelineEnd}"
                             Segments="{Binding TimelineSegments}" />
 
-                        <!-- Títol de la llista de franges -->
+                        <!-- Títol de la llista de registres -->
                         <TextBlock Grid.Row="2"
                                    Text="{local:Localize Section_TimeSlots}"
                                    FontSize="16"
@@ -534,9 +437,9 @@ mc:Ignorable="d"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    Margin="0,0,0,12" />
 
-                        <!-- Llista de franges -->
+                        <!-- Llista de registres (només lectura) -->
                         <Grid Grid.Row="3">
-                            <!-- Llista de franges quan n'hi ha -->
+                            <!-- Llista de registres quan n'hi ha -->
                             <ScrollViewer VerticalScrollBarVisibility="Auto"
                                           HorizontalScrollBarVisibility="Disabled">
                                 <ItemsControl ItemsSource="{Binding Slots}">
@@ -547,7 +450,6 @@ mc:Ignorable="d"
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
 
@@ -574,18 +476,12 @@ mc:Ignorable="d"
                                                                        Foreground="White" />
                                                     </Border>
 
-                                                    <!-- Informació de la franja -->
+                                                    <!-- Informació del registre -->
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                         <TextBlock Text="{Binding LocationText}"
                                                                    FontWeight="SemiBold"
                                                                    FontSize="15"
                                                                    Margin="0,0,0,2" />
-                                                        <TextBlock FontSize="13"
-                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                                                            <Run Text="{Binding StartTime}" />
-                                                            <Run Text=" - " />
-                                                            <Run Text="{Binding EndTime}" />
-                                                        </TextBlock>
                                                     </StackPanel>
 
                                                     <!-- Durada -->
@@ -594,34 +490,7 @@ mc:Ignorable="d"
                                                                FontSize="16"
                                                                FontWeight="SemiBold"
                                                                VerticalAlignment="Center"
-                                                               Margin="0,0,12,0" />
-
-                                                    <!-- Menú d'accions -->
-                                                    <ui:DropDownButton Grid.Column="3"
-                                                                       VerticalAlignment="Center"
-                                                                       Padding="8,4"
-                                                                       Appearance="Secondary"
-                                                                       Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Page}}">
-                                                        <ui:SymbolIcon Symbol="MoreHorizontal24" />
-                                                        <ui:DropDownButton.Flyout>
-                                                            <ContextMenu>
-                                                                <ui:MenuItem Header="Editar"
-                                                                             Command="{Binding DataContext.OpenEditSlotDialogCommand, Source={x:Reference WorkdayPage}}"
-                                                                             CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
-                                                                    <ui:MenuItem.Icon>
-                                                                        <ui:SymbolIcon Symbol="Edit24" />
-                                                                    </ui:MenuItem.Icon>
-                                                                </ui:MenuItem>
-                                                                <ui:MenuItem Header="Eliminar"
-                                                                             Command="{Binding DataContext.DeleteSlotCommand, Source={x:Reference WorkdayPage}}"
-                                                                             CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
-                                                                    <ui:MenuItem.Icon>
-                                                                        <ui:SymbolIcon Symbol="Delete24" />
-                                                                    </ui:MenuItem.Icon>
-                                                                </ui:MenuItem>
-                                                            </ContextMenu>
-                                                        </ui:DropDownButton.Flyout>
-                                                    </ui:DropDownButton>
+                                                               Margin="0,0,0,0" />
                                                 </Grid>
                                             </ui:Card>
                                         </DataTemplate>

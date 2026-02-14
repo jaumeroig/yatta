@@ -8,7 +8,7 @@ using TimeTracker.Core.Models;
 public interface IWorkdayService
 {
     /// <summary>
-    /// Gets the daily summary of a workday.
+    /// Gets the daily summary of a workday based on time records.
     /// </summary>
     /// <param name="date">Date of the workday.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
@@ -16,24 +16,7 @@ public interface IWorkdayService
     Task<WorkdaySummary> GetDailySummaryAsync(DateOnly date, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Validates if a new work slot can be added to a workday.
-    /// </summary>
-    /// <param name="slot">Work slot to add.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>True if it can be added, false otherwise.</returns>
-    Task<bool> CanAddWorkdaySlotAsync(WorkdaySlot slot, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Validates if a new work slot can be added to a workday with error message.
-    /// </summary>
-    /// <param name="slot">Work slot to add.</param>
-    /// <param name="errorMessage">Error message if it cannot be added.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>True if it can be added, false otherwise.</returns>
-    Task<(bool IsValid, string ErrorMessage)> ValidateWorkdaySlotAsync(WorkdaySlot slot, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets the total hours worked in a date range.
+    /// Gets the total hours worked in a date range based on time records.
     /// </summary>
     /// <param name="startDate">Start date.</param>
     /// <param name="endDate">End date.</param>
@@ -42,7 +25,7 @@ public interface IWorkdayService
     Task<double> GetTotalHoursAsync(DateOnly startDate, DateOnly endDate, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets the telework percentage in a date range.
+    /// Gets the telework percentage in a date range based on time records.
     /// </summary>
     /// <param name="startDate">Start date.</param>
     /// <param name="endDate">End date.</param>
@@ -82,7 +65,7 @@ public class WorkdaySummary
     public double TeleworkPercentage { get; set; }
 
     /// <summary>
-    /// Number of work slots.
+    /// Number of time records.
     /// </summary>
-    public int SlotCount { get; set; }
+    public int RecordCount { get; set; }
 }

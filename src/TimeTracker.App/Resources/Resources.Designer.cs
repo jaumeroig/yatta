@@ -2102,7 +2102,16 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Today_RemainingTime", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Hora de salida.
+        /// </summary>
+        internal static string Today_EstimatedEndTime {
+            get {
+                return ResourceManager.GetString("Today_EstimatedEndTime", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Comenzar a registrar.
         /// </summary>

@@ -46,6 +46,25 @@ public partial class HistoricDetailViewModel : ObservableObject
     private string _notes = string.Empty;
 
     [ObservableProperty]
+    private bool _telework;
+
+    /// <summary>
+    /// Inverse of Telework for radio button binding (Office selected).
+    /// </summary>
+    public bool IsOffice
+    {
+        get => !Telework;
+        set
+        {
+            if (value != !Telework)
+            {
+                Telework = !value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    [ObservableProperty]
     private bool _isDeleteConfirmationOpen;
 
     [ObservableProperty]
@@ -153,6 +172,7 @@ public partial class HistoricDetailViewModel : ObservableObject
         StartTimeText = record.StartTime.ToString("HH:mm");
         EndTimeText = record.EndTime?.ToString("HH:mm") ?? "";
         Notes = record.Notes ?? string.Empty;
+        Telework = record.Telework;
     }
 
     /// <summary>
@@ -269,7 +289,8 @@ public partial class HistoricDetailViewModel : ObservableObject
             Date = DateOnly.FromDateTime(Date),
             StartTime = startTime,
             EndTime = endTime,
-            Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes
+            Notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes,
+            Telework = Telework
         };
 
         try

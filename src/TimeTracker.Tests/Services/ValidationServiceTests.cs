@@ -325,7 +325,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateNoOverlap retorna el missatge d'error correcte.
+    /// Verifies that ValidateNoOverlap returns the correct error message.
     /// </summary>
     [Fact]
     public void ValidateNoOverlap_TimeRecord_WhenOverlaps_ShouldReturnErrorMessage()
@@ -359,134 +359,10 @@ public class ValidationServiceTests
 
     #endregion
 
-    #region ValidateNoOverlap WorkdaySlot Tests
-
-    /// <summary>
-    /// Verifica que ValidateNoOverlap per franges retorna true quan no hi ha franges existents.
-    /// </summary>
-    [Fact]
-    public void ValidateNoOverlap_WorkdaySlot_WhenNoExistingSlots_ShouldReturnTrue()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(14, 0)
-        };
-        var existingSlots = Enumerable.Empty<WorkdaySlot>();
-
-        // Act
-        var result = _sut.ValidateNoOverlap(slot, existingSlots);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    /// <summary>
-    /// Verifica que ValidateNoOverlap per franges retorna true quan no hi ha solapament.
-    /// </summary>
-    [Fact]
-    public void ValidateNoOverlap_WorkdaySlot_WhenNoOverlap_ShouldReturnTrue()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(15, 0),
-            EndTime = new TimeOnly(18, 0)
-        };
-        var existingSlots = new List<WorkdaySlot>
-        {
-            new WorkdaySlot
-            {
-                Id = Guid.NewGuid(),
-                Date = DateOnly.FromDateTime(DateTime.Today),
-                StartTime = new TimeOnly(9, 0),
-                EndTime = new TimeOnly(14, 0)
-            }
-        };
-
-        // Act
-        var result = _sut.ValidateNoOverlap(slot, existingSlots);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    /// <summary>
-    /// Verifica que ValidateNoOverlap per franges retorna false quan hi ha solapament.
-    /// </summary>
-    [Fact]
-    public void ValidateNoOverlap_WorkdaySlot_WhenOverlaps_ShouldReturnFalse()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(12, 0),
-            EndTime = new TimeOnly(16, 0)
-        };
-        var existingSlots = new List<WorkdaySlot>
-        {
-            new WorkdaySlot
-            {
-                Id = Guid.NewGuid(),
-                Date = DateOnly.FromDateTime(DateTime.Today),
-                StartTime = new TimeOnly(9, 0),
-                EndTime = new TimeOnly(14, 0)
-            }
-        };
-
-        // Act
-        var result = _sut.ValidateNoOverlap(slot, existingSlots);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    /// <summary>
-    /// Verifica que ValidateNoOverlap per franges retorna el missatge d'error correcte.
-    /// </summary>
-    [Fact]
-    public void ValidateNoOverlap_WorkdaySlot_WhenOverlaps_ShouldReturnErrorMessage()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(12, 0),
-            EndTime = new TimeOnly(16, 0)
-        };
-        var existingSlots = new List<WorkdaySlot>
-        {
-            new WorkdaySlot
-            {
-                Id = Guid.NewGuid(),
-                Date = DateOnly.FromDateTime(DateTime.Today),
-                StartTime = new TimeOnly(9, 0),
-                EndTime = new TimeOnly(14, 0)
-            }
-        };
-
-        // Act
-        var result = _sut.ValidateNoOverlap(slot, existingSlots, out var errorMessage);
-
-        // Assert
-        Assert.False(result);
-        Assert.StartsWith("Validation_OverlappingSlot|", errorMessage);
-    }
-
-    #endregion
-
     #region ValidateTimeRecord Tests
 
     /// <summary>
-    /// Verifica que ValidateTimeRecord retorna true quan el registre és vàlid.
+    /// Verifies that ValidateTimeRecord returns true when the record is valid.
     /// </summary>
     [Fact]
     public void ValidateTimeRecord_WhenValid_ShouldReturnTrue()
@@ -508,7 +384,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateTimeRecord retorna true quan no hi ha hora de fi (registre en curs).
+    /// Verifies that ValidateTimeRecord returns true when there is no end time (in-progress record).
     /// </summary>
     [Fact]
     public void ValidateTimeRecord_WhenNoEndTime_ShouldReturnTrue()
@@ -530,7 +406,7 @@ public class ValidationServiceTests
     }
 
     /// <summary>
-    /// Verifica que ValidateTimeRecord retorna false quan l'hora de fi és anterior a l'hora d'inici.
+    /// Verifies that ValidateTimeRecord returns false when end time is before start time.
     /// </summary>
     [Fact]
     public void ValidateTimeRecord_WhenEndTimeBeforeStartTime_ShouldReturnFalse()
@@ -549,77 +425,6 @@ public class ValidationServiceTests
 
         // Assert
         Assert.False(result);
-    }
-
-    #endregion
-
-    #region ValidateWorkdaySlot Tests
-
-    /// <summary>
-    /// Verifica que ValidateWorkdaySlot retorna true quan la franja és vàlida.
-    /// </summary>
-    [Fact]
-    public void ValidateWorkdaySlot_WhenValid_ShouldReturnTrue()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(14, 0)
-        };
-
-        // Act
-        var result = _sut.ValidateWorkdaySlot(slot);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    /// <summary>
-    /// Verifica que ValidateWorkdaySlot retorna false quan la franja no és vàlida.
-    /// </summary>
-    [Fact]
-    public void ValidateWorkdaySlot_WhenInvalid_ShouldReturnFalse()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(17, 0),
-            EndTime = new TimeOnly(9, 0)
-        };
-
-        // Act
-        var result = _sut.ValidateWorkdaySlot(slot);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    /// <summary>
-    /// Verifica que ValidateWorkdaySlot retorna el missatge d'error correcte.
-    /// </summary>
-    [Fact]
-    public void ValidateWorkdaySlot_WhenInvalid_ShouldReturnErrorMessage()
-    {
-        // Arrange
-        var slot = new WorkdaySlot
-        {
-            Id = Guid.NewGuid(),
-            Date = DateOnly.FromDateTime(DateTime.Today),
-            StartTime = new TimeOnly(17, 0),
-            EndTime = new TimeOnly(9, 0)
-        };
-
-        // Act
-        var result = _sut.ValidateWorkdaySlot(slot, out var errorMessage);
-
-        // Assert
-        Assert.False(result);
-        Assert.Equal("Validation_EndTimeAfterStartTime", errorMessage);
     }
 
     #endregion

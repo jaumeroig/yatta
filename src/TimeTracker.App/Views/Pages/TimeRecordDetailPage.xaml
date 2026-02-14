@@ -11,6 +11,7 @@
     d:DesignHeight="600" d:DesignWidth="900"
     Title="Detall de registre"
     Loaded="Page_Loaded"
+    ScrollViewer.CanContentScroll="False"
     Unloaded="Page_Unloaded">
 
     <Page.Resources>
@@ -165,6 +166,21 @@
                                TextWrapping="Wrap"
                                FontSize="13" />
                 </Border>
+
+                <!-- Work location -->
+                <TextBlock Text="{local:Localize Label_WorkLocation}"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,8" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                    <RadioButton Content="{local:Localize RadioButton_Office}"
+                                 IsChecked="{Binding IsOffice}"
+                                 GroupName="WorkLocation"
+                                 Margin="0,0,16,0" />
+                    <RadioButton Content="{local:Localize RadioButton_Telework}"
+                                 IsChecked="{Binding Telework}"
+                                 GroupName="WorkLocation" />
+                </StackPanel>
 
                 <!-- Notes -->
                 <TextBlock Text="{local:Localize Label_Notes}"
