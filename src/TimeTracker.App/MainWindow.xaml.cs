@@ -21,7 +21,7 @@ public partial class MainWindow : FluentWindow
     private readonly IServiceProvider _serviceProvider;
     private bool _isRealClose = false;
     private bool _closeConfirmed = false;
-    private HoyPage? _hoyPage;
+    private TodayPage? _todayPage;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
@@ -44,18 +44,18 @@ public partial class MainWindow : FluentWindow
         breadcrumbService.SetBreadcrumbBar(BreadcrumbBar);
         
         
-        // Navigate to the Hoy page by default
+        // Navigate to the Today page by default
         Loaded += (_, _) => 
         {
-            NavigationView.Navigate(typeof(HoyPage));
+            NavigationView.Navigate(typeof(TodayPage));
         };
         
-        // Track when navigating to HoyPage
+        // Track when navigating to TodayPage
         NavigationView.Navigated += (_, args) =>
         {
-            if (args.Page is HoyPage hoyPage)
+            if (args.Page is TodayPage todayPage)
             {
-                _hoyPage = hoyPage;
+                _todayPage = todayPage;
             }
         };
         
@@ -274,23 +274,23 @@ public partial class MainWindow : FluentWindow
         Topmost = false;
         Focus();
 
-        // Navigate to HoyPage only if not already there
+        // Navigate to TodayPage only if not already there
         bool needsNavigation = true;
-        if (_hoyPage != null && _hoyPage.IsLoaded)
+        if (_todayPage != null && _todayPage.IsLoaded)
         {
-            // HoyPage is already loaded, no need to navigate
+            // TodayPage is already loaded, no need to navigate
             needsNavigation = false;
         }
 
         if (needsNavigation)
         {
-            NavigationView.Navigate(typeof(HoyPage));
+            NavigationView.Navigate(typeof(TodayPage));
         }
 
         // Give the navigation a moment to complete if needed, then trigger the dialog
         Dispatcher.InvokeAsync(() =>
         {
-            _hoyPage?.BringChangeActivityDialogToFront();
+            _todayPage?.BringChangeActivityDialogToFront();
         }, System.Windows.Threading.DispatcherPriority.Background);
     }
 
