@@ -205,8 +205,12 @@ public partial class MainWindow : FluentWindow
         // Calculate duration
         var startDateTime = activeRecord.Date.ToDateTime(activeRecord.StartTime);
         var duration = DateTime.Now - startDateTime;
-        string durationText = duration.Hours > 0
-            ? $"{duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}"
+        if (duration < TimeSpan.Zero)
+        {
+            duration = TimeSpan.Zero;
+        }
+        string durationText = (int)duration.TotalHours > 0
+            ? $"{(int)duration.TotalHours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}"
             : $"{duration.Minutes:D2}:{duration.Seconds:D2}";
 
         // Build the dialog content with activity information
