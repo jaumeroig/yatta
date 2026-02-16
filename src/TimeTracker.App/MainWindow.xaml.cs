@@ -84,7 +84,8 @@ public partial class MainWindow : FluentWindow
 
     /// <summary>
     /// Handles the window closing event to minimize to tray instead of closing.
-    /// When the app is actually closing and there is an active record, shows a confirmation dialog.
+    /// When the app is actually closing and there is an active record, cancels the close
+    /// and defers the confirmation dialog to avoid WPF limitations during Closing event.
     /// </summary>
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
@@ -99,7 +100,7 @@ public partial class MainWindow : FluentWindow
                 Hide();
                 return;
             }
-            // If MinimizeToTray is false, the app will close — check for active record below
+            // If MinimizeToTray is false, fall through to close confirmation below
         }
 
         // If the close was already confirmed by the dialog, allow closing
@@ -108,31 +109,15 @@ public partial class MainWindow : FluentWindow
             return;
         }
 
-        // Check if there is an active record before closing
-        var dialogResult = await ShowCloseConfirmationIfNeededAsync();
+        // Always cancel the close — we cannot show dialogs or change visibility during
+        // the Closing event. Instead, defer the confirmation to after the event completes.
+        e.Cancel = true;
 
-        if (dialogResult == CloseConfirmationResult.Cancel)
+        // Defer the dialog to the next dispatcher frame so the Closing event can complete
+        _ = Dispatcher.InvokeAsync(async () =>
         {
-            // User cancelled — don't close the app
-            e.Cancel = true;
-            _isRealClose = false;
-        }
-        else if (dialogResult == CloseConfirmationResult.StopAndClose ||
-                 dialogResult == CloseConfirmationResult.NoActiveRecord)
-        {
-            // User confirmed or no active record — proceed with close
-            _closeConfirmed = true;
-            e.Cancel = true;
-            // Re-trigger close on the dispatcher so the Closing event completes first
-            _ = Dispatcher.InvokeAsync(() => Application.Current.Shutdown());
-        }
-        else // CloseConfirmationResult.CloseWithoutStopping
-        {
-            // User chose not to stop — proceed with close
-            _closeConfirmed = true;
-            e.Cancel = true;
-            _ = Dispatcher.InvokeAsync(() => Application.Current.Shutdown());
-        }
+            await HandleCloseConfirmationAsync();
+        });
     }
 
     private async void MainWindow_StateChanged(object? sender, EventArgs e)
@@ -166,10 +151,32 @@ public partial class MainWindow : FluentWindow
 
     /// <summary>
     /// Handles the Tray Icon "Close" menu click.
+    /// Shows close confirmation if there is an active record before closing.
     /// </summary>
-    private void TrayClose_Click(object sender, RoutedEventArgs e)
+    private async void TrayClose_Click(object sender, RoutedEventArgs e)
     {
+        await HandleCloseConfirmationAsync();
+    }
+
+    /// <summary>
+    /// Handles the close confirmation flow.
+    /// Checks for active records, shows the confirmation dialog if needed,
+    /// and shuts down the application based on user response.
+    /// </summary>
+    private async Task HandleCloseConfirmationAsync()
+    {
+        var dialogResult = await ShowCloseConfirmationIfNeededAsync();
+
+        if (dialogResult == CloseConfirmationResult.Cancel)
+        {
+            // User cancelled — reset flags and keep the app open
+            _isRealClose = false;
+            return;
+        }
+
+        // User confirmed or no active record — proceed with close
         _isRealClose = true;
+        _closeConfirmed = true;
         Application.Current.Shutdown();
     }
 
