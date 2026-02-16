@@ -5,6 +5,7 @@ using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
+using TimeTracker.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ public partial class MainWindow : FluentWindow
     private readonly ISettingsRepository _settingsRepository;
     private readonly IServiceProvider _serviceProvider;
     private bool _isRealClose = false;
+    private bool _closeConfirmed = false;
     private HoyPage? _hoyPage;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
@@ -82,6 +84,7 @@ public partial class MainWindow : FluentWindow
 
     /// <summary>
     /// Handles the window closing event to minimize to tray instead of closing.
+    /// When the app is actually closing and there is an active record, shows a confirmation dialog.
     /// </summary>
     private async void MainWindow_Closing(object? sender, CancelEventArgs e)
     {
@@ -94,8 +97,41 @@ public partial class MainWindow : FluentWindow
                 e.Cancel = true;
                 ShowInTaskbar = false;
                 Hide();
+                return;
             }
-            // If MinimizeToTray is false, allow the window to close normally (exit the app)
+            // If MinimizeToTray is false, the app will close — check for active record below
+        }
+
+        // If the close was already confirmed by the dialog, allow closing
+        if (_closeConfirmed)
+        {
+            return;
+        }
+
+        // Check if there is an active record before closing
+        var dialogResult = await ShowCloseConfirmationIfNeededAsync();
+
+        if (dialogResult == CloseConfirmationResult.Cancel)
+        {
+            // User cancelled — don't close the app
+            e.Cancel = true;
+            _isRealClose = false;
+        }
+        else if (dialogResult == CloseConfirmationResult.StopAndClose ||
+                 dialogResult == CloseConfirmationResult.NoActiveRecord)
+        {
+            // User confirmed or no active record — proceed with close
+            _closeConfirmed = true;
+            e.Cancel = true;
+            // Re-trigger close on the dispatcher so the Closing event completes first
+            _ = Dispatcher.InvokeAsync(() => Application.Current.Shutdown());
+        }
+        else // CloseConfirmationResult.CloseWithoutStopping
+        {
+            // User chose not to stop — proceed with close
+            _closeConfirmed = true;
+            e.Cancel = true;
+            _ = Dispatcher.InvokeAsync(() => Application.Current.Shutdown());
         }
     }
 
@@ -138,6 +174,76 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>
+    /// Checks if there is an active time record and shows a confirmation dialog if so.
+    /// </summary>
+    /// <returns>The result of the confirmation dialog.</returns>
+    private async Task<CloseConfirmationResult> ShowCloseConfirmationIfNeededAsync()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
+        var activeRecord = await timeRecordRepository.GetActiveAsync();
+
+        if (activeRecord == null)
+        {
+            return CloseConfirmationResult.NoActiveRecord;
+        }
+
+        // Ensure the window is visible so the dialog can be shown
+        if (!IsVisible || WindowState == WindowState.Minimized)
+        {
+            ShowInTaskbar = true;
+            Show();
+            WindowState = WindowState.Normal;
+        }
+        Activate();
+
+        // Load the activity name
+        var activityRepository = scope.ServiceProvider.GetRequiredService<IActivityRepository>();
+        var activity = await activityRepository.GetByIdAsync(activeRecord.ActivityId);
+        string activityName = activity?.Name ?? string.Empty;
+
+        // Calculate duration
+        var startDateTime = activeRecord.Date.ToDateTime(activeRecord.StartTime);
+        var duration = DateTime.Now - startDateTime;
+        string durationText = duration.Hours > 0
+            ? $"{duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}"
+            : $"{duration.Minutes:D2}:{duration.Seconds:D2}";
+
+        // Build the dialog content with activity information
+        var content = TimeTracker.App.Resources.Resources.Dialog_CloseApp_Message
+            + "\n\n" + string.Format(TimeTracker.App.Resources.Resources.Dialog_CloseApp_Activity, activityName)
+            + "\n" + string.Format(TimeTracker.App.Resources.Resources.Dialog_CloseApp_StartTime, activeRecord.StartTime.ToString("HH:mm"))
+            + "\n" + string.Format(TimeTracker.App.Resources.Resources.Dialog_CloseApp_Duration, durationText);
+
+        var dialog = new ContentDialog(RootContentDialogHost)
+        {
+            Title = TimeTracker.App.Resources.Resources.Dialog_CloseApp_Title,
+            Content = content,
+            PrimaryButtonText = TimeTracker.App.Resources.Resources.Button_Yes,
+            SecondaryButtonText = TimeTracker.App.Resources.Resources.Button_No,
+            CloseButtonText = TimeTracker.App.Resources.Resources.Button_Cancel
+        };
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            // Stop the active record
+            activeRecord.EndTime = TimeOnly.FromDateTime(DateTime.Now);
+            await timeRecordRepository.UpdateAsync(activeRecord);
+            return CloseConfirmationResult.StopAndClose;
+        }
+        else if (result == ContentDialogResult.Secondary)
+        {
+            return CloseConfirmationResult.CloseWithoutStopping;
+        }
+        else
+        {
+            return CloseConfirmationResult.Cancel;
+        }
+    }
+
+    /// <summary>
     /// Shows the change activity dialog from the global hotkey.
     /// Brings the window to the foreground if needed and opens the dialog.
     /// </summary>
@@ -175,5 +281,20 @@ public partial class MainWindow : FluentWindow
         {
             _hoyPage?.BringChangeActivityDialogToFront();
         }, System.Windows.Threading.DispatcherPriority.Background);
+    }
+
+    /// <summary>
+    /// Represents the result of the close confirmation dialog.
+    /// </summary>
+    private enum CloseConfirmationResult
+    {
+        /// <summary>No active record exists, proceed with closing.</summary>
+        NoActiveRecord,
+        /// <summary>User chose to stop the activity and close the app.</summary>
+        StopAndClose,
+        /// <summary>User chose to close the app without stopping the activity.</summary>
+        CloseWithoutStopping,
+        /// <summary>User cancelled, the app should remain open.</summary>
+        Cancel
     }
 }

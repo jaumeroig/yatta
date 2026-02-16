@@ -2336,5 +2336,68 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actividad en curso.
+        /// </summary>
+        internal static string Dialog_CloseApp_Title {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Desea detener la actividad en curso antes de cerrar?.
+        /// </summary>
+        internal static string Dialog_CloseApp_Message {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actividad: {0}.
+        /// </summary>
+        internal static string Dialog_CloseApp_Activity {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Activity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inicio: {0}.
+        /// </summary>
+        internal static string Dialog_CloseApp_StartTime {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duración: {0}.
+        /// </summary>
+        internal static string Dialog_CloseApp_Duration {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sí.
+        /// </summary>
+        internal static string Button_Yes {
+            get {
+                return ResourceManager.GetString("Button_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string Button_No {
+            get {
+                return ResourceManager.GetString("Button_No", resourceCulture);
+            }
+        }
     }
 }

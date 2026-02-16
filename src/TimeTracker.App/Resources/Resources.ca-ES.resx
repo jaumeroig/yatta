@@ -879,4 +879,25 @@
   <data name="Key_Down" xml:space="preserve">
     <value>Avall</value>
   </data>
+  <data name="Dialog_CloseApp_Title" xml:space="preserve">
+    <value>Activitat en curs</value>
+  </data>
+  <data name="Dialog_CloseApp_Message" xml:space="preserve">
+    <value>Voleu aturar l'activitat en curs abans de tancar?</value>
+  </data>
+  <data name="Dialog_CloseApp_Activity" xml:space="preserve">
+    <value>Activitat: {0}</value>
+  </data>
+  <data name="Dialog_CloseApp_StartTime" xml:space="preserve">
+    <value>Inici: {0}</value>
+  </data>
+  <data name="Dialog_CloseApp_Duration" xml:space="preserve">
+    <value>Durada: {0}</value>
+  </data>
+  <data name="Button_Yes" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="Button_No" xml:space="preserve">
+    <value>No</value>
+  </data>
 </root>
