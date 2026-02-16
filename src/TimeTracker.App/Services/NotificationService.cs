@@ -81,6 +81,12 @@ public class NotificationService : INotificationService
         _timer = null;
     }
 
+    public void ResetTimer()
+    {
+        _lastNotificationTime = DateTime.Now;
+        _snoozeMinutes = 0;
+    }
+
     public async Task CheckAndNotifyAsync()
     {
         if (!_isEnabled) return;

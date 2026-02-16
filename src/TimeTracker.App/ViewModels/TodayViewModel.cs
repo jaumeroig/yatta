@@ -18,6 +18,7 @@ public partial class TodayViewModel : ObservableObject
     private readonly IActivityRepository _activityRepository;
     private readonly IWorkdayConfigService _workdayConfigService;
     private readonly ITimeCalculatorService _timeCalculatorService;
+    private readonly INotificationService _notificationService;
     private readonly DispatcherTimer _timer;
     private List<Activity> _allActivities = [];
 
@@ -88,12 +89,14 @@ public partial class TodayViewModel : ObservableObject
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         IWorkdayConfigService workdayConfigService,
-        ITimeCalculatorService timeCalculatorService)
+        ITimeCalculatorService timeCalculatorService,
+        INotificationService notificationService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
         _workdayConfigService = workdayConfigService;
         _timeCalculatorService = timeCalculatorService;
+        _notificationService = notificationService;
 
         _timer = new DispatcherTimer
         {
@@ -552,6 +555,9 @@ public partial class TodayViewModel : ObservableObject
         };
 
         await _timeRecordRepository.AddAsync(newRecord);
+
+        // Reset notification timer when activity changes
+        _notificationService.ResetTimer();
 
         // Close dialog and reload data
         IsChangeActivityDialogOpen = false;
