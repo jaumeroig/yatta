@@ -44,5 +44,9 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
         builder.Property(s => s.HistoricSortAscending)
             .IsRequired()
             .HasDefaultValue(false);
+
+        builder.Property(s => s.KeepNotificationsVisible)
+            .IsRequired()
+            .HasDefaultValue(false);
     }
 }

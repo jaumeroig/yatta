@@ -237,6 +237,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private string _hotkeyMessage = string.Empty;
 
+    /// <summary>
+    /// Indicates if notifications should remain visible until manually dismissed.
+    /// </summary>
+    [ObservableProperty]
+    private bool _keepNotificationsVisible;
+
     #endregion
 
     #region Property Changed Handlers
@@ -318,6 +324,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ToggleStartWithWindowsAsync()
     {
         await SaveStartWithWindowsAsync(StartWithWindowsEnabled);
+    }
+
+    /// <summary>
+    /// Toggles whether notifications should remain visible until manually dismissed.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleKeepNotificationsVisibleAsync()
+    {
+        await SaveKeepNotificationsVisibleAsync(KeepNotificationsVisible);
     }
 
     /// <summary>
@@ -501,6 +516,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Update global hotkey
         GlobalHotkey = _currentSettings.GlobalHotkey ?? _globalHotkeyService.GetDefaultHotkey();
+
+        // Update keep notifications visible
+        KeepNotificationsVisible = _currentSettings.KeepNotificationsVisible;
     }
 
     /// <summary>
@@ -586,6 +604,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             _startupService.DisableStartup();
         }
+    }
+
+    /// <summary>
+    /// Saves the keep notifications visible configuration.
+    /// </summary>
+    private async Task SaveKeepNotificationsVisibleAsync(bool enabled)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.KeepNotificationsVisible = enabled;
+        await _settingsRepository.UpdateAsync(_currentSettings);
     }
 
     /// <summary>

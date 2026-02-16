@@ -410,7 +410,16 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Description_NotificationInterval", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Si está activado, las notificaciones se mantendrán visibles hasta que las descartes manualmente. Si está desactivado, se ocultarán automáticamente después de unos segundos.
+        /// </summary>
+        internal static string Description_KeepNotificationsVisible {
+            get {
+                return ResourceManager.GetString("Description_KeepNotificationsVisible", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Muestra notificaciones para recordarte registrar las horas.
         /// </summary>
@@ -1112,7 +1121,16 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Label_NotificationInterval", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Mantener notificaciones visibles.
+        /// </summary>
+        internal static string Label_KeepNotificationsVisible {
+            get {
+                return ResourceManager.GetString("Label_KeepNotificationsVisible", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Oficina.
         /// </summary>

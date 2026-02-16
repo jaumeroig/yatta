@@ -153,6 +153,7 @@ public class NotificationService : INotificationService
         {
             using var scope = _serviceProvider.CreateScope();
             var activityRepository = scope.ServiceProvider.GetRequiredService<IActivityRepository>();
+            var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
 
             var activity = await activityRepository.GetByIdAsync(record.ActivityId);
             var activityName = activity?.Name ?? _localizationService.GetString("Notification_UnknownActivity");
@@ -171,9 +172,14 @@ public class NotificationService : INotificationService
             // Get the logo path
             var logoPath = GetLogoPath();
 
+            // Get settings to determine notification behavior
+            var settings = await settingsRepository.GetAsync();
+            var scenario = settings.KeepNotificationsVisible ? ToastScenario.Reminder : ToastScenario.Default;
+
             var builder = new ToastContentBuilder()
                 .AddText(title)
-                .AddText(body);
+                .AddText(body)
+                .SetToastScenario(scenario);
 
             // Add logo if available
             if (!string.IsNullOrEmpty(logoPath) && File.Exists(logoPath))
