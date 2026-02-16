@@ -70,4 +70,10 @@ public class AppSettings
     /// If false (default), records are sorted in descending order (newest first).
     /// </summary>
     public bool HistoricSortAscending { get; set; } = false;
+
+    /// <summary>
+    /// Indicates if notifications should remain visible until manually dismissed.
+    /// If true, uses ToastScenario.Reminder. If false (default), uses ToastScenario.Default.
+    /// </summary>
+    public bool KeepNotificationsVisible { get; set; } = false;
 }

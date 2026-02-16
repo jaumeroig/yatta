@@ -203,6 +203,26 @@
                     </StackPanel>
                 </ui:CardControl>
 
+                <!-- Keep notifications visible -->
+                <ui:CardControl Margin="0,0,0,4"
+                                IsEnabled="{Binding NotificationsEnabled}">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Pin24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_KeepNotificationsVisible}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_KeepNotificationsVisible}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding KeepNotificationsVisible, Mode=TwoWay}"
+                                     Command="{Binding ToggleKeepNotificationsVisibleCommand}" />
+                </ui:CardControl>
+
                 <!-- Jornada laboral -->
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>

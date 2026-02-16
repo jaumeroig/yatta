@@ -360,6 +360,12 @@
   <data name="Description_NotificationInterval" xml:space="preserve">
     <value>Temps en minuts entre cada notificació (mínim 15, màxim 480)</value>
   </data>
+  <data name="Label_KeepNotificationsVisible" xml:space="preserve">
+    <value>Mantenir notificacions visibles</value>
+  </data>
+  <data name="Description_KeepNotificationsVisible" xml:space="preserve">
+    <value>Si està activat, les notificacions es mantindran visibles fins que les descartes manualment. Si està desactivat, s'ocultaran automàticament després d'uns segons.</value>
+  </data>
   <data name="Label_Minutes" xml:space="preserve">
     <value>minuts</value>
   </data>
