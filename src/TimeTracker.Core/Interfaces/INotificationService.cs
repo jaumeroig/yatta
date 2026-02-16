@@ -31,6 +31,12 @@ public interface INotificationService : IDisposable
     Task ForceShowNotificationAsync();
 
     /// <summary>
+    /// Resets the notification timer to start counting from now.
+    /// Should be called when the current activity changes or is modified.
+    /// </summary>
+    void ResetTimer();
+
+    /// <summary>
     /// Event raised when user responds to continue with current activity.
     /// </summary>
     event EventHandler? OnContinueActivity;

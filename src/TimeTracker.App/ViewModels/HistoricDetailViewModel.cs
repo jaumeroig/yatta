@@ -18,6 +18,7 @@ public partial class HistoricDetailViewModel : ObservableObject
     private readonly INavigationService _navigationService;
     private readonly IDialogService _dialogService;
     private readonly IBreadcrumbService _breadcrumbService;
+    private readonly INotificationService _notificationService;
     private Guid _recordId;
     private bool _isNewRecord;
 
@@ -100,13 +101,15 @@ public partial class HistoricDetailViewModel : ObservableObject
         IActivityRepository activityRepository,
         INavigationService navigationService,
         IDialogService dialogService,
-        IBreadcrumbService breadcrumbService)
+        IBreadcrumbService breadcrumbService,
+        INotificationService notificationService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
         _navigationService = navigationService;
         _dialogService = dialogService;
         _breadcrumbService = breadcrumbService;
+        _notificationService = notificationService;
     }
 
     /// <summary>
@@ -298,10 +301,27 @@ public partial class HistoricDetailViewModel : ObservableObject
             if (_isNewRecord)
             {
                 await _timeRecordRepository.AddAsync(record);
+
+                // Reset notification timer if the new record is active (no end time)
+                if (!record.EndTime.HasValue)
+                {
+                    _notificationService.ResetTimer();
+                }
             }
             else
             {
+                // Check if this is an active record (was active before update)
+                var existingRecord = await _timeRecordRepository.GetByIdAsync(_recordId);
+                var wasActive = existingRecord?.EndTime == null;
+                var isNowActive = !record.EndTime.HasValue;
+
                 await _timeRecordRepository.UpdateAsync(record);
+
+                // Reset timer if record is still active or became active
+                if (isNowActive || wasActive)
+                {
+                    _notificationService.ResetTimer();
+                }
             }
 
             _navigationService.GoBack();
