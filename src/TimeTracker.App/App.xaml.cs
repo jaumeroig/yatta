@@ -302,7 +302,7 @@ public partial class App : Application
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
-        services.AddTransient<HoyViewModel>();
+        services.AddTransient<TodayViewModel>();
         services.AddTransient<HistoricViewModel>();
         services.AddTransient<HistoricDetailViewModel>();
         services.AddTransient<JornadaViewModel>();
@@ -312,7 +312,7 @@ public partial class App : Application
         services.AddTransient<WhatsNewViewModel>();
 
         // Register Pages
-        services.AddTransient<HoyPage>();
+        services.AddTransient<TodayPage>();
         services.AddTransient<HistoricPage>();
         services.AddTransient<HistoricDetailPage>();
         services.AddTransient<JornadaPage>();

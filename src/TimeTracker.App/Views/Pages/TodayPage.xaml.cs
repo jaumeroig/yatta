@@ -8,18 +8,18 @@ using TimeTracker.App.ViewModels;
 using Wpf.Ui.Controls;
 
 /// <summary>
-/// Interaction logic for HoyPage.xaml
+/// Interaction logic for TodayPage.xaml
 /// </summary>
-public partial class HoyPage : Page
+public partial class TodayPage : Page
 {
-    private readonly HoyViewModel _viewModel;
+    private readonly TodayViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
     private readonly IDialogService _dialogService;
     private ContentDialog? _configureDayDialog;
     private ContentDialog? _changeActivityDialog;
     private bool _isSubscribedToChanges;
 
-    public HoyPage(HoyViewModel viewModel, IBreadcrumbService breadcrumbService, IDialogService dialogService)
+    public TodayPage(TodayViewModel viewModel, IBreadcrumbService breadcrumbService, IDialogService dialogService)
     {
         _viewModel = viewModel;
         _breadcrumbService = breadcrumbService;
@@ -55,7 +55,7 @@ public partial class HoyPage : Page
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(HoyViewModel.IsConfigureDayDialogOpen))
+        if (e.PropertyName == nameof(TodayViewModel.IsConfigureDayDialogOpen))
         {
             if (_viewModel.IsConfigureDayDialogOpen)
             {
@@ -66,7 +66,7 @@ public partial class HoyPage : Page
                 _configureDayDialog?.Hide();
             }
         }
-        else if (e.PropertyName == nameof(HoyViewModel.IsChangeActivityDialogOpen))
+        else if (e.PropertyName == nameof(TodayViewModel.IsChangeActivityDialogOpen))
         {
             if (_viewModel.IsChangeActivityDialogOpen)
             {

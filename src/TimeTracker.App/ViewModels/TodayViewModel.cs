@@ -10,9 +10,9 @@ using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
 /// <summary>
-/// ViewModel for the Today (Hoy) page.
+/// ViewModel for the Today page.
 /// </summary>
-public partial class HoyViewModel : ObservableObject
+public partial class TodayViewModel : ObservableObject
 {
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
@@ -84,7 +84,7 @@ public partial class HoyViewModel : ObservableObject
     [ObservableProperty]
     private ChangeActivityModel _changeActivityModel = new();
 
-    public HoyViewModel(
+    public TodayViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         IWorkdayConfigService workdayConfigService,
