@@ -54,6 +54,11 @@ public partial class HistoricViewModel : ObservableObject
     [ObservableProperty]
     private TimeRecordEditModel _editRecordModel = new();
 
+    [ObservableProperty]
+    private bool _isDeleteConfirmationOpen;
+
+    private TimeRecordDisplay? _pendingDeleteRecord;
+
     public HistoricViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
@@ -436,20 +441,50 @@ public partial class HistoricViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Deletes a time record.
+    /// Requests deletion of a time record (opens confirmation dialog).
     /// </summary>
     [RelayCommand]
-    private async Task DeleteRecordAsync(TimeRecordDisplay recordDisplay)
+    private void RequestDeleteRecord(TimeRecordDisplay recordDisplay)
     {
+        _pendingDeleteRecord = recordDisplay;
+        IsDeleteConfirmationOpen = true;
+    }
+
+    /// <summary>
+    /// Confirms and executes the pending record deletion.
+    /// </summary>
+    [RelayCommand]
+    private async Task ConfirmDeleteRecordAsync()
+    {
+        if (_pendingDeleteRecord == null)
+        {
+            return;
+        }
+
         try
         {
-            await _timeRecordRepository.DeleteAsync(recordDisplay.Id);
+            await _timeRecordRepository.DeleteAsync(_pendingDeleteRecord.Id);
             await LoadDataAsync();
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error deleting record: {ex.Message}");
         }
+        finally
+        {
+            _pendingDeleteRecord = null;
+            IsDeleteConfirmationOpen = false;
+        }
+    }
+
+    /// <summary>
+    /// Cancels the pending record deletion.
+    /// </summary>
+    [RelayCommand]
+    private void CancelDeleteRecord()
+    {
+        _pendingDeleteRecord = null;
+        IsDeleteConfirmationOpen = false;
     }
 
     /// <summary>

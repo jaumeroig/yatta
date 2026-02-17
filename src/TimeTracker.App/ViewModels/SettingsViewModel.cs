@@ -92,17 +92,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         // Initialize theme options
         ThemeOptions =
         [
-            new ThemeOption { Value = Theme.System, DisplayName = Resources.Resources.RadioButton_SystemTheme },
-            new ThemeOption { Value = Theme.Dark, DisplayName = Resources.Resources.RadioButton_DarkTheme },
-            new ThemeOption { Value = Theme.Light, DisplayName = Resources.Resources.RadioButton_LightTheme }
+            new ThemeOption { Value = Theme.System, DisplayName = Resources.Resources.Theme_System },
+            new ThemeOption { Value = Theme.Dark, DisplayName = Resources.Resources.Theme_Dark },
+            new ThemeOption { Value = Theme.Light, DisplayName = Resources.Resources.Theme_Light }
         ];
 
         // Initialize language options
         LanguageOptions =
         [
-            new LanguageOption { Value = null, DisplayName = Resources.Resources.RadioButton_SystemLanguage },
-            new LanguageOption { Value = "es-ES", DisplayName = Resources.Resources.RadioButton_Spanish },
-            new LanguageOption { Value = "ca-ES", DisplayName = Resources.Resources.RadioButton_Catalan }
+            new LanguageOption { Value = null, DisplayName = Resources.Resources.Language_System },
+            new LanguageOption { Value = "es-ES", DisplayName = Resources.Resources.Language_Spanish },
+            new LanguageOption { Value = "ca-ES", DisplayName = Resources.Resources.Language_Catalan }
         ];
 
         // Initialize retention policy options

@@ -204,7 +204,7 @@ public partial class HistoricDetailViewModel : ObservableObject
     /// </summary>
     private void UpdateBreadcrumb()
     {
-        var recordsLabel = Resources.Resources.Nav_Records;
+        var recordsLabel = Resources.Resources.Nav_Historic;
 
         _breadcrumbService.SetItems(
             new BreadcrumbItem(recordsLabel, () => _navigationService.GoBack()),

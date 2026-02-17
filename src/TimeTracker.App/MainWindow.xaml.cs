@@ -5,7 +5,6 @@ using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
-using TimeTracker.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.ComponentModel;

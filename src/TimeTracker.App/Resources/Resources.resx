@@ -120,7 +120,7 @@
   <data name="TitleBar_Subtitle" xml:space="preserve">
     <value>Control de tiempo</value>
   </data>
-  <data name="Nav_Records" xml:space="preserve">
+  <data name="Nav_Historic" xml:space="preserve">
     <value>Histórico</value>
   </data>
   <data name="Nav_Workday" xml:space="preserve">
@@ -336,13 +336,13 @@
   <data name="Label_AppTheme" xml:space="preserve">
     <value>Tema de la aplicación</value>
   </data>
-  <data name="RadioButton_DarkTheme" xml:space="preserve">
+  <data name="Theme_Dark" xml:space="preserve">
     <value>Oscuro</value>
   </data>
-  <data name="RadioButton_LightTheme" xml:space="preserve">
+  <data name="Theme_Light" xml:space="preserve">
     <value>Claro</value>
   </data>
-  <data name="RadioButton_SystemTheme" xml:space="preserve">
+  <data name="Theme_System" xml:space="preserve">
     <value>Sistema</value>
   </data>
   <data name="Section_Notifications" xml:space="preserve">
@@ -456,13 +456,13 @@
   <data name="Label_AppLanguage" xml:space="preserve">
     <value>Idioma de la aplicación</value>
   </data>
-  <data name="RadioButton_SystemLanguage" xml:space="preserve">
+  <data name="Language_System" xml:space="preserve">
     <value>Sistema</value>
   </data>
-  <data name="RadioButton_Spanish" xml:space="preserve">
+  <data name="Language_Spanish" xml:space="preserve">
     <value>Español</value>
   </data>
-  <data name="RadioButton_Catalan" xml:space="preserve">
+  <data name="Language_Catalan" xml:space="preserve">
     <value>Català</value>
   </data>
   <data name="Description_Language" xml:space="preserve">
