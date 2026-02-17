@@ -1,0 +1,302 @@
+<ui:Page x:Class="YourApp.Views.Pages.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    mc:Ignorable="d"
+    Title="Dashboard"
+    d:DesignHeight="800"
+    d:DesignWidth="1000">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="24,0,24,24">
+            
+            <!-- Page Header -->
+            <TextBlock Text="Dashboard" 
+                       FontSize="28" 
+                       FontWeight="SemiBold" 
+                       Margin="0,0,0,24" />
+            
+            <!-- Stats Cards Row -->
+            <UniformGrid Rows="1" Columns="4" Margin="0,0,0,24">
+                
+                <!-- Stat Card 1 -->
+                <ui:Card Margin="0,0,8,0">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="People24" 
+                                       FontSize="24" 
+                                       Foreground="{ui:ThemeResource SystemAccentColorPrimaryBrush}"
+                                       Margin="0,0,0,8" />
+                        <TextBlock Text="Total Users" 
+                                   FontSize="12"
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="1,234" 
+                                   FontSize="32" 
+                                   FontWeight="Bold" />
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <ui:SymbolIcon Symbol="ArrowUp24" 
+                                           FontSize="12" 
+                                           Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}" />
+                            <TextBlock Text="12% from last month" 
+                                       FontSize="11"
+                                       Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}" 
+                                       Margin="4,0,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+                </ui:Card>
+                
+                <!-- Stat Card 2 -->
+                <ui:Card Margin="4,0">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="DocumentBulletList24" 
+                                       FontSize="24" 
+                                       Foreground="{ui:ThemeResource SystemAccentColorPrimaryBrush}"
+                                       Margin="0,0,0,8" />
+                        <TextBlock Text="Active Projects" 
+                                   FontSize="12"
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="42" 
+                                   FontSize="32" 
+                                   FontWeight="Bold" />
+                        <TextBlock Text="8 completed this week" 
+                                   FontSize="11"
+                                   Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" 
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </ui:Card>
+                
+                <!-- Stat Card 3 -->
+                <ui:Card Margin="4,0">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="CheckmarkCircle24" 
+                                       FontSize="24" 
+                                       Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}"
+                                       Margin="0,0,0,8" />
+                        <TextBlock Text="Success Rate" 
+                                   FontSize="12"
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="97.7%" 
+                                   FontSize="32" 
+                                   FontWeight="Bold"
+                                   Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}" />
+                        <TextBlock Text="Above target" 
+                                   FontSize="11"
+                                   Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}" 
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </ui:Card>
+                
+                <!-- Stat Card 4 -->
+                <ui:Card Margin="8,0,0,0">
+                    <StackPanel>
+                        <ui:SymbolIcon Symbol="Warning24" 
+                                       FontSize="24" 
+                                       Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
+                                       Margin="0,0,0,8" />
+                        <TextBlock Text="Open Issues" 
+                                   FontSize="12"
+                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="23" 
+                                   FontSize="32" 
+                                   FontWeight="Bold" />
+                        <TextBlock Text="5 high priority" 
+                                   FontSize="11"
+                                   Foreground="{ui:ThemeResource SystemFillColorCautionBrush}" 
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </ui:Card>
+                
+            </UniformGrid>
+            
+            <!-- Two Column Layout -->
+            <Grid Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <!-- Main Content Area -->
+                <ui:Card Grid.Column="0" Margin="0,0,12,0">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,16">
+                            <TextBlock Text="Recent Activity" 
+                                       FontSize="18" 
+                                       FontWeight="SemiBold" 
+                                       VerticalAlignment="Center" />
+                            <ui:Button Content="View All" 
+                                       Appearance="Transparent"
+                                       HorizontalAlignment="Right" />
+                        </Grid>
+                        
+                        <!-- Activity List -->
+                        <StackPanel>
+                            <!-- Activity Item 1 -->
+                            <Border Padding="12" 
+                                    Margin="0,0,0,8"
+                                    CornerRadius="4"
+                                    Background="{ui:ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Checkmark24" 
+                                                   Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}"
+                                                   Margin="0,0,12,0" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Project Alpha completed" FontWeight="SemiBold" />
+                                        <TextBlock Text="All tasks finished successfully" 
+                                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" 
+                                               Text="2 hours ago" 
+                                               Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Activity Item 2 -->
+                            <Border Padding="12" 
+                                    Margin="0,0,0,8"
+                                    CornerRadius="4"
+                                    Background="{ui:ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Person24" 
+                                                   Foreground="{ui:ThemeResource SystemAccentColorPrimaryBrush}"
+                                                   Margin="0,0,12,0" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="New team member added" FontWeight="SemiBold" />
+                                        <TextBlock Text="Jane Smith joined the project" 
+                                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" 
+                                               Text="5 hours ago" 
+                                               Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Activity Item 3 -->
+                            <Border Padding="12" 
+                                    CornerRadius="4"
+                                    Background="{ui:ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Warning24" 
+                                                   Foreground="{ui:ThemeResource SystemFillColorCautionBrush}"
+                                                   Margin="0,0,12,0" />
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="New issue reported" FontWeight="SemiBold" />
+                                        <TextBlock Text="Bug in login module" 
+                                                   Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                                   FontSize="12" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="2" 
+                                               Text="Yesterday" 
+                                               Foreground="{ui:ThemeResource TextFillColorTertiaryBrush}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </ui:Card>
+                
+                <!-- Sidebar -->
+                <StackPanel Grid.Column="1">
+                    
+                    <!-- Quick Actions Card -->
+                    <ui:Card Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Quick Actions" 
+                                       FontSize="16" 
+                                       FontWeight="SemiBold" 
+                                       Margin="0,0,0,16" />
+                            
+                            <ui:Button Content="New Project" 
+                                       Icon="{ui:SymbolIcon Add24}" 
+                                       Appearance="Primary" 
+                                       HorizontalAlignment="Stretch" 
+                                       Margin="0,0,0,8" />
+                            
+                            <ui:Button Content="Create Report" 
+                                       Icon="{ui:SymbolIcon DocumentAdd24}" 
+                                       HorizontalAlignment="Stretch" 
+                                       Margin="0,0,0,8" />
+                            
+                            <ui:Button Content="Invite Team" 
+                                       Icon="{ui:SymbolIcon PersonAdd24}" 
+                                       HorizontalAlignment="Stretch" />
+                        </StackPanel>
+                    </ui:Card>
+                    
+                    <!-- System Status Card -->
+                    <ui:CardExpander Header="System Status" IsExpanded="True">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="Database" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Ellipse Width="8" Height="8" 
+                                             Fill="{ui:ThemeResource SystemFillColorSuccessBrush}" 
+                                             Margin="0,0,6,0" />
+                                    <TextBlock Text="Online" 
+                                               Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}" 
+                                               FontSize="12" />
+                                </StackPanel>
+                            </Grid>
+                            
+                            <Grid Margin="0,0,0,8">
+                                <TextBlock Text="API Server" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Ellipse Width="8" Height="8" 
+                                             Fill="{ui:ThemeResource SystemFillColorSuccessBrush}" 
+                                             Margin="0,0,6,0" />
+                                    <TextBlock Text="Connected" 
+                                               Foreground="{ui:ThemeResource SystemFillColorSuccessBrush}" 
+                                               FontSize="12" />
+                                </StackPanel>
+                            </Grid>
+                            
+                            <Grid>
+                                <TextBlock Text="Background Jobs" VerticalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Ellipse Width="8" Height="8" 
+                                             Fill="{ui:ThemeResource SystemFillColorCautionBrush}" 
+                                             Margin="0,0,6,0" />
+                                    <TextBlock Text="3 pending" 
+                                               Foreground="{ui:ThemeResource SystemFillColorCautionBrush}" 
+                                               FontSize="12" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </ui:CardExpander>
+                    
+                </StackPanel>
+            </Grid>
+            
+            <!-- InfoBar for notifications -->
+            <ui:InfoBar Title="Tip of the day" 
+                        Message="You can press Ctrl+K to quickly search across all projects."
+                        IsOpen="True"
+                        Severity="Informational"
+                        IsClosable="True" />
+            
+        </StackPanel>
+    </ScrollViewer>
+</ui:Page>
