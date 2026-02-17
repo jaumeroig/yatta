@@ -250,6 +250,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string Button_No {
+            get {
+                return ResourceManager.GetString("Button_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Iniciar.
         /// </summary>
         internal static string Button_Play {
@@ -340,6 +349,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sí.
+        /// </summary>
+        internal static string Button_Yes {
+            get {
+                return ResourceManager.GetString("Button_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actividad activa.
         /// </summary>
         internal static string CheckBox_ActivityActive {
@@ -372,6 +390,15 @@ namespace TimeTracker.App.Resources {
         internal static string Description_GlobalHotkey {
             get {
                 return ResourceManager.GetString("Description_GlobalHotkey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Si está activado, las notificaciones se mantendrán visibles hasta que las descartes manualmente. Si está desactivado, se ocultarán automáticamente después de unos segundos..
+        /// </summary>
+        internal static string Description_KeepNotificationsVisible {
+            get {
+                return ResourceManager.GetString("Description_KeepNotificationsVisible", resourceCulture);
             }
         }
         
@@ -410,16 +437,7 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Description_NotificationInterval", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Si está activado, las notificaciones se mantendrán visibles hasta que las descartes manualmente. Si está desactivado, se ocultarán automáticamente después de unos segundos.
-        /// </summary>
-        internal static string Description_KeepNotificationsVisible {
-            get {
-                return ResourceManager.GetString("Description_KeepNotificationsVisible", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Muestra notificaciones para recordarte registrar las horas.
         /// </summary>
@@ -462,6 +480,51 @@ namespace TimeTracker.App.Resources {
         internal static string Dialog_ChangeActivity_Title {
             get {
                 return ResourceManager.GetString("Dialog_ChangeActivity_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actividad: {0}.
+        /// </summary>
+        internal static string Dialog_CloseApp_Activity {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Activity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duración: {0}.
+        /// </summary>
+        internal static string Dialog_CloseApp_Duration {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Desea detener la actividad en curso antes de cerrar?.
+        /// </summary>
+        internal static string Dialog_CloseApp_Message {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inicio: {0}.
+        /// </summary>
+        internal static string Dialog_CloseApp_StartTime {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_StartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actividad en curso.
+        /// </summary>
+        internal static string Dialog_CloseApp_Title {
+            get {
+                return ResourceManager.GetString("Dialog_CloseApp_Title", resourceCulture);
             }
         }
         
@@ -1069,6 +1132,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mantener notificaciones visibles.
+        /// </summary>
+        internal static string Label_KeepNotificationsVisible {
+            get {
+                return ResourceManager.GetString("Label_KeepNotificationsVisible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Idioma (requiere reiniciar).
         /// </summary>
         internal static string Label_LanguageRequiresRestart {
@@ -1121,16 +1193,7 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Label_NotificationInterval", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Mantener notificaciones visibles.
-        /// </summary>
-        internal static string Label_KeepNotificationsVisible {
-            get {
-                return ResourceManager.GetString("Label_KeepNotificationsVisible", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Oficina.
         /// </summary>
@@ -1285,6 +1348,33 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Català.
+        /// </summary>
+        internal static string Language_Catalan {
+            get {
+                return ResourceManager.GetString("Language_Catalan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Español.
+        /// </summary>
+        internal static string Language_Spanish {
+            get {
+                return ResourceManager.GetString("Language_Spanish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sistema.
+        /// </summary>
+        internal static string Language_System {
+            get {
+                return ResourceManager.GetString("Language_System", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Oficina.
         /// </summary>
         internal static string Location_Office {
@@ -1359,9 +1449,9 @@ namespace TimeTracker.App.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Histórico.
         /// </summary>
-        internal static string Nav_Records {
+        internal static string Nav_Historic {
             get {
-                return ResourceManager.GetString("Nav_Records", resourceCulture);
+                return ResourceManager.GetString("Nav_Historic", resourceCulture);
             }
         }
         
@@ -1654,65 +1744,11 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Català.
-        /// </summary>
-        internal static string RadioButton_Catalan {
-            get {
-                return ResourceManager.GetString("RadioButton_Catalan", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Oscuro.
-        /// </summary>
-        internal static string RadioButton_DarkTheme {
-            get {
-                return ResourceManager.GetString("RadioButton_DarkTheme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Claro.
-        /// </summary>
-        internal static string RadioButton_LightTheme {
-            get {
-                return ResourceManager.GetString("RadioButton_LightTheme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Oficina.
         /// </summary>
         internal static string RadioButton_Office {
             get {
                 return ResourceManager.GetString("RadioButton_Office", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Español.
-        /// </summary>
-        internal static string RadioButton_Spanish {
-            get {
-                return ResourceManager.GetString("RadioButton_Spanish", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sistema.
-        /// </summary>
-        internal static string RadioButton_SystemLanguage {
-            get {
-                return ResourceManager.GetString("RadioButton_SystemLanguage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sistema.
-        /// </summary>
-        internal static string RadioButton_SystemTheme {
-            get {
-                return ResourceManager.GetString("RadioButton_SystemTheme", resourceCulture);
             }
         }
         
@@ -1951,6 +1987,33 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Oscuro.
+        /// </summary>
+        internal static string Theme_Dark {
+            get {
+                return ResourceManager.GetString("Theme_Dark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Claro.
+        /// </summary>
+        internal static string Theme_Light {
+            get {
+                return ResourceManager.GetString("Theme_Light", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sistema.
+        /// </summary>
+        internal static string Theme_System {
+            get {
+                return ResourceManager.GetString("Theme_System", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Control de tiempo.
         /// </summary>
         internal static string TitleBar_Subtitle {
@@ -2077,6 +2140,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hora de salida.
+        /// </summary>
+        internal static string Today_EstimatedEndTime {
+            get {
+                return ResourceManager.GetString("Today_EstimatedEndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to En curso.
         /// </summary>
         internal static string Today_InProgress {
@@ -2120,16 +2192,7 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Today_RemainingTime", resourceCulture);
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Hora de salida.
-        /// </summary>
-        internal static string Today_EstimatedEndTime {
-            get {
-                return ResourceManager.GetString("Today_EstimatedEndTime", resourceCulture);
-            }
-        }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Comenzar a registrar.
         /// </summary>
@@ -2352,69 +2415,6 @@ namespace TimeTracker.App.Resources {
         internal static string Value_Technology {
             get {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Actividad en curso.
-        /// </summary>
-        internal static string Dialog_CloseApp_Title {
-            get {
-                return ResourceManager.GetString("Dialog_CloseApp_Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ¿Desea detener la actividad en curso antes de cerrar?.
-        /// </summary>
-        internal static string Dialog_CloseApp_Message {
-            get {
-                return ResourceManager.GetString("Dialog_CloseApp_Message", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Actividad: {0}.
-        /// </summary>
-        internal static string Dialog_CloseApp_Activity {
-            get {
-                return ResourceManager.GetString("Dialog_CloseApp_Activity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Inicio: {0}.
-        /// </summary>
-        internal static string Dialog_CloseApp_StartTime {
-            get {
-                return ResourceManager.GetString("Dialog_CloseApp_StartTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Duración: {0}.
-        /// </summary>
-        internal static string Dialog_CloseApp_Duration {
-            get {
-                return ResourceManager.GetString("Dialog_CloseApp_Duration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sí.
-        /// </summary>
-        internal static string Button_Yes {
-            get {
-                return ResourceManager.GetString("Button_Yes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No.
-        /// </summary>
-        internal static string Button_No {
-            get {
-                return ResourceManager.GetString("Button_No", resourceCulture);
             }
         }
     }

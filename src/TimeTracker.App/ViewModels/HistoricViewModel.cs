@@ -23,6 +23,7 @@ public partial class HistoricViewModel : ObservableObject
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly INavigationService _navigationService;
     private readonly ISettingsRepository _settingsRepository;
+    private readonly INotificationService _notificationService;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
 
@@ -47,18 +48,31 @@ public partial class HistoricViewModel : ObservableObject
     [ObservableProperty]
     private bool _sortAscending = false;
 
+    [ObservableProperty]
+    private bool _isEditRecordDialogOpen;
+
+    [ObservableProperty]
+    private TimeRecordEditModel _editRecordModel = new();
+
+    [ObservableProperty]
+    private bool _isDeleteConfirmationOpen;
+
+    private TimeRecordDisplay? _pendingDeleteRecord;
+
     public HistoricViewModel(
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
         ITimeCalculatorService timeCalculatorService,
         INavigationService navigationService,
-        ISettingsRepository settingsRepository)
+        ISettingsRepository settingsRepository,
+        INotificationService notificationService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
         _timeCalculatorService = timeCalculatorService;
         _navigationService = navigationService;
         _settingsRepository = settingsRepository;
+        _notificationService = notificationService;
     }
 
     /// <summary>
@@ -294,21 +308,204 @@ public partial class HistoricViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Navigates to the detail page to create a new record.
+    /// Opens the dialog to create a new record.
     /// </summary>
     [RelayCommand]
-    private void NavigateToNewRecord()
+    private async Task OpenNewRecordDialogAsync()
     {
-        _navigationService.Navigate<HistoricDetailPage>(null);
+        EditRecordModel = new TimeRecordEditModel
+        {
+            DialogTitle = AppResources.Dialog_NewRecord_Title,
+            RecordId = Guid.NewGuid(),
+            IsNewRecord = true,
+            AvailableActivities = new ObservableCollection<Activity>(_allActivities),
+            SelectedActivityId = Guid.Empty,
+            Date = DateTime.Today,
+            StartTimeText = await GetDefaultStartTimeAsync(DateOnly.FromDateTime(DateTime.Today)),
+            EndTimeText = "",
+            Notes = string.Empty,
+            Telework = false
+        };
+        IsEditRecordDialogOpen = true;
     }
 
     /// <summary>
-    /// Navigates to the detail page to edit an existing record.
+    /// Opens the dialog to edit an existing record.
     /// </summary>
     [RelayCommand]
-    private void NavigateToRecord(TimeRecordDisplay record)
+    private async Task OpenEditRecordDialogAsync(TimeRecordDisplay recordDisplay)
     {
-        _navigationService.Navigate<HistoricDetailPage>(record.Id);
+        var record = await _timeRecordRepository.GetByIdAsync(recordDisplay.Id);
+        if (record == null)
+        {
+            return;
+        }
+
+        // Ensure the record's activity is available for selection (might be inactive)
+        var activity = await _activityRepository.GetByIdAsync(record.ActivityId);
+        var availableActivities = new List<Activity>(_allActivities);
+        if (activity != null && !availableActivities.Any(a => a.Id == activity.Id))
+        {
+            availableActivities.Insert(0, activity);
+        }
+
+        EditRecordModel = new TimeRecordEditModel
+        {
+            DialogTitle = AppResources.Dialog_EditRecord_Title,
+            RecordId = record.Id,
+            IsNewRecord = false,
+            AvailableActivities = new ObservableCollection<Activity>(availableActivities),
+            SelectedActivityId = record.ActivityId,
+            Date = record.Date.ToDateTime(TimeOnly.MinValue),
+            StartTimeText = record.StartTime.ToString("HH:mm"),
+            EndTimeText = record.EndTime?.ToString("HH:mm") ?? "",
+            Notes = record.Notes ?? string.Empty,
+            Telework = record.Telework
+        };
+        IsEditRecordDialogOpen = true;
+    }
+
+    /// <summary>
+    /// Saves the record from the dialog.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveEditRecordAsync()
+    {
+        // Validate before saving
+        if (!EditRecordModel.Validate())
+        {
+            return;
+        }
+
+        var startTime = TimeOnly.Parse(EditRecordModel.StartTimeText);
+        TimeOnly? endTime = string.IsNullOrWhiteSpace(EditRecordModel.EndTimeText)
+            ? null
+            : TimeOnly.Parse(EditRecordModel.EndTimeText);
+
+        var record = new TimeRecord
+        {
+            Id = EditRecordModel.RecordId,
+            ActivityId = EditRecordModel.SelectedActivityId,
+            Date = DateOnly.FromDateTime(EditRecordModel.Date),
+            StartTime = startTime,
+            EndTime = endTime,
+            Notes = string.IsNullOrWhiteSpace(EditRecordModel.Notes) ? null : EditRecordModel.Notes,
+            Telework = EditRecordModel.Telework
+        };
+
+        try
+        {
+            if (EditRecordModel.IsNewRecord)
+            {
+                await _timeRecordRepository.AddAsync(record);
+
+                // Reset notification timer if the new record is active (no end time)
+                if (!record.EndTime.HasValue)
+                {
+                    _notificationService.ResetTimer();
+                }
+            }
+            else
+            {
+                // Check if this is an active record (was active before update)
+                var existingRecord = await _timeRecordRepository.GetByIdAsync(EditRecordModel.RecordId);
+                var wasActive = existingRecord?.EndTime == null;
+                var isNowActive = !record.EndTime.HasValue;
+
+                await _timeRecordRepository.UpdateAsync(record);
+
+                // Reset timer if record is still active or became active
+                if (isNowActive || wasActive)
+                {
+                    _notificationService.ResetTimer();
+                }
+            }
+
+            IsEditRecordDialogOpen = false;
+            await LoadDataAsync();
+        }
+        catch (Exception)
+        {
+            // In case of unexpected error, show generic message
+            EditRecordModel.ValidationError = AppResources.Validation_RecordSaveError;
+        }
+    }
+
+    /// <summary>
+    /// Closes the edit record dialog.
+    /// </summary>
+    [RelayCommand]
+    private void CloseEditRecordDialog()
+    {
+        IsEditRecordDialogOpen = false;
+    }
+
+    /// <summary>
+    /// Requests deletion of a time record (opens confirmation dialog).
+    /// </summary>
+    [RelayCommand]
+    private void RequestDeleteRecord(TimeRecordDisplay recordDisplay)
+    {
+        _pendingDeleteRecord = recordDisplay;
+        IsDeleteConfirmationOpen = true;
+    }
+
+    /// <summary>
+    /// Confirms and executes the pending record deletion.
+    /// </summary>
+    [RelayCommand]
+    private async Task ConfirmDeleteRecordAsync()
+    {
+        if (_pendingDeleteRecord == null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _timeRecordRepository.DeleteAsync(_pendingDeleteRecord.Id);
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error deleting record: {ex.Message}");
+        }
+        finally
+        {
+            _pendingDeleteRecord = null;
+            IsDeleteConfirmationOpen = false;
+        }
+    }
+
+    /// <summary>
+    /// Cancels the pending record deletion.
+    /// </summary>
+    [RelayCommand]
+    private void CancelDeleteRecord()
+    {
+        _pendingDeleteRecord = null;
+        IsDeleteConfirmationOpen = false;
+    }
+
+    /// <summary>
+    /// Gets the default start time for a new record on the given date.
+    /// If there are existing records, returns the end time of the last one.
+    /// Otherwise, returns the current time.
+    /// </summary>
+    private async Task<string> GetDefaultStartTimeAsync(DateOnly date)
+    {
+        var records = await _timeRecordRepository.GetByDateAsync(date);
+        var lastRecord = records
+            .Where(r => r.EndTime.HasValue)
+            .OrderByDescending(r => r.EndTime)
+            .FirstOrDefault();
+
+        if (lastRecord?.EndTime != null)
+        {
+            return lastRecord.EndTime.Value.ToString("HH:mm");
+        }
+
+        return DateTime.Now.ToString("HH:mm");
     }
 
     [RelayCommand]
@@ -367,5 +564,111 @@ public class TimeRecordDisplay
                 return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
             }
         }
+    }
+}
+
+/// <summary>
+/// Model for the edit record dialog.
+/// </summary>
+public partial class TimeRecordEditModel : ObservableObject
+{
+    [ObservableProperty]
+    private string _dialogTitle = string.Empty;
+
+    [ObservableProperty]
+    private Guid _recordId;
+
+    [ObservableProperty]
+    private bool _isNewRecord;
+
+    [ObservableProperty]
+    private ObservableCollection<Activity> _availableActivities = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSave))]
+    private Guid _selectedActivityId;
+
+    [ObservableProperty]
+    private DateTime _date;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSave))]
+    private string _startTimeText = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSave))]
+    private string _endTimeText = string.Empty;
+
+    [ObservableProperty]
+    private string _notes = string.Empty;
+
+    [ObservableProperty]
+    private bool _telework;
+
+    [ObservableProperty]
+    private string _validationError = string.Empty;
+
+    /// <summary>
+    /// Inverse of Telework for radio button binding (Office selected).
+    /// </summary>
+    public bool IsOffice
+    {
+        get => !Telework;
+        set
+        {
+            if (value != !Telework)
+            {
+                Telework = !value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Indicates if the record can be saved (basic validation).
+    /// </summary>
+    public bool CanSave => SelectedActivityId != Guid.Empty &&
+                           TimeOnly.TryParse(StartTimeText, out _) &&
+                           (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _));
+
+    /// <summary>
+    /// Validates the record data.
+    /// </summary>
+    public bool Validate()
+    {
+        ValidationError = string.Empty;
+
+        // Validate selected activity
+        if (SelectedActivityId == Guid.Empty)
+        {
+            ValidationError = AppResources.Validation_ActivityRequired;
+            return false;
+        }
+
+        // Validate start time
+        if (!TimeOnly.TryParse(StartTimeText, out var startTime))
+        {
+            ValidationError = AppResources.Validation_InvalidStartTime;
+            return false;
+        }
+
+        // Validate end time (optional if empty)
+        if (!string.IsNullOrWhiteSpace(EndTimeText))
+        {
+            if (!TimeOnly.TryParse(EndTimeText, out var parsedEndTime))
+            {
+                ValidationError = AppResources.Validation_InvalidEndTime;
+                return false;
+            }
+
+            // Validate that end time is after start time
+            if (parsedEndTime <= startTime)
+            {
+                ValidationError = AppResources.Validation_EndTimeAfterStartTime;
+                return false;
+            }
+        }
+
+        return true;
     }
 }

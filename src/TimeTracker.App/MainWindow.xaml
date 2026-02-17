@@ -18,7 +18,7 @@
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/Logo.ico">
-    
+
     <Grid>
         <!--<Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -61,23 +61,14 @@
                     </ui:BreadcrumbBar>
                 </StackPanel>
             </ui:NavigationView.Header>
-            <!--<ui:NavigationView.Header>
-                <StackPanel Orientation="Horizontal" Margin="16,8">
-                    <ui:SymbolIcon Symbol="Clock24" FontSize="28" Margin="0,0,12,0" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}" />
-                    <StackPanel>
-                        <TextBlock Text="{local:Localize App_Title}" FontWeight="SemiBold" FontSize="14" />
-                        <TextBlock Text="{local:Localize TitleBar_Subtitle}" FontSize="11" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                    </StackPanel>
-                </StackPanel>
-            </ui:NavigationView.Header>-->
-            
+
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Today}" TargetPageType="{x:Type pages:TodayPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="CalendarDay24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                <ui:NavigationViewItem Content="{local:Localize Nav_Records}" TargetPageType="{x:Type pages:HistoricPage}">
+                <ui:NavigationViewItem Content="{local:Localize Nav_Historic}" TargetPageType="{x:Type pages:HistoricPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Document24" />
                     </ui:NavigationViewItem.Icon>
@@ -88,14 +79,14 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
-            
+
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Activities}" TargetPageType="{x:Type pages:ActivitiesPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="AppsList24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
-                
+
                 <Separator />
 
                 <ui:NavigationViewItem Content="{local:Localize Nav_WhatsNew}" TargetPageType="{x:Type pages:WhatsNewPage}">
@@ -111,7 +102,7 @@
             </ui:NavigationView.FooterMenuItems>
 
 
-            
+
         </ui:NavigationView>
 
         <tray:NotifyIcon
