@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
+using TimeTracker.App.Views.Dialogs;
 using Wpf.Ui.Controls;
 
 /// <summary>
@@ -92,9 +93,10 @@ public partial class TodayPage : Page
             return;
         }
 
-        var template = (DataTemplate)Resources["ConfigureDayDialogTemplate"];
-        var content = template.LoadContent();
-        ((FrameworkElement)content).DataContext = _viewModel;
+        var content = new ConfigureDayDialogControl
+        {
+            DataContext = _viewModel
+        };
 
         _configureDayDialog = new ContentDialog(dialogHost)
         {
@@ -119,9 +121,10 @@ public partial class TodayPage : Page
             return;
         }
 
-        var template = (DataTemplate)Resources["ChangeActivityDialogTemplate"];
-        var content = template.LoadContent();
-        ((FrameworkElement)content).DataContext = _viewModel;
+        var content = new ChangeActivityDialogControl
+        {
+            DataContext = _viewModel
+        };
 
         _changeActivityDialog = new ContentDialog(dialogHost)
         {
