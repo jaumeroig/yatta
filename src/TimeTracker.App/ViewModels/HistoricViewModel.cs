@@ -279,8 +279,7 @@ public partial class HistoricViewModel : ObservableObject
     private static string FormatDate(DateOnly date)
     {
         var culture = AppResources.Culture ?? CultureInfo.CurrentCulture;
-        var longDate = date.ToString("D", culture);
-        return char.ToUpper(longDate[0], culture) + longDate[1..];
+        return date.ToString("D", culture).Capitalize();
     }
 
     private static string FormatTimeAgo(DateOnly date)

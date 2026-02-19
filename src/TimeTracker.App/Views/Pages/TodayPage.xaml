@@ -5,7 +5,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:controls="clr-namespace:TimeTracker.App.Controls"
-      xmlns:local="clr-namespace:TimeTracker.App.Markup"
+      xmlns:local="clr-namespace:TimeTracker.App.Markup" 
+      xmlns:viewmodels="clr-namespace:TimeTracker.App.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TodayViewModel}"
       mc:Ignorable="d"
       d:DesignHeight="800" d:DesignWidth="900"
       Loaded="Page_Loaded"
@@ -13,7 +14,7 @@
       Unloaded="Page_Unloaded">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="42,0,42,42" MaxWidth="800">
+        <StackPanel Margin="42,12,42,42" MaxWidth="800">
 
             <!-- === SECTION A: Header row (date + time + day type + configure) === -->
             <Grid Margin="0,0,0,20">
@@ -35,9 +36,9 @@
                 <!-- Clock -->
                 <TextBlock Grid.Column="1"
                            Text="{Binding CurrentTime}"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"
                            Margin="16,0,0,0"/>
 
@@ -207,7 +208,7 @@
                                            Padding="8"
                                            ToolTip="{local:Localize Button_Stop}"
                                            Command="{Binding StopRecordCommand}">
-                                    <ui:SymbolIcon Symbol="Stop24"/>
+                                    <ui:SymbolIcon Symbol="RecordStop24"/>
                                 </ui:Button>
                             </StackPanel>
                         </Grid>
