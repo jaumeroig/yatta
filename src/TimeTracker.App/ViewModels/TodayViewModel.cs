@@ -163,7 +163,7 @@ public partial class TodayViewModel : ObservableObject
         var completedRecords = records.Where(r => r.EndTime != null).ToList();
 
         HasActiveRecord = activeRecord != null;
-        CanPlay = activeRecord == null && records.Any();
+        CanPlay = activeRecord == null;
 
         if (activeRecord != null)
         {
