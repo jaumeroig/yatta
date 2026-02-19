@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
+using TimeTracker.App.Views.Dialogs;
 using Wpf.Ui.Controls;
 using AppResources = TimeTracker.App.Resources.Resources;
 
@@ -95,9 +96,10 @@ public partial class HistoricPage : Page
             return;
         }
 
-        var template = (DataTemplate)Resources["EditRecordDialogTemplate"];
-        var content = template.LoadContent();
-        ((FrameworkElement)content).DataContext = _viewModel;
+        var content = new EditRecordDialogControl
+        {
+            DataContext = _viewModel
+        };
 
         _editRecordDialog = new ContentDialog(dialogHost)
         {
@@ -145,8 +147,7 @@ public partial class HistoricPage : Page
             return;
         }
 
-        var template = (DataTemplate)Resources["DeleteRecordDialogTemplate"];
-        var content = template.LoadContent();
+        var content = new DeleteRecordConfirmationDialogControl();
 
         _deleteConfirmationDialog = new ContentDialog(dialogHost)
         {
