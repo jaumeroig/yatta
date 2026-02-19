@@ -1,13 +1,15 @@
 namespace TimeTracker.App.ViewModels;
 
-using System.Collections.ObjectModel;
-using System.Windows.Media;
-using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Windows.Media;
+using System.Windows.Threading;
 using TimeTracker.App.Controls;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 /// <summary>
 /// ViewModel for the Today page.
@@ -130,7 +132,7 @@ public partial class TodayViewModel : ObservableObject
     private void UpdateDateTime()
     {
         var now = DateTime.Now;
-        CurrentDate = now.ToString("D");
+        CurrentDate = now.ToString("D").Capitalize();
         CurrentTime = now.ToString("HH:mm");
     }
 
