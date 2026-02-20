@@ -16,50 +16,6 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="42,12,42,42" MaxWidth="800">
 
-            <!-- === SECTION A: Header row (date + time + day type + configure) === -->
-            <Grid Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Date -->
-                <TextBlock Grid.Column="0"
-                           Text="{Binding CurrentDate}"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           VerticalAlignment="Center"/>
-
-                <!-- Clock -->
-                <TextBlock Grid.Column="1"
-                           Text="{Binding CurrentTime}"
-                           FontSize="16"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           VerticalAlignment="Center"
-                           Margin="16,0,0,0"/>
-
-                <!-- Day type badge + configure button -->
-                <StackPanel Grid.Column="3"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Center">
-                    <ui:Badge Content="{Binding DayTypeDisplay}"
-                              Appearance="Secondary"
-                              Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0"/>
-                    <ui:Button Appearance="Transparent"
-                               Command="{Binding ConfigureDayCommand}"
-                               Padding="6"
-                               ToolTip="{local:Localize Today_ConfigureDay}">
-                        <ui:SymbolIcon Symbol="Settings24"/>
-                    </ui:Button>
-                </StackPanel>
-            </Grid>
-
             <!-- === SECTION B: Status card (timeline + active record/play + stats) === -->
             <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
@@ -68,18 +24,76 @@
                     Padding="24"
                     Margin="0,0,0,20">
                 <StackPanel>
+                    <!-- === SECTION A: Header row (date + time + day type + configure) === -->
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Stats row: Worked / Target / Remaining / End Time -->
+                        <!-- Date -->
+                        <TextBlock Grid.Column="0"
+                           Text="{Binding CurrentDate}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           VerticalAlignment="Center"/>
+
+                        <!-- Clock -->
+                        <TextBlock Grid.Column="1"
+                           Text="{Binding CurrentTime}"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           VerticalAlignment="Center"
+                           Margin="16,0,0,0"/>
+
+                        <!-- Day type badge + configure button -->
+                        <StackPanel Grid.Column="3"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                            <ui:Badge Content="{Binding DayTypeDisplay}"
+                              Appearance="Secondary"
+                              Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                              VerticalAlignment="Center"
+                              Margin="0,0,8,0"/>
+                            <ui:Button Appearance="Transparent"
+                               Command="{Binding ConfigureDayCommand}"
+                               Padding="6"
+                               ToolTip="{local:Localize Today_ConfigureDay}">
+                                <ui:SymbolIcon Symbol="Settings24"/>
+                            </ui:Button>
+                        </StackPanel>
+                    </Grid>
+
+
+
+                    <!-- Stats row: Start Time / Worked / Target / Remaining / End Time -->
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Worked -->
+                        <!-- Start time -->
                         <StackPanel Grid.Column="0">
+                            <TextBlock Text="{local:Localize Today_WorkdayStartTime}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding WorkdayStartTime}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- Worked -->
+                        <StackPanel Grid.Column="1">
                             <TextBlock Text="{local:Localize Today_WorkedTime}"
                                        FontSize="12"
                                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
@@ -91,7 +105,7 @@
                         </StackPanel>
 
                         <!-- Target (working days only) -->
-                        <StackPanel Grid.Column="1"
+                        <StackPanel Grid.Column="2"
                                     Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Text="{local:Localize Today_TargetDuration}"
                                        FontSize="12"
@@ -104,7 +118,7 @@
                         </StackPanel>
 
                         <!-- Remaining (working days only) -->
-                        <StackPanel Grid.Column="2"
+                        <StackPanel Grid.Column="3"
                                     Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Text="{local:Localize Today_RemainingTime}"
                                        FontSize="12"
@@ -117,7 +131,7 @@
                         </StackPanel>
 
                         <!-- Estimated end time (working days only) -->
-                        <StackPanel Grid.Column="3"
+                        <StackPanel Grid.Column="4"
                                     Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Text="{local:Localize Today_EstimatedEndTime}"
                                        FontSize="12"
@@ -188,8 +202,8 @@
                             <TextBlock Grid.Column="2"
                                        Text="{Binding ElapsedTime}"
                                        FontSize="20"
-                                       FontWeight="Bold"
-                                       Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                                        VerticalAlignment="Center"
                                        Margin="16,0,16,0"/>
 
@@ -204,7 +218,7 @@
                                            Command="{Binding ChangeActivityCommand}">
                                     <ui:SymbolIcon Symbol="ArrowSwap24"/>
                                 </ui:Button>
-                                <ui:Button Appearance="Primary"
+                                <ui:Button Appearance="Secondary"
                                            Padding="8"
                                            ToolTip="{local:Localize Button_Stop}"
                                            Command="{Binding StopRecordCommand}">
