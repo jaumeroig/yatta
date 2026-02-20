@@ -69,17 +69,30 @@
                     Margin="0,0,0,20">
                 <StackPanel>
 
-                    <!-- Stats row: Worked / Target / Remaining / End Time -->
+                    <!-- Stats row: Start Time / Worked / Target / Remaining / End Time -->
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Worked -->
+                        <!-- Start time -->
                         <StackPanel Grid.Column="0">
+                            <TextBlock Text="{local:Localize Today_WorkdayStartTime}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       Margin="0,0,0,2"/>
+                            <TextBlock Text="{Binding WorkdayStartTime}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- Worked -->
+                        <StackPanel Grid.Column="1">
                             <TextBlock Text="{local:Localize Today_WorkedTime}"
                                        FontSize="12"
                                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
@@ -91,7 +104,7 @@
                         </StackPanel>
 
                         <!-- Target (working days only) -->
-                        <StackPanel Grid.Column="1"
+                        <StackPanel Grid.Column="2"
                                     Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Text="{local:Localize Today_TargetDuration}"
                                        FontSize="12"
@@ -104,7 +117,7 @@
                         </StackPanel>
 
                         <!-- Remaining (working days only) -->
-                        <StackPanel Grid.Column="2"
+                        <StackPanel Grid.Column="3"
                                     Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Text="{local:Localize Today_RemainingTime}"
                                        FontSize="12"
@@ -117,7 +130,7 @@
                         </StackPanel>
 
                         <!-- Estimated end time (working days only) -->
-                        <StackPanel Grid.Column="3"
+                        <StackPanel Grid.Column="4"
                                     Visibility="{Binding IsWorkingDay, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <TextBlock Text="{local:Localize Today_EstimatedEndTime}"
                                        FontSize="12"
