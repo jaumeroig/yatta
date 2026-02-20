@@ -141,7 +141,6 @@ mc:Ignorable="d"
 
                 </StackPanel>
             </ToggleButton>
-
             <ui:Button Grid.Column="4"
                        Appearance="Primary"
                        Command="{Binding OpenNewRecordDialogCommand}"

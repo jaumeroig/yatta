@@ -32,55 +32,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <DataTemplate x:Key="DeleteActivityDialogTemplate">
-            <StackPanel Width="420">
-                <ui:SymbolIcon Symbol="Warning24"
-                               FontSize="48"
-                               Foreground="#F59E0B"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,16" />
-
-                <TextBlock Text="{local:Localize Dialog_DeleteActivity_Title}"
-                           FontSize="20"
-                           FontWeight="SemiBold"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,8" />
-
-                <TextBlock TextAlignment="Center"
-                           TextWrapping="Wrap"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           Margin="0,0,0,20">
-                    <Run Text="Aquesta activitat té " />
-                    <Run Text="{Binding RecordCount}" FontWeight="SemiBold" />
-                    <Run Text=" registres associats. Si l'elimines, es perdran totes les dades." />
-                </TextBlock>
-
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="8" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <ui:Button Grid.Column="0"
-                               Content="{local:Localize Button_CancelDelete}"
-                               Appearance="Secondary"
-                               Command="{Binding CancelDeleteCommand}"
-                               HorizontalAlignment="Stretch"
-                               Height="40"
-                               Padding="16,0" />
-
-                    <ui:Button Grid.Column="2"
-                               Content="{local:Localize Button_Delete}"
-                               Appearance="Danger"
-                               Command="{Binding ConfirmDeleteCommand}"
-                               HorizontalAlignment="Stretch"
-                               Height="40"
-                               Padding="16,0" />
-                </Grid>
-            </StackPanel>
-        </DataTemplate>
     </Page.Resources>
 
     <Grid Margin="42,12,42,12">
