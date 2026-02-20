@@ -68,6 +68,17 @@
                         <ui:SymbolIcon Symbol="CalendarDay24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="{local:Localize Nav_Dashboard}" TargetPageType="{x:Type pages:DashboardIndexPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="DataArea24" />
+                    </ui:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem.MenuItems>
+                        <ui:NavigationViewItem Content="{local:Localize Dashboard_Day}" TargetPageType="{x:Type pages:DashboardDayPage}" />
+                        <ui:NavigationViewItem Content="{local:Localize Dashboard_Week}" TargetPageType="{x:Type pages:DashboardWeekPage}" />
+                        <ui:NavigationViewItem Content="{local:Localize Dashboard_Month}" TargetPageType="{x:Type pages:DashboardMonthPage}" />
+                        <ui:NavigationViewItem Content="{local:Localize Dashboard_Year}" TargetPageType="{x:Type pages:DashboardYearPage}" />
+                    </ui:NavigationViewItem.MenuItems>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Historic}" TargetPageType="{x:Type pages:HistoricPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Document24" />

@@ -367,6 +367,159 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Actividades.
+        /// </summary>
+        internal static string Dashboard_Activities {
+            get {
+                return ResourceManager.GetString("Dashboard_Activities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horas por día.
+        /// </summary>
+        internal static string Dashboard_DailyHours {
+            get {
+                return ResourceManager.GetString("Dashboard_DailyHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Día.
+        /// </summary>
+        internal static string Dashboard_Day {
+            get {
+                return ResourceManager.GetString("Dashboard_Day", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Estadísticas detalladas de un día concreto.
+        /// </summary>
+        internal static string Dashboard_DayDescription {
+            get {
+                return ResourceManager.GetString("Dashboard_DayDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diferencial.
+        /// </summary>
+        internal static string Dashboard_Differential {
+            get {
+                return ResourceManager.GetString("Dashboard_Differential", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selecciona un período para ver las estadísticas.
+        /// </summary>
+        internal static string Dashboard_IndexSubtitle {
+            get {
+                return ResourceManager.GetString("Dashboard_IndexSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mes.
+        /// </summary>
+        internal static string Dashboard_Month {
+            get {
+                return ResourceManager.GetString("Dashboard_Month", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resumen mensual con desglose diario.
+        /// </summary>
+        internal static string Dashboard_MonthDescription {
+            get {
+                return ResourceManager.GetString("Dashboard_MonthDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Horas por mes.
+        /// </summary>
+        internal static string Dashboard_MonthlyHours {
+            get {
+                return ResourceManager.GetString("Dashboard_MonthlyHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registros del día.
+        /// </summary>
+        internal static string Dashboard_Records {
+            get {
+                return ResourceManager.GetString("Dashboard_Records", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Objetivo.
+        /// </summary>
+        internal static string Dashboard_Target {
+            get {
+                return ResourceManager.GetString("Dashboard_Target", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Línea de tiempo.
+        /// </summary>
+        internal static string Dashboard_Timeline {
+            get {
+                return ResourceManager.GetString("Dashboard_Timeline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Semana.
+        /// </summary>
+        internal static string Dashboard_Week {
+            get {
+                return ResourceManager.GetString("Dashboard_Week", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resumen semanal de lunes a domingo.
+        /// </summary>
+        internal static string Dashboard_WeekDescription {
+            get {
+                return ResourceManager.GetString("Dashboard_WeekDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo trabajado.
+        /// </summary>
+        internal static string Dashboard_WorkedTime {
+            get {
+                return ResourceManager.GetString("Dashboard_WorkedTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Año.
+        /// </summary>
+        internal static string Dashboard_Year {
+            get {
+                return ResourceManager.GetString("Dashboard_Year", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resumen anual con tendencias mensuales.
+        /// </summary>
+        internal static string Dashboard_YearDescription {
+            get {
+                return ResourceManager.GetString("Dashboard_YearDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ejecutar el purgado automáticamente al iniciar la aplicación.
         /// </summary>
         internal static string Description_AutoPurge {
@@ -1249,7 +1402,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duración objetivo (horas).
+        ///   Looks up a localized string similar to Duración objetivo (HH:mm).
         /// </summary>
         internal static string Label_TargetDuration {
             get {
@@ -1443,6 +1596,15 @@ namespace TimeTracker.App.Resources {
         internal static string Nav_Activities {
             get {
                 return ResourceManager.GetString("Nav_Activities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dashboard.
+        /// </summary>
+        internal static string Nav_Dashboard {
+            get {
+                return ResourceManager.GetString("Nav_Dashboard", resourceCulture);
             }
         }
         
@@ -1726,7 +1888,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ej: 8.
+        ///   Looks up a localized string similar to HH:mm.
         /// </summary>
         internal static string Placeholder_TargetDuration {
             get {
@@ -2392,7 +2554,7 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to La duración objetivo debe ser un número válido mayor que 0..
+        ///   Looks up a localized string similar to El formato de duración debe ser HH:mm (por ejemplo, 8:00) y debe ser mayor que 0..
         /// </summary>
         internal static string Validation_TargetDurationInvalid {
             get {
