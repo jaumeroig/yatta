@@ -903,4 +903,58 @@
   <data name="Button_No" xml:space="preserve">
     <value>No</value>
   </data>
+  <data name="Nav_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Dashboard_Day" xml:space="preserve">
+    <value>Dia</value>
+  </data>
+  <data name="Dashboard_Week" xml:space="preserve">
+    <value>Setmana</value>
+  </data>
+  <data name="Dashboard_Month" xml:space="preserve">
+    <value>Mes</value>
+  </data>
+  <data name="Dashboard_Year" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="Dashboard_IndexSubtitle" xml:space="preserve">
+    <value>Selecciona un període per veure les estadístiques</value>
+  </data>
+  <data name="Dashboard_DayDescription" xml:space="preserve">
+    <value>Estadístiques detallades d'un dia concret</value>
+  </data>
+  <data name="Dashboard_WeekDescription" xml:space="preserve">
+    <value>Resum setmanal de dilluns a diumenge</value>
+  </data>
+  <data name="Dashboard_MonthDescription" xml:space="preserve">
+    <value>Resum mensual amb desglossament diari</value>
+  </data>
+  <data name="Dashboard_YearDescription" xml:space="preserve">
+    <value>Resum anual amb tendències mensuals</value>
+  </data>
+  <data name="Dashboard_WorkedTime" xml:space="preserve">
+    <value>Temps treballat</value>
+  </data>
+  <data name="Dashboard_Differential" xml:space="preserve">
+    <value>Diferencial</value>
+  </data>
+  <data name="Dashboard_Timeline" xml:space="preserve">
+    <value>Línia de temps</value>
+  </data>
+  <data name="Dashboard_Activities" xml:space="preserve">
+    <value>Activitats</value>
+  </data>
+  <data name="Dashboard_Records" xml:space="preserve">
+    <value>Registres del dia</value>
+  </data>
+  <data name="Dashboard_Target" xml:space="preserve">
+    <value>Objectiu</value>
+  </data>
+  <data name="Dashboard_DailyHours" xml:space="preserve">
+    <value>Hores per dia</value>
+  </data>
+  <data name="Dashboard_MonthlyHours" xml:space="preserve">
+    <value>Hores per mes</value>
+  </data>
 </root>

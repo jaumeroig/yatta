@@ -288,6 +288,7 @@ public partial class App : Application
         services.AddScoped<IValidationService, ValidationService>();
         services.AddScoped<IWorkdayService, WorkdayService>();
         services.AddScoped<IWorkdayConfigService, WorkdayConfigService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IDataPurgeService, DataPurgeService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
@@ -310,6 +311,11 @@ public partial class App : Application
         services.AddTransient<ActivityDetailViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<WhatsNewViewModel>();
+        services.AddTransient<DashboardIndexViewModel>();
+        services.AddTransient<DashboardDayViewModel>();
+        services.AddTransient<DashboardWeekViewModel>();
+        services.AddTransient<DashboardMonthViewModel>();
+        services.AddTransient<DashboardYearViewModel>();
 
         // Register Pages
         services.AddTransient<TodayPage>();
@@ -320,6 +326,11 @@ public partial class App : Application
         services.AddTransient<ActivityDetailPage>();
         services.AddTransient<SettingsPage>();
         services.AddTransient<WhatsNewPage>();
+        services.AddTransient<DashboardIndexPage>();
+        services.AddTransient<DashboardDayPage>();
+        services.AddTransient<DashboardWeekPage>();
+        services.AddTransient<DashboardMonthPage>();
+        services.AddTransient<DashboardYearPage>();
 
         // Register windows
         services.AddSingleton<MainWindow>();
