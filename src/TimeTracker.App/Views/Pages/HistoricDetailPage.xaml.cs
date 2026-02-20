@@ -6,7 +6,9 @@ using System.Windows.Controls;
 using TimeTracker.App.Models;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
+using TimeTracker.App.Views.Dialogs;
 using Wpf.Ui.Controls;
+using AppResources = TimeTracker.App.Resources.Resources;
 
 /// <summary>
 /// Detail page to edit or create a time record.
@@ -73,8 +75,7 @@ public partial class HistoricDetailPage : Page
             _isSubscribedToChanges = false;
         }
 
-        DisposeDialog(ref _deleteDialog, OnDeleteDialogClosed);
-        _isDeleteDialogVisible = false;
+        DisposeDeleteDialog();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -94,15 +95,30 @@ public partial class HistoricDetailPage : Page
 
     private async Task ShowDeleteDialogAsync()
     {
-        if (_deleteDialog == null)
-        {
-            _deleteDialog = CreateDialog("DeleteRecordDialogTemplate");
-            _deleteDialog.Closed += OnDeleteDialogClosed;
-        }
-
         if (_isDeleteDialogVisible)
         {
             return;
+        }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        if (_deleteDialog == null)
+        {
+            var content = new DeleteRecordConfirmationDialogControl();
+
+            _deleteDialog = new ContentDialog(dialogHost)
+            {
+                Content = content,
+                CloseButtonText = AppResources.Button_CancelDelete,
+                PrimaryButtonText = AppResources.Button_Delete,
+                PrimaryButtonAppearance = ControlAppearance.Danger,
+            };
+
+            _deleteDialog.ButtonClicked += OnDeleteDialogButtonClicked;
         }
 
         try
@@ -113,46 +129,28 @@ public partial class HistoricDetailPage : Page
         finally
         {
             _isDeleteDialogVisible = false;
+            _viewModel.IsDeleteConfirmationOpen = false;
         }
     }
 
-    private ContentDialog CreateDialog(string templateKey)
+    private async void OnDeleteDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        var content = CreateDialogContent(templateKey);
-        var dialogHost = _dialogService.GetDialogHost();
-        
-        return new ContentDialog(dialogHost)
+        if (args.Button == ContentDialogButton.Primary)
         {
-            Content = content
-        };
+            args.Handled = true;
+            await _viewModel.ConfirmDeleteCommand.ExecuteAsync(null);
+        }
     }
 
-    private FrameworkElement CreateDialogContent(string templateKey)
+    private void DisposeDeleteDialog()
     {
-        if (Resources[templateKey] is DataTemplate template && template.LoadContent() is FrameworkElement element)
+        if (_deleteDialog != null)
         {
-            element.DataContext = _viewModel;
-            return element;
+            _deleteDialog.ButtonClicked -= OnDeleteDialogButtonClicked;
+            _deleteDialog.Hide();
         }
 
-        throw new InvalidOperationException($"Dialog template '{templateKey}' not found.");
-    }
-
-    private void DisposeDialog(ref ContentDialog? dialog, TypedEventHandler<ContentDialog, ContentDialogClosedEventArgs> closedHandler)
-    {
-        if (dialog == null)
-        {
-            return;
-        }
-
-        dialog.Closed -= closedHandler;
-        dialog.Hide();
-        dialog = null;
-    }
-
-    private void OnDeleteDialogClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-    {
-        _viewModel.IsDeleteConfirmationOpen = false;
+        _deleteDialog = null;
         _isDeleteDialogVisible = false;
     }
 }

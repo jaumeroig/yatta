@@ -211,18 +211,19 @@
                             <StackPanel Grid.Column="3"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center">
-                                <ui:Button Appearance="Secondary"
-                                           Padding="8"
-                                           Margin="0,0,4,0"
-                                           ToolTip="{local:Localize Button_Change}"
-                                           Command="{Binding ChangeActivityCommand}">
-                                    <ui:SymbolIcon Symbol="ArrowSwap24"/>
-                                </ui:Button>
+
                                 <ui:Button Appearance="Secondary"
                                            Padding="8"
                                            ToolTip="{local:Localize Button_Stop}"
                                            Command="{Binding StopRecordCommand}">
                                     <ui:SymbolIcon Symbol="RecordStop24"/>
+                                </ui:Button>
+                                <Separator Height="16" Margin="4,0,4,0" />
+                                <ui:Button Appearance="Secondary"
+                                           Padding="8"
+                                           ToolTip="{local:Localize Button_Change}"
+                                           Command="{Binding ChangeActivityCommand}">
+                                    <ui:SymbolIcon Symbol="ArrowSwap24"/>
                                 </ui:Button>
                             </StackPanel>
                         </Grid>
@@ -243,6 +244,7 @@
                                        FontSize="14"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                        VerticalAlignment="Center"/>
+
                             <ui:Button Grid.Column="1"
                                        Appearance="Primary"
                                        Command="{Binding PlayRecordCommand}"

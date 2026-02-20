@@ -7,6 +7,7 @@ using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Dialogs;
 using Wpf.Ui.Controls;
+using AppResources = TimeTracker.App.Resources.Resources;
 
 /// <summary>
 /// Interaction logic for TodayPage.xaml
@@ -100,11 +101,27 @@ public partial class TodayPage : Page
 
         _configureDayDialog = new ContentDialog(dialogHost)
         {
-            Content = content
+            Content = content,
+            Title = _viewModel.ConfigureDayModel.DialogTitle,
+            PrimaryButtonText = AppResources.Button_SaveChanges,
+            CloseButtonText = AppResources.Button_Cancel,
+            DefaultButton = ContentDialogButton.Primary,
         };
 
+        _configureDayDialog.ButtonClicked += OnConfigureDayDialogButtonClicked;
+
         await _configureDayDialog.ShowAsync();
-        DisposeDialogs();
+        _viewModel.IsConfigureDayDialogOpen = false;
+        DisposeConfigureDayDialog();
+    }
+
+    private async void OnConfigureDayDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (args.Button == ContentDialogButton.Primary)
+        {
+            args.Handled = true;
+            await _viewModel.SaveConfigureDayCommand.ExecuteAsync(null);
+        }
     }
 
     private async Task ShowChangeActivityDialogAsync()
@@ -128,11 +145,47 @@ public partial class TodayPage : Page
 
         _changeActivityDialog = new ContentDialog(dialogHost)
         {
-            Content = content
+            Content = content,
+            Title = _viewModel.ChangeActivityModel.DialogTitle,
+            PrimaryButtonText = _viewModel.ChangeActivityModel.PrimaryButtonText,
+            CloseButtonText = AppResources.Button_Cancel,
+            DefaultButton = ContentDialogButton.Primary,
+            IsPrimaryButtonEnabled = _viewModel.ChangeActivityModel.HasChanges,
         };
 
+        _viewModel.ChangeActivityModel.PropertyChanged += OnChangeActivityModelPropertyChanged;
+        _changeActivityDialog.ButtonClicked += OnChangeActivityDialogButtonClicked;
+
         await _changeActivityDialog.ShowAsync();
-        DisposeDialogs();
+        _viewModel.IsChangeActivityDialogOpen = false;
+        DisposeChangeActivityDialog();
+    }
+
+    private void OnChangeActivityModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_changeActivityDialog == null) return;
+
+        if (e.PropertyName == nameof(ChangeActivityModel.HasChanges))
+        {
+            _changeActivityDialog.IsPrimaryButtonEnabled = _viewModel.ChangeActivityModel.HasChanges;
+        }
+        else if (e.PropertyName == nameof(ChangeActivityModel.PrimaryButtonText))
+        {
+            _changeActivityDialog.PrimaryButtonText = _viewModel.ChangeActivityModel.PrimaryButtonText;
+        }
+        else if (e.PropertyName == nameof(ChangeActivityModel.DialogTitle))
+        {
+            _changeActivityDialog.Title = _viewModel.ChangeActivityModel.DialogTitle;
+        }
+    }
+
+    private async void OnChangeActivityDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (args.Button == ContentDialogButton.Primary)
+        {
+            args.Handled = true;
+            await _viewModel.SaveChangeActivityCommand.ExecuteAsync(null);
+        }
     }
 
     /// <summary>
@@ -157,7 +210,28 @@ public partial class TodayPage : Page
 
     private void DisposeDialogs()
     {
+        DisposeConfigureDayDialog();
+        DisposeChangeActivityDialog();
+    }
+
+    private void DisposeConfigureDayDialog()
+    {
+        if (_configureDayDialog != null)
+        {
+            _configureDayDialog.ButtonClicked -= OnConfigureDayDialogButtonClicked;
+        }
+
         _configureDayDialog = null;
+    }
+
+    private void DisposeChangeActivityDialog()
+    {
+        if (_changeActivityDialog != null)
+        {
+            _changeActivityDialog.ButtonClicked -= OnChangeActivityDialogButtonClicked;
+        }
+
+        _viewModel.ChangeActivityModel.PropertyChanged -= OnChangeActivityModelPropertyChanged;
         _changeActivityDialog = null;
     }
 }

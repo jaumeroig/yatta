@@ -9,42 +9,16 @@
              d:DesignWidth="480"
              mc:Ignorable="d">
     <StackPanel Width="480">
-        <Grid Margin="0,0,0,20">
-            <TextBlock Text="{local:Localize Dialog_ConfigureDay_Title}"
-                       FontSize="20"
-                       FontWeight="SemiBold" />
-            <ui:Button HorizontalAlignment="Right"
-                       Appearance="Transparent"
-                       Command="{Binding CloseConfigureDayDialogCommand}"
-                       Padding="4">
-                <ui:SymbolIcon Symbol="Dismiss24" />
-            </ui:Button>
-        </Grid>
-
         <TextBlock Text="{local:Localize Label_DayType}"
                    FontWeight="SemiBold"
-                   Margin="0,0,0,12" />
-        <StackPanel Margin="0,0,0,16">
-            <RadioButton Content="{local:Localize Today_DayType_WorkDay}"
-                         IsChecked="{Binding ConfigureDayModel.IsWorkDay}"
-                         GroupName="DayType"
-                         Margin="0,0,0,8" />
-            <RadioButton Content="{local:Localize Today_DayType_IntensiveDay}"
-                         IsChecked="{Binding ConfigureDayModel.IsIntensiveDay}"
-                         GroupName="DayType"
-                         Margin="0,0,0,8" />
-            <RadioButton Content="{local:Localize Today_DayType_Holiday}"
-                         IsChecked="{Binding ConfigureDayModel.IsHoliday}"
-                         GroupName="DayType"
-                         Margin="0,0,0,8" />
-            <RadioButton Content="{local:Localize Today_DayType_FreeChoice}"
-                         IsChecked="{Binding ConfigureDayModel.IsFreeChoice}"
-                         GroupName="DayType"
-                         Margin="0,0,0,8" />
-            <RadioButton Content="{local:Localize Today_DayType_Vacation}"
-                         IsChecked="{Binding ConfigureDayModel.IsVacation}"
-                         GroupName="DayType" />
-        </StackPanel>
+                   Margin="0,0,0,8" />
+        <ComboBox ItemsSource="{Binding ConfigureDayModel.AvailableDayTypes}"
+                  SelectedValue="{Binding ConfigureDayModel.DayType, Mode=TwoWay}"
+                  SelectedValuePath="Value"
+                  DisplayMemberPath="DisplayName"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,0,0,16"
+                  Height="40" />
 
         <StackPanel Margin="0,0,0,16"
                     Visibility="{Binding ConfigureDayModel.IsWorkingDayType, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -52,7 +26,7 @@
                        FontWeight="SemiBold"
                        Margin="0,0,0,8" />
             <ui:TextBox PlaceholderText="{local:Localize Placeholder_TargetDuration}"
-                        Text="{Binding ConfigureDayModel.TargetDurationHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding ConfigureDayModel.TargetDurationText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Height="40" />
         </StackPanel>
 
@@ -60,19 +34,12 @@
                 BorderThickness="1"
                 CornerRadius="4"
                 Padding="12,8"
-                Margin="0,0,0,16"
+                Margin="0,0,0,0"
                 Visibility="{Binding ConfigureDayModel.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
             <TextBlock Text="{Binding ConfigureDayModel.ValidationError}"
                        Foreground="White"
                        TextWrapping="Wrap"
                        FontSize="13" />
         </Border>
-
-        <ui:Button Content="{local:Localize Button_SaveChanges}"
-                   Appearance="Primary"
-                   HorizontalAlignment="Stretch"
-                   Command="{Binding SaveConfigureDayCommand}"
-                   Height="40"
-                   Padding="16,0" />
     </StackPanel>
 </UserControl>

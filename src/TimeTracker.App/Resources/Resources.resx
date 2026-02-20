@@ -703,16 +703,16 @@
     <value>Tipo de día</value>
   </data>
   <data name="Label_TargetDuration" xml:space="preserve">
-    <value>Duración objetivo (horas)</value>
+    <value>Duración objetivo (HH:mm)</value>
   </data>
   <data name="Placeholder_TargetDuration" xml:space="preserve">
-    <value>Ej: 8</value>
+    <value>HH:mm</value>
   </data>
   <data name="Validation_TargetDurationRequired" xml:space="preserve">
     <value>La duración objetivo es obligatoria para días laborables.</value>
   </data>
   <data name="Validation_TargetDurationInvalid" xml:space="preserve">
-    <value>La duración objetivo debe ser un número válido mayor que 0.</value>
+    <value>El formato de duración debe ser HH:mm (por ejemplo, 8:00) y debe ser mayor que 0.</value>
   </data>
   <data name="Dialog_ChangeActivity_Title" xml:space="preserve">
     <value>Cambiar actividad</value>
