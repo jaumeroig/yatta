@@ -577,10 +577,55 @@ public partial class TodayViewModel : ObservableObject
             Date = today,
             DayType = currentConfig.DayType,
             TargetDurationHours = currentConfig.TargetDuration.TotalHours,
+            TargetDurationText = FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
             ValidationError = string.Empty
         };
         
         IsConfigureDayDialogOpen = true;
+    }
+
+    private static string FormatHoursToHHmm(double hours)
+    {
+        if (hours <= 0)
+        {
+            return "8:00";
+        }
+
+        var timeSpan = TimeSpan.FromHours(hours);
+        return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}";
+    }
+
+    private static bool TryParseHHmm(string text, out TimeSpan duration)
+    {
+        duration = TimeSpan.Zero;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var parts = text.Split(':');
+        if (parts.Length != 2)
+        {
+            return false;
+        }
+
+        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
+        {
+            return false;
+        }
+
+        if (hours < 0 || minutes < 0 || minutes > 59)
+        {
+            return false;
+        }
+
+        if (hours == 0 && minutes == 0)
+        {
+            return false;
+        }
+
+        duration = new TimeSpan(hours, minutes, 0);
+        return true;
     }
 
     [RelayCommand]
@@ -596,9 +641,10 @@ public partial class TodayViewModel : ObservableObject
         var isWorkingDay = ConfigureDayModel.DayType == DayType.WorkDay || 
                           ConfigureDayModel.DayType == DayType.IntensiveDay;
         
+        TimeSpan targetDuration = TimeSpan.Zero;
         if (isWorkingDay)
         {
-            if (ConfigureDayModel.TargetDurationHours <= 0)
+            if (!TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
             {
                 ConfigureDayModel.ValidationError = TimeTracker.App.Resources.Resources.Validation_TargetDurationInvalid;
                 return;
@@ -606,9 +652,6 @@ public partial class TodayViewModel : ObservableObject
         }
         
         // Save configuration
-        var targetDuration = isWorkingDay 
-            ? TimeSpan.FromHours(ConfigureDayModel.TargetDurationHours) 
-            : TimeSpan.Zero;
             
         await _workdayConfigService.SetConfigurationAsync(
             ConfigureDayModel.Date,
@@ -622,11 +665,28 @@ public partial class TodayViewModel : ObservableObject
 }
 
 /// <summary>
+/// Represents a day type option for the dropdown.
+/// </summary>
+public class DayTypeOption
+{
+    /// <summary>
+    /// Day type value.
+    /// </summary>
+    public DayType Value { get; set; }
+
+    /// <summary>
+    /// Name to display in the UI.
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
+}
+
+/// <summary>
 /// Model for the Configure Day dialog.
 /// </summary>
 public partial class ConfigureDayModel : ObservableObject
 {
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DialogTitle))]
     private DateOnly _date;
 
     [ObservableProperty]
@@ -636,47 +696,33 @@ public partial class ConfigureDayModel : ObservableObject
     private double _targetDurationHours = 8;
 
     [ObservableProperty]
+    private string _targetDurationText = string.Empty;
+
+    [ObservableProperty]
     private string _validationError = string.Empty;
 
-    public bool IsWorkDay
-    {
-        get => DayType == DayType.WorkDay;
-        set { if (value) DayType = DayType.WorkDay; }
-    }
+    /// <summary>
+    /// Title shown in the dialog header, including the date in short format.
+    /// </summary>
+    public string DialogTitle =>
+        $"{TimeTracker.App.Resources.Resources.Dialog_ConfigureDay_Title} {Date.ToString("d")}";
 
-    public bool IsIntensiveDay
-    {
-        get => DayType == DayType.IntensiveDay;
-        set { if (value) DayType = DayType.IntensiveDay; }
-    }
-
-    public bool IsHoliday
-    {
-        get => DayType == DayType.Holiday;
-        set { if (value) DayType = DayType.Holiday; }
-    }
-
-    public bool IsFreeChoice
-    {
-        get => DayType == DayType.FreeChoice;
-        set { if (value) DayType = DayType.FreeChoice; }
-    }
-
-    public bool IsVacation
-    {
-        get => DayType == DayType.Vacation;
-        set { if (value) DayType = DayType.Vacation; }
-    }
+    /// <summary>
+    /// Available day type options for the dropdown.
+    /// </summary>
+    public static List<DayTypeOption> AvailableDayTypes { get; } =
+    [
+        new DayTypeOption { Value = DayType.WorkDay, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_WorkDay },
+        new DayTypeOption { Value = DayType.IntensiveDay, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_IntensiveDay },
+        new DayTypeOption { Value = DayType.Holiday, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_Holiday },
+        new DayTypeOption { Value = DayType.FreeChoice, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_FreeChoice },
+        new DayTypeOption { Value = DayType.Vacation, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_Vacation },
+    ];
 
     public bool IsWorkingDayType => DayType == DayType.WorkDay || DayType == DayType.IntensiveDay;
 
     partial void OnDayTypeChanged(DayType value)
     {
-        OnPropertyChanged(nameof(IsWorkDay));
-        OnPropertyChanged(nameof(IsIntensiveDay));
-        OnPropertyChanged(nameof(IsHoliday));
-        OnPropertyChanged(nameof(IsFreeChoice));
-        OnPropertyChanged(nameof(IsVacation));
         OnPropertyChanged(nameof(IsWorkingDayType));
     }
 }

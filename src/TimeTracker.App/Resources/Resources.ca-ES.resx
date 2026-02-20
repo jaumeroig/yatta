@@ -706,16 +706,16 @@
     <value>Tipus de dia</value>
   </data>
   <data name="Label_TargetDuration" xml:space="preserve">
-    <value>Durada objectiu (hores)</value>
+    <value>Durada objectiu (HH:mm)</value>
   </data>
   <data name="Placeholder_TargetDuration" xml:space="preserve">
-    <value>Ex: 8</value>
+    <value>HH:mm</value>
   </data>
   <data name="Validation_TargetDurationRequired" xml:space="preserve">
     <value>La durada objectiu és obligatòria per a dies laborables.</value>
   </data>
   <data name="Validation_TargetDurationInvalid" xml:space="preserve">
-    <value>La durada objectiu ha de ser un número vàlid més gran que 0.</value>
+    <value>El format de durada ha de ser HH:mm (per exemple, 8:00) i ha de ser major que 0.</value>
   </data>
   <data name="Dialog_ChangeActivity_Title" xml:space="preserve">
     <value>Canviar activitat</value>
