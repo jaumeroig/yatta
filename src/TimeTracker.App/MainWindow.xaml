@@ -20,15 +20,10 @@
         Icon="/Resources/Logo.ico">
 
     <Grid>
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>-->
 
         <ui:TitleBar
             
             x:Name="TitleBar"
-            Grid.Row="0"
             Title="{local:Localize App_Title}"
             ShowMaximize="True"
             ShowMinimize="True" >
@@ -44,13 +39,18 @@
             Margin="0,50,0,0"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleVisible="True"
-            IsTopSeparatorVisible="false"
-            IsFooterSeparatorVisible="false"
+            IsTopSeparatorVisible="False"
+            IsFooterSeparatorVisible="False"
             OpenPaneLength="200">
 
             <ui:NavigationView.Header>
                 <StackPanel Margin="42,32,42,20">
                     <ui:BreadcrumbBar x:Name="BreadcrumbBar">
+                        <ui:BreadcrumbBar.ItemContainerStyle>
+                            <Style TargetType="{x:Type ui:BreadcrumbBarItem}" BasedOn="{StaticResource {x:Type ui:BreadcrumbBarItem}}">
+                                <Setter Property="IconMargin" Value="8,8,8,0"  />
+                            </Style>
+                        </ui:BreadcrumbBar.ItemContainerStyle>
                         <ui:BreadcrumbBar.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding}" 
@@ -70,7 +70,7 @@
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem Content="{local:Localize Nav_Dashboard}" TargetPageType="{x:Type pages:DashboardIndexPage}">
                     <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="DataArea24" />
+                        <ui:SymbolIcon Symbol="ChartMultiple24" />
                     </ui:NavigationViewItem.Icon>
                     <ui:NavigationViewItem.MenuItems>
                         <ui:NavigationViewItem Content="{local:Localize Dashboard_Day}" TargetPageType="{x:Type pages:DashboardDayPage}" />
@@ -112,12 +112,9 @@
                 </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
 
-
-
         </ui:NavigationView>
 
         <tray:NotifyIcon
-            Grid.Row="0"
             FocusOnLeftClick="True"
             MenuOnRightClick="True"
             LeftClick="TrayOpen_Click"
@@ -141,6 +138,6 @@
         </tray:NotifyIcon>
 
         <!-- Host global per als diàlegs (ha d'estar al final per estar per sobre de tot) -->
-        <ui:ContentDialogHost x:Name="RootContentDialogHost" Grid.RowSpan="2" />
+        <ui:ContentDialogHost x:Name="RootContentDialogHost" />
     </Grid>
 </ui:FluentWindow>
