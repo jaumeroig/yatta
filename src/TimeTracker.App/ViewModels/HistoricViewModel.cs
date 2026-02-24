@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Humanizer;
 using TimeTracker.App.Controls;
+using TimeTracker.App.Models;
 using TimeTracker.App.Services;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.Core.Interfaces;
@@ -211,7 +212,8 @@ public partial class HistoricViewModel : ObservableObject
             StartTime = record.StartTime.ToString("HH:mm"),
             EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
             Duration = FormatDuration(duration),
-            Date = record.Date
+            Date = record.Date,
+            Telework = record.Telework
         };
     }
 
@@ -529,145 +531,4 @@ public class DayGroup
     public DateTime WorkdayEnd { get; set; }
     public ObservableCollection<TimeRecordDisplay> Records { get; set; } = [];
     public ObservableCollection<TimeSegment> TimelineSegments { get; set; } = [];
-}
-
-/// <summary>
-/// Display model for a time record.
-/// </summary>
-public class TimeRecordDisplay
-{
-    public Guid Id { get; set; }
-    public string ActivityName { get; set; } = string.Empty;
-    public string ActivityColor { get; set; } = string.Empty;
-    public string Notes { get; set; } = string.Empty;
-    public string StartTime { get; set; } = string.Empty;
-    public string EndTime { get; set; } = string.Empty;
-    public string Duration { get; set; } = string.Empty;
-    public DateOnly Date { get; set; }
-    public bool IsActive { get; set; }
-
-    /// <summary>
-    /// Returns the color as a SolidColorBrush to facilitate binding.
-    /// </summary>
-    public System.Windows.Media.SolidColorBrush ActivityColorBrush
-    {
-        get
-        {
-            try
-            {
-                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(ActivityColor);
-                return new System.Windows.Media.SolidColorBrush(color);
-            }
-            catch
-            {
-                return new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Gray);
-            }
-        }
-    }
-}
-
-/// <summary>
-/// Model for the edit record dialog.
-/// </summary>
-public partial class TimeRecordEditModel : ObservableObject
-{
-    [ObservableProperty]
-    private string _dialogTitle = string.Empty;
-
-    [ObservableProperty]
-    private Guid _recordId;
-
-    [ObservableProperty]
-    private bool _isNewRecord;
-
-    [ObservableProperty]
-    private ObservableCollection<Activity> _availableActivities = [];
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanSave))]
-    private Guid _selectedActivityId;
-
-    [ObservableProperty]
-    private DateTime _date;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanSave))]
-    private string _startTimeText = string.Empty;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(CanSave))]
-    private string _endTimeText = string.Empty;
-
-    [ObservableProperty]
-    private string _notes = string.Empty;
-
-    [ObservableProperty]
-    private bool _telework;
-
-    [ObservableProperty]
-    private string _validationError = string.Empty;
-
-    /// <summary>
-    /// Inverse of Telework for radio button binding (Office selected).
-    /// </summary>
-    public bool IsOffice
-    {
-        get => !Telework;
-        set
-        {
-            if (value != !Telework)
-            {
-                Telework = !value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Indicates if the record can be saved (basic validation).
-    /// </summary>
-    public bool CanSave => SelectedActivityId != Guid.Empty &&
-                           TimeOnly.TryParse(StartTimeText, out _) &&
-                           (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _));
-
-    /// <summary>
-    /// Validates the record data.
-    /// </summary>
-    public bool Validate()
-    {
-        ValidationError = string.Empty;
-
-        // Validate selected activity
-        if (SelectedActivityId == Guid.Empty)
-        {
-            ValidationError = AppResources.Validation_ActivityRequired;
-            return false;
-        }
-
-        // Validate start time
-        if (!TimeOnly.TryParse(StartTimeText, out var startTime))
-        {
-            ValidationError = AppResources.Validation_InvalidStartTime;
-            return false;
-        }
-
-        // Validate end time (optional if empty)
-        if (!string.IsNullOrWhiteSpace(EndTimeText))
-        {
-            if (!TimeOnly.TryParse(EndTimeText, out var parsedEndTime))
-            {
-                ValidationError = AppResources.Validation_InvalidEndTime;
-                return false;
-            }
-
-            // Validate that end time is after start time
-            if (parsedEndTime <= startTime)
-            {
-                ValidationError = AppResources.Validation_EndTimeAfterStartTime;
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
