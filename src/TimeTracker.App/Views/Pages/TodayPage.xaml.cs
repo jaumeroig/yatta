@@ -3,6 +3,7 @@ namespace TimeTracker.App.Views.Pages;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using TimeTracker.App.Models;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Dialogs;
@@ -19,6 +20,8 @@ public partial class TodayPage : Page
     private readonly IDialogService _dialogService;
     private ContentDialog? _configureDayDialog;
     private ContentDialog? _changeActivityDialog;
+    private ContentDialog? _editRecordDialog;
+    private ContentDialog? _deleteConfirmationDialog;
     private bool _isSubscribedToChanges;
 
     public TodayPage(TodayViewModel viewModel, IBreadcrumbService breadcrumbService, IDialogService dialogService)
@@ -77,6 +80,28 @@ public partial class TodayPage : Page
             else
             {
                 _changeActivityDialog?.Hide();
+            }
+        }
+        else if (e.PropertyName == nameof(TodayViewModel.IsEditRecordDialogOpen))
+        {
+            if (_viewModel.IsEditRecordDialogOpen)
+            {
+                _ = ShowEditRecordDialogAsync();
+            }
+            else
+            {
+                _editRecordDialog?.Hide();
+            }
+        }
+        else if (e.PropertyName == nameof(TodayViewModel.IsDeleteConfirmationOpen))
+        {
+            if (_viewModel.IsDeleteConfirmationOpen)
+            {
+                _ = ShowDeleteConfirmationDialogAsync();
+            }
+            else
+            {
+                _deleteConfirmationDialog?.Hide();
             }
         }
     }
@@ -188,6 +213,96 @@ public partial class TodayPage : Page
         }
     }
 
+    private async Task ShowEditRecordDialogAsync()
+    {
+        if (_editRecordDialog != null)
+        {
+            return;
+        }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        var content = new EditRecordDialogControl
+        {
+            DataContext = _viewModel
+        };
+
+        _editRecordDialog = new ContentDialog(dialogHost)
+        {
+            Content = content,
+            CloseButtonText = AppResources.Button_Cancel,
+            PrimaryButtonText = AppResources.Button_Save,
+            IsPrimaryButtonEnabled = _viewModel.EditRecordModel.CanSave,
+        };
+
+        _viewModel.EditRecordModel.PropertyChanged += OnEditRecordModelPropertyChanged;
+        _editRecordDialog.ButtonClicked += OnEditRecordDialogButtonClicked;
+
+        await _editRecordDialog.ShowAsync();
+        _viewModel.IsEditRecordDialogOpen = false;
+        DisposeEditDialog();
+    }
+
+    private void OnEditRecordModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(TimeRecordEditModel.CanSave) && _editRecordDialog != null)
+        {
+            _editRecordDialog.IsPrimaryButtonEnabled = _viewModel.EditRecordModel.CanSave;
+        }
+    }
+
+    private async void OnEditRecordDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (args.Button == ContentDialogButton.Primary)
+        {
+            args.Handled = true;
+            await _viewModel.SaveEditRecordCommand.ExecuteAsync(null);
+        }
+    }
+
+    private async Task ShowDeleteConfirmationDialogAsync()
+    {
+        if (_deleteConfirmationDialog != null)
+        {
+            return;
+        }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        var content = new DeleteRecordConfirmationDialogControl();
+
+        _deleteConfirmationDialog = new ContentDialog(dialogHost)
+        {
+            Content = content,
+            CloseButtonText = AppResources.Button_CancelDelete,
+            PrimaryButtonText = AppResources.Button_Delete,
+            PrimaryButtonAppearance = ControlAppearance.Danger,
+        };
+
+        _deleteConfirmationDialog.ButtonClicked += OnDeleteConfirmationDialogButtonClicked;
+
+        await _deleteConfirmationDialog.ShowAsync();
+        _viewModel.CancelDeleteRecordCommand.Execute(null);
+        DisposeDeleteDialog();
+    }
+
+    private async void OnDeleteConfirmationDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (args.Button == ContentDialogButton.Primary)
+        {
+            args.Handled = true;
+            await _viewModel.ConfirmDeleteRecordCommand.ExecuteAsync(null);
+        }
+    }
+
     /// <summary>
     /// Brings the change activity dialog to the front if it's already open,
     /// or opens it if it's not.
@@ -212,6 +327,8 @@ public partial class TodayPage : Page
     {
         DisposeConfigureDayDialog();
         DisposeChangeActivityDialog();
+        DisposeEditDialog();
+        DisposeDeleteDialog();
     }
 
     private void DisposeConfigureDayDialog()
@@ -233,5 +350,26 @@ public partial class TodayPage : Page
 
         _viewModel.ChangeActivityModel.PropertyChanged -= OnChangeActivityModelPropertyChanged;
         _changeActivityDialog = null;
+    }
+
+    private void DisposeEditDialog()
+    {
+        if (_editRecordDialog != null)
+        {
+            _editRecordDialog.ButtonClicked -= OnEditRecordDialogButtonClicked;
+        }
+
+        _viewModel.EditRecordModel.PropertyChanged -= OnEditRecordModelPropertyChanged;
+        _editRecordDialog = null;
+    }
+
+    private void DisposeDeleteDialog()
+    {
+        if (_deleteConfirmationDialog != null)
+        {
+            _deleteConfirmationDialog.ButtonClicked -= OnDeleteConfirmationDialogButtonClicked;
+        }
+
+        _deleteConfirmationDialog = null;
     }
 }

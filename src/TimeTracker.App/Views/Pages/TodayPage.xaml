@@ -286,53 +286,19 @@
                     <ItemsControl ItemsSource="{Binding CompletedRecords}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
-                                        CornerRadius="4"
-                                        Padding="12"
-                                        Margin="0,0,0,6">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Activity Color -->
-                                        <Border Grid.Column="0"
-                                                Width="4"
-                                                Background="{Binding ActivityColorBrush}"
-                                                CornerRadius="2"
-                                                Margin="0,0,12,0"/>
-
-                                        <!-- Record Info -->
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding ActivityName}"
-                                                       FontSize="13"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
-                                            <TextBlock FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}">
-                                                <Run Text="{Binding StartTime}"/>
-                                                <Run Text=" - "/>
-                                                <Run Text="{Binding EndTime}"/>
-                                            </TextBlock>
-                                            <TextBlock Text="{Binding Notes}"
-                                                       FontSize="11"
-                                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       Margin="0,1,0,0"
-                                                       Visibility="{Binding Notes, Converter={StaticResource StringToVisibilityConverter}}"/>
-                                        </StackPanel>
-
-                                        <!-- Duration -->
-                                        <TextBlock Grid.Column="2"
-                                                   Text="{Binding Duration}"
-                                                   FontSize="13"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                   VerticalAlignment="Center"
-                                                   Margin="12,0,0,0"/>
-                                    </Grid>
-                                </Border>
+                                <controls:TimeRecordCard Margin="0,0,0,6"
+                                                         ActivityColor="{Binding ActivityColor}"
+                                                         ActivityName="{Binding ActivityName}"
+                                                         IsTelework="{Binding Telework}"
+                                                         StartTime="{Binding StartTime}"
+                                                         EndTime="{Binding EndTime}"
+                                                         Duration="{Binding Duration}"
+                                                         Notes="{Binding Notes}"
+                                                         IsActive="{Binding IsActive}"
+                                                         CardClickCommand="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                         EditCommand="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                         DeleteCommand="{Binding DataContext.RequestDeleteRecordCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                         CommandParameter="{Binding}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

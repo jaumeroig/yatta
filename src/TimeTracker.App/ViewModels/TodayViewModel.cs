@@ -7,9 +7,11 @@ using System.Globalization;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TimeTracker.App.Controls;
+using TimeTracker.App.Models;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using AppResources = TimeTracker.App.Resources.Resources;
 
 /// <summary>
 /// ViewModel for the Today page.
@@ -86,6 +88,17 @@ public partial class TodayViewModel : ObservableObject
 
     [ObservableProperty]
     private ChangeActivityModel _changeActivityModel = new();
+
+    [ObservableProperty]
+    private bool _isEditRecordDialogOpen;
+
+    [ObservableProperty]
+    private TimeRecordEditModel _editRecordModel = new();
+
+    [ObservableProperty]
+    private bool _isDeleteConfirmationOpen;
+
+    private TimeRecordDisplay? _pendingDeleteRecord;
 
     public TodayViewModel(
         ITimeRecordRepository timeRecordRepository,
@@ -204,8 +217,136 @@ public partial class TodayViewModel : ObservableObject
             EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
             Duration = FormatDuration(duration),
             Date = record.Date,
-            IsActive = isActive
+            IsActive = isActive,
+            Telework = record.Telework
         };
+    }
+
+    [RelayCommand]
+    private async Task OpenEditRecordDialogAsync(TimeRecordDisplay recordDisplay)
+    {
+        var record = await _timeRecordRepository.GetByIdAsync(recordDisplay.Id);
+        if (record == null)
+        {
+            return;
+        }
+
+        var activity = await _activityRepository.GetByIdAsync(record.ActivityId);
+        var availableActivities = new List<Activity>(_allActivities);
+        if (activity != null && !availableActivities.Any(a => a.Id == activity.Id))
+        {
+            availableActivities.Insert(0, activity);
+        }
+
+        EditRecordModel = new TimeRecordEditModel
+        {
+            DialogTitle = AppResources.Dialog_EditRecord_Title,
+            RecordId = record.Id,
+            IsNewRecord = false,
+            AvailableActivities = new ObservableCollection<Activity>(availableActivities),
+            SelectedActivityId = record.ActivityId,
+            Date = record.Date.ToDateTime(TimeOnly.MinValue),
+            StartTimeText = record.StartTime.ToString("HH:mm"),
+            EndTimeText = record.EndTime?.ToString("HH:mm") ?? string.Empty,
+            Notes = record.Notes ?? string.Empty,
+            Telework = record.Telework
+        };
+
+        IsEditRecordDialogOpen = true;
+    }
+
+    [RelayCommand]
+    private async Task SaveEditRecordAsync()
+    {
+        if (!EditRecordModel.Validate())
+        {
+            return;
+        }
+
+        var startTime = TimeOnly.Parse(EditRecordModel.StartTimeText);
+        TimeOnly? endTime = string.IsNullOrWhiteSpace(EditRecordModel.EndTimeText)
+            ? null
+            : TimeOnly.Parse(EditRecordModel.EndTimeText);
+
+        var record = new TimeRecord
+        {
+            Id = EditRecordModel.RecordId,
+            ActivityId = EditRecordModel.SelectedActivityId,
+            Date = DateOnly.FromDateTime(EditRecordModel.Date),
+            StartTime = startTime,
+            EndTime = endTime,
+            Notes = string.IsNullOrWhiteSpace(EditRecordModel.Notes) ? null : EditRecordModel.Notes,
+            Telework = EditRecordModel.Telework
+        };
+
+        try
+        {
+            var existingRecord = await _timeRecordRepository.GetByIdAsync(EditRecordModel.RecordId);
+            var wasActive = existingRecord?.EndTime == null;
+            var isNowActive = !record.EndTime.HasValue;
+
+            await _timeRecordRepository.UpdateAsync(record);
+
+            if (isNowActive || wasActive)
+            {
+                _notificationService.ResetTimer();
+            }
+
+            IsEditRecordDialogOpen = false;
+            await LoadTodayRecordsAsync();
+        }
+        catch (Exception)
+        {
+            EditRecordModel.ValidationError = AppResources.Validation_RecordSaveError;
+        }
+    }
+
+    [RelayCommand]
+    private void CloseEditRecordDialog()
+    {
+        IsEditRecordDialogOpen = false;
+    }
+
+    [RelayCommand]
+    private void RequestDeleteRecord(TimeRecordDisplay recordDisplay)
+    {
+        _pendingDeleteRecord = recordDisplay;
+        IsDeleteConfirmationOpen = true;
+    }
+
+    [RelayCommand]
+    private async Task ConfirmDeleteRecordAsync()
+    {
+        if (_pendingDeleteRecord == null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _timeRecordRepository.DeleteAsync(_pendingDeleteRecord.Id);
+            await LoadTodayRecordsAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error deleting record: {ex.Message}");
+            if (EditRecordModel != null)
+            {
+                EditRecordModel.ValidationError = $"Error deleting record: {ex.Message}";
+            }
+        }
+        finally
+        {
+            _pendingDeleteRecord = null;
+            IsDeleteConfirmationOpen = false;
+        }
+    }
+
+    [RelayCommand]
+    private void CancelDeleteRecord()
+    {
+        _pendingDeleteRecord = null;
+        IsDeleteConfirmationOpen = false;
     }
 
     private void UpdateTimelineSegments(List<TimeRecord> records)

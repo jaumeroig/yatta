@@ -203,89 +203,20 @@ mc:Ignorable="d"
                             <ItemsControl ItemsSource="{Binding Records}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <ui:CardAction Command="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                                       CommandParameter="{Binding}"
-                                                       behaviors:ScrollParentBehavior.BubbleScroll="True"
-                                                       IsChevronVisible="False"
-                                                       Margin="0,0,0,4"
-                                                       Padding="16,12">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <!-- Activity Color Indicator -->
-                                                <Ellipse Grid.Column="0"
-                                                             Width="12"
-                                                             Height="12"
-                                                             Margin="0,0,16,0"
-                                                             VerticalAlignment="Center"
-                                                             Fill="{Binding ActivityColor, Converter={StaticResource StringToBrushConverter}}" />
-
-                                                <!-- Activity Info -->
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding ActivityName}"
-                                                                   FontWeight="SemiBold"
-                                                                   FontSize="14" />
-                                                    <TextBlock Text="{Binding Notes}"
-                                                                   FontSize="12"
-                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   MaxWidth="400"
-                                                                   Visibility="{Binding Notes, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}" />
-                                                </StackPanel>
-
-                                                <!-- Time Info -->
-                                                <StackPanel Grid.Column="2"
-                                                                VerticalAlignment="Center"
-                                                                HorizontalAlignment="Right"
-                                                                Margin="0,0,18,0">
-                                                    <TextBlock Text="{Binding Duration}"
-                                                                   FontWeight="SemiBold"
-                                                                   FontSize="14"
-                                                                   HorizontalAlignment="Right" />
-                                                    <TextBlock FontSize="12"
-                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                                   HorizontalAlignment="Right">
-                                                            <Run Text="{Binding StartTime}" />
-                                                            <Run Text=" - " />
-                                                            <Run Text="{Binding EndTime}" />
-                                                    </TextBlock>
-                                                </StackPanel>
-
-                                                <!-- Three-dot menu button -->
-                                                <ui:Button Grid.Column="3"
-                                                           x:Name="RecordMenuButton"
-                                                           Appearance="Transparent"
-                                                           Padding="4"
-                                                           VerticalAlignment="Center"
-                                                           Click="RecordMenuButton_Click"
-                                                           Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Page}}">
-                                                    <ui:SymbolIcon Symbol="MoreVertical24" FontSize="16" />
-                                                    <ui:Button.ContextMenu>
-                                                        <ContextMenu>
-                                                            <MenuItem Header="{local:Localize Menu_Edit}"
-                                                                      Command="{Binding PlacementTarget.Tag.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
-                                                                <MenuItem.Icon>
-                                                                    <ui:SymbolIcon Symbol="Edit24" FontSize="16" />
-                                                                </MenuItem.Icon>
-                                                            </MenuItem>
-                                                            <MenuItem Header="{local:Localize Menu_Delete}"
-                                                                      Command="{Binding PlacementTarget.Tag.RequestDeleteRecordCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
-                                                                <MenuItem.Icon>
-                                                                    <ui:SymbolIcon Symbol="Delete24" FontSize="16" Foreground="#EF4444" />
-                                                                </MenuItem.Icon>
-                                                            </MenuItem>
-                                                        </ContextMenu>
-                                                    </ui:Button.ContextMenu>
-                                                </ui:Button>
-                                            </Grid>
-                                        </ui:CardAction>
+                                        <controls:TimeRecordCard Margin="0,0,0,4"
+                                                                 behaviors:ScrollParentBehavior.BubbleScroll="True"
+                                                                 ActivityColor="{Binding ActivityColor}"
+                                                                 ActivityName="{Binding ActivityName}"
+                                                                 IsTelework="{Binding Telework}"
+                                                                 StartTime="{Binding StartTime}"
+                                                                 EndTime="{Binding EndTime}"
+                                                                 Duration="{Binding Duration}"
+                                                                 Notes="{Binding Notes}"
+                                                                 IsActive="{Binding IsActive}"
+                                                                 CardClickCommand="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                 EditCommand="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                 DeleteCommand="{Binding DataContext.RequestDeleteRecordCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                                 CommandParameter="{Binding}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

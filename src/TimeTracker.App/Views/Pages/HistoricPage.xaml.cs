@@ -3,6 +3,7 @@ namespace TimeTracker.App.Views.Pages;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using TimeTracker.App.Models;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
 using TimeTracker.App.Views.Dialogs;
