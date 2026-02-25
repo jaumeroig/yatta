@@ -20,6 +20,7 @@ public partial class HistoricPage : Page
     private readonly IDialogService _dialogService;
     private ContentDialog? _editRecordDialog;
     private ContentDialog? _deleteConfirmationDialog;
+    private ContentDialog? _configureDayDialog;
     private bool _isSubscribedToChanges;
 
     public HistoricPage(HistoricViewModel viewModel, IBreadcrumbService breadcrumbService, IDialogService dialogService)
@@ -80,6 +81,17 @@ public partial class HistoricPage : Page
             else
             {
                 _deleteConfirmationDialog?.Hide();
+            }
+        }
+        else if (e.PropertyName == nameof(HistoricViewModel.IsConfigureDayDialogOpen))
+        {
+            if (_viewModel.IsConfigureDayDialogOpen)
+            {
+                _ = ShowConfigureDayDialogAsync();
+            }
+            else
+            {
+                _configureDayDialog?.Hide();
             }
         }
     }
@@ -178,6 +190,7 @@ public partial class HistoricPage : Page
     {
         DisposeEditDialog();
         DisposeDeleteDialog();
+        DisposeConfigureDayDialog();
     }
 
     private void DisposeEditDialog()
@@ -199,6 +212,59 @@ public partial class HistoricPage : Page
         }
 
         _deleteConfirmationDialog = null;
+    }
+
+    private async Task ShowConfigureDayDialogAsync()
+    {
+        if (_configureDayDialog != null)
+        {
+            return;
+        }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        var content = new ConfigureDayDialogControl
+        {
+            DataContext = _viewModel
+        };
+
+        _configureDayDialog = new ContentDialog(dialogHost)
+        {
+            Content = content,
+            Title = _viewModel.ConfigureDayModel.DialogTitle,
+            PrimaryButtonText = AppResources.Button_SaveChanges,
+            CloseButtonText = AppResources.Button_Cancel,
+            DefaultButton = ContentDialogButton.Primary,
+        };
+
+        _configureDayDialog.ButtonClicked += OnConfigureDayDialogButtonClicked;
+
+        await _configureDayDialog.ShowAsync();
+        _viewModel.IsConfigureDayDialogOpen = false;
+        DisposeConfigureDayDialog();
+    }
+
+    private async void OnConfigureDayDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (args.Button == ContentDialogButton.Primary)
+        {
+            args.Handled = true;
+            await _viewModel.SaveConfigureDayCommand.ExecuteAsync(null);
+        }
+    }
+
+    private void DisposeConfigureDayDialog()
+    {
+        if (_configureDayDialog != null)
+        {
+            _configureDayDialog.ButtonClicked -= OnConfigureDayDialogButtonClicked;
+        }
+
+        _configureDayDialog = null;
     }
 
     private void RecordMenuButton_Click(object sender, RoutedEventArgs e)
