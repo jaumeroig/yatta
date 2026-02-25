@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:local="clr-namespace:TimeTracker.App.Markup"
+             xmlns:controls="clr-namespace:TimeTracker.App.Controls"
              d:DesignHeight="600"
              d:DesignWidth="480"
              mc:Ignorable="d">
@@ -12,13 +13,9 @@
         <TextBlock Text="{local:Localize Label_Activity}"
                    FontWeight="SemiBold"
                    Margin="0,0,0,8" />
-        <ComboBox ItemsSource="{Binding ChangeActivityModel.AvailableActivities}"
-                  SelectedValue="{Binding ChangeActivityModel.SelectedActivityId, Mode=TwoWay}"
-                  SelectedValuePath="Id"
-                  DisplayMemberPath="Name"
-                  HorizontalAlignment="Stretch"
-                  Margin="0,0,0,16"
-                  Height="40" />
+        <controls:ActivityComboBox ItemsSource="{Binding ChangeActivityModel.AvailableActivities}"
+                                   SelectedValue="{Binding ChangeActivityModel.SelectedActivityId, Mode=TwoWay}"
+                                   Margin="0,0,0,16" />
 
         <TextBlock Text="{local:Localize Label_StartDateTime}"
                    FontWeight="SemiBold"
