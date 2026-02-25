@@ -163,13 +163,13 @@ mc:Ignorable="d"
             <ItemsControl ItemsSource="{Binding GroupedRecords}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="0,0,20,24">
+                        <StackPanel Margin="0,0,20,32">
                             <!-- Day Header (separador amb label de data) -->
-                            <Grid Margin="0,0,0,12">
+                            <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0"
@@ -177,28 +177,31 @@ mc:Ignorable="d"
                                                FontSize="14"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                <ui:Button Grid.Column="1"
-                                           Appearance="Transparent"
-                                           Padding="4"
-                                           Margin="4,0,0,0"
-                                           VerticalAlignment="Center"
-                                           ToolTip="{local:Localize Today_ConfigureDay}"
-                                           Command="{Binding DataContext.ConfigureDayCommand, RelativeSource={RelativeSource AncestorType=Page}}"
-                                           CommandParameter="{Binding Date}">
-                                    <ui:SymbolIcon Symbol="Settings24" FontSize="14" />
-                                </ui:Button>
-                                <TextBlock Grid.Column="2"
+                                
+                                <TextBlock Grid.Column="1"
                                                Text="{Binding TimeAgo}"
-                                               FontSize="13"
+                                               FontSize="12"
                                                FontStyle="Italic"
                                                Margin="12,0,0,0"
                                                VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                                <TextBlock Grid.Column="3"
+                                <TextBlock Grid.Column="2"
                                                Text="{Binding TotalWorked}"
                                                FontSize="14"
                                                FontWeight="SemiBold"
+                                           VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                                <ui:Button Grid.Column="3"
+                                               Appearance="Transparent"
+                                               BorderThickness="0"
+                                               Padding="4"
+                                               Margin="16,0,0,0"
+                                               VerticalAlignment="Center"
+                                               ToolTip="{local:Localize Today_ConfigureDay}"
+                                               Command="{Binding DataContext.ConfigureDayCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                               CommandParameter="{Binding Date}">
+                                    <ui:SymbolIcon Symbol="Settings24" FontSize="14" />
+                                </ui:Button>
                             </Grid>
 
                             <!-- Timeline bar for this day -->
