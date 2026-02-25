@@ -1285,6 +1285,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hora.
+        /// </summary>
+        internal static string Label_Hour {
+            get {
+                return ResourceManager.GetString("Label_Hour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mantener notificaciones visibles.
         /// </summary>
         internal static string Label_KeepNotificationsVisible {
@@ -1317,6 +1326,15 @@ namespace TimeTracker.App.Resources {
         internal static string Label_MinimizeToTray {
             get {
                 return ResourceManager.GetString("Label_MinimizeToTray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minuto.
+        /// </summary>
+        internal static string Label_Minute {
+            get {
+                return ResourceManager.GetString("Label_Minute", resourceCulture);
             }
         }
         

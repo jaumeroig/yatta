@@ -29,9 +29,8 @@
             <DatePicker Grid.Column="0"
                         SelectedDate="{Binding ChangeActivityModel.StartDate, Mode=TwoWay}"
                         Height="40" />
-            <ui:TextBox Grid.Column="2"
-                        PlaceholderText="{local:Localize Placeholder_Time}"
-                        Text="{Binding ChangeActivityModel.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <controls:TimePickerControl Grid.Column="2"
+                        TimeText="{Binding ChangeActivityModel.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Height="40" />
         </Grid>
 

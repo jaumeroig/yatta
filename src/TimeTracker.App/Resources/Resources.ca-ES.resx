@@ -957,4 +957,10 @@
   <data name="Dashboard_MonthlyHours" xml:space="preserve">
     <value>Hores per mes</value>
   </data>
+  <data name="Label_Hour" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="Label_Minute" xml:space="preserve">
+    <value>Minut</value>
+  </data>
 </root>
