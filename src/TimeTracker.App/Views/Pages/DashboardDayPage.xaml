@@ -183,10 +183,26 @@
                 <!-- Right column: Day details -->
                 <StackPanel Grid.Column="2">
                     <!-- Full date header -->
-                    <TextBlock Text="{Binding FullDateDisplay}"
-                               FontSize="22"
-                               FontWeight="SemiBold"
-                               Margin="0,0,0,16" />
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding FullDateDisplay}"
+                                   FontSize="22"
+                                   FontWeight="SemiBold" />
+                        <ui:Button Grid.Column="1"
+                                   Appearance="Transparent"
+                                   Padding="4"
+                                   Margin="8,0,0,0"
+                                   VerticalAlignment="Center"
+                                   ToolTip="{local:Localize Today_ConfigureDay}"
+                                   Command="{Binding ConfigureDayCommand}">
+                            <ui:SymbolIcon Symbol="Settings24" FontSize="16" />
+                        </ui:Button>
+                    </Grid>
 
                     <!-- Day info cards row -->
                     <UniformGrid Columns="3" Margin="0,0,0,16">

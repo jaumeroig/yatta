@@ -3,6 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using TimeTracker.App.Services;
 using TimeTracker.App.ViewModels;
+using TimeTracker.App.Views.Dialogs;
+using Wpf.Ui.Controls;
+using AppResources = TimeTracker.App.Resources.Resources;
 
 namespace TimeTracker.App.Views.Pages;
 
@@ -14,15 +17,18 @@ public partial class DashboardDayPage : Page
     private readonly DashboardDayViewModel _viewModel;
     private readonly IBreadcrumbService _breadcrumbService;
     private readonly INavigationService _navigationService;
+    private readonly IDialogService _dialogService;
+    private ContentDialog? _configureDayDialog;
     private bool _isSubscribedToChanges;
     private bool _isUpdatingCalendar;
 
-    public DashboardDayPage(DashboardDayViewModel viewModel, IBreadcrumbService breadcrumbService, INavigationService navigationService)
+    public DashboardDayPage(DashboardDayViewModel viewModel, IBreadcrumbService breadcrumbService, INavigationService navigationService, IDialogService dialogService)
     {
         InitializeComponent();
         _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         _breadcrumbService = breadcrumbService ?? throw new ArgumentNullException(nameof(breadcrumbService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+        _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         DataContext = viewModel;
     }
 
@@ -49,6 +55,8 @@ public partial class DashboardDayPage : Page
             _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
             _isSubscribedToChanges = false;
         }
+
+        DisposeConfigureDayDialog();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -61,6 +69,17 @@ public partial class DashboardDayPage : Page
                 DashboardCalendar.SelectedDate = _viewModel.SelectedDate;
                 DashboardCalendar.DisplayDate = _viewModel.SelectedDate;
                 _isUpdatingCalendar = false;
+            }
+        }
+        else if (e.PropertyName == nameof(DashboardDayViewModel.IsConfigureDayDialogOpen))
+        {
+            if (_viewModel.IsConfigureDayDialogOpen)
+            {
+                _ = ShowConfigureDayDialogAsync();
+            }
+            else
+            {
+                _configureDayDialog?.Hide();
             }
         }
     }
@@ -90,5 +109,58 @@ public partial class DashboardDayPage : Page
             await _viewModel.LoadDataAsync();
             _isUpdatingCalendar = false;
         }
+    }
+
+    private async Task ShowConfigureDayDialogAsync()
+    {
+        if (_configureDayDialog != null)
+        {
+            return;
+        }
+
+        var dialogHost = _dialogService.GetDialogHost();
+        if (dialogHost == null)
+        {
+            return;
+        }
+
+        var content = new ConfigureDayDialogControl
+        {
+            DataContext = _viewModel
+        };
+
+        _configureDayDialog = new ContentDialog(dialogHost)
+        {
+            Content = content,
+            Title = _viewModel.ConfigureDayModel.DialogTitle,
+            PrimaryButtonText = AppResources.Button_SaveChanges,
+            CloseButtonText = AppResources.Button_Cancel,
+            DefaultButton = ContentDialogButton.Primary,
+        };
+
+        _configureDayDialog.ButtonClicked += OnConfigureDayDialogButtonClicked;
+
+        await _configureDayDialog.ShowAsync();
+        _viewModel.IsConfigureDayDialogOpen = false;
+        DisposeConfigureDayDialog();
+    }
+
+    private async void OnConfigureDayDialogButtonClicked(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (args.Button == ContentDialogButton.Primary)
+        {
+            args.Handled = true;
+            await _viewModel.SaveConfigureDayCommand.ExecuteAsync(null);
+        }
+    }
+
+    private void DisposeConfigureDayDialog()
+    {
+        if (_configureDayDialog != null)
+        {
+            _configureDayDialog.ButtonClicked -= OnConfigureDayDialogButtonClicked;
+        }
+
+        _configureDayDialog = null;
     }
 }

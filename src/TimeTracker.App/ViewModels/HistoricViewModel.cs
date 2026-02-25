@@ -25,6 +25,7 @@ public partial class HistoricViewModel : ObservableObject
     private readonly INavigationService _navigationService;
     private readonly ISettingsRepository _settingsRepository;
     private readonly INotificationService _notificationService;
+    private readonly IWorkdayConfigService _workdayConfigService;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
 
@@ -58,6 +59,12 @@ public partial class HistoricViewModel : ObservableObject
     [ObservableProperty]
     private bool _isDeleteConfirmationOpen;
 
+    [ObservableProperty]
+    private bool _isConfigureDayDialogOpen;
+
+    [ObservableProperty]
+    private ConfigureDayModel _configureDayModel = new();
+
     private TimeRecordDisplay? _pendingDeleteRecord;
 
     public HistoricViewModel(
@@ -66,7 +73,8 @@ public partial class HistoricViewModel : ObservableObject
         ITimeCalculatorService timeCalculatorService,
         INavigationService navigationService,
         ISettingsRepository settingsRepository,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IWorkdayConfigService workdayConfigService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
@@ -74,6 +82,7 @@ public partial class HistoricViewModel : ObservableObject
         _navigationService = navigationService;
         _settingsRepository = settingsRepository;
         _notificationService = notificationService;
+        _workdayConfigService = workdayConfigService;
     }
 
     /// <summary>
@@ -515,6 +524,107 @@ public partial class HistoricViewModel : ObservableObject
         SearchText = string.Empty;
         SelectedActivityFilter = null;
         SelectedDate = null;
+    }
+
+    /// <summary>
+    /// Opens the configure day dialog for the specified date.
+    /// </summary>
+    [RelayCommand]
+    private async Task ConfigureDayAsync(DateOnly date)
+    {
+        var currentConfig = await _workdayConfigService.GetEffectiveConfigurationAsync(date);
+
+        ConfigureDayModel = new ConfigureDayModel
+        {
+            Date = date,
+            DayType = currentConfig.DayType,
+            TargetDurationHours = currentConfig.TargetDuration.TotalHours,
+            TargetDurationText = FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
+            ValidationError = string.Empty
+        };
+
+        IsConfigureDayDialogOpen = true;
+    }
+
+    /// <summary>
+    /// Saves the day configuration from the dialog.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveConfigureDayAsync()
+    {
+        var isWorkingDay = ConfigureDayModel.DayType == DayType.WorkDay ||
+                          ConfigureDayModel.DayType == DayType.IntensiveDay;
+
+        TimeSpan targetDuration = TimeSpan.Zero;
+        if (isWorkingDay)
+        {
+            if (!TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
+            {
+                ConfigureDayModel.ValidationError = AppResources.Validation_TargetDurationInvalid;
+                return;
+            }
+        }
+
+        await _workdayConfigService.SetConfigurationAsync(
+            ConfigureDayModel.Date,
+            ConfigureDayModel.DayType,
+            targetDuration);
+
+        IsConfigureDayDialogOpen = false;
+        await LoadDataAsync();
+    }
+
+    /// <summary>
+    /// Closes the configure day dialog.
+    /// </summary>
+    [RelayCommand]
+    private void CloseConfigureDayDialog()
+    {
+        IsConfigureDayDialogOpen = false;
+    }
+
+    private static string FormatHoursToHHmm(double hours)
+    {
+        if (hours <= 0)
+        {
+            return "8:00";
+        }
+
+        var timeSpan = TimeSpan.FromHours(hours);
+        return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}";
+    }
+
+    private static bool TryParseHHmm(string text, out TimeSpan duration)
+    {
+        duration = TimeSpan.Zero;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var parts = text.Split(':');
+        if (parts.Length != 2)
+        {
+            return false;
+        }
+
+        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
+        {
+            return false;
+        }
+
+        if (hours < 0 || minutes < 0 || minutes > 59)
+        {
+            return false;
+        }
+
+        if (hours == 0 && minutes == 0)
+        {
+            return false;
+        }
+
+        duration = new TimeSpan(hours, minutes, 0);
+        return true;
     }
 }
 

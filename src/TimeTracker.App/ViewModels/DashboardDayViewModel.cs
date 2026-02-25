@@ -24,6 +24,7 @@ public partial class DashboardDayViewModel : ObservableObject
     private readonly ITimeRecordRepository _timeRecordRepository;
     private readonly IActivityRepository _activityRepository;
     private readonly ILocalizationService _localizationService;
+    private readonly IWorkdayConfigService _workdayConfigService;
     private Dictionary<Guid, Activity> _activitiesCache = [];
 
     [ObservableProperty]
@@ -97,18 +98,26 @@ public partial class DashboardDayViewModel : ObservableObject
     [ObservableProperty]
     private string _monthYear = string.Empty;
 
+    [ObservableProperty]
+    private bool _isConfigureDayDialogOpen;
+
+    [ObservableProperty]
+    private ConfigureDayModel _configureDayModel = new();
+
     public DashboardDayViewModel(
         IPageStateService pageStateService,
         IDashboardService dashboardService,
         ITimeRecordRepository timeRecordRepository,
         IActivityRepository activityRepository,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IWorkdayConfigService workdayConfigService)
     {
         _pageStateService = pageStateService ?? throw new ArgumentNullException(nameof(pageStateService));
         _dashboardService = dashboardService ?? throw new ArgumentNullException(nameof(dashboardService));
         _timeRecordRepository = timeRecordRepository ?? throw new ArgumentNullException(nameof(timeRecordRepository));
         _activityRepository = activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+        _workdayConfigService = workdayConfigService ?? throw new ArgumentNullException(nameof(workdayConfigService));
         _selectedDate = _pageStateService.DashboardPage.ContextDate.ToDateTime(TimeOnly.MinValue);
     }
 
@@ -154,6 +163,108 @@ public partial class DashboardDayViewModel : ObservableObject
     {
         SelectedDate = SelectedDate.AddMonths(1);
         await LoadCalendarIndicatorsAsync();
+    }
+
+    /// <summary>
+    /// Opens the configure day dialog for the currently selected date.
+    /// </summary>
+    [RelayCommand]
+    private async Task ConfigureDayAsync()
+    {
+        var date = DateOnly.FromDateTime(SelectedDate);
+        var currentConfig = await _workdayConfigService.GetEffectiveConfigurationAsync(date);
+
+        ConfigureDayModel = new ConfigureDayModel
+        {
+            Date = date,
+            DayType = currentConfig.DayType,
+            TargetDurationHours = currentConfig.TargetDuration.TotalHours,
+            TargetDurationText = FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
+            ValidationError = string.Empty
+        };
+
+        IsConfigureDayDialogOpen = true;
+    }
+
+    /// <summary>
+    /// Saves the day configuration from the dialog.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveConfigureDayAsync()
+    {
+        var isWorkingDay = ConfigureDayModel.DayType == DayType.WorkDay ||
+                          ConfigureDayModel.DayType == DayType.IntensiveDay;
+
+        TimeSpan targetDuration = TimeSpan.Zero;
+        if (isWorkingDay)
+        {
+            if (!TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
+            {
+                ConfigureDayModel.ValidationError = TimeTracker.App.Resources.Resources.Validation_TargetDurationInvalid;
+                return;
+            }
+        }
+
+        await _workdayConfigService.SetConfigurationAsync(
+            ConfigureDayModel.Date,
+            ConfigureDayModel.DayType,
+            targetDuration);
+
+        IsConfigureDayDialogOpen = false;
+        await LoadDayDataAsync();
+    }
+
+    /// <summary>
+    /// Closes the configure day dialog.
+    /// </summary>
+    [RelayCommand]
+    private void CloseConfigureDayDialog()
+    {
+        IsConfigureDayDialogOpen = false;
+    }
+
+    private static string FormatHoursToHHmm(double hours)
+    {
+        if (hours <= 0)
+        {
+            return "8:00";
+        }
+
+        var timeSpan = TimeSpan.FromHours(hours);
+        return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}";
+    }
+
+    private static bool TryParseHHmm(string text, out TimeSpan duration)
+    {
+        duration = TimeSpan.Zero;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var parts = text.Split(':');
+        if (parts.Length != 2)
+        {
+            return false;
+        }
+
+        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
+        {
+            return false;
+        }
+
+        if (hours < 0 || minutes < 0 || minutes > 59)
+        {
+            return false;
+        }
+
+        if (hours == 0 && minutes == 0)
+        {
+            return false;
+        }
+
+        duration = new TimeSpan(hours, minutes, 0);
+        return true;
     }
 
     private async Task LoadDayDataAsync()

@@ -168,6 +168,7 @@ mc:Ignorable="d"
                             <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
@@ -176,14 +177,24 @@ mc:Ignorable="d"
                                                FontSize="14"
                                                FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                                <TextBlock Grid.Column="1"
+                                <ui:Button Grid.Column="1"
+                                           Appearance="Transparent"
+                                           Padding="4"
+                                           Margin="4,0,0,0"
+                                           VerticalAlignment="Center"
+                                           ToolTip="{local:Localize Today_ConfigureDay}"
+                                           Command="{Binding DataContext.ConfigureDayCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                           CommandParameter="{Binding Date}">
+                                    <ui:SymbolIcon Symbol="Settings24" FontSize="14" />
+                                </ui:Button>
+                                <TextBlock Grid.Column="2"
                                                Text="{Binding TimeAgo}"
                                                FontSize="13"
                                                FontStyle="Italic"
                                                Margin="12,0,0,0"
                                                VerticalAlignment="Center"
                                                Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                                <TextBlock Grid.Column="2"
+                                <TextBlock Grid.Column="3"
                                                Text="{Binding TotalWorked}"
                                                FontSize="14"
                                                FontWeight="SemiBold"
