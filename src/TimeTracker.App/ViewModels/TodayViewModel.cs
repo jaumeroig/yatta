@@ -943,8 +943,9 @@ public partial class ChangeActivityModel : ObservableObject
         : TimeTracker.App.Resources.Resources.Button_Start;
 
     /// <summary>
-    /// Determines if any field has been modified relative to the original active record values.
-    /// When no active record exists, always returns true (enabling "Start").
+    /// Determines if the form is valid and has been modified.
+    /// When no active record exists, validates that an activity is selected and the start time is valid.
+    /// When an active record exists, checks if any field has been modified relative to the original values.
     /// </summary>
     public bool HasChanges
     {
@@ -952,7 +953,8 @@ public partial class ChangeActivityModel : ObservableObject
         {
             if (!HasActiveRecord)
             {
-                return true;
+                return SelectedActivityId != Guid.Empty
+                    && TimeOnly.TryParse(StartTimeText, out _);
             }
 
             return SelectedActivityId != OriginalActivityId
