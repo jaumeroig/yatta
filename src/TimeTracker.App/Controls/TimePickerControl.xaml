@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:TimeTracker.App.Markup"
              x:Name="Root"
              d:DesignHeight="40"
              d:DesignWidth="200"
@@ -16,6 +17,7 @@
         <ComboBox x:Name="HourComboBox"
                   Grid.Column="0"
                   IsEditable="True"
+                  AutomationProperties.Name="{local:Localize Label_Hour}"
                   ItemsSource="{Binding Hours, ElementName=Root}"
                   Height="40" />
         <TextBlock Grid.Column="1"
@@ -28,6 +30,7 @@
         <ComboBox x:Name="MinuteComboBox"
                   Grid.Column="2"
                   IsEditable="True"
+                  AutomationProperties.Name="{local:Localize Label_Minute}"
                   ItemsSource="{Binding Minutes, ElementName=Root}"
                   Height="40" />
     </Grid>
