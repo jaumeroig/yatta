@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using TimeTracker.App.Controls;
 using TimeTracker.App.Models;
+using TimeTracker.Core.Extensions;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -860,7 +861,7 @@ public partial class ConfigureDayModel : ObservableObject
         new DayTypeOption { Value = DayType.Vacation, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_Vacation },
     ];
 
-    public bool IsWorkingDayType => DayType == DayType.WorkDay || DayType == DayType.IntensiveDay;
+    public bool IsWorkingDayType => DayType.IsWorkable();
 
     partial void OnDayTypeChanged(DayType value)
     {
