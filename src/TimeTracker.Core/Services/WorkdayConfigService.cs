@@ -1,5 +1,6 @@
 namespace TimeTracker.Core.Services;
 
+using TimeTracker.Core.Extensions;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -158,12 +159,12 @@ public class WorkdayConfigService : IWorkdayConfigService
     }
 
     /// <summary>
-    /// Determines if a day type represents a working day.
+    /// Determines if a day type represents a working day using the <see cref="Attributes.WorkableDayAttribute"/>.
     /// </summary>
     /// <param name="dayType">The day type to check.</param>
     /// <returns>True if it's a working day type, false otherwise.</returns>
     private static bool IsWorkingDayType(DayType dayType)
     {
-        return dayType == DayType.WorkDay || dayType == DayType.IntensiveDay;
+        return dayType.IsWorkable();
     }
 }
