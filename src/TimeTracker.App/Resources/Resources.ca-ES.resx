@@ -964,6 +964,6 @@
     <value>Minut</value>
   </data>
   <data name="StaleActivity_AutoClosed" xml:space="preserve">
-    <value>S'ha finalitzat automàticament una activitat en curs del dia {0}. Hora de finalització: {1}.</value>
+    <value>S'ha finalitzat automàticament una activitat que havia quedat en curs el dia {0:d}. Hora de finalització: {1:t}.</value>
   </data>
 </root>

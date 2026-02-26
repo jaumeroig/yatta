@@ -2086,6 +2086,15 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Se ha finalizado automáticamente una actividad que quedó en curso el día {0:d}. Hora de finalización: {1:t}..
+        /// </summary>
+        internal static string StaleActivity_AutoClosed {
+            get {
+                return ResourceManager.GetString("StaleActivity_AutoClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} entradas.
         /// </summary>
         internal static string Stat_Entries {
@@ -2595,15 +2604,6 @@ namespace TimeTracker.App.Resources {
         internal static string Value_Technology {
             get {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Se ha finalizado automáticamente una actividad en curso del día {0}. Hora de finalización: {1}..
-        /// </summary>
-        internal static string StaleActivity_AutoClosed {
-            get {
-                return ResourceManager.GetString("StaleActivity_AutoClosed", resourceCulture);
             }
         }
     }
