@@ -8,30 +8,9 @@
              d:DesignHeight="40"
              d:DesignWidth="200"
              mc:Ignorable="d">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <ComboBox x:Name="HourComboBox"
-                  Grid.Column="0"
-                  IsEditable="True"
-                  AutomationProperties.Name="{local:Localize Label_Hour}"
-                  ItemsSource="{Binding Hours, ElementName=Root}"
-                  Height="40" />
-        <TextBlock Grid.Column="1"
-                   Text=":"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Margin="6,0"
-                   FontSize="16"
-                   FontWeight="SemiBold" />
-        <ComboBox x:Name="MinuteComboBox"
-                  Grid.Column="2"
-                  IsEditable="True"
-                  AutomationProperties.Name="{local:Localize Label_Minute}"
-                  ItemsSource="{Binding Minutes, ElementName=Root}"
-                  Height="40" />
-    </Grid>
+    <ComboBox x:Name="TimeComboBox"
+              IsEditable="True"
+              AutomationProperties.Name="{local:Localize Placeholder_Time}"
+              ItemsSource="{Binding TimeOptions, ElementName=Root}"
+              Height="40" />
 </UserControl>

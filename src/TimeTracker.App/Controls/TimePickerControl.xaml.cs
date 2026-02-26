@@ -7,11 +7,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 /// <summary>
-/// Reusable time picker control that allows selecting hours (0-23) and minutes (0-59)
-/// via dropdowns or manual entry. Validates input and coerces out-of-range values.
+/// Reusable time picker control that provides a single editable dropdown
+/// with time options generated at a configurable step interval.
 /// </summary>
 public partial class TimePickerControl : UserControl
 {
+    private const int DefaultStepMinutes = 15;
     private bool _isUpdating;
 
     /// <summary>
@@ -28,37 +29,30 @@ public partial class TimePickerControl : UserControl
                 OnTimeTextChanged));
 
     /// <summary>
+    /// Identifies the <see cref="Step"/> dependency property.
+    /// </summary>
+    public static readonly DependencyProperty StepProperty =
+        DependencyProperty.Register(
+            nameof(Step),
+            typeof(int),
+            typeof(TimePickerControl),
+            new PropertyMetadata(DefaultStepMinutes, OnStepChanged));
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="TimePickerControl"/> class.
     /// </summary>
     public TimePickerControl()
     {
-        Hours = new ObservableCollection<string>();
-        Minutes = new ObservableCollection<string>();
-
-        for (int i = 0; i < 24; i++)
-        {
-            Hours.Add(i.ToString("D2"));
-        }
-
-        for (int i = 0; i < 60; i++)
-        {
-            Minutes.Add(i.ToString("D2"));
-        }
-
+        TimeOptions = new ObservableCollection<string>();
+        GenerateTimeOptions();
         InitializeComponent();
 
-        HourComboBox.AddHandler(
-            TextBoxBase.TextChangedEvent,
-            new TextChangedEventHandler(OnComboBoxTextChanged));
-        MinuteComboBox.AddHandler(
+        TimeComboBox.AddHandler(
             TextBoxBase.TextChangedEvent,
             new TextChangedEventHandler(OnComboBoxTextChanged));
 
-        HourComboBox.PreviewTextInput += OnPreviewTextInput;
-        MinuteComboBox.PreviewTextInput += OnPreviewTextInput;
-
-        HourComboBox.LostFocus += OnHourLostFocus;
-        MinuteComboBox.LostFocus += OnMinuteLostFocus;
+        TimeComboBox.PreviewTextInput += OnPreviewTextInput;
+        TimeComboBox.LostFocus += OnLostFocus;
     }
 
     /// <summary>
@@ -71,24 +65,49 @@ public partial class TimePickerControl : UserControl
     }
 
     /// <summary>
-    /// Gets the collection of available hours (00-23).
+    /// Gets or sets the step interval in minutes between time options.
+    /// Default is 15 minutes.
     /// </summary>
-    public ObservableCollection<string> Hours { get; }
+    public int Step
+    {
+        get => (int)GetValue(StepProperty);
+        set => SetValue(StepProperty, value);
+    }
 
     /// <summary>
-    /// Gets the collection of available minutes (00-59).
+    /// Gets the collection of available time options.
     /// </summary>
-    public ObservableCollection<string> Minutes { get; }
+    public ObservableCollection<string> TimeOptions { get; }
 
     private static void OnTimeTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is TimePickerControl control && !control._isUpdating)
         {
-            control.ParseTimeText((string)e.NewValue);
+            control.SyncComboBoxText((string)e.NewValue);
         }
     }
 
-    private void ParseTimeText(string timeText)
+    private static void OnStepChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is TimePickerControl control)
+        {
+            control.GenerateTimeOptions();
+        }
+    }
+
+    private void GenerateTimeOptions()
+    {
+        TimeOptions.Clear();
+        int step = Step > 0 ? Step : DefaultStepMinutes;
+        for (int totalMinutes = 0; totalMinutes < 24 * 60; totalMinutes += step)
+        {
+            int hour = totalMinutes / 60;
+            int minute = totalMinutes % 60;
+            TimeOptions.Add($"{hour:D2}:{minute:D2}");
+        }
+    }
+
+    private void SyncComboBoxText(string timeText)
     {
         if (string.IsNullOrWhiteSpace(timeText))
         {
@@ -98,14 +117,7 @@ public partial class TimePickerControl : UserControl
         _isUpdating = true;
         try
         {
-            var parts = timeText.Split(':');
-            if (parts.Length == 2
-                && int.TryParse(parts[0], out int hour) && hour >= 0 && hour <= 23
-                && int.TryParse(parts[1], out int minute) && minute >= 0 && minute <= 59)
-            {
-                HourComboBox.Text = hour.ToString("D2");
-                MinuteComboBox.Text = minute.ToString("D2");
-            }
+            TimeComboBox.Text = timeText;
         }
         finally
         {
@@ -120,26 +132,11 @@ public partial class TimePickerControl : UserControl
             return;
         }
 
-        UpdateTimeText();
-    }
-
-    private void UpdateTimeText()
-    {
         _isUpdating = true;
         try
         {
-            string hourText = HourComboBox.Text?.Trim() ?? string.Empty;
-            string minuteText = MinuteComboBox.Text?.Trim() ?? string.Empty;
-
-            if (int.TryParse(hourText, out int hour) && hour >= 0 && hour <= 23
-                && int.TryParse(minuteText, out int minute) && minute >= 0 && minute <= 59)
-            {
-                TimeText = $"{hour:D2}:{minute:D2}";
-            }
-            else
-            {
-                TimeText = $"{hourText}:{minuteText}";
-            }
+            string text = TimeComboBox.Text?.Trim() ?? string.Empty;
+            TimeText = text;
         }
         finally
         {
@@ -151,7 +148,7 @@ public partial class TimePickerControl : UserControl
     {
         foreach (char c in e.Text)
         {
-            if (!char.IsDigit(c))
+            if (!char.IsDigit(c) && c != ':')
             {
                 e.Handled = true;
                 return;
@@ -159,35 +156,48 @@ public partial class TimePickerControl : UserControl
         }
     }
 
-    private void OnHourLostFocus(object sender, RoutedEventArgs e)
+    private void OnLostFocus(object sender, RoutedEventArgs e)
     {
-        CoerceComboBoxValue(HourComboBox, 0, 23);
-    }
-
-    private void OnMinuteLostFocus(object sender, RoutedEventArgs e)
-    {
-        CoerceComboBoxValue(MinuteComboBox, 0, 59);
-    }
-
-    private void CoerceComboBoxValue(ComboBox comboBox, int min, int max)
-    {
-        string text = comboBox.Text?.Trim() ?? string.Empty;
-        if (int.TryParse(text, out int value))
+        string text = TimeComboBox.Text?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(text))
         {
-            if (value < min)
-            {
-                value = min;
-            }
-            else if (value > max)
-            {
-                value = max;
-            }
-
-            comboBox.Text = value.ToString("D2");
+            return;
         }
-        else if (!string.IsNullOrEmpty(text))
+
+        var parts = text.Split(':');
+        if (parts.Length == 2
+            && int.TryParse(parts[0], out int hour)
+            && int.TryParse(parts[1], out int minute))
         {
-            comboBox.Text = min.ToString("D2");
+            if (hour < 0)
+            {
+                hour = 0;
+            }
+            else if (hour > 23)
+            {
+                hour = 23;
+            }
+
+            if (minute < 0)
+            {
+                minute = 0;
+            }
+            else if (minute > 59)
+            {
+                minute = 59;
+            }
+
+            string coerced = $"{hour:D2}:{minute:D2}";
+            _isUpdating = true;
+            try
+            {
+                TimeComboBox.Text = coerced;
+                TimeText = coerced;
+            }
+            finally
+            {
+                _isUpdating = false;
+            }
         }
     }
 }
