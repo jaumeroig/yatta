@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:local="clr-namespace:TimeTracker.App.Markup"
+             xmlns:controls="clr-namespace:TimeTracker.App.Controls"
              d:DesignHeight="450"
              d:DesignWidth="480"
              mc:Ignorable="d">
@@ -25,8 +26,8 @@
             <TextBlock Text="{local:Localize Label_TargetDuration}"
                        FontWeight="SemiBold"
                        Margin="0,0,0,8" />
-            <ui:TextBox PlaceholderText="{local:Localize Placeholder_TargetDuration}"
-                        Text="{Binding ConfigureDayModel.TargetDurationText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            <controls:TimePickerControl TimeText="{Binding ConfigureDayModel.TargetDurationText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Step="30"
                         Height="40" />
         </StackPanel>
 

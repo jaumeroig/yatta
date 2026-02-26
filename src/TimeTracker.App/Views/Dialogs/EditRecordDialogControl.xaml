@@ -44,8 +44,7 @@
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,8" />
-                <ui:TextBox PlaceholderText="HH:mm"
-                            Text="{Binding EditRecordModel.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <controls:TimePickerControl TimeText="{Binding EditRecordModel.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Height="40" />
             </StackPanel>
 
@@ -54,8 +53,7 @@
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            Margin="0,0,0,8" />
-                <ui:TextBox PlaceholderText="HH:mm"
-                            Text="{Binding EditRecordModel.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                <controls:TimePickerControl TimeText="{Binding EditRecordModel.EndTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             Height="40" />
             </StackPanel>
         </Grid>
