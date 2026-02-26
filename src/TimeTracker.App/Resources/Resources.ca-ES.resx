@@ -963,4 +963,7 @@
   <data name="Label_Minute" xml:space="preserve">
     <value>Minut</value>
   </data>
+  <data name="StaleActivity_AutoClosed" xml:space="preserve">
+    <value>S'ha finalitzat automàticament una activitat en curs del dia {0}. Hora de finalització: {1}.</value>
+  </data>
 </root>

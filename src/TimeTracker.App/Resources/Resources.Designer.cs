@@ -2597,5 +2597,14 @@ namespace TimeTracker.App.Resources {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Se ha finalizado automáticamente una actividad en curso del día {0}. Hora de finalización: {1}..
+        /// </summary>
+        internal static string StaleActivity_AutoClosed {
+            get {
+                return ResourceManager.GetString("StaleActivity_AutoClosed", resourceCulture);
+            }
+        }
     }
 }

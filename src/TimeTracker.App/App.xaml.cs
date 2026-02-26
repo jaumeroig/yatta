@@ -82,6 +82,9 @@ public partial class App : Application
         // Initialize notification service
         InitializeNotificationService();
 
+        // Close stale activities from previous days
+        CloseStaleActivities();
+
         // Execute automatic purge if enabled
         ExecuteAutoPurge();
 
@@ -190,6 +193,38 @@ public partial class App : Application
     }
 
     /// <summary>
+    /// Closes stale activities from previous days and shows a notification.
+    /// </summary>
+    private void CloseStaleActivities()
+    {
+        using var scope = _serviceProvider!.CreateScope();
+        var staleActivityService = scope.ServiceProvider.GetRequiredService<IStaleActivityService>();
+
+        try
+        {
+            var result = staleActivityService.CloseStaleActivitiesAsync().GetAwaiter().GetResult();
+
+            if (result != null)
+            {
+                var message = string.Format(
+                    TimeTracker.App.Resources.Resources.StaleActivity_AutoClosed,
+                    result.Date.ToString("dd/MM/yyyy"),
+                    result.EndTime.ToString("HH:mm"));
+
+                MessageBox.Show(
+                    message,
+                    TimeTracker.App.Resources.Resources.TitleBar_Title,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        }
+        catch
+        {
+            // If there's an error, continue startup normally
+        }
+    }
+
+    /// <summary>
     /// Executes automatic data purge if enabled in settings.
     /// </summary>
     private void ExecuteAutoPurge()
@@ -290,6 +325,7 @@ public partial class App : Application
         services.AddScoped<IWorkdayConfigService, WorkdayConfigService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IDataPurgeService, DataPurgeService>();
+        services.AddScoped<IStaleActivityService, StaleActivityService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
