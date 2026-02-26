@@ -35,10 +35,10 @@ public partial class App : Application
             try
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<TimeTrackerDbContext>();
-                
+
                 // Log pending migrations before applying
                 var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
-                if (pendingMigrations.Any())
+                if (pendingMigrations.Count != 0)
                 {
                     System.Diagnostics.Debug.WriteLine($"Applying {pendingMigrations.Count} pending migrations:");
                     foreach (var migration in pendingMigrations)
@@ -46,9 +46,9 @@ public partial class App : Application
                         System.Diagnostics.Debug.WriteLine($"  - {migration}");
                     }
                 }
-                
+
                 dbContext.Database.Migrate();
-                
+
                 // Verify migration was applied
                 var appliedMigrations = dbContext.Database.GetAppliedMigrations().ToList();
                 System.Diagnostics.Debug.WriteLine($"Total applied migrations: {appliedMigrations.Count}");
@@ -82,6 +82,9 @@ public partial class App : Application
         // Initialize notification service
         InitializeNotificationService();
 
+        // Close stale activities from previous days
+        CloseStaleActivities().Wait();
+
         // Execute automatic purge if enabled
         ExecuteAutoPurge();
 
@@ -94,7 +97,7 @@ public partial class App : Application
     private void InitializeGlobalHotkey(MainWindow mainWindow)
     {
         var hotkeyService = _serviceProvider!.GetRequiredService<IGlobalHotkeyService>();
-        
+
         // Initialize the service with the main window handle
         if (hotkeyService is GlobalHotkeyService service)
         {
@@ -187,6 +190,28 @@ public partial class App : Application
             };
             navigationService.Navigate<HistoricDetailPage>(navParam);
         });
+    }
+
+    /// <summary>
+    /// Closes stale activities from previous days and shows a notification.
+    /// </summary>
+    private async Task CloseStaleActivities()
+    {
+        using var scope = _serviceProvider!.CreateScope();
+        var staleActivityService = scope.ServiceProvider.GetRequiredService<IStaleActivityService>();
+
+        var result = staleActivityService.CloseStaleActivitiesAsync().GetAwaiter().GetResult();
+
+        if (result == null)
+            return;
+
+        var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+        {
+            Title = TimeTracker.App.Resources.Resources.TitleBar_Title,
+            Content = string.Format(TimeTracker.App.Resources.Resources.StaleActivity_AutoClosed, result.Date, result.EndTime)
+        };
+
+        _ = await uiMessageBox.ShowDialogAsync();
     }
 
     /// <summary>
@@ -290,6 +315,7 @@ public partial class App : Application
         services.AddScoped<IWorkdayConfigService, WorkdayConfigService>();
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IDataPurgeService, DataPurgeService>();
+        services.AddScoped<IStaleActivityService, StaleActivityService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
