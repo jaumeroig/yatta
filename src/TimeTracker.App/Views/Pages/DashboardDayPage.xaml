@@ -126,9 +126,26 @@
         </Style>
     </Page.Resources>
 
-    <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Grid Margin="42,12,42,12">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="42,0,42,42">
+        <StackPanel>
+            <!-- Header: day navigation -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding FullDateDisplay}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousDayCommand}" Height="32px" Margin="0,0,4,0" />
+                    <ui:Button Content="{local:Localize Button_Today}" Command="{Binding TodayCommand}" Height="32px" Margin="0,0,4,0" />
+                    <ui:Button Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextDayCommand}" Height="32px" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Main content -->
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="24" />
@@ -182,28 +199,6 @@
 
                 <!-- Right column: Day details -->
                 <StackPanel Grid.Column="2">
-                    <!-- Full date header -->
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Text="{Binding FullDateDisplay}"
-                                   FontSize="22"
-                                   FontWeight="SemiBold" />
-                        <ui:Button Grid.Column="1"
-                                   Appearance="Transparent"
-                                   Padding="4"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"
-                                   ToolTip="{local:Localize Today_ConfigureDay}"
-                                   Command="{Binding ConfigureDayCommand}">
-                            <ui:SymbolIcon Symbol="Settings24" FontSize="16" />
-                        </ui:Button>
-                    </Grid>
-
                     <!-- Day info cards row -->
                     <UniformGrid Columns="3" Margin="0,0,0,16">
                         <!-- Day type -->
@@ -245,6 +240,15 @@
                             </StackPanel>
                         </ui:Card>
                     </UniformGrid>
+
+                    <!-- Configure day button -->
+                    <ui:Card Padding="16" Margin="0,0,0,16">
+                        <ui:Button Content="{local:Localize Today_ConfigureDay}"
+                                   Icon="{ui:SymbolIcon Settings24}"
+                                   Appearance="Secondary"
+                                   Command="{Binding ConfigureDayCommand}"
+                                   HorizontalAlignment="Stretch" />
+                    </ui:Card>
 
                     <!-- Worked time and differential -->
                     <UniformGrid Columns="2" Margin="0,0,0,16">
@@ -463,6 +467,6 @@
                     </ui:Card>
                 </StackPanel>
             </Grid>
-        </ScrollViewer>
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Page>
