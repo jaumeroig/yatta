@@ -75,6 +75,11 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <!-- Global Styles -->
+            <!--<Style TargetType="{x:Type ui:CardAction}" BasedOn="{StaticResource {x:Type ui:CardAction}}">
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>-->
         </ResourceDictionary>
     </Application.Resources>
 </Application>

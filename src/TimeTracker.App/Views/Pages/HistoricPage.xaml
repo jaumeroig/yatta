@@ -25,7 +25,7 @@ mc:Ignorable="d"
         </Grid.RowDefinitions>
 
         <!-- Filters -->
-        <Grid Grid.Row="1" Margin="0,0,20,24">
+        <Grid Grid.Row="1" Margin="0,0,20,24" Height="35">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -37,7 +37,7 @@ mc:Ignorable="d"
             <ui:TextBox Grid.Column="0"
                             PlaceholderText="{local:Localize Filter_SearchByActivityOrNotes}"
                             Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Height="34"
+                            VerticalAlignment="Stretch"
                             VerticalContentAlignment="Center"
                             Margin="0,0,0,0">
                 <ui:TextBox.Icon>
@@ -48,7 +48,7 @@ mc:Ignorable="d"
             <ComboBox Grid.Column="1"
                       IsEditable="False"
                       Width="200"
-                      Height="33"
+                      VerticalAlignment="Stretch"
                       VerticalContentAlignment="Center"
                       ItemsSource="{Binding Activities}"
                       SelectedItem="{Binding SelectedActivityFilter}"
@@ -74,9 +74,8 @@ mc:Ignorable="d"
 
             <DatePicker Grid.Column="2"
                         Width="130"
-                        Height="35"
                         Padding="12"
-                        VerticalAlignment="Center"
+                        VerticalAlignment="Stretch"
                         VerticalContentAlignment="Center"
                         Margin="12,0,0,0"
                         SelectedDateFormat="Short"
@@ -85,10 +84,9 @@ mc:Ignorable="d"
             <!-- Sort Direction Toggle -->
             <ToggleButton Grid.Column="3"
                           IsChecked="{Binding SortAscending}"
-                          VerticalAlignment="Center"
+                          VerticalAlignment="Stretch"
                           Margin="12,0,0,0"
-                          Height="36"
-                          Width="40"
+                          Width="35"
                           ToolTip="{local:Localize Filter_Sort_Tooltip}">
                 <ToggleButton.Style>
                     <Style TargetType="ToggleButton">
@@ -141,10 +139,11 @@ mc:Ignorable="d"
 
                 </StackPanel>
             </ToggleButton>
+            
             <ui:Button Grid.Column="4"
                        Appearance="Primary"
+                       VerticalAlignment="Stretch"
                        Command="{Binding OpenNewRecordDialogCommand}"
-                       Height="33"
                        Margin="48,0,0,0"
                        Padding="16,0"
                        HorizontalAlignment="Right">

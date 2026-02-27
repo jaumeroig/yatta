@@ -14,12 +14,13 @@
     <Grid Margin="42,0,42,42">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Subtitle -->
         <TextBlock Grid.Row="0"
                    Text="{local:Localize Dashboard_IndexSubtitle}"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                    FontSize="14"
                    Opacity="0.6"
                    Margin="0,0,0,24" />
@@ -30,6 +31,7 @@
             <!-- Day tile -->
             <ui:CardAction Command="{Binding NavigateToDayCommand}"
                            Margin="0,0,12,12"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarDay24"
@@ -49,6 +51,7 @@
             <!-- Week tile -->
             <ui:CardAction Command="{Binding NavigateToWeekCommand}"
                            Margin="12,0,0,12"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarWeekNumbers24"
@@ -68,6 +71,7 @@
             <!-- Month tile -->
             <ui:CardAction Command="{Binding NavigateToMonthCommand}"
                            Margin="0,12,12,0"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarLtr24"
@@ -87,6 +91,7 @@
             <!-- Year tile -->
             <ui:CardAction Command="{Binding NavigateToYearCommand}"
                            Margin="12,12,0,0"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarAgenda24"

@@ -28,7 +28,12 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 
-                <TextBlock Grid.Column="0" Text="{Binding MonthYearDisplay}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="0" 
+                           Text="{Binding MonthYearDisplay}"
+                           FontSize="22" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                           VerticalAlignment="Center" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousMonthCommand}" Height="32px" Margin="0,0,4,0" />

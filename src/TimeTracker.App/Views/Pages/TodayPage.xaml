@@ -19,7 +19,7 @@
             <!-- === SECTION B: Status card (timeline + active record/play + stats) === -->
             <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
+                    BorderThickness="0"
                     CornerRadius="8"
                     Padding="24"
                     Margin="0,0,0,20">
@@ -264,7 +264,7 @@
             <!-- === SECTION C: Completed Records === -->
             <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
+                    BorderThickness="0"
                     CornerRadius="8"
                     Padding="24">
                 <StackPanel>

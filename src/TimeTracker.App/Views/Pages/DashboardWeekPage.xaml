@@ -30,7 +30,9 @@
 
                 <StackPanel Grid.Column="0" >
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                        <TextBlock FontSize="22" 
+                                   FontWeight="SemiBold" 
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}">
                             <Run Text="{local:Localize Dashboard_Week}" />
                             <Run Text=" " />
                             <Run Text="{Binding WeekNumber, Mode=OneWay}" />
