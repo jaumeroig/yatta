@@ -29,6 +29,7 @@
         <UniformGrid Grid.Row="1" Rows="2" Columns="2" Margin="0,0,0,0">
 
             <!-- Day tile -->
+
             <ui:CardAction Command="{Binding NavigateToDayCommand}"
                            Margin="0,0,12,12"
                            BorderThickness="0"

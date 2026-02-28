@@ -40,6 +40,7 @@ public partial class ActivityDetailViewModel : ObservableObject
     private bool _active = true;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DeleteWarningMessage))]
     private int _recordCount;
 
     [ObservableProperty]
@@ -61,6 +62,8 @@ public partial class ActivityDetailViewModel : ObservableObject
     /// Indicates if the activity already exists (not new).
     /// </summary>
     public bool IsExistingActivity => !_isNewActivity;
+
+    public string DeleteWarningMessage => string.Format(Resources.Resources.Message_DeleteActivityWarning, RecordCount);
 
     /// <summary>
     /// Text for the archive/unarchive button based on Active state.
