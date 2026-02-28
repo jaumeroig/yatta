@@ -158,7 +158,7 @@
                     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
                             BorderBrush="{DynamicResource SystemAccentColorPrimaryBrush}"
                             BorderThickness="1"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             Padding="16"
                             Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid>
@@ -231,7 +231,7 @@
 
                     <!-- Play Button (when stopped but has records) -->
                     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             Padding="16"
                             Visibility="{Binding CanPlay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid>
