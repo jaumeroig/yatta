@@ -3,6 +3,7 @@ namespace TimeTracker.App.ViewModels;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using TimeTracker.App.Helpers;
 using TimeTracker.App.Services;
 using TimeTracker.App.Views.Pages;
 using TimeTracker.Core.Interfaces;
@@ -100,7 +101,7 @@ public partial class ActivitiesViewModel : ObservableObject
         {
             var records = _allRecords.Where(r => r.ActivityId == activity.Id).ToList();
             var totalHours = _timeCalculatorService.CalculateTotalHours(records);
-            var totalTime = FormatDuration(totalHours);
+            var totalTime = DurationFormatHelper.FormatDuration(totalHours);
 
             // Create subtitle with format: "X records · Xh Xm"
             var recordsText = records.Count == 1
@@ -126,15 +127,6 @@ public partial class ActivitiesViewModel : ObservableObject
         }).OrderBy(a => a.Name);
 
         Activities = new ObservableCollection<ActivityDisplay>(activityDisplays);
-    }
-
-    private static string FormatDuration(double hours)
-    {
-        var totalMinutes = (int)(hours * 60);
-        var h = totalMinutes / 60;
-        var m = totalMinutes % 60;
-        var format = Resources.Resources.Format_Duration;
-        return string.Format(format, h, m);
     }
 
     /// <summary>

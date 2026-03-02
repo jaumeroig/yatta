@@ -10,6 +10,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using TimeTracker.App.Extensions;
+using TimeTracker.App.Helpers;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
@@ -122,18 +123,9 @@ public partial class DashboardMonthViewModel : ObservableObject
         TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
-        const double maxBarWidth = 200.0;
-        var maxHours = Math.Max(report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
-        if (maxHours > 0)
-        {
-            OfficeBarWidth = report.OfficeTime.TotalHours / maxHours * maxBarWidth;
-            TeleworkBarWidth = report.TeleworkTime.TotalHours / maxHours * maxBarWidth;
-        }
-        else
-        {
-            OfficeBarWidth = 0;
-            TeleworkBarWidth = 0;
-        }
+        // Bar widths
+        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
+            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
 
         // Day type counts
         WorkDayCount = (report.DayTypeCounts.GetValueOrDefault(DayType.WorkDay) + report.DayTypeCounts.GetValueOrDefault(DayType.IntensiveDay)).ToString();
@@ -145,30 +137,9 @@ public partial class DashboardMonthViewModel : ObservableObject
         BuildDailyBarChart(report.DailyBreakdown);
 
         // Activity donut
-        ActivityBreakdown = new ObservableCollection<ActivityBreakdownDisplay>(
-            report.Activities.Select(a => new ActivityBreakdownDisplay
-            {
-                ActivityName = a.ActivityName,
-                Color = a.Color,
-                ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(a.Color)),
-                TotalTime = a.TotalTime.FormatDuration(),
-                Percentage = $"{a.Percentage:F1}%",
-                PercentageValue = a.Percentage
-            }));
+        ActivityBreakdown = DashboardDisplayHelper.BuildActivityBreakdown(report.Activities);
 
-        ActivitySeries = report.Activities.Select(a =>
-        {
-            var skColor = SKColor.Parse(a.Color);
-            return (ISeries)new PieSeries<double>
-            {
-                Values = [a.TotalTime.TotalMinutes],
-                Name = a.ActivityName,
-                Fill = new SolidColorPaint(skColor),
-                InnerRadius = 60,
-                Pushout = 0,
-                ToolTipLabelFormatter = _ => $"{a.ActivityName}: {a.TotalTime.FormatDuration()} ({a.Percentage:F1}%)",
-            };
-        }).ToArray();
+        ActivitySeries = DashboardDisplayHelper.BuildActivityDonutSeries(report.Activities);
     }
 
     private void BuildDailyBarChart(List<DailyHoursSummary> daily)

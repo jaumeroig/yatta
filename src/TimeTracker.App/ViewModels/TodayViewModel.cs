@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TimeTracker.App.Controls;
 using TimeTracker.App.Extensions;
+using TimeTracker.App.Helpers;
 using TimeTracker.App.Models;
 using TimeTracker.Core.Extensions;
 using TimeTracker.Core.Interfaces;
@@ -160,7 +161,7 @@ public partial class TodayViewModel : ObservableObject
 
         if (isWorking)
         {
-            TargetDuration = FormatDuration(workday.TargetDuration.TotalHours);
+            TargetDuration = DurationFormatHelper.FormatDuration(workday.TargetDuration.TotalHours);
         }
         else
         {
@@ -215,7 +216,7 @@ public partial class TodayViewModel : ObservableObject
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
             EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
-            Duration = FormatDuration(duration),
+            Duration = DurationFormatHelper.FormatDuration(duration),
             Date = record.Date,
             IsActive = isActive,
             Telework = record.Telework
@@ -411,7 +412,7 @@ public partial class TodayViewModel : ObservableObject
     private void CalculateWorkedTime(List<TimeRecord> records)
     {
         var totalHours = CalculateTotalHoursIncludingActive(records);
-        WorkedTime = FormatDuration(totalHours);
+        WorkedTime = DurationFormatHelper.FormatDuration(totalHours);
     }
 
     private async void UpdateWorkedTime()
@@ -421,7 +422,7 @@ public partial class TodayViewModel : ObservableObject
         var today = DateOnly.FromDateTime(DateTime.Today);
         var records = (await _timeRecordRepository.GetByDateAsync(today)).ToList();
         var totalHours = CalculateTotalHoursIncludingActive(records);
-        WorkedTime = FormatDuration(totalHours);
+        WorkedTime = DurationFormatHelper.FormatDuration(totalHours);
     }
 
     private double CalculateTotalHoursIncludingActive(List<TimeRecord> records)
@@ -445,7 +446,7 @@ public partial class TodayViewModel : ObservableObject
         var now = TimeOnly.FromDateTime(DateTime.Now);
         var startTime = TimeOnly.Parse(ActiveRecord.StartTime);
         var elapsed = _timeCalculatorService.CalculateDuration(startTime, now);
-        ElapsedTime = FormatDuration(elapsed);
+        ElapsedTime = DurationFormatHelper.FormatDuration(elapsed);
     }
 
     private void UpdateActiveSegmentEnd()
@@ -506,17 +507,6 @@ public partial class TodayViewModel : ObservableObject
         var firstRecord = records.OrderBy(r => r.StartTime).First();
         WorkdayStartTime = firstRecord.StartTime.ToString("HH:mm");
     }
-
-    private static string FormatDuration(double hours)
-    {
-        var totalMinutes = (int)(hours * 60);
-        var h = totalMinutes / 60;
-        var m = totalMinutes % 60;
-        var format = AppResources.Format_Duration;
-        return string.Format(format, h, m);
-    }
-
-
 
     [RelayCommand]
     private async Task StopRecordAsync()
@@ -698,55 +688,11 @@ public partial class TodayViewModel : ObservableObject
             Date = today,
             DayType = currentConfig.DayType,
             TargetDurationHours = currentConfig.TargetDuration.TotalHours,
-            TargetDurationText = FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
+            TargetDurationText = DurationFormatHelper.FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
             ValidationError = string.Empty
         };
 
         IsConfigureDayDialogOpen = true;
-    }
-
-    private static string FormatHoursToHHmm(double hours)
-    {
-        if (hours <= 0)
-        {
-            return "8:00";
-        }
-
-        var timeSpan = TimeSpan.FromHours(hours);
-        return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}";
-    }
-
-    private static bool TryParseHHmm(string text, out TimeSpan duration)
-    {
-        duration = TimeSpan.Zero;
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var parts = text.Split(':');
-        if (parts.Length != 2)
-        {
-            return false;
-        }
-
-        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
-        {
-            return false;
-        }
-
-        if (hours < 0 || minutes < 0 || minutes > 59)
-        {
-            return false;
-        }
-
-        if (hours == 0 && minutes == 0)
-        {
-            return false;
-        }
-
-        duration = new TimeSpan(hours, minutes, 0);
-        return true;
     }
 
     [RelayCommand]
@@ -765,7 +711,7 @@ public partial class TodayViewModel : ObservableObject
         TimeSpan targetDuration = TimeSpan.Zero;
         if (isWorkingDay)
         {
-            if (!TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
+            if (!DurationFormatHelper.TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
             {
                 ConfigureDayModel.ValidationError = AppResources.Validation_TargetDurationInvalid;
                 return;
