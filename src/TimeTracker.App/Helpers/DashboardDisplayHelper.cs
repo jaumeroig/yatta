@@ -48,7 +48,9 @@ internal static class DashboardDisplayHelper
                 Values = [a.TotalTime.TotalMinutes],
                 Name = a.ActivityName,
                 Fill = new SolidColorPaint(skColor),
-                InnerRadius = 60,
+                Stroke = null,
+                InnerRadius = 50,
+                MaxRadialColumnWidth = 30,
                 Pushout = 0,
                 ToolTipLabelFormatter = _ =>
                     $"{a.ActivityName}: {a.TotalTime.FormatDuration()} ({a.Percentage:F1}%)",
