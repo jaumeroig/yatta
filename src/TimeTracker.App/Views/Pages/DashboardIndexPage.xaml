@@ -9,24 +9,26 @@
       d:DesignHeight="600"
       d:DesignWidth="900"
       Loaded="Page_Loaded"
+      ScrollViewer.CanContentScroll="False"
       Unloaded="Page_Unloaded">
 
-    <Grid Margin="42,0,42,42">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="42,0,42,42">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <!-- Subtitle -->
-        <TextBlock Grid.Row="0"
-                   Text="{local:Localize Dashboard_IndexSubtitle}"
-                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                   FontSize="14"
-                   Opacity="0.6"
-                   Margin="0,0,0,24" />
+            <!-- Subtitle -->
+            <TextBlock Grid.Row="0"
+                       Text="{local:Localize Dashboard_IndexSubtitle}"
+                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                       FontSize="14"
+                       Opacity="0.6"
+                       Margin="0,0,0,24" />
 
-        <!-- Four large tiles for each period -->
-        <UniformGrid Grid.Row="1" Rows="2" Columns="2" Margin="0,0,0,0">
+            <!-- Four large tiles for each period -->
+            <UniformGrid Grid.Row="1" Rows="2" Columns="2" Margin="0,0,0,0">
 
             <!-- Day tile -->
 
@@ -109,6 +111,7 @@
                 </StackPanel>
             </ui:CardAction>
 
-        </UniformGrid>
-    </Grid>
+            </UniformGrid>
+        </Grid>
+    </ScrollViewer>
 </Page>
