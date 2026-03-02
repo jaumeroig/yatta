@@ -60,6 +60,8 @@ public partial class TodayViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<TimeRecordDisplay> _completedRecords = [];
 
+    public bool HasAnyRecords => ActiveRecord != null || CompletedRecords.Count > 0;
+
     [ObservableProperty]
     private ObservableCollection<TimeSegment> _timelineSegments = [];
 
@@ -348,6 +350,27 @@ public partial class TodayViewModel : ObservableObject
     {
         _pendingDeleteRecord = null;
         IsDeleteConfirmationOpen = false;
+    }
+
+    partial void OnActiveRecordChanged(TimeRecordDisplay? value)
+    {
+        OnPropertyChanged(nameof(HasAnyRecords));
+    }
+
+    partial void OnCompletedRecordsChanged(ObservableCollection<TimeRecordDisplay>? oldValue, ObservableCollection<TimeRecordDisplay> newValue)
+    {
+        if (oldValue != null)
+        {
+            oldValue.CollectionChanged -= CompletedRecordsOnCollectionChanged;
+        }
+
+        newValue.CollectionChanged += CompletedRecordsOnCollectionChanged;
+        OnPropertyChanged(nameof(HasAnyRecords));
+    }
+
+    private void CompletedRecordsOnCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(HasAnyRecords));
     }
 
     private void UpdateTimelineSegments(List<TimeRecord> records)
