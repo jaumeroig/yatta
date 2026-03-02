@@ -288,17 +288,17 @@ public partial class DashboardDayViewModel : ObservableObject
         StartTimeDisplay = report.StartTime?.ToString("HH:mm") ?? "--:--";
 
         // Target & worked
-        TargetTimeDisplay = FormatTimeSpan(report.TargetDuration);
-        WorkedTimeDisplay = FormatTimeSpan(report.WorkedDuration);
+        TargetTimeDisplay = report.TargetDuration.FormatDuration();
+        WorkedTimeDisplay = report.WorkedDuration.FormatDuration();
 
         // Differential
         IsDifferentialPositive = report.Differential >= TimeSpan.Zero;
         var absDiff = report.Differential < TimeSpan.Zero ? report.Differential.Negate() : report.Differential;
-        DifferentialDisplay = (IsDifferentialPositive ? "+" : "-") + FormatTimeSpan(absDiff);
+        DifferentialDisplay = (IsDifferentialPositive ? "+" : "-") + absDiff.FormatDuration();
 
         // Office / Telework
-        OfficeTimeDisplay = FormatTimeSpan(report.OfficeTime);
-        TeleworkTimeDisplay = FormatTimeSpan(report.TeleworkTime);
+        OfficeTimeDisplay = report.OfficeTime.FormatDuration();
+        TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
         // Bar widths (pixel-based, max 200px – same pattern as JornadaPage)
@@ -322,7 +322,7 @@ public partial class DashboardDayViewModel : ObservableObject
                 ActivityName = a.ActivityName,
                 Color = a.Color,
                 ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(a.Color)),
-                TotalTime = FormatTimeSpan(a.TotalTime),
+                TotalTime = a.TotalTime.FormatDuration(),
                 Percentage = $"{a.Percentage:F1}%",
                 PercentageValue = a.Percentage
             }));
@@ -338,7 +338,7 @@ public partial class DashboardDayViewModel : ObservableObject
                 Fill = new SolidColorPaint(skColor),
                 InnerRadius = 60,
                 Pushout = 0,
-                ToolTipLabelFormatter = point => $"{a.ActivityName}: {FormatTimeSpan(a.TotalTime)} ({a.Percentage:F1}%)",
+                ToolTipLabelFormatter = point => $"{a.ActivityName}: {a.TotalTime.FormatDuration()} ({a.Percentage:F1}%)",
             };
         }).ToArray();
 
@@ -354,7 +354,7 @@ public partial class DashboardDayViewModel : ObservableObject
                     ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(activity?.Color ?? "#808080")),
                     StartTime = r.StartTime.ToString("HH:mm"),
                     EndTime = r.EndTime?.ToString("HH:mm") ?? "--:--",
-                    Duration = r.EndTime.HasValue ? FormatTimeSpan(r.EndTime.Value.ToTimeSpan() - r.StartTime.ToTimeSpan()) : "--:--",
+                    Duration = r.EndTime.HasValue ? (r.EndTime.Value.ToTimeSpan() - r.StartTime.ToTimeSpan()).FormatDuration() : "--:--",
                     Notes = r.Notes ?? string.Empty,
                     IsTelework = r.Telework
                 };
@@ -442,14 +442,6 @@ public partial class DashboardDayViewModel : ObservableObject
             DayType.Vacation => _localizationService.GetString("Today_DayType_Vacation"),
             _ => dayType.ToString()
         };
-    }
-
-    private static string FormatTimeSpan(TimeSpan ts)
-    {
-        var totalMinutes = (int)Math.Abs(ts.TotalMinutes);
-        var hours = totalMinutes / 60;
-        var minutes = totalMinutes % 60;
-        return $"{hours}h {minutes:D2}m";
     }
 }
 

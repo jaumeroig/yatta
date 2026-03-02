@@ -9,6 +9,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using TimeTracker.App.Extensions;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
@@ -112,14 +113,14 @@ public partial class DashboardWeekViewModel : ObservableObject
         var report = await _dashboardService.GetWeekReportAsync(WeekStartDate);
 
         // Summary
-        WorkedTimeDisplay = FormatTimeSpan(report.TotalWorked);
-        TargetTimeDisplay = FormatTimeSpan(report.TotalTarget);
-        DifferentialDisplay = (report.Differential >= TimeSpan.Zero ? "+" : "-") + FormatTimeSpan(report.Differential);
+        WorkedTimeDisplay = report.TotalWorked.FormatDuration();
+        TargetTimeDisplay = report.TotalTarget.FormatDuration();
+        DifferentialDisplay = (report.Differential >= TimeSpan.Zero ? "+" : "-") + report.Differential.FormatDuration();
         IsDifferentialPositive = report.Differential >= TimeSpan.Zero;
 
         // Office / Telework
-        OfficeTimeDisplay = FormatTimeSpan(report.OfficeTime);
-        TeleworkTimeDisplay = FormatTimeSpan(report.TeleworkTime);
+        OfficeTimeDisplay = report.OfficeTime.FormatDuration();
+        TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
         const double maxBarWidth = 200.0;
@@ -151,7 +152,7 @@ public partial class DashboardWeekViewModel : ObservableObject
                 ActivityName = a.ActivityName,
                 Color = a.Color,
                 ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(a.Color)),
-                TotalTime = FormatTimeSpan(a.TotalTime),
+                TotalTime = a.TotalTime.FormatDuration(),
                 Percentage = $"{a.Percentage:F1}%",
                 PercentageValue = a.Percentage
             }));
@@ -166,7 +167,7 @@ public partial class DashboardWeekViewModel : ObservableObject
                 Fill = new SolidColorPaint(skColor),
                 InnerRadius = 60,
                 Pushout = 0,
-                ToolTipLabelFormatter = _ => $"{a.ActivityName}: {FormatTimeSpan(a.TotalTime)} ({a.Percentage:F1}%)",
+                ToolTipLabelFormatter = _ => $"{a.ActivityName}: {a.TotalTime.FormatDuration()} ({a.Percentage:F1}%)",
             };
         }).ToArray();
     }
@@ -259,13 +260,5 @@ public partial class DashboardWeekViewModel : ObservableObject
     private void UpdateContextDate()
     {
         _pageStateService.DashboardPage.ContextDate = WeekStartDate;
-    }
-
-    private static string FormatTimeSpan(TimeSpan ts)
-    {
-        var totalMinutes = (int)Math.Abs(ts.TotalMinutes);
-        var hours = totalMinutes / 60;
-        var minutes = totalMinutes % 60;
-        return $"{hours}h {minutes:D2}m";
     }
 }
