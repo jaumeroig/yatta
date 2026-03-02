@@ -299,7 +299,7 @@ mc:Ignorable="d"
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                        <TextBlock Text="Total"
+                                        <TextBlock Text="{local:Localize Stat_Total}"
                                                    FontSize="12"
                                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                    HorizontalAlignment="Center"
@@ -311,7 +311,7 @@ mc:Ignorable="d"
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                        <TextBlock Text="Oficina"
+                                        <TextBlock Text="{local:Localize Stat_Office}"
                                                    FontSize="12"
                                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                    HorizontalAlignment="Center"
@@ -364,7 +364,7 @@ mc:Ignorable="d"
 
                                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                             <Ellipse Width="8" Height="8" Fill="#4CAF50" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                            <TextBlock Text="Oficina" FontSize="13" VerticalAlignment="Center" />
+                                            <TextBlock Text="{local:Localize Label_OfficeBar}" FontSize="13" VerticalAlignment="Center" />
                                         </StackPanel>
 
                                         <Border Grid.Column="1"

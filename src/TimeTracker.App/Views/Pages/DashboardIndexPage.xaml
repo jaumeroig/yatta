@@ -4,32 +4,37 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      xmlns:local="clr-namespace:TimeTracker.App.Markup"
+      xmlns:local="clr-namespace:TimeTracker.App.Markup" xmlns:viewmodels="clr-namespace:TimeTracker.App.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:DashboardIndexViewModel}"
       mc:Ignorable="d"
       d:DesignHeight="600"
       d:DesignWidth="900"
       Loaded="Page_Loaded"
+      ScrollViewer.CanContentScroll="False"
       Unloaded="Page_Unloaded">
 
-    <Grid Margin="42,0,42,42">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="42,0,42,42">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <!-- Subtitle -->
-        <TextBlock Grid.Row="0"
-                   Text="{local:Localize Dashboard_IndexSubtitle}"
-                   FontSize="14"
-                   Opacity="0.6"
-                   Margin="0,0,0,24" />
+            <!-- Subtitle -->
+            <TextBlock Grid.Row="0"
+                       Text="{local:Localize Dashboard_IndexSubtitle}"
+                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                       FontSize="14"
+                       Opacity="0.6"
+                       Margin="0,0,0,24" />
 
-        <!-- Four large tiles for each period -->
-        <UniformGrid Grid.Row="1" Rows="2" Columns="2" Margin="0,0,0,0">
+            <!-- Four large tiles for each period -->
+            <UniformGrid Grid.Row="1" Rows="2" Columns="2" Margin="0,0,0,0">
 
             <!-- Day tile -->
+
             <ui:CardAction Command="{Binding NavigateToDayCommand}"
                            Margin="0,0,12,12"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarDay24"
@@ -49,6 +54,7 @@
             <!-- Week tile -->
             <ui:CardAction Command="{Binding NavigateToWeekCommand}"
                            Margin="12,0,0,12"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarWeekNumbers24"
@@ -68,6 +74,7 @@
             <!-- Month tile -->
             <ui:CardAction Command="{Binding NavigateToMonthCommand}"
                            Margin="0,12,12,0"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarLtr24"
@@ -87,6 +94,7 @@
             <!-- Year tile -->
             <ui:CardAction Command="{Binding NavigateToYearCommand}"
                            Margin="12,12,0,0"
+                           BorderThickness="0"
                            Padding="32">
                 <StackPanel>
                     <ui:SymbolIcon Symbol="CalendarAgenda24"
@@ -103,6 +111,7 @@
                 </StackPanel>
             </ui:CardAction>
 
-        </UniformGrid>
-    </Grid>
+            </UniformGrid>
+        </Grid>
+    </ScrollViewer>
 </Page>

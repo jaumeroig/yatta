@@ -10,6 +10,8 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using TimeTracker.App.Controls;
+using TimeTracker.App.Extensions;
+using TimeTracker.App.Helpers;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
@@ -179,7 +181,7 @@ public partial class DashboardDayViewModel : ObservableObject
             Date = date,
             DayType = currentConfig.DayType,
             TargetDurationHours = currentConfig.TargetDuration.TotalHours,
-            TargetDurationText = FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
+            TargetDurationText = DurationFormatHelper.FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
             ValidationError = string.Empty
         };
 
@@ -198,7 +200,7 @@ public partial class DashboardDayViewModel : ObservableObject
         TimeSpan targetDuration = TimeSpan.Zero;
         if (isWorkingDay)
         {
-            if (!TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
+            if (!DurationFormatHelper.TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
             {
                 ConfigureDayModel.ValidationError = TimeTracker.App.Resources.Resources.Validation_TargetDurationInvalid;
                 return;
@@ -223,50 +225,6 @@ public partial class DashboardDayViewModel : ObservableObject
         IsConfigureDayDialogOpen = false;
     }
 
-    private static string FormatHoursToHHmm(double hours)
-    {
-        if (hours <= 0)
-        {
-            return "8:00";
-        }
-
-        var timeSpan = TimeSpan.FromHours(hours);
-        return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}";
-    }
-
-    private static bool TryParseHHmm(string text, out TimeSpan duration)
-    {
-        duration = TimeSpan.Zero;
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var parts = text.Split(':');
-        if (parts.Length != 2)
-        {
-            return false;
-        }
-
-        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
-        {
-            return false;
-        }
-
-        if (hours < 0 || minutes < 0 || minutes > 59)
-        {
-            return false;
-        }
-
-        if (hours == 0 && minutes == 0)
-        {
-            return false;
-        }
-
-        duration = new TimeSpan(hours, minutes, 0);
-        return true;
-    }
-
     private async Task LoadDayDataAsync()
     {
         var date = DateOnly.FromDateTime(SelectedDate);
@@ -288,59 +246,28 @@ public partial class DashboardDayViewModel : ObservableObject
         StartTimeDisplay = report.StartTime?.ToString("HH:mm") ?? "--:--";
 
         // Target & worked
-        TargetTimeDisplay = FormatTimeSpan(report.TargetDuration);
-        WorkedTimeDisplay = FormatTimeSpan(report.WorkedDuration);
+        TargetTimeDisplay = report.TargetDuration.FormatDuration();
+        WorkedTimeDisplay = report.WorkedDuration.FormatDuration();
 
         // Differential
         IsDifferentialPositive = report.Differential >= TimeSpan.Zero;
         var absDiff = report.Differential < TimeSpan.Zero ? report.Differential.Negate() : report.Differential;
-        DifferentialDisplay = (IsDifferentialPositive ? "+" : "-") + FormatTimeSpan(absDiff);
+        DifferentialDisplay = (IsDifferentialPositive ? "+" : "-") + absDiff.FormatDuration();
 
         // Office / Telework
-        OfficeTimeDisplay = FormatTimeSpan(report.OfficeTime);
-        TeleworkTimeDisplay = FormatTimeSpan(report.TeleworkTime);
+        OfficeTimeDisplay = report.OfficeTime.FormatDuration();
+        TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
-        // Bar widths (pixel-based, max 200px – same pattern as JornadaPage)
-        const double maxBarWidth = 200.0;
-        var maxHours = Math.Max(report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
-        if (maxHours > 0)
-        {
-            OfficeBarWidth = report.OfficeTime.TotalHours / maxHours * maxBarWidth;
-            TeleworkBarWidth = report.TeleworkTime.TotalHours / maxHours * maxBarWidth;
-        }
-        else
-        {
-            OfficeBarWidth = 0;
-            TeleworkBarWidth = 0;
-        }
+        // Bar widths
+        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
+            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
 
         // Activity breakdown
-        ActivityBreakdown = new ObservableCollection<ActivityBreakdownDisplay>(
-            report.Activities.Select(a => new ActivityBreakdownDisplay
-            {
-                ActivityName = a.ActivityName,
-                Color = a.Color,
-                ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(a.Color)),
-                TotalTime = FormatTimeSpan(a.TotalTime),
-                Percentage = $"{a.Percentage:F1}%",
-                PercentageValue = a.Percentage
-            }));
+        ActivityBreakdown = DashboardDisplayHelper.BuildActivityBreakdown(report.Activities);
 
         // Donut chart series
-        ActivitySeries = report.Activities.Select(a =>
-        {
-            var skColor = SKColor.Parse(a.Color);
-            return (ISeries)new PieSeries<double>
-            {
-                Values = [a.TotalTime.TotalMinutes],
-                Name = a.ActivityName,
-                Fill = new SolidColorPaint(skColor),
-                InnerRadius = 60,
-                Pushout = 0,
-                ToolTipLabelFormatter = point => $"{a.ActivityName}: {FormatTimeSpan(a.TotalTime)} ({a.Percentage:F1}%)",
-            };
-        }).ToArray();
+        ActivitySeries = DashboardDisplayHelper.BuildActivityDonutSeries(report.Activities);
 
         // Records list
         Records = new ObservableCollection<DayRecordDisplay>(
@@ -354,7 +281,7 @@ public partial class DashboardDayViewModel : ObservableObject
                     ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(activity?.Color ?? "#808080")),
                     StartTime = r.StartTime.ToString("HH:mm"),
                     EndTime = r.EndTime?.ToString("HH:mm") ?? "--:--",
-                    Duration = r.EndTime.HasValue ? FormatTimeSpan(r.EndTime.Value.ToTimeSpan() - r.StartTime.ToTimeSpan()) : "--:--",
+                    Duration = r.EndTime.HasValue ? (r.EndTime.Value.ToTimeSpan() - r.StartTime.ToTimeSpan()).FormatDuration() : "--:--",
                     Notes = r.Notes ?? string.Empty,
                     IsTelework = r.Telework
                 };
@@ -442,14 +369,6 @@ public partial class DashboardDayViewModel : ObservableObject
             DayType.Vacation => _localizationService.GetString("Today_DayType_Vacation"),
             _ => dayType.ToString()
         };
-    }
-
-    private static string FormatTimeSpan(TimeSpan ts)
-    {
-        var totalMinutes = (int)Math.Abs(ts.TotalMinutes);
-        var hours = totalMinutes / 60;
-        var minutes = totalMinutes % 60;
-        return $"{hours}h {minutes:D2}m";
     }
 }
 

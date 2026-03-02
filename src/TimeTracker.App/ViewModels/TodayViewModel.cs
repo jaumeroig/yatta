@@ -1,17 +1,17 @@
 namespace TimeTracker.App.ViewModels;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Windows.Media;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TimeTracker.App.Controls;
+using TimeTracker.App.Extensions;
+using TimeTracker.App.Helpers;
 using TimeTracker.App.Models;
 using TimeTracker.Core.Extensions;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using AppResources = TimeTracker.App.Resources.Resources;
 
 /// <summary>
@@ -157,16 +157,16 @@ public partial class TodayViewModel : ObservableObject
         var isWorking = await _workdayConfigService.IsWorkingDayAsync(today);
 
         IsWorkingDay = isWorking;
-        DayTypeDisplay = GetDayTypeDisplayName(workday.DayType);
+        DayTypeDisplay = workday.DayType.GetDisplayName();
 
         if (isWorking)
         {
-            TargetDuration = FormatDuration(workday.TargetDuration.TotalHours);
+            TargetDuration = DurationFormatHelper.FormatDuration(workday.TargetDuration.TotalHours);
         }
         else
         {
-            TargetDuration = TimeTracker.App.Resources.Resources.Today_NoWorkingDay;
-            RemainingTime = TimeTracker.App.Resources.Resources.Today_NoWorkingDay;
+            TargetDuration = AppResources.Today_NoWorkingDay;
+            RemainingTime = AppResources.Today_NoWorkingDay;
         }
     }
 
@@ -211,12 +211,12 @@ public partial class TodayViewModel : ObservableObject
         return new TimeRecordDisplay
         {
             Id = record.Id,
-            ActivityName = activity?.Name ?? TimeTracker.App.Resources.Resources.Activity_Unknown,
+            ActivityName = activity?.Name ?? AppResources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
             EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
-            Duration = FormatDuration(duration),
+            Duration = DurationFormatHelper.FormatDuration(duration),
             Date = record.Date,
             IsActive = isActive,
             Telework = record.Telework
@@ -377,7 +377,7 @@ public partial class TodayViewModel : ObservableObject
                 return new TimeSegment
                 {
                     RecordId = r.Id,
-                    Label = activity?.Name ?? TimeTracker.App.Resources.Resources.Activity_Unknown,
+                    Label = activity?.Name ?? AppResources.Activity_Unknown,
                     Start = today.ToDateTime(r.StartTime),
                     End = today.ToDateTime(endTime),
                     Color = color,
@@ -412,7 +412,7 @@ public partial class TodayViewModel : ObservableObject
     private void CalculateWorkedTime(List<TimeRecord> records)
     {
         var totalHours = CalculateTotalHoursIncludingActive(records);
-        WorkedTime = FormatDuration(totalHours);
+        WorkedTime = DurationFormatHelper.FormatDuration(totalHours);
     }
 
     private async void UpdateWorkedTime()
@@ -422,7 +422,7 @@ public partial class TodayViewModel : ObservableObject
         var today = DateOnly.FromDateTime(DateTime.Today);
         var records = (await _timeRecordRepository.GetByDateAsync(today)).ToList();
         var totalHours = CalculateTotalHoursIncludingActive(records);
-        WorkedTime = FormatDuration(totalHours);
+        WorkedTime = DurationFormatHelper.FormatDuration(totalHours);
     }
 
     private double CalculateTotalHoursIncludingActive(List<TimeRecord> records)
@@ -446,7 +446,7 @@ public partial class TodayViewModel : ObservableObject
         var now = TimeOnly.FromDateTime(DateTime.Now);
         var startTime = TimeOnly.Parse(ActiveRecord.StartTime);
         var elapsed = _timeCalculatorService.CalculateDuration(startTime, now);
-        ElapsedTime = FormatDuration(elapsed);
+        ElapsedTime = DurationFormatHelper.FormatDuration(elapsed);
     }
 
     private void UpdateActiveSegmentEnd()
@@ -481,7 +481,7 @@ public partial class TodayViewModel : ObservableObject
         var workedDuration = TimeSpan.FromHours(workedHours);
         var remaining = await _workdayConfigService.GetRemainingWorkTimeAsync(today, workedDuration);
 
-        RemainingTime = remaining > TimeSpan.Zero ? FormatTimeSpan(remaining) : "0h 0m";
+        RemainingTime = remaining > TimeSpan.Zero ? remaining.FormatDuration() : "0h 0m";
         if (remaining > TimeSpan.Zero)
         {
             var endTime = DateTime.Now.Add(remaining);
@@ -506,37 +506,6 @@ public partial class TodayViewModel : ObservableObject
 
         var firstRecord = records.OrderBy(r => r.StartTime).First();
         WorkdayStartTime = firstRecord.StartTime.ToString("HH:mm");
-    }
-
-    private static string FormatDuration(double hours)
-    {
-        var totalMinutes = (int)(hours * 60);
-        var h = totalMinutes / 60;
-        var m = totalMinutes % 60;
-        var format = TimeTracker.App.Resources.Resources.Format_Duration;
-        return string.Format(format, h, m);
-    }
-
-    private static string FormatTimeSpan(TimeSpan timeSpan)
-    {
-        var totalMinutes = (int)timeSpan.TotalMinutes;
-        var h = totalMinutes / 60;
-        var m = totalMinutes % 60;
-        var format = TimeTracker.App.Resources.Resources.Format_Duration;
-        return string.Format(format, h, m);
-    }
-
-    private static string GetDayTypeDisplayName(DayType dayType)
-    {
-        return dayType switch
-        {
-            DayType.WorkDay => TimeTracker.App.Resources.Resources.Today_DayType_WorkDay,
-            DayType.IntensiveDay => TimeTracker.App.Resources.Resources.Today_DayType_IntensiveDay,
-            DayType.Holiday => TimeTracker.App.Resources.Resources.Today_DayType_Holiday,
-            DayType.FreeChoice => TimeTracker.App.Resources.Resources.Today_DayType_FreeChoice,
-            DayType.Vacation => TimeTracker.App.Resources.Resources.Today_DayType_Vacation,
-            _ => string.Empty
-        };
     }
 
     [RelayCommand]
@@ -662,14 +631,14 @@ public partial class TodayViewModel : ObservableObject
         // Validate that an activity is selected
         if (ChangeActivityModel.SelectedActivityId == Guid.Empty)
         {
-            ChangeActivityModel.ValidationError = Resources.Resources.Validation_ActivityRequired;
+            ChangeActivityModel.ValidationError = AppResources.Validation_ActivityRequired;
             return;
         }
 
         // Parse the start time
         if (!TimeOnly.TryParse(ChangeActivityModel.StartTimeText, out var switchTime))
         {
-            ChangeActivityModel.ValidationError = Resources.Resources.Validation_InvalidStartTime;
+            ChangeActivityModel.ValidationError = AppResources.Validation_InvalidStartTime;
             return;
         }
 
@@ -713,61 +682,17 @@ public partial class TodayViewModel : ObservableObject
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         var currentConfig = await _workdayConfigService.GetEffectiveConfigurationAsync(today);
-        
+
         ConfigureDayModel = new ConfigureDayModel
         {
             Date = today,
             DayType = currentConfig.DayType,
             TargetDurationHours = currentConfig.TargetDuration.TotalHours,
-            TargetDurationText = FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
+            TargetDurationText = DurationFormatHelper.FormatHoursToHHmm(currentConfig.TargetDuration.TotalHours),
             ValidationError = string.Empty
         };
-        
+
         IsConfigureDayDialogOpen = true;
-    }
-
-    private static string FormatHoursToHHmm(double hours)
-    {
-        if (hours <= 0)
-        {
-            return "8:00";
-        }
-
-        var timeSpan = TimeSpan.FromHours(hours);
-        return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}";
-    }
-
-    private static bool TryParseHHmm(string text, out TimeSpan duration)
-    {
-        duration = TimeSpan.Zero;
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var parts = text.Split(':');
-        if (parts.Length != 2)
-        {
-            return false;
-        }
-
-        if (!int.TryParse(parts[0], out var hours) || !int.TryParse(parts[1], out var minutes))
-        {
-            return false;
-        }
-
-        if (hours < 0 || minutes < 0 || minutes > 59)
-        {
-            return false;
-        }
-
-        if (hours == 0 && minutes == 0)
-        {
-            return false;
-        }
-
-        duration = new TimeSpan(hours, minutes, 0);
-        return true;
     }
 
     [RelayCommand]
@@ -780,26 +705,26 @@ public partial class TodayViewModel : ObservableObject
     private async Task SaveConfigureDayAsync()
     {
         // Validate
-        var isWorkingDay = ConfigureDayModel.DayType == DayType.WorkDay || 
+        var isWorkingDay = ConfigureDayModel.DayType == DayType.WorkDay ||
                           ConfigureDayModel.DayType == DayType.IntensiveDay;
-        
+
         TimeSpan targetDuration = TimeSpan.Zero;
         if (isWorkingDay)
         {
-            if (!TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
+            if (!DurationFormatHelper.TryParseHHmm(ConfigureDayModel.TargetDurationText, out targetDuration))
             {
-                ConfigureDayModel.ValidationError = TimeTracker.App.Resources.Resources.Validation_TargetDurationInvalid;
+                ConfigureDayModel.ValidationError = AppResources.Validation_TargetDurationInvalid;
                 return;
             }
         }
-        
+
         // Save configuration
-            
+
         await _workdayConfigService.SetConfigurationAsync(
             ConfigureDayModel.Date,
             ConfigureDayModel.DayType,
             targetDuration);
-        
+
         // Close dialog and reload
         IsConfigureDayDialogOpen = false;
         await LoadDayConfigurationAsync();
@@ -847,19 +772,19 @@ public partial class ConfigureDayModel : ObservableObject
     /// Title shown in the dialog header, including the date in short format.
     /// </summary>
     public string DialogTitle =>
-        $"{TimeTracker.App.Resources.Resources.Dialog_ConfigureDay_Title} {Date.ToString("d")}";
+        $"{AppResources.Dialog_ConfigureDay_Title} {Date.ToString("d")}";
 
     /// <summary>
     /// Available day type options for the dropdown.
     /// </summary>
     public static List<DayTypeOption> AvailableDayTypes { get; } =
-    [
-        new DayTypeOption { Value = DayType.WorkDay, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_WorkDay },
-        new DayTypeOption { Value = DayType.IntensiveDay, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_IntensiveDay },
-        new DayTypeOption { Value = DayType.Holiday, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_Holiday },
-        new DayTypeOption { Value = DayType.FreeChoice, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_FreeChoice },
-        new DayTypeOption { Value = DayType.Vacation, DisplayName = TimeTracker.App.Resources.Resources.Today_DayType_Vacation },
-    ];
+        Enum.GetValues<DayType>()
+            .Select(dayType => new DayTypeOption
+            {
+                Value = dayType,
+                DisplayName = dayType.GetDisplayName()
+            })
+            .ToList();
 
     public bool IsWorkingDayType => DayType.IsWorkable();
 
@@ -933,15 +858,15 @@ public partial class ChangeActivityModel : ObservableObject
     /// Returns the dialog title based on whether there is an active record.
     /// </summary>
     public string DialogTitle => HasActiveRecord
-        ? TimeTracker.App.Resources.Resources.Dialog_ChangeActivity_Title
-        : TimeTracker.App.Resources.Resources.Dialog_StartActivity_Title;
+        ? AppResources.Dialog_ChangeActivity_Title
+        : AppResources.Dialog_StartActivity_Title;
 
     /// <summary>
     /// Returns the primary button text based on whether there is an active record.
     /// </summary>
     public string PrimaryButtonText => HasActiveRecord
-        ? TimeTracker.App.Resources.Resources.Button_Change
-        : TimeTracker.App.Resources.Resources.Button_Start;
+        ? AppResources.Button_Change
+        : AppResources.Button_Start;
 
     /// <summary>
     /// Determines if the form is valid and has been modified.

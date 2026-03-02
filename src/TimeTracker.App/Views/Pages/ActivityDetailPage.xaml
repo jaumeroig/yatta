@@ -13,6 +13,7 @@
     Title="Detall d'activitat"
     FocusManager.FocusedElement="{Binding ElementName=ActivityName}"
     Loaded="Page_Loaded"
+    ScrollViewer.CanContentScroll="False"
     Unloaded="Page_Unloaded">
 
     <Page.Resources>

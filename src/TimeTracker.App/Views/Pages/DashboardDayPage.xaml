@@ -14,6 +14,7 @@
       d:DesignHeight="700"
       d:DesignWidth="1100"
       Loaded="Page_Loaded"
+      ScrollViewer.CanContentScroll="False"
       Unloaded="Page_Unloaded">
 
     <Page.Resources>
@@ -126,9 +127,31 @@
         </Style>
     </Page.Resources>
 
-    <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Grid Margin="42,12,42,12">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="42,0,42,42">
+        <StackPanel>
+            <!-- Header: day navigation -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" 
+                           Text="{Binding FullDateDisplay}" 
+                           FontSize="22" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                           VerticalAlignment="Center" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousDayCommand}" Height="32px" Margin="0,0,4,0" />
+                    <ui:Button Content="{local:Localize Button_Today}" Command="{Binding TodayCommand}" Height="32px" Margin="0,0,4,0" />
+                    <ui:Button Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextDayCommand}" Height="32px" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Main content -->
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="24" />
@@ -136,7 +159,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Left column: Calendar -->
-                <ui:Card Grid.Column="0" Padding="16" VerticalAlignment="Top">
+                <ui:Card Grid.Column="0" Padding="16" VerticalAlignment="Top" BorderThickness="0">
                     <StackPanel>
                         <!-- Month navigation -->
                         <Grid Margin="0,0,0,8">
@@ -182,32 +205,10 @@
 
                 <!-- Right column: Day details -->
                 <StackPanel Grid.Column="2">
-                    <!-- Full date header -->
-                    <Grid Margin="0,0,0,16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Text="{Binding FullDateDisplay}"
-                                   FontSize="22"
-                                   FontWeight="SemiBold" />
-                        <ui:Button Grid.Column="1"
-                                   Appearance="Transparent"
-                                   Padding="4"
-                                   Margin="8,0,0,0"
-                                   VerticalAlignment="Center"
-                                   ToolTip="{local:Localize Today_ConfigureDay}"
-                                   Command="{Binding ConfigureDayCommand}">
-                            <ui:SymbolIcon Symbol="Settings24" FontSize="16" />
-                        </ui:Button>
-                    </Grid>
-
                     <!-- Day info cards row -->
                     <UniformGrid Columns="3" Margin="0,0,0,16">
                         <!-- Day type -->
-                        <ui:Card Padding="16" Margin="0,0,8,0">
+                        <ui:Card Padding="16" Margin="0,0,8,0" BorderThickness="0">
                             <StackPanel>
                                 <TextBlock Text="{local:Localize Today_DayType}"
                                            FontSize="12"
@@ -220,7 +221,7 @@
                         </ui:Card>
 
                         <!-- Start time -->
-                        <ui:Card Padding="16" Margin="4,0,4,0">
+                        <ui:Card Padding="16" Margin="4,0,4,0" BorderThickness="0">
                             <StackPanel>
                                 <TextBlock Text="{local:Localize Today_WorkdayStartTime}"
                                            FontSize="12"
@@ -233,7 +234,7 @@
                         </ui:Card>
 
                         <!-- Target duration -->
-                        <ui:Card Padding="16" Margin="8,0,0,0">
+                        <ui:Card Padding="16" Margin="8,0,0,0" BorderThickness="0">
                             <StackPanel>
                                 <TextBlock Text="{local:Localize Today_TargetDuration}"
                                            FontSize="12"
@@ -246,9 +247,18 @@
                         </ui:Card>
                     </UniformGrid>
 
+                    <!-- Configure day button -->
+                    <ui:Card Padding="16" Margin="0,0,0,16" BorderThickness="0">
+                        <ui:Button Content="{local:Localize Today_ConfigureDay}"
+                                   Icon="{ui:SymbolIcon Settings24}"
+                                   Appearance="Secondary"
+                                   Command="{Binding ConfigureDayCommand}"
+                                   HorizontalAlignment="Stretch" />
+                    </ui:Card>
+
                     <!-- Worked time and differential -->
                     <UniformGrid Columns="2" Margin="0,0,0,16">
-                        <ui:Card Padding="16" Margin="0,0,8,0">
+                        <ui:Card Padding="16" Margin="0,0,8,0" BorderThickness="0">
                             <StackPanel>
                                 <TextBlock Text="{local:Localize Dashboard_WorkedTime}"
                                            FontSize="12"
@@ -260,7 +270,7 @@
                             </StackPanel>
                         </ui:Card>
 
-                        <ui:Card Padding="16" Margin="8,0,0,0">
+                        <ui:Card Padding="16" Margin="8,0,0,0" BorderThickness="0">
                             <StackPanel>
                                 <TextBlock Text="{local:Localize Dashboard_Differential}"
                                            FontSize="12"
@@ -287,7 +297,7 @@
                     </UniformGrid>
 
                     <!-- Office / Telework breakdown -->
-                    <ui:Card Padding="16" Margin="0,0,0,16">
+                    <ui:Card Padding="16" Margin="0,0,0,16" BorderThickness="0">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -353,7 +363,7 @@
                     </ui:Card>
 
                     <!-- Timeline bar -->
-                    <ui:Card Padding="16" Margin="0,0,0,16">
+                    <ui:Card Padding="16" Margin="0,0,0,16" BorderThickness="0">
                         <StackPanel>
                             <TextBlock Text="{local:Localize Dashboard_Timeline}"
                                        FontSize="14"
@@ -368,7 +378,7 @@
                     </ui:Card>
 
                     <!-- Activity breakdown with donut chart -->
-                    <ui:Card Padding="16" Margin="0,0,0,16">
+                    <ui:Card Padding="16" Margin="0,0,0,16" BorderThickness="0">
                         <StackPanel>
                             <TextBlock Text="{local:Localize Dashboard_Activities}"
                                        FontSize="14"
@@ -413,7 +423,7 @@
                     </ui:Card>
 
                     <!-- Records list -->
-                    <ui:Card Padding="16" Margin="0,0,0,16">
+                    <ui:Card Padding="16" Margin="0,0,0,16" BorderThickness="0">
                         <StackPanel>
                             <TextBlock Text="{local:Localize Dashboard_Records}"
                                        FontSize="14"
@@ -463,6 +473,6 @@
                     </ui:Card>
                 </StackPanel>
             </Grid>
-        </ScrollViewer>
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

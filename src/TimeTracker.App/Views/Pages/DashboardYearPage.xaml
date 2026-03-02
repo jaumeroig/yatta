@@ -13,6 +13,7 @@
       d:DesignHeight="700"
       d:DesignWidth="1100"
       Loaded="Page_Loaded"
+      ScrollViewer.CanContentScroll="False"
       Unloaded="Page_Unloaded">
 
     <Page.Resources>
@@ -28,19 +29,23 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="{Binding SelectedYear}" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="0" Text="{Binding SelectedYear}"
+                           FontSize="22" 
+                           FontWeight="SemiBold" 
+                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                           VerticalAlignment="Center" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousYearCommand}" Margin="0,0,4,0" />
-                    <ui:Button Content="{local:Localize Button_Today}" Command="{Binding ThisYearCommand}" Margin="0,0,4,0" />
-                    <ui:Button Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextYearCommand}" />
+                    <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousYearCommand}" Height="32px" Margin="0,0,4,0" />
+                    <ui:Button Content="{local:Localize Button_Today}" Command="{Binding ThisYearCommand}" Height="32px" Margin="0,0,4,0" />
+                    <ui:Button Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextYearCommand}" Height="32px" />
                 </StackPanel>
             </Grid>
 
             <!-- Summary cards -->
             <UniformGrid Rows="1" Columns="3" Margin="0,0,0,16">
                 <!-- Worked time -->
-                <ui:Card Padding="16" Margin="0,0,8,0">
+                <ui:Card Padding="16" Margin="0,0,8,0" VerticalAlignment="Stretch">
                     <StackPanel>
                         <TextBlock Text="{local:Localize Dashboard_WorkedTime}" FontSize="13" Opacity="0.6" />
                         <TextBlock Text="{Binding WorkedTimeDisplay}" FontSize="28" FontWeight="Bold" Margin="0,4,0,0" />
@@ -53,7 +58,7 @@
                 </ui:Card>
 
                 <!-- Differential -->
-                <ui:Card Padding="16" Margin="4,0,4,0">
+                <ui:Card Padding="16" Margin="4,0,4,0" VerticalAlignment="Stretch">
                     <StackPanel>
                         <TextBlock Text="{local:Localize Dashboard_Differential}" FontSize="13" Opacity="0.6" />
                         <TextBlock Text="{Binding DifferentialDisplay}" FontSize="28" FontWeight="Bold" Margin="0,4,0,0">
@@ -74,7 +79,7 @@
                 </ui:Card>
 
                 <!-- Day type counts -->
-                <ui:Card Padding="16" Margin="8,0,0,0">
+                <ui:Card Padding="16" Margin="8,0,0,0" VerticalAlignment="Stretch">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

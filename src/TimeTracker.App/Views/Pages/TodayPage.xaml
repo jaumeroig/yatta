@@ -19,7 +19,7 @@
             <!-- === SECTION B: Status card (timeline + active record/play + stats) === -->
             <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
+                    BorderThickness="0"
                     CornerRadius="8"
                     Padding="24"
                     Margin="0,0,0,20">
@@ -158,7 +158,7 @@
                     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
                             BorderBrush="{DynamicResource SystemAccentColorPrimaryBrush}"
                             BorderThickness="1"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             Padding="16"
                             Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid>
@@ -231,7 +231,7 @@
 
                     <!-- Play Button (when stopped but has records) -->
                     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
-                            CornerRadius="6"
+                            CornerRadius="8"
                             Padding="16"
                             Visibility="{Binding CanPlay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid>
@@ -264,7 +264,7 @@
             <!-- === SECTION C: Completed Records === -->
             <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1"
+                    BorderThickness="0"
                     CornerRadius="8"
                     Padding="24">
                 <StackPanel>

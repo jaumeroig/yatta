@@ -6,6 +6,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using TimeTracker.App.Controls;
+using TimeTracker.App.Helpers;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -211,7 +212,7 @@ public partial class JornadaViewModel : ObservableObject
                 {
                     StartTime = firstStart.ToString("HH:mm"),
                     EndTime = lastEnd?.ToString("HH:mm") ?? Resources.Resources.Today_InProgress,
-                    Duration = FormatDuration(totalHours),
+                    Duration = DurationFormatHelper.FormatDuration(totalHours),
                     LocationText = isTelework
                         ? Resources.Resources.Location_Telework
                         : Resources.Resources.Location_Office,
@@ -279,9 +280,9 @@ public partial class JornadaViewModel : ObservableObject
         var officeHours = _timeCalculatorService.CalculateOfficeHours(_allRecords);
         var percentage = _timeCalculatorService.CalculateTeleworkPercentage(_allRecords);
 
-        TotalWorkedTime = FormatDuration(totalHours);
-        TeleworkTime = FormatDuration(teleworkHours);
-        OfficeTime = FormatDuration(officeHours);
+        TotalWorkedTime = DurationFormatHelper.FormatDuration(totalHours);
+        TeleworkTime = DurationFormatHelper.FormatDuration(teleworkHours);
+        OfficeTime = DurationFormatHelper.FormatDuration(officeHours);
         TeleworkPercentage = $"{percentage:F0}%";
 
         // Update values for bar chart
@@ -292,19 +293,8 @@ public partial class JornadaViewModel : ObservableObject
 
     private void UpdateBarWidths()
     {
-        const double maxBarWidth = 200.0;
-        var maxHours = Math.Max(OfficeHoursValue, TeleworkHoursValue);
-
-        if (maxHours > 0)
-        {
-            OfficeBarWidth = OfficeHoursValue / maxHours * maxBarWidth;
-            TeleworkBarWidth = TeleworkHoursValue / maxHours * maxBarWidth;
-        }
-        else
-        {
-            OfficeBarWidth = 0;
-            TeleworkBarWidth = 0;
-        }
+        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
+            OfficeHoursValue, TeleworkHoursValue);
     }
 
     private async Task UpdateMonthlySummaryAsync()
@@ -315,7 +305,7 @@ public partial class JornadaViewModel : ObservableObject
         var totalHours = await _workdayService.GetTotalHoursAsync(firstDay, lastDay);
         var percentage = await _workdayService.GetTeleworkPercentageAsync(firstDay, lastDay);
 
-        MonthTotalTime = FormatDuration(totalHours);
+        MonthTotalTime = DurationFormatHelper.FormatDuration(totalHours);
         MonthTeleworkPercentage = $"{percentage:F0}%";
     }
 
@@ -331,15 +321,6 @@ public partial class JornadaViewModel : ObservableObject
         var culture = Resources.Resources.Culture ?? CultureInfo.CurrentCulture;
         var month = culture.TextInfo.ToTitleCase(SelectedDate.ToString("MMMM", culture));
         MonthYear = $"{month} {SelectedDate.Year}";
-    }
-
-    private static string FormatDuration(double hours)
-    {
-        var totalMinutes = (int)(hours * 60);
-        var h = totalMinutes / 60;
-        var m = totalMinutes % 60;
-        var format = Resources.Resources.Format_Duration;
-        return string.Format(format, h, m);
     }
 
     [RelayCommand]

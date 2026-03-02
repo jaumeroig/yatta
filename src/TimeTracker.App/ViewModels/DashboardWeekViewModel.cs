@@ -9,6 +9,8 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using TimeTracker.App.Extensions;
+using TimeTracker.App.Helpers;
 using TimeTracker.App.Services;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
@@ -112,28 +114,19 @@ public partial class DashboardWeekViewModel : ObservableObject
         var report = await _dashboardService.GetWeekReportAsync(WeekStartDate);
 
         // Summary
-        WorkedTimeDisplay = FormatTimeSpan(report.TotalWorked);
-        TargetTimeDisplay = FormatTimeSpan(report.TotalTarget);
-        DifferentialDisplay = (report.Differential >= TimeSpan.Zero ? "+" : "-") + FormatTimeSpan(report.Differential);
+        WorkedTimeDisplay = report.TotalWorked.FormatDuration();
+        TargetTimeDisplay = report.TotalTarget.FormatDuration();
+        DifferentialDisplay = (report.Differential >= TimeSpan.Zero ? "+" : "-") + report.Differential.FormatDuration();
         IsDifferentialPositive = report.Differential >= TimeSpan.Zero;
 
         // Office / Telework
-        OfficeTimeDisplay = FormatTimeSpan(report.OfficeTime);
-        TeleworkTimeDisplay = FormatTimeSpan(report.TeleworkTime);
+        OfficeTimeDisplay = report.OfficeTime.FormatDuration();
+        TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
-        const double maxBarWidth = 200.0;
-        var maxHours = Math.Max(report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
-        if (maxHours > 0)
-        {
-            OfficeBarWidth = report.OfficeTime.TotalHours / maxHours * maxBarWidth;
-            TeleworkBarWidth = report.TeleworkTime.TotalHours / maxHours * maxBarWidth;
-        }
-        else
-        {
-            OfficeBarWidth = 0;
-            TeleworkBarWidth = 0;
-        }
+        // Bar widths
+        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
+            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
 
         // Day type counts
         WorkDayCount = (report.DayTypeCounts.GetValueOrDefault(DayType.WorkDay) + report.DayTypeCounts.GetValueOrDefault(DayType.IntensiveDay)).ToString();
@@ -145,30 +138,9 @@ public partial class DashboardWeekViewModel : ObservableObject
         BuildDailyBarChart(report.DailyBreakdown);
 
         // Activity donut
-        ActivityBreakdown = new ObservableCollection<ActivityBreakdownDisplay>(
-            report.Activities.Select(a => new ActivityBreakdownDisplay
-            {
-                ActivityName = a.ActivityName,
-                Color = a.Color,
-                ColorBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(a.Color)),
-                TotalTime = FormatTimeSpan(a.TotalTime),
-                Percentage = $"{a.Percentage:F1}%",
-                PercentageValue = a.Percentage
-            }));
+        ActivityBreakdown = DashboardDisplayHelper.BuildActivityBreakdown(report.Activities);
 
-        ActivitySeries = report.Activities.Select(a =>
-        {
-            var skColor = SKColor.Parse(a.Color);
-            return (ISeries)new PieSeries<double>
-            {
-                Values = [a.TotalTime.TotalMinutes],
-                Name = a.ActivityName,
-                Fill = new SolidColorPaint(skColor),
-                InnerRadius = 60,
-                Pushout = 0,
-                ToolTipLabelFormatter = _ => $"{a.ActivityName}: {FormatTimeSpan(a.TotalTime)} ({a.Percentage:F1}%)",
-            };
-        }).ToArray();
+        ActivitySeries = DashboardDisplayHelper.BuildActivityDonutSeries(report.Activities);
     }
 
     private void BuildDailyBarChart(List<DailyHoursSummary> daily)
@@ -259,13 +231,5 @@ public partial class DashboardWeekViewModel : ObservableObject
     private void UpdateContextDate()
     {
         _pageStateService.DashboardPage.ContextDate = WeekStartDate;
-    }
-
-    private static string FormatTimeSpan(TimeSpan ts)
-    {
-        var totalMinutes = (int)Math.Abs(ts.TotalMinutes);
-        var hours = totalMinutes / 60;
-        var minutes = totalMinutes % 60;
-        return $"{hours}h {minutes:D2}m";
     }
 }
