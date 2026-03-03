@@ -1,11 +1,12 @@
 namespace TimeTracker.App.Models;
 
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 /// <summary>
 /// Display model for a time record.
 /// </summary>
-public class TimeRecordDisplay
+public partial class TimeRecordDisplay : ObservableObject
 {
     public Guid Id { get; set; }
     public string ActivityName { get; set; } = string.Empty;
@@ -13,7 +14,10 @@ public class TimeRecordDisplay
     public string Notes { get; set; } = string.Empty;
     public string StartTime { get; set; } = string.Empty;
     public string EndTime { get; set; } = string.Empty;
-    public string Duration { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    private string _duration = string.Empty;
+
     public DateOnly Date { get; set; }
     public bool IsActive { get; set; }
     public bool Telework { get; set; }

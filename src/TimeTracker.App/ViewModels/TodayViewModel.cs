@@ -61,6 +61,9 @@ public partial class TodayViewModel : ObservableObject
     private ObservableCollection<TimeRecordDisplay> _completedRecords = [];
 
     [ObservableProperty]
+    private ObservableCollection<TimeRecordDisplay> _allRecords = [];
+
+    [ObservableProperty]
     private ObservableCollection<TimeSegment> _timelineSegments = [];
 
     [ObservableProperty]
@@ -194,6 +197,15 @@ public partial class TodayViewModel : ObservableObject
 
         CompletedRecords = new ObservableCollection<TimeRecordDisplay>(
             completedRecords.Select(r => CreateRecordDisplay(r, false)));
+
+        // Combine active and completed records into AllRecords collection
+        var allRecordsList = new List<TimeRecordDisplay>();
+        if (activeRecord != null)
+        {
+            allRecordsList.Add(CreateRecordDisplay(activeRecord, true));
+        }
+        allRecordsList.AddRange(completedRecords.Select(r => CreateRecordDisplay(r, false)));
+        AllRecords = new ObservableCollection<TimeRecordDisplay>(allRecordsList);
 
         UpdateTimelineSegments(records);
         CalculateWorkedTime(records);
@@ -447,6 +459,13 @@ public partial class TodayViewModel : ObservableObject
         var startTime = TimeOnly.Parse(ActiveRecord.StartTime);
         var elapsed = _timeCalculatorService.CalculateDuration(startTime, now);
         ElapsedTime = DurationFormatHelper.FormatDuration(elapsed);
+
+        // Update the duration in the active record in AllRecords collection
+        var activeInList = AllRecords.FirstOrDefault(r => r.IsActive);
+        if (activeInList != null)
+        {
+            activeInList.Duration = DurationFormatHelper.FormatDuration(elapsed);
+        }
     }
 
     private void UpdateActiveSegmentEnd()
