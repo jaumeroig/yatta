@@ -82,6 +82,9 @@ public partial class TodayViewModel : ObservableObject
     private bool _canPlay;
 
     [ObservableProperty]
+    private bool _hasCompletedRecordsOnly;
+
+    [ObservableProperty]
     private bool _isConfigureDayDialogOpen;
 
     [ObservableProperty]
@@ -183,6 +186,7 @@ public partial class TodayViewModel : ObservableObject
 
         HasActiveRecord = activeRecord != null;
         CanPlay = activeRecord == null;
+        HasCompletedRecordsOnly = activeRecord == null && completedRecords.Any();
 
         if (activeRecord != null)
         {

@@ -198,13 +198,13 @@
                             </ui:Button>
                         </StackPanel>
 
-                        <!-- Play button (when no active record exists but there are records) -->
+                        <!-- Play button (when no active record exists but there are completed records) -->
                         <ui:Button Grid.Column="1"
                                    Appearance="Primary"
                                    Command="{Binding PlayRecordCommand}"
                                    Height="35"
                                    Padding="8,4"
-                                   Visibility="{Binding CanPlay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                   Visibility="{Binding HasCompletedRecordsOnly, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal">
                                 <ui:SymbolIcon Symbol="Play24" Margin="0,0,6,0"/>
                                 <TextBlock Text="{local:Localize Button_Play}"/>
