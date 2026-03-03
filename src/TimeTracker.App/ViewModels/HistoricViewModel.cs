@@ -497,6 +497,48 @@ public partial class HistoricViewModel : ObservableObject
         IsDeleteConfirmationOpen = false;
     }
 
+    [RelayCommand]
+    private async Task OpenEditRecordFromSegmentAsync(TimeSegment segment)
+    {
+        if (segment.RecordId == null)
+            return;
+
+        // Find the corresponding TimeRecordDisplay in any DayGroup
+        TimeRecordDisplay? recordDisplay = null;
+        foreach (var dayGroup in GroupedRecords)
+        {
+            recordDisplay = dayGroup.Records.FirstOrDefault(r => r.Id == segment.RecordId.Value);
+            if (recordDisplay != null)
+                break;
+        }
+
+        if (recordDisplay != null)
+        {
+            await OpenEditRecordDialogAsync(recordDisplay);
+        }
+    }
+
+    [RelayCommand]
+    private void RequestDeleteRecordFromSegment(TimeSegment segment)
+    {
+        if (segment.RecordId == null || segment.IsActive)
+            return;
+
+        // Find the corresponding TimeRecordDisplay in any DayGroup
+        TimeRecordDisplay? recordDisplay = null;
+        foreach (var dayGroup in GroupedRecords)
+        {
+            recordDisplay = dayGroup.Records.FirstOrDefault(r => r.Id == segment.RecordId.Value);
+            if (recordDisplay != null)
+                break;
+        }
+
+        if (recordDisplay != null)
+        {
+            RequestDeleteRecord(recordDisplay);
+        }
+    }
+
     /// <summary>
     /// Gets the default start time for a new record on the given date.
     /// If there are existing records, returns the end time of the last one.

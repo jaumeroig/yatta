@@ -210,7 +210,10 @@ mc:Ignorable="d"
                                 CornerRadius="4"
                                 WorkdayStart="{Binding WorkdayStart}"
                                 WorkdayEnd="{Binding WorkdayEnd}"
-                                Segments="{Binding TimelineSegments}" />
+                                Segments="{Binding TimelineSegments}"
+                                SegmentDoubleClickedCommand="{Binding OpenEditRecordFromSegmentCommand}"
+                                EditCommand="{Binding OpenEditRecordFromSegmentCommand}"
+                                DeleteCommand="{Binding RequestDeleteRecordFromSegmentCommand}" />
 
                             <!-- Records for this day -->
                             <ItemsControl ItemsSource="{Binding Records}">
