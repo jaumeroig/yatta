@@ -10,8 +10,8 @@
              d:DesignWidth="760"
              mc:Ignorable="d">
     <Border x:Name="ActiveBorder"
-            BorderThickness="2"
-            CornerRadius="8"
+            BorderThickness="1"
+            CornerRadius="4"
             Padding="0">
         <Border.Style>
             <Style TargetType="Border">
@@ -26,17 +26,13 @@
         <ui:CardAction Command="{Binding CardClickCommand, ElementName=Root}"
                        CommandParameter="{Binding CommandParameter, ElementName=Root}"
                        IsChevronVisible="False"
+                       BorderThickness="0"
                        Padding="0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <Border Grid.Column="0"
-                        Width="4"
-                        CornerRadius="2,0,0,2"
-                        Background="{Binding ActivityColor, ElementName=Root, Converter={StaticResource StringToBrushConverter}}" />
 
                 <Grid Grid.Column="1" Margin="12,12,16,12">
                     <Grid.ColumnDefinitions>
@@ -46,11 +42,19 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
+                    <!-- Activity Color Indicator -->
+                    <Ellipse Grid.Column="0"
+                                         Width="24"
+                                         Height="24"
+                                         Margin="0,0,16,0"
+                                         VerticalAlignment="Center"
+                                         Fill="{Binding ActivityColor, Converter={StaticResource StringToBrushConverter}}" />
+
                     <ui:SymbolIcon Grid.Column="0"
                                    x:Name="LocationIcon"
                                    Symbol="Building24"
                                    VerticalAlignment="Center"
-                                   Margin="0,1,10,0"
+                                   Margin="0,0,15,0"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    ToolTip="{local:Localize Location_Office}" />
 
@@ -103,8 +107,7 @@
                                Padding="4"
                                BorderThickness="0"
                                VerticalAlignment="Center"
-                               Click="RecordMenuButton_Click"
-                               Visibility="{Binding IsActive, ElementName=Root, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                               Click="RecordMenuButton_Click">
                         <ui:SymbolIcon Symbol="MoreVertical24" FontSize="16" />
                         <ui:Button.ContextMenu>
                             <ContextMenu>
