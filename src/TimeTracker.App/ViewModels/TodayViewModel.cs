@@ -366,6 +366,34 @@ public partial class TodayViewModel : ObservableObject
         IsDeleteConfirmationOpen = false;
     }
 
+    [RelayCommand]
+    private async Task OpenEditRecordFromSegmentAsync(TimeSegment segment)
+    {
+        if (segment.RecordId == null)
+            return;
+
+        // Find the corresponding TimeRecordDisplay
+        var recordDisplay = AllRecords.FirstOrDefault(r => r.Id == segment.RecordId.Value);
+        if (recordDisplay != null)
+        {
+            await OpenEditRecordDialogAsync(recordDisplay);
+        }
+    }
+
+    [RelayCommand]
+    private void RequestDeleteRecordFromSegment(TimeSegment segment)
+    {
+        if (segment.RecordId == null || segment.IsActive)
+            return;
+
+        // Find the corresponding TimeRecordDisplay
+        var recordDisplay = AllRecords.FirstOrDefault(r => r.Id == segment.RecordId.Value);
+        if (recordDisplay != null)
+        {
+            RequestDeleteRecord(recordDisplay);
+        }
+    }
+
     private void UpdateTimelineSegments(List<TimeRecord> records)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);

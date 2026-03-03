@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Wpf.Ui.Controls;
+using AppResources = TimeTracker.App.Resources.Resources;
 
 namespace TimeTracker.App.Controls;
 
@@ -26,6 +29,11 @@ public sealed class WorkdayTimelineBar : FrameworkElement
     private TimeSegment? _dragNeighbor;
     private DateTime _dragNeighborOriginalTime;
 
+    // Double-click tracking
+    private TimeSegment? _lastClickedSegment;
+    private DateTime _lastClickTime = DateTime.MinValue;
+    private const double DoubleClickMilliseconds = 500;
+
     private const double EdgeThreshold = 6.0;
     private static readonly TimeSpan SnapInterval = TimeSpan.FromMinutes(1);
     private static readonly TimeSpan MinSegmentDuration = TimeSpan.FromMinutes(5);
@@ -48,6 +56,7 @@ public sealed class WorkdayTimelineBar : FrameworkElement
         MouseLeave += OnMouseLeave;
         MouseLeftButtonDown += OnMouseLeftButtonDown;
         MouseLeftButtonUp += OnMouseLeftButtonUp;
+        MouseRightButtonDown += OnMouseRightButtonDown;
         KeyDown += OnKeyDown;
     }
 
@@ -155,6 +164,45 @@ public sealed class WorkdayTimelineBar : FrameworkElement
     {
         get => (ICommand?)GetValue(SegmentResizedCommandProperty);
         set => SetValue(SegmentResizedCommandProperty, value);
+    }
+
+    public static readonly DependencyProperty SegmentDoubleClickedCommandProperty =
+        DependencyProperty.Register(
+            nameof(SegmentDoubleClickedCommand),
+            typeof(ICommand),
+            typeof(WorkdayTimelineBar),
+            new FrameworkPropertyMetadata(null));
+
+    public ICommand? SegmentDoubleClickedCommand
+    {
+        get => (ICommand?)GetValue(SegmentDoubleClickedCommandProperty);
+        set => SetValue(SegmentDoubleClickedCommandProperty, value);
+    }
+
+    public static readonly DependencyProperty EditCommandProperty =
+        DependencyProperty.Register(
+            nameof(EditCommand),
+            typeof(ICommand),
+            typeof(WorkdayTimelineBar),
+            new FrameworkPropertyMetadata(null));
+
+    public ICommand? EditCommand
+    {
+        get => (ICommand?)GetValue(EditCommandProperty);
+        set => SetValue(EditCommandProperty, value);
+    }
+
+    public static readonly DependencyProperty DeleteCommandProperty =
+        DependencyProperty.Register(
+            nameof(DeleteCommand),
+            typeof(ICommand),
+            typeof(WorkdayTimelineBar),
+            new FrameworkPropertyMetadata(null));
+
+    public ICommand? DeleteCommand
+    {
+        get => (ICommand?)GetValue(DeleteCommandProperty);
+        set => SetValue(DeleteCommandProperty, value);
     }
 
     #endregion
@@ -424,6 +472,30 @@ public sealed class WorkdayTimelineBar : FrameworkElement
         if (seg is null)
             return;
 
+        // Check for double-click
+        var now = DateTime.Now;
+        var isDoubleClick = ReferenceEquals(seg, _lastClickedSegment) &&
+                           (now - _lastClickTime).TotalMilliseconds <= DoubleClickMilliseconds;
+
+        if (isDoubleClick && SegmentDoubleClickedCommand != null)
+        {
+            // Execute double-click command
+            if (SegmentDoubleClickedCommand.CanExecute(seg))
+            {
+                SegmentDoubleClickedCommand.Execute(seg);
+            }
+
+            // Reset double-click tracking
+            _lastClickedSegment = null;
+            _lastClickTime = DateTime.MinValue;
+            e.Handled = true;
+            return;
+        }
+
+        // Update double-click tracking
+        _lastClickedSegment = seg;
+        _lastClickTime = now;
+
         _selected = seg;
         InvalidateVisual();
 
@@ -483,6 +555,71 @@ public sealed class WorkdayTimelineBar : FrameworkElement
         // Raise event and execute command to persist both segments
         RaiseEvent(new TimeSegmentResizedEventArgs(SegmentResizedEvent, this, result));
         SegmentResizedCommand.Execute(result);
+    }
+
+    private void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        var p = e.GetPosition(this);
+        var seg = HitTestSegment(p.X);
+
+        if (seg is null)
+            return;
+
+        // Don't show context menu if no commands are bound
+        if (EditCommand == null && DeleteCommand == null)
+            return;
+
+        // Build context menu
+        var contextMenu = new System.Windows.Controls.ContextMenu();
+
+        // Edit menu item
+        if (EditCommand != null)
+        {
+            var editItem = new System.Windows.Controls.MenuItem
+            {
+                Header = AppResources.Menu_Edit
+            };
+
+            var editIcon = new SymbolIcon
+            {
+                Symbol = SymbolRegular.Edit24,
+                FontSize = 16
+            };
+            editItem.Icon = editIcon;
+            editItem.Command = EditCommand;
+            editItem.CommandParameter = seg;
+
+            contextMenu.Items.Add(editItem);
+        }
+
+        // Delete menu item (only for non-active segments)
+        if (DeleteCommand != null && !seg.IsActive)
+        {
+            var deleteItem = new System.Windows.Controls.MenuItem
+            {
+                Header = AppResources.Menu_Delete
+            };
+
+            var deleteIcon = new SymbolIcon
+            {
+                Symbol = SymbolRegular.Delete24,
+                FontSize = 16
+            };
+            deleteIcon.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "SystemFillColorCriticalBrush");
+            deleteItem.Icon = deleteIcon;
+            deleteItem.Command = DeleteCommand;
+            deleteItem.CommandParameter = seg;
+
+            contextMenu.Items.Add(deleteItem);
+        }
+
+        // Show context menu if it has items
+        if (contextMenu.Items.Count > 0)
+        {
+            contextMenu.PlacementTarget = this;
+            contextMenu.IsOpen = true;
+            e.Handled = true;
+        }
     }
 
     private void OnKeyDown(object sender, KeyEventArgs e)
