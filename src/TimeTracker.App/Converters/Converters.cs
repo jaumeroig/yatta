@@ -367,28 +367,6 @@ public class BoolInverterConverter : IValueConverter
 }
 
 /// <summary>
-/// Converts a double value to bar width (minimum 4px if there is a value).
-/// Used for the workday bar chart.
-/// </summary>
-public class BarWidthConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is double width)
-        {
-            // If there are hours but the width is 0, show a minimum bar
-            return width > 0 ? width : 0;
-        }
-        return 0.0;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
 /// Multivalue converter: returns Visible if the provided date exists in ANY of the provided collections.
 /// values[0] = DateTime (day button date), values[1..n] = IEnumerable<DateTime> (dates collections).
 /// </summary>

@@ -50,10 +50,7 @@ public partial class DashboardYearViewModel : ObservableObject
     private string _teleworkPercentageDisplay = "0%";
 
     [ObservableProperty]
-    private double _officeBarWidth;
-
-    [ObservableProperty]
-    private double _teleworkBarWidth;
+    private ISeries[] _teleworkSeries = [];
 
     // Day type counts
     [ObservableProperty]
@@ -111,9 +108,12 @@ public partial class DashboardYearViewModel : ObservableObject
         TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
-        // Bar widths
-        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
-            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
+        // Telework donut
+        TeleworkSeries = DashboardDisplayHelper.BuildTeleworkDonutSeries(
+            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours,
+            _localizationService.GetString("Label_OfficeBar"),
+            _localizationService.GetString("Label_TeleworkBar"),
+            OfficeTimeDisplay, TeleworkTimeDisplay);
 
         // Day type counts
         WorkDayCount = (report.DayTypeCounts.GetValueOrDefault(DayType.WorkDay) + report.DayTypeCounts.GetValueOrDefault(DayType.IntensiveDay)).ToString();

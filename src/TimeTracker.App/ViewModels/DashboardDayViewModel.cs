@@ -63,10 +63,7 @@ public partial class DashboardDayViewModel : ObservableObject
     private string _teleworkPercentageDisplay = "0%";
 
     [ObservableProperty]
-    private double _officeBarWidth;
-
-    [ObservableProperty]
-    private double _teleworkBarWidth;
+    private ISeries[] _teleworkSeries = [];
 
     [ObservableProperty]
     private ObservableCollection<ActivityBreakdownDisplay> _activityBreakdown = [];
@@ -259,9 +256,12 @@ public partial class DashboardDayViewModel : ObservableObject
         TeleworkTimeDisplay = report.TeleworkTime.FormatDuration();
         TeleworkPercentageDisplay = $"{report.TeleworkPercentage:F0}%";
 
-        // Bar widths
-        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
-            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours);
+        // Telework donut
+        TeleworkSeries = DashboardDisplayHelper.BuildTeleworkDonutSeries(
+            report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours,
+            _localizationService.GetString("Label_OfficeBar"),
+            _localizationService.GetString("Label_TeleworkBar"),
+            OfficeTimeDisplay, TeleworkTimeDisplay);
 
         // Activity breakdown
         ActivityBreakdown = DashboardDisplayHelper.BuildActivityBreakdown(report.Activities);
