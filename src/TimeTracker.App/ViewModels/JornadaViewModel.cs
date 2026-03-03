@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LiveChartsCore;
 using TimeTracker.App.Controls;
 using TimeTracker.App.Helpers;
 using TimeTracker.Core.Interfaces;
@@ -54,18 +55,8 @@ public partial class JornadaViewModel : ObservableObject
     [ObservableProperty]
     private string _monthTeleworkPercentage = "0%";
 
-    // Properties for bar chart
     [ObservableProperty]
-    private double _officeHoursValue;
-
-    [ObservableProperty]
-    private double _teleworkHoursValue;
-
-    [ObservableProperty]
-    private double _officeBarWidth;
-
-    [ObservableProperty]
-    private double _teleworkBarWidth;
+    private ISeries[] _teleworkSeries = [];
 
     // Timeline segments for WorkdayTimelineBar
     [ObservableProperty]
@@ -285,16 +276,12 @@ public partial class JornadaViewModel : ObservableObject
         OfficeTime = DurationFormatHelper.FormatDuration(officeHours);
         TeleworkPercentage = $"{percentage:F0}%";
 
-        // Update values for bar chart
-        OfficeHoursValue = officeHours;
-        TeleworkHoursValue = teleworkHours;
-        UpdateBarWidths();
-    }
-
-    private void UpdateBarWidths()
-    {
-        (OfficeBarWidth, TeleworkBarWidth) = DashboardDisplayHelper.CalculateBarWidths(
-            OfficeHoursValue, TeleworkHoursValue);
+        // Telework donut
+        TeleworkSeries = DashboardDisplayHelper.BuildTeleworkDonutSeries(
+            officeHours, teleworkHours,
+            _localizationService.GetString("Label_OfficeBar"),
+            _localizationService.GetString("Label_TeleworkBar"),
+            OfficeTime, TeleworkTime);
     }
 
     private async Task UpdateMonthlySummaryAsync()

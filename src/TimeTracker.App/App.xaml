@@ -30,14 +30,9 @@
             <converters:ActivityStatusToForegroundConverter x:Key="ActivityStatusToForegroundConverter" />
             <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
             <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
-            <converters:BarWidthConverter x:Key="BarWidthConverter" />
             <converters:DateToWorkdayStartConverter x:Key="DateToWorkdayStartConverter" />
             <converters:DateToWorkdayEndConverter x:Key="DateToWorkdayEndConverter" />
-            
-            <!-- Bar Chart Colors -->
-            <SolidColorBrush x:Key="OfficeBarColor">#4CAF50</SolidColorBrush>
-            <SolidColorBrush x:Key="TeleworkBarColor">#2196F3</SolidColorBrush>
-            
+
             <converters:DateInMultipleCollectionsToVisibilityConverter x:Key="DateInMultipleCollectionsToVisibilityConverter" />
             <!-- calendar converters registered above -->
             

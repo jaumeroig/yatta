@@ -16,9 +16,8 @@
       ScrollViewer.CanContentScroll="False"
       Unloaded="Page_Unloaded">
 
-    <Page.Resources>
-        <converters:BarWidthConverter x:Key="BarWidthConverter" />
-    </Page.Resources>
+    <Page.Resources />
+
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="42,0,42,42">
         <StackPanel>
@@ -111,32 +110,34 @@
                 </ui:Card>
             </UniformGrid>
 
-            <!-- Office / Telework bar -->
+            <!-- Office / Telework -->
             <ui:Card Padding="16" Margin="0,0,0,16">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="10" Height="10" Fill="#4CAF50" Margin="0,0,6,0" VerticalAlignment="Center" />
+                    <lvc:PieChart Grid.Column="0"
+                                  Series="{Binding TeleworkSeries}"
+                                  Width="120" Height="120"
+                                  InitialRotation="-90"
+                                  LegendPosition="Hidden"
+                                  Margin="0,0,12,0" />
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Ellipse Width="10" Height="10" Fill="#4CAF50" Margin="0,0,8,0" VerticalAlignment="Center" />
                             <TextBlock Text="{local:Localize Label_OfficeBar}" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding OfficeTimeDisplay}" FontSize="14" FontWeight="SemiBold" Margin="12,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBlock Text="{Binding OfficeTimeDisplay}" FontSize="15" FontWeight="SemiBold" Margin="18,2,0,0" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="1">
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="10" Height="10" Fill="#2196F3" Margin="0,0,6,0" VerticalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Ellipse Width="10" Height="10" Fill="#2196F3" Margin="0,0,8,0" VerticalAlignment="Center" />
                             <TextBlock Text="{local:Localize Label_TeleworkBar}" FontSize="13" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding TeleworkTimeDisplay}" FontSize="14" FontWeight="SemiBold" Margin="12,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TextBlock Text="{Binding TeleworkTimeDisplay}" FontSize="15" FontWeight="SemiBold" Margin="18,2,0,0" />
+                        <TextBlock Text="{Binding TeleworkPercentageDisplay}" FontSize="13" Opacity="0.6" />
                     </StackPanel>
-
-                    <TextBlock Grid.Column="2" Text="{Binding TeleworkPercentageDisplay}" FontSize="13" Opacity="0.6" VerticalAlignment="Center" />
                 </Grid>
             </ui:Card>
 
