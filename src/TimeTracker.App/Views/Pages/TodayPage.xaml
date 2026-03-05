@@ -61,8 +61,9 @@
                               Margin="0,0,8,0"/>
                             <ui:Button Appearance="Transparent"
                                Command="{Binding ConfigureDayCommand}"
+                               ToolTip="{local:Localize Today_ConfigureDay}"
                                Padding="6"
-                               ToolTip="{local:Localize Today_ConfigureDay}">
+                               BorderThickness="0">
                                 <ui:SymbolIcon Symbol="Settings24"/>
                             </ui:Button>
                         </StackPanel>
@@ -186,17 +187,18 @@
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center"
                                     Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <ui:Button Appearance="Secondary"
-                                       Padding="8"
+                            <ui:Button Appearance="Transparent"
+                                       Command="{Binding StopRecordCommand}"
                                        ToolTip="{local:Localize Button_Stop}"
-                                       Command="{Binding StopRecordCommand}">
+                                       Padding="6"
+                                       BorderThickness="0">
                                 <ui:SymbolIcon Symbol="RecordStop24"/>
                             </ui:Button>
-                            <Separator Height="16" Margin="4,0,4,0" />
-                            <ui:Button Appearance="Secondary"
-                                       Padding="8"
+                            <ui:Button Appearance="Transparent"
+                                       Command="{Binding ChangeActivityCommand}"
                                        ToolTip="{local:Localize Button_Change}"
-                                       Command="{Binding ChangeActivityCommand}">
+                                       Padding="6"
+                                       BorderThickness="0">
                                 <ui:SymbolIcon Symbol="ArrowSwap24"/>
                             </ui:Button>
                         </StackPanel>
