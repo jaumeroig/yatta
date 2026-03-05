@@ -1663,15 +1663,6 @@ namespace TimeTracker.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Jornada.
-        /// </summary>
-        internal static string Nav_Workday {
-            get {
-                return ResourceManager.GetString("Nav_Workday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 15 minutos.
         /// </summary>
         internal static string Notification_15min {
