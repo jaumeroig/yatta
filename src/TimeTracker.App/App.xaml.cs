@@ -332,7 +332,6 @@ public partial class App : Application
         services.AddTransient<TodayViewModel>();
         services.AddTransient<HistoricViewModel>();
         services.AddTransient<HistoricDetailViewModel>();
-        services.AddTransient<JornadaViewModel>();
         services.AddTransient<ActivitiesViewModel>();
         services.AddTransient<ActivityDetailViewModel>();
         services.AddTransient<SettingsViewModel>();
@@ -347,7 +346,6 @@ public partial class App : Application
         services.AddTransient<TodayPage>();
         services.AddTransient<HistoricPage>();
         services.AddTransient<HistoricDetailPage>();
-        services.AddTransient<JornadaPage>();
         services.AddTransient<ActivitiesPage>();
         services.AddTransient<ActivityDetailPage>();
         services.AddTransient<SettingsPage>();

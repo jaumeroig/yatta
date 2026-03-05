@@ -123,9 +123,6 @@
   <data name="Nav_Historic" xml:space="preserve">
     <value>Històric</value>
   </data>
-  <data name="Nav_Workday" xml:space="preserve">
-    <value>Jornada</value>
-  </data>
   <data name="Nav_Activities" xml:space="preserve">
     <value>Activitats</value>
   </data>
