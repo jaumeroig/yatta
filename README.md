@@ -1,45 +1,24 @@
-# TimeTracker
+# Yatta (Yet Another Time Tracker App)
 
-TimeTracker es una aplicación de escritorio desarrollada en WPF que permite a los usuarios registrar y gestionar su tiempo de trabajo. Con una interfaz moderna basada en Fluent Design, facilita la imputación de horas y permite registrar las horas trabajadas en cada jornada y el porcentaje de horas de teletrabajo.
+> Yatta (やった) es una expresión coloquial japonesa que significa "¡Lo hice!", "¡Lo logré!" o "¡Bien!". Se utiliza para expresar alegría, alivio o celebración tras alcanzar una meta, superar un desafío o finalizar un trabajo. Proviene del verbo yaru (hacer) y se traduce frecuentemente como "listo" o "viola".
+
+Esta aplicación de escritorio desarrollada en WPF permite a los usuarios registrar y gestionar su tiempo de trabajo. Con una interfaz moderna basada en Fluent Design, facilita la imputación de horas y el registro de las horas trabajadas en cada jornada y el porcentaje de horas de teletrabajo.
 
 ## 🎯 Funcionalidades principales
 
-### Vista Hoy (Today)
-Control rápido del día actual con:
-- Inicio/parada de actividades en tiempo real
-- Visualización de registros activos y completados
-- Edición y eliminación de registros del día
-- Indicador de teletrabajo por registro
+Yatta te ayuda a registrar y gestionar tu tiempo de trabajo de forma intuitiva y eficiente. Puedes iniciar y detener actividades con un solo clic, registrar las horas de trabajo realizadas en oficina o teletrabajo, y obtener análisis detallados de cómo distribuyes tu tiempo.
 
-### Panel de Control (Dashboard)
-Análisis y estadísticas de tu tiempo de trabajo con vistas:
-- **Día**: Resumen detallado de una jornada específica
-- **Semana**: Análisis semanal con distribución por días
-- **Mes**: Vista mensual con totales y promedios
-- **Año**: Resumen anual con tendencias
+La aplicación te permite **trabajar en tiempo real**: simplemente selecciona una actividad y pulsa el botón de inicio. El seguimiento comenzará automáticamente mientras trabajas. Cuando termines, detén la actividad y el registro quedará guardado con la duración exacta. Si necesitas registrar horas de forma manual para completar días anteriores o ajustar entradas, también puedes hacerlo especificando las horas de inicio y fin.
 
-### Histórico (Historic)
-Gestión completa de registros pasados:
-- Búsqueda y filtrado por fecha y actividad
-- Edición de registros históricos
-- Vista detallada por día
-- Estadísticas acumuladas
+Puedes **marcar qué registros corresponden a teletrabajo**, permitiéndote llevar un control preciso del porcentaje de trabajo remoto. La aplicación calcula automáticamente las horas totales, las horas de teletrabajo y te muestra una barra visual que representa tu jornada completa de un vistazo.
 
-### Actividades (Activities)
-Organización de tus actividades o proyectos:
-- Creación y gestión de actividades
-- Estadísticas de tiempo por actividad
-- Detalles de uso y registros asociados
-- Activación/desactivación de actividades
+**Analiza tu tiempo** desde múltiples perspectivas: consulta el detalle de un día concreto, revisa cómo has distribuido tu tiempo durante la semana, obtén totales mensuales o visualiza las tendencias anuales. Cada vista incluye gráficos y estadísticas que te ayudan a entender cómo inviertes tu tiempo en cada proyecto o actividad.
 
-### Configuración (Settings)
-Personalización de la aplicación:
-- **Apariencia**: Temas claro, oscuro o del sistema
-- **Notificaciones**: Recordatorios personalizables con intervalo y duración
-- **Idioma**: Soporte para Español y Català
-- **Sistema**: Inicio automático con Windows, minimizar a bandeja
-- **Atajos**: Teclas globales para acceso rápido
-- **Retención de datos**: Política de limpieza automática de registros antiguos
+El **histórico completo** de tus registros está siempre accesible. Puedes buscar y filtrar por fechas o actividades específicas, editar entradas pasadas si cometiste algún error, y consultar estadísticas acumuladas de cualquier periodo. Esto te permite generar informes precisos de las horas trabajadas en cada proyecto.
+
+Organiza tu trabajo mediante **actividades personalizadas** que representan tus proyectos, tareas. Para cada actividad, puedes consultar cuánto tiempo has dedicado en total, ver todos los registros asociados y activarla o desactivarla según tus necesidades actuales.
+
+La aplicación es completamente **personalizable**: elige entre temas claro, oscuro o automático según tu sistema, activa notificaciones periódicas para recordarte registrar tu tiempo, cambia el idioma entre español y catalán, configura atajos de teclado globales para acceder rápidamente sin salir de otras aplicaciones, e incluso define políticas de retención para limpiar automáticamente registros antiguos manteniendo tu base de datos optimizada.
 
 
 ## 📚 Arquitectura
@@ -95,24 +74,12 @@ dotnet test src/TimeTracker.slnx
 dotnet test --filter "FullyQualifiedName~ValidationServiceTests.ValidateTimeRange_ShouldReturnTrue"
 ```
 
-### Migraciones de base de datos
-```bash
-# Añadir nueva migración
-dotnet ef migrations add MigrationName --project src/TimeTracker.Data --startup-project src/TimeTracker.App
-
-# Aplicar migraciones
-dotnet ef database update --project src/TimeTracker.Data --startup-project src/TimeTracker.App
-
-# Eliminar última migración
-dotnet ef migrations remove --project src/TimeTracker.Data --startup-project src/TimeTracker.App
-```
-
 ## 📦 Estructura del proyecto
 ```
 src/
 ├── TimeTracker.App/           # Aplicación WPF (capa de presentación)
 │   ├── Views/
-│   │   ├── Pages/            # Páginas principales (Today, Dashboard, Historic, etc.)
+│   │   ├── Pages/            # Páginas principales (Hoy, Panel de Control, Histórico, etc.)
 │   │   └── Dialogs/          # Controles de diálogos reutilizables
 │   ├── ViewModels/           # ViewModels (MVVM)
 │   ├── Controls/             # Controles personalizados
