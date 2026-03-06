@@ -1,6 +1,5 @@
 namespace TimeTracker.Core.Services;
 
-using System.Globalization;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -150,7 +149,7 @@ public class DashboardService : IDashboardService
                     ActivityName = activity?.Name ?? "Unknown",
                     Color = activity?.Color ?? "#808080",
                     TotalTime = TimeSpan.FromHours(hours),
-                    Percentage = totalHours > 0 ? (hours / totalHours) * 100.0 : 0
+                    Percentage = totalHours > 0 ? hours / totalHours * 100.0 : 0
                 };
             })
             .OrderByDescending(a => a.TotalTime)

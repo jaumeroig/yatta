@@ -9,26 +9,26 @@ using TimeTracker.Core.Models;
 /// </summary>
 public class ActivityRepository : IActivityRepository
 {
-    private readonly TimeTrackerDbContext _context;
+    private readonly TimeTrackerDbContext dbContext;
 
     public ActivityRepository(TimeTrackerDbContext context)
     {
-        _context = context;
+        dbContext = context;
     }
 
     public async Task<IEnumerable<Activity>> GetAllAsync()
     {
-        return await _context.Activities.ToListAsync();
+        return await dbContext.Activities.ToListAsync();
     }
 
     public async Task<Activity?> GetByIdAsync(Guid id)
     {
-        return await _context.Activities.FindAsync(id);
+        return await dbContext.Activities.FindAsync(id);
     }
 
     public async Task<IEnumerable<Activity>> GetActiveAsync()
     {
-        return await _context.Activities
+        return await dbContext.Activities
             .Where(a => a.Active)
             .OrderBy(a => a.Name)
             .ToListAsync();
@@ -36,26 +36,26 @@ public class ActivityRepository : IActivityRepository
 
     public async Task<Activity?> GetByNameAsync(string name)
     {
-        return await _context.Activities
+        return await dbContext.Activities
             .FirstOrDefaultAsync(a => a.Name.ToLower() == name.ToLower());
     }
 
     public async Task<Activity> AddAsync(Activity activity)
     {
-        _context.Activities.Add(activity);
-        await _context.SaveChangesAsync();
+        dbContext.Activities.Add(activity);
+        await dbContext.SaveChangesAsync();
         return activity;
     }
 
     public async Task UpdateAsync(Activity activity)
     {
-        var existingActivity = await _context.Activities.FindAsync(activity.Id);
+        var existingActivity = await dbContext.Activities.FindAsync(activity.Id);
         if (existingActivity != null)
         {
             existingActivity.Name = activity.Name;
             existingActivity.Color = activity.Color;
             existingActivity.Active = activity.Active;
-            await _context.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
     }
 
@@ -64,8 +64,8 @@ public class ActivityRepository : IActivityRepository
         var activity = await GetByIdAsync(id);
         if (activity != null)
         {
-            _context.Activities.Remove(activity);
-            await _context.SaveChangesAsync();
+            dbContext.Activities.Remove(activity);
+            await dbContext.SaveChangesAsync();
         }
     }
 }
