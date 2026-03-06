@@ -1,6 +1,5 @@
 namespace TimeTracker.Data.Repositories;
 
-using Microsoft.EntityFrameworkCore;
 using TimeTracker.Core.Interfaces;
 using TimeTracker.Core.Models;
 
@@ -9,17 +8,17 @@ using TimeTracker.Core.Models;
 /// </summary>
 public class SettingsRepository : ISettingsRepository
 {
-    private readonly TimeTrackerDbContext _context;
+    private readonly TimeTrackerDbContext dbContext;
 
     public SettingsRepository(TimeTrackerDbContext context)
     {
-        _context = context;
+        dbContext = context;
     }
 
     public async Task<AppSettings> GetAsync()
     {
         // Obtenir la configuració amb Id = 1 o crear-ne una de nova
-        var settings = await _context.AppSettings.FindAsync(1);
+        var settings = await dbContext.AppSettings.FindAsync(1);
         
         if (settings == null)
         {
@@ -31,8 +30,8 @@ public class SettingsRepository : ISettingsRepository
                 WorkdayTotalTime = TimeSpan.FromHours(8)
             };
             
-            _context.AppSettings.Add(settings);
-            await _context.SaveChangesAsync();
+            dbContext.AppSettings.Add(settings);
+            await dbContext.SaveChangesAsync();
         }
 
         return settings;
@@ -43,7 +42,7 @@ public class SettingsRepository : ISettingsRepository
         // Assegurar que sempre utilitzem Id = 1
         settings.Id = 1;
         
-        var existingSettings = await _context.AppSettings.FindAsync(1);
+        var existingSettings = await dbContext.AppSettings.FindAsync(1);
         
         if (existingSettings != null)
         {
@@ -58,13 +57,13 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
             existingSettings.GlobalHotkey = settings.GlobalHotkey;
 
-            _context.AppSettings.Update(existingSettings);
+            dbContext.AppSettings.Update(existingSettings);
         }
         else
         {
-            _context.AppSettings.Add(settings);
+            dbContext.AppSettings.Add(settings);
         }
         
-        await _context.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
     }
 }

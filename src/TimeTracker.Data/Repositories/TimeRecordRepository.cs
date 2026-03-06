@@ -9,16 +9,16 @@ using TimeTracker.Core.Models;
 /// </summary>
 public class TimeRecordRepository : ITimeRecordRepository
 {
-    private readonly TimeTrackerDbContext _context;
+    private readonly TimeTrackerDbContext dbContext;
 
     public TimeRecordRepository(TimeTrackerDbContext context)
     {
-        _context = context;
+        dbContext = context;
     }
 
     public async Task<IEnumerable<TimeRecord>> GetAllAsync()
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .OrderByDescending(tr => tr.Date)
             .ThenByDescending(tr => tr.StartTime)
             .ToListAsync();
@@ -26,12 +26,12 @@ public class TimeRecordRepository : ITimeRecordRepository
 
     public async Task<TimeRecord?> GetByIdAsync(Guid id)
     {
-        return await _context.TimeRecords.FindAsync(id);
+        return await dbContext.TimeRecords.FindAsync(id);
     }
 
     public async Task<IEnumerable<TimeRecord>> GetByDateAsync(DateOnly date)
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .Where(tr => tr.Date == date)
             .OrderBy(tr => tr.StartTime)
             .ToListAsync();
@@ -39,7 +39,7 @@ public class TimeRecordRepository : ITimeRecordRepository
 
     public async Task<IEnumerable<TimeRecord>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate)
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .Where(tr => tr.Date >= startDate && tr.Date <= endDate)
             .OrderBy(tr => tr.Date)
             .ThenBy(tr => tr.StartTime)
@@ -48,7 +48,7 @@ public class TimeRecordRepository : ITimeRecordRepository
 
     public async Task<IEnumerable<TimeRecord>> GetByActivityIdAsync(Guid activityId)
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .Where(tr => tr.ActivityId == activityId)
             .OrderByDescending(tr => tr.Date)
             .ThenByDescending(tr => tr.StartTime)
@@ -57,7 +57,7 @@ public class TimeRecordRepository : ITimeRecordRepository
 
     public async Task<TimeRecord?> GetActiveAsync()
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .Where(tr => tr.EndTime == null)
             .OrderByDescending(tr => tr.Date)
             .ThenByDescending(tr => tr.StartTime)
@@ -66,9 +66,9 @@ public class TimeRecordRepository : ITimeRecordRepository
 
     public async Task<TimeRecord> AddAsync(TimeRecord timeRecord)
     {
-        _context.TimeRecords.Add(timeRecord);
+        dbContext.TimeRecords.Add(timeRecord);
 
-        await _context.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         return timeRecord;
     }
@@ -79,7 +79,7 @@ public class TimeRecordRepository : ITimeRecordRepository
         // identity conflicts when a different instance with the same key
         // is provided (EF Core throws if two instances with same key are tracked).
 
-        var existing = await _context.TimeRecords.FindAsync(timeRecord.Id) ?? 
+        var existing = await dbContext.TimeRecords.FindAsync(timeRecord.Id) ??
             throw new InvalidOperationException($"TimeRecord with Id '{timeRecord.Id}' not found.");
 
         existing.ActivityId = timeRecord.ActivityId;
@@ -89,7 +89,7 @@ public class TimeRecordRepository : ITimeRecordRepository
         existing.Notes = timeRecord.Notes;
         existing.Telework = timeRecord.Telework;
 
-        await _context.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid id)
@@ -99,14 +99,14 @@ public class TimeRecordRepository : ITimeRecordRepository
         if (timeRecord is null)
             return;
 
-        _context.TimeRecords.Remove(timeRecord);
-        await _context.SaveChangesAsync();
+        dbContext.TimeRecords.Remove(timeRecord);
+        await dbContext.SaveChangesAsync();
     }
 
     /// <inheritdoc/>
     public async Task<int> CountBeforeDateAsync(DateOnly date)
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .Where(tr => tr.Date < date)
             .CountAsync();
     }
@@ -114,7 +114,7 @@ public class TimeRecordRepository : ITimeRecordRepository
     /// <inheritdoc/>
     public async Task<int> DeleteBeforeDateAsync(DateOnly date)
     {
-        return await _context.TimeRecords
+        return await dbContext.TimeRecords
             .Where(tr => tr.Date < date)
             .ExecuteDeleteAsync();
     }
