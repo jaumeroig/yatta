@@ -8,10 +8,10 @@
       "Bash(powershell -Command:*)",
       "Bash(dotnet ef migrations add:*)",
       "Bash(dotnet clean:*)",
-      "Bash(cmd.exe /c \"rmdir /s /q \"\"C:\\\\Users\\\\nahue\\\\Documents\\\\_Nahuel\\\\Programacion\\\\.___YATTA\\\\time-tracker\\\\src\\\\TimeTracker.App\\\\obj\"\"\")",
+      "Bash(cmd.exe /c \"rmdir /s /q \"\"C:\\\\Users\\\\nahue\\\\Documents\\\\_Nahuel\\\\Programacion\\\\.___YATTA\\\\time-tracker\\\\src\\\\Yatta.App\\\\obj\"\"\")",
       "Bash(dotnet test:*)",
       "Bash(curl:*)",
-      "Bash(git add src/TimeTracker.App/App.xaml src/TimeTracker.App/Converters/Converters.cs src/TimeTracker.App/Helpers/DashboardDisplayHelper.cs src/TimeTracker.App/ViewModels/DashboardDayViewModel.cs src/TimeTracker.App/ViewModels/DashboardMonthViewModel.cs src/TimeTracker.App/ViewModels/DashboardWeekViewModel.cs src/TimeTracker.App/ViewModels/DashboardYearViewModel.cs src/TimeTracker.App/ViewModels/JornadaViewModel.cs src/TimeTracker.App/Views/Pages/DashboardDayPage.xaml src/TimeTracker.App/Views/Pages/DashboardMonthPage.xaml src/TimeTracker.App/Views/Pages/DashboardWeekPage.xaml src/TimeTracker.App/Views/Pages/DashboardYearPage.xaml src/TimeTracker.App/Views/Pages/JornadaPage.xaml)",
+      "Bash(git add src/Yatta.App/App.xaml src/Yatta.App/Converters/Converters.cs src/Yatta.App/Helpers/DashboardDisplayHelper.cs src/Yatta.App/ViewModels/DashboardDayViewModel.cs src/Yatta.App/ViewModels/DashboardMonthViewModel.cs src/Yatta.App/ViewModels/DashboardWeekViewModel.cs src/Yatta.App/ViewModels/DashboardYearViewModel.cs src/Yatta.App/ViewModels/JornadaViewModel.cs src/Yatta.App/Views/Pages/DashboardDayPage.xaml src/Yatta.App/Views/Pages/DashboardMonthPage.xaml src/Yatta.App/Views/Pages/DashboardWeekPage.xaml src/Yatta.App/Views/Pages/DashboardYearPage.xaml src/Yatta.App/Views/Pages/JornadaPage.xaml)",
       "Bash(git commit:*)"
     ]
   }

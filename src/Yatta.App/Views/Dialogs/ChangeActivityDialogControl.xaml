@@ -1,0 +1,71 @@
+<UserControl x:Class="Yatta.App.Views.Dialogs.ChangeActivityDialogControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:local="clr-namespace:Yatta.App.Markup"
+             xmlns:controls="clr-namespace:Yatta.App.Controls"
+             d:DesignHeight="600"
+             d:DesignWidth="480"
+             mc:Ignorable="d">
+    <StackPanel Width="480">
+        <TextBlock Text="{local:Localize Label_Activity}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <controls:ActivityComboBox ItemsSource="{Binding ChangeActivityModel.AvailableActivities}"
+                                   SelectedValue="{Binding ChangeActivityModel.SelectedActivityId, Mode=TwoWay}"
+                                   Margin="0,0,0,16" />
+
+        <TextBlock Text="{local:Localize Label_StartDateTime}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <Grid Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DatePicker Grid.Column="0"
+                        SelectedDate="{Binding ChangeActivityModel.StartDate, Mode=TwoWay}"
+                        Height="40" />
+            <controls:TimePickerControl Grid.Column="2"
+                        TimeText="{Binding ChangeActivityModel.StartTimeText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Height="40" />
+        </Grid>
+
+        <TextBlock Text="{local:Localize Label_WorkLocation}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <RadioButton Content="{local:Localize RadioButton_Office}"
+                         IsChecked="{Binding ChangeActivityModel.IsOffice}"
+                         GroupName="ChangeActivityLocation"
+                         Margin="0,0,16,0" />
+            <RadioButton Content="{local:Localize RadioButton_Telework}"
+                         IsChecked="{Binding ChangeActivityModel.Telework}"
+                         GroupName="ChangeActivityLocation" />
+        </StackPanel>
+
+        <TextBlock Text="{local:Localize Label_Notes}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <ui:TextBox PlaceholderText="{local:Localize Placeholder_RecordNotes}"
+                    Text="{Binding ChangeActivityModel.Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    AcceptsReturn="True"
+                    MinHeight="60"
+                    Margin="0,0,0,16" />
+
+        <Border Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12,8"
+                Margin="0,0,0,0"
+                Visibility="{Binding ChangeActivityModel.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+            <TextBlock Text="{Binding ChangeActivityModel.ValidationError}"
+                       Foreground="White"
+                       TextWrapping="Wrap"
+                       FontSize="13" />
+        </Border>
+    </StackPanel>
+</UserControl>

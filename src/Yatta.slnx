@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../AGENTS.md" />
+    <File Path="../README.md" />
+  </Folder>
+  <Project Path="Yatta.App/Yatta.App.csproj" />
+  <Project Path="Yatta.Core/Yatta.Core.csproj" />
+  <Project Path="Yatta.Data/Yatta.Data.csproj" />
+  <Project Path="Yatta.Tests/Yatta.Tests.csproj" />
+</Solution>

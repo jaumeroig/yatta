@@ -1,0 +1,80 @@
+<Application x:Class="Yatta.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:md="http://schemas.lepo.co/wpfui/2022/xaml/markdown"
+             xmlns:converters="clr-namespace:Yatta.App.Converters"
+             xmlns:local="clr-namespace:Yatta.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+                <md:ThemesDictionary Theme="Dark" />
+                <md:ControlsDictionary />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Global Converters -->
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+            <converters:InverseCountToVisibilityConverter x:Key="InverseCountToVisibilityConverter" />
+            <converters:PositiveCountToVisibilityConverter x:Key="PositiveCountToVisibilityConverter" />
+            <converters:PositiveCountToBooleanConverter x:Key="PositiveCountToBooleanConverter" />
+            <converters:EditingToTitleConverter x:Key="EditingToTitleConverter" />
+            <converters:EditingToButtonTextConverter x:Key="EditingToButtonTextConverter" />
+            <converters:ActivityEditingToTitleConverter x:Key="ActivityEditingToTitleConverter" />
+            <converters:ActivityEditingToButtonTextConverter x:Key="ActivityEditingToButtonTextConverter" />
+            <converters:ActivityStatusToBackgroundConverter x:Key="ActivityStatusToBackgroundConverter" />
+            <converters:ActivityStatusToForegroundConverter x:Key="ActivityStatusToForegroundConverter" />
+            <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
+            <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
+            <converters:DateToWorkdayStartConverter x:Key="DateToWorkdayStartConverter" />
+            <converters:DateToWorkdayEndConverter x:Key="DateToWorkdayEndConverter" />
+
+            <converters:DateInMultipleCollectionsToVisibilityConverter x:Key="DateInMultipleCollectionsToVisibilityConverter" />
+            <!-- calendar converters registered above -->
+            
+            <!-- HotkeyTextBox Style -->
+            <Style TargetType="{x:Type local:Controls.HotkeyTextBox}" BasedOn="{StaticResource {x:Type ui:TextBox}}" />
+            
+            <!-- Color Button Style -->
+            <Style x:Key="ColorButtonStyle" TargetType="Button">
+                <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorSecondaryBrush}" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border x:Name="OuterBorder"
+                                        Width="40"
+                                        Height="40"
+                                        CornerRadius="20"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        Background="Transparent"
+                                        Padding="0">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="17"
+                                            Width="34"
+                                            Height="34" />
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="OuterBorder" Property="Opacity" Value="0.8" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Global Styles -->
+            <!--<Style TargetType="{x:Type ui:CardAction}" BasedOn="{StaticResource {x:Type ui:CardAction}}">
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>-->
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

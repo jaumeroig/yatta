@@ -7,9 +7,9 @@ This document provides guidelines for AI coding agents working in this repositor
 TimeTracker is a Windows time tracking application built with .NET 10, WPF, and SQLite.
 
 ### Architecture
-- **TimeTracker.App** - WPF presentation layer (MVVM pattern)
-- **TimeTracker.Core** - Business logic, services, and models
-- **TimeTracker.Data** - Data persistence with Entity Framework Core + SQLite
+- **Yatta.App** - WPF presentation layer (MVVM pattern)
+- **Yatta.Core** - Business logic, services, and models
+- **Yatta.Data** - Data persistence with Entity Framework Core + SQLite
 
 ### Key Technologies
 - .NET 10 (net10.0 / net10.0-windows)
@@ -24,31 +24,31 @@ TimeTracker is a Windows time tracking application built with .NET 10, WPF, and 
 ### Building the Project
 ```bash
 # Build entire solution
-dotnet build src/TimeTracker.slnx
+dotnet build src/Yatta.slnx
 
 # Build specific project
-dotnet build src/TimeTracker.App/TimeTracker.App.csproj
-dotnet build src/TimeTracker.Core/TimeTracker.Core.csproj
-dotnet build src/TimeTracker.Data/TimeTracker.Data.csproj
+dotnet build src/Yatta.App/Yatta.App.csproj
+dotnet build src/Yatta.Core/Yatta.Core.csproj
+dotnet build src/Yatta.Data/Yatta.Data.csproj
 
 # Build in Release mode
-dotnet build src/TimeTracker.slnx -c Release
+dotnet build src/Yatta.slnx -c Release
 ```
 
 ### Running the Application
 ```bash
 # Run from App project directory
-dotnet run --project src/TimeTracker.App/TimeTracker.App.csproj
+dotnet run --project src/Yatta.App/Yatta.App.csproj
 ```
 
 ### Testing
 ```bash
 # No test projects currently exist
 # When creating tests, use xUnit or NUnit and follow naming:
-# TimeTracker.Tests, TimeTracker.Core.Tests, TimeTracker.Data.Tests
+# Yatta.Tests, Yatta.Core.Tests, Yatta.Data.Tests
 
 # Run tests (when available)
-dotnet test src/TimeTracker.slnx
+dotnet test src/Yatta.slnx
 
 # Run specific test
 dotnet test --filter "FullyQualifiedName~TestClassName.TestMethodName"
@@ -58,22 +58,22 @@ dotnet test --filter "FullyQualifiedName~ValidationServiceTests.ValidateTimeRang
 ### Database Migrations
 ```bash
 # Add migration (run from Data project directory)
-dotnet ef migrations add MigrationName --project src/TimeTracker.Data --startup-project src/TimeTracker.App
+dotnet ef migrations add MigrationName --project src/Yatta.Data --startup-project src/Yatta.App
 
 # Update database
-dotnet ef database update --project src/TimeTracker.Data --startup-project src/TimeTracker.App
+dotnet ef database update --project src/Yatta.Data --startup-project src/Yatta.App
 
 # Remove last migration
-dotnet ef migrations remove --project src/TimeTracker.Data --startup-project src/TimeTracker.App
+dotnet ef migrations remove --project src/Yatta.Data --startup-project src/Yatta.App
 ```
 
 ### Code Analysis
 ```bash
 # Format code (if using dotnet format)
-dotnet format src/TimeTracker.slnx
+dotnet format src/Yatta.slnx
 
 # Restore packages
-dotnet restore src/TimeTracker.slnx
+dotnet restore src/Yatta.slnx
 ```
 
 ## Code Style Guidelines
@@ -87,11 +87,11 @@ dotnet restore src/TimeTracker.slnx
 ### File Organization
 Always start files with namespace declaration followed by usings:
 ```
-namespace TimeTracker.Core.Services;  // Add a blank line after namespace
+namespace Yatta.Core.Services;  // Add a blank line after namespace
 
 using System;                         // System usings first
 using Microsoft.Extensions.Logging;   // Then Microsoft usings
-using TimeTracker.Core.Interfaces;    // Finally project usings
+using Yatta.Core.Interfaces;    // Finally project usings
 ```
 
 ### Imports
@@ -267,14 +267,14 @@ public class ValidationService : IValidationService
 
 ## When Creating New Features
 
-1. Define models in `TimeTracker.Core/Models`
-2. Create interfaces in `TimeTracker.Core/Interfaces`
-3. Implement services in `TimeTracker.Core/Services`
-4. Create repository in `TimeTracker.Data/Repositories`
-5. Add EF configuration in `TimeTracker.Data/Configurations`
+1. Define models in `Yatta.Core/Models`
+2. Create interfaces in `Yatta.Core/Interfaces`
+3. Implement services in `Yatta.Core/Services`
+4. Create repository in `Yatta.Data/Repositories`
+5. Add EF configuration in `Yatta.Data/Configurations`
 6. Create migration
-7. Create ViewModel in `TimeTracker.App/ViewModels`
-8. Create View (XAML + code-behind) in `TimeTracker.App/Views/Pages`
+7. Create ViewModel in `Yatta.App/ViewModels`
+8. Create View (XAML + code-behind) in `Yatta.App/Views/Pages`
 9. Register all in DI container (`App.xaml.cs`)
 
 ## References

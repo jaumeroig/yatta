@@ -1,0 +1,46 @@
+<UserControl x:Class="Yatta.App.Views.Dialogs.ConfigureDayDialogControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:local="clr-namespace:Yatta.App.Markup"
+             xmlns:controls="clr-namespace:Yatta.App.Controls"
+             d:DesignHeight="450"
+             d:DesignWidth="480"
+             mc:Ignorable="d">
+    <StackPanel Width="480">
+        <TextBlock Text="{local:Localize Label_DayType}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <ComboBox ItemsSource="{Binding ConfigureDayModel.AvailableDayTypes}"
+                  SelectedValue="{Binding ConfigureDayModel.DayType, Mode=TwoWay}"
+                  SelectedValuePath="Value"
+                  DisplayMemberPath="DisplayName"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,0,0,16"
+                  Height="40" />
+
+        <StackPanel Margin="0,0,0,16"
+                    Visibility="{Binding ConfigureDayModel.IsWorkingDayType, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="{local:Localize Label_TargetDuration}"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+            <controls:TimePickerControl TimeText="{Binding ConfigureDayModel.TargetDurationText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Step="30"
+                        Height="40" />
+        </StackPanel>
+
+        <Border Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12,8"
+                Margin="0,0,0,0"
+                Visibility="{Binding ConfigureDayModel.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+            <TextBlock Text="{Binding ConfigureDayModel.ValidationError}"
+                       Foreground="White"
+                       TextWrapping="Wrap"
+                       FontSize="13" />
+        </Border>
+    </StackPanel>
+</UserControl>
