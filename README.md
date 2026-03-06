@@ -24,9 +24,9 @@ La aplicación es completamente **personalizable**: elige entre temas claro, osc
 ## 📚 Arquitectura
 
 Este proyecto sigue una arquitectura de 3 capas:
-- **TimeTracker.App** - Capa de presentación (WPF + WPF UI)
-- **TimeTracker.Core** - Lógica de negocio y modelos
-- **TimeTracker.Data** - Capa de persistencia (EF Core + SQLite)
+- **Yatta.App** - Capa de presentación (WPF + WPF UI)
+- **Yatta.Core** - Lógica de negocio y modelos
+- **Yatta.Data** - Capa de persistencia (EF Core + SQLite)
 
 ## 🛠️ Tecnologías
 
@@ -54,21 +54,21 @@ cd yatta
 ### Compilar la solución
 ```bash
 # Build en modo Debug
-dotnet build src/TimeTracker.slnx
+dotnet build src/Yatta.slnx
 
 # Build en modo Release
-dotnet build src/TimeTracker.slnx -c Release
+dotnet build src/Yatta.slnx -c Release
 ```
 
 ### Ejecutar la aplicación
 ```bash
-dotnet run --project src/TimeTracker.App/TimeTracker.App.csproj
+dotnet run --project src/Yatta.App/Yatta.App.csproj
 ```
 
 ### Ejecutar tests
 ```bash
 # Ejecutar todos los tests
-dotnet test src/TimeTracker.slnx
+dotnet test src/Yatta.slnx
 
 # Ejecutar un test específico
 dotnet test --filter "FullyQualifiedName~ValidationServiceTests.ValidateTimeRange_ShouldReturnTrue"
@@ -77,7 +77,7 @@ dotnet test --filter "FullyQualifiedName~ValidationServiceTests.ValidateTimeRang
 ## 📦 Estructura del proyecto
 ```
 src/
-├── TimeTracker.App/           # Aplicación WPF (capa de presentación)
+├── Yatta.App/           # Aplicación WPF (capa de presentación)
 │   ├── Views/
 │   │   ├── Pages/            # Páginas principales (Hoy, Panel de Control, Histórico, etc.)
 │   │   └── Dialogs/          # Controles de diálogos reutilizables
@@ -87,18 +87,18 @@ src/
 │   ├── Resources/            # Recursos (cadenas localizadas, estilos)
 │   ├── Converters/           # Convertidores de datos para binding
 │   └── Models/               # Modelos específicos de UI
-├── TimeTracker.Core/          # Lógica de negocio
+├── Yatta.Core/          # Lógica de negocio
 │   ├── Models/               # Modelos de dominio (TimeRecord, Activity, Workday, etc.)
 │   ├── Interfaces/           # Interfaces de servicios y repositorios
 │   ├── Services/             # Implementación de servicios de negocio
 │   ├── Extensions/           # Métodos de extensión
 │   └── Attributes/           # Atributos personalizados
-├── TimeTracker.Data/          # Capa de datos
+├── Yatta.Data/          # Capa de datos
 │   ├── Repositories/         # Implementación de repositorios
 │   ├── Configurations/       # Configuraciones de Entity Framework
 │   └── Migrations/           # Migraciones de base de datos
-└── TimeTracker.Tests/         # Tests unitarios (xUnit + Moq)
-    └── Core/                 # Tests de TimeTracker.Core
+└── Yatta.Tests/         # Tests unitarios (xUnit + Moq)
+    └── Core/                 # Tests de Yatta.Core
 ```
 
 
@@ -106,7 +106,7 @@ src/
 
 La aplicación utiliza SQLite como base de datos local. El archivo de base de datos se almacena en:
 ```
-%APPDATA%/TimeTracker/timetracker.db
+%APPDATA%/Yatta/yatta.db
 ```
 
 Las migraciones de Entity Framework se aplican automáticamente al iniciar la aplicación.

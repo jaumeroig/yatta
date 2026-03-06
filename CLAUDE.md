@@ -6,33 +6,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build
-dotnet build src/TimeTracker.slnx
-dotnet build src/TimeTracker.slnx -c Release
+dotnet build src/Yatta.slnx
+dotnet build src/Yatta.slnx -c Release
 
 # Run
-dotnet run --project src/TimeTracker.App/TimeTracker.App.csproj
+dotnet run --project src/Yatta.App/Yatta.App.csproj
 
-# Test (xUnit + Moq, tests only cover TimeTracker.Core)
-dotnet test src/TimeTracker.slnx
+# Test (xUnit + Moq, tests only cover Yatta.Core)
+dotnet test src/Yatta.slnx
 dotnet test --filter "FullyQualifiedName~ValidationServiceTests.ValidateTimeRange_ShouldReturnTrue"
 
 # EF Core migrations
-dotnet ef migrations add MigrationName --project src/TimeTracker.Data --startup-project src/TimeTracker.App
-dotnet ef database update --project src/TimeTracker.Data --startup-project src/TimeTracker.App
-dotnet ef migrations remove --project src/TimeTracker.Data --startup-project src/TimeTracker.App
+dotnet ef migrations add MigrationName --project src/Yatta.Data --startup-project src/Yatta.App
+dotnet ef database update --project src/Yatta.Data --startup-project src/Yatta.App
+dotnet ef migrations remove --project src/Yatta.Data --startup-project src/Yatta.App
 
 # Format / restore
-dotnet format src/TimeTracker.slnx
-dotnet restore src/TimeTracker.slnx
+dotnet format src/Yatta.slnx
+dotnet restore src/Yatta.slnx
 ```
 
 ## Architecture
 
 Three-layer architecture targeting .NET 10 / Windows:
 
-- **TimeTracker.Core** (`net10.0`) — Models, interfaces, and business-logic services. No UI or EF dependencies. This is what the test project references.
-- **TimeTracker.Data** (`net10.0`) — EF Core 10 + SQLite. Repositories, entity configurations, and migrations. DB is stored in `%APPDATA%/TimeTracker/timetracker.db` via `DatabaseConfiguration.GetConnectionString()`.
-- **TimeTracker.App** (`net10.0-windows`) — WPF presentation layer using WPF-UI (Fluent Design) and CommunityToolkit.Mvvm.
+- **Yatta.Core** (`net10.0`) — Models, interfaces, and business-logic services. No UI or EF dependencies. This is what the test project references.
+- **Yatta.Data** (`net10.0`) — EF Core 10 + SQLite. Repositories, entity configurations, and migrations. DB is stored in `%APPDATA%/TimeTracker/timetracker.db` via `DatabaseConfiguration.GetConnectionString()`.
+- **Yatta.App** (`net10.0-windows`) — WPF presentation layer using WPF-UI (Fluent Design) and CommunityToolkit.Mvvm.
 
 DI is wired entirely in `App.xaml.cs → ConfigureServices`. Migrations are applied automatically on startup. Localization must be initialized (`InitializeLocalization`) **before** any Window or Page is created.
 
@@ -40,12 +40,12 @@ DI is wired entirely in `App.xaml.cs → ConfigureServices`. Migrations are appl
 
 | Type | Location | Lifetime |
 |------|----------|----------|
-| `TimeTrackerDbContext` | `TimeTracker.Data` | Scoped |
-| Repositories (`IActivityRepository`, `ITimeRecordRepository`, `ISettingsRepository`, `IWorkdayRepository`) | `TimeTracker.Data/Repositories` | Scoped |
-| Core services (`IValidationService`, `ITimeCalculatorService`, `IWorkdayService`, etc.) | `TimeTracker.Core/Services` | Scoped |
-| UI singletons (`INavigationService`, `IDialogService`, `ILocalizationService`, `ThemeService`, `INotificationService`, `IGlobalHotkeyService`, `IPageStateService`) | `TimeTracker.App/Services` | Singleton |
-| Page ViewModels | `TimeTracker.App/ViewModels` | Transient |
-| `MainWindowViewModel` / `MainWindow` | `TimeTracker.App` | Singleton |
+| `TimeTrackerDbContext` | `Yatta.Data` | Scoped |
+| Repositories (`IActivityRepository`, `ITimeRecordRepository`, `ISettingsRepository`, `IWorkdayRepository`) | `Yatta.Data/Repositories` | Scoped |
+| Core services (`IValidationService`, `ITimeCalculatorService`, `IWorkdayService`, etc.) | `Yatta.Core/Services` | Scoped |
+| UI singletons (`INavigationService`, `IDialogService`, `ILocalizationService`, `ThemeService`, `INotificationService`, `IGlobalHotkeyService`, `IPageStateService`) | `Yatta.App/Services` | Singleton |
+| Page ViewModels | `Yatta.App/ViewModels` | Transient |
+| `MainWindowViewModel` / `MainWindow` | `Yatta.App` | Singleton |
 
 ### Domain models
 
@@ -65,11 +65,11 @@ DI is wired entirely in `App.xaml.cs → ConfigureServices`. Migrations are appl
 ### Namespace / using order
 
 ```csharp
-namespace TimeTracker.Core.Services;  // file-scoped, no braces, blank line after
+namespace Yatta.Core.Services;  // file-scoped, no braces, blank line after
 
 using System;                          // System first
 using Microsoft.Extensions.Logging;   // Microsoft second
-using TimeTracker.Core.Interfaces;    // project last
+using Yatta.Core.Interfaces;    // project last
 ```
 
 ### Types and patterns
@@ -85,16 +85,16 @@ ViewModels inherit `ObservableObject`, use `[ObservableProperty]` and `[RelayCom
 
 ### EF Core
 
-Create a separate `IEntityTypeConfiguration<T>` class per entity in `TimeTracker.Data/Configurations`.
+Create a separate `IEntityTypeConfiguration<T>` class per entity in `Yatta.Data/Configurations`.
 
 ## Adding a New Feature
 
-1. Define model in `TimeTracker.Core/Models`
-2. Add interface in `TimeTracker.Core/Interfaces`
-3. Implement service in `TimeTracker.Core/Services`
-4. Create repository in `TimeTracker.Data/Repositories` with interface in `TimeTracker.Core/Interfaces`
-5. Add EF configuration in `TimeTracker.Data/Configurations`
+1. Define model in `Yatta.Core/Models`
+2. Add interface in `Yatta.Core/Interfaces`
+3. Implement service in `Yatta.Core/Services`
+4. Create repository in `Yatta.Data/Repositories` with interface in `Yatta.Core/Interfaces`
+5. Add EF configuration in `Yatta.Data/Configurations`
 6. Create migration
-7. Create ViewModel in `TimeTracker.App/ViewModels`
-8. Create View (XAML + code-behind) in `TimeTracker.App/Views/Pages`
+7. Create ViewModel in `Yatta.App/ViewModels`
+8. Create View (XAML + code-behind) in `Yatta.App/Views/Pages`
 9. Register everything in `App.xaml.cs → ConfigureServices`
