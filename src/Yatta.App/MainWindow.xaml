@@ -18,7 +18,6 @@
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         Icon="/Resources/Logo.ico">
-
     <Grid>
 
         <ui:TitleBar
@@ -30,7 +29,6 @@
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Resources/Logo.png" />
             </ui:TitleBar.Icon>
-
         </ui:TitleBar>
 
         <ui:NavigationView

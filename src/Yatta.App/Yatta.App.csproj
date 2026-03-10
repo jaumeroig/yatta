@@ -14,6 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\background.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Humanizer.Core" Version="3.0.1" />
     <PackageReference Include="Humanizer.Core.ca" Version="3.0.1" />
@@ -55,6 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\background.jpg" />
     <Resource Include="Resources\Logo.png" />
     <Resource Include="Resources\Logo.ico" />
     <EmbeddedResource Include="Resources\changelog.md" />
