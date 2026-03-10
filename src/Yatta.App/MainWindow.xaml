@@ -17,11 +17,10 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
-        Icon="/Resources/Logo.ico">
+        Icon="/Resources/Logo.png">
     <Grid>
 
         <ui:TitleBar
-            
             x:Name="TitleBar"
             Title="{local:Localize App_Title}"
             ShowMaximize="True"
@@ -112,7 +111,7 @@
             MenuOnRightClick="True"
             LeftClick="TrayOpen_Click"
             TooltipText="{local:Localize App_Title}"
-            Icon="/Resources/Logo.ico">
+            Icon="/Resources/Logo.png">
             <tray:NotifyIcon.Menu>
                 <ContextMenu>
                     <MenuItem Header="{local:Localize Tray_Open}" Click="TrayOpen_Click">

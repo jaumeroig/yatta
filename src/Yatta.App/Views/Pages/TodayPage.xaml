@@ -27,7 +27,7 @@
                 <Border.Background>
                     <ImageBrush ImageSource="/Resources/background.jpg"
                                 Stretch="UniformToFill"
-                                Opacity="0.4"/>
+                                Opacity="0.6"/>
                 </Border.Background>
                 <StackPanel>
                     <Grid Margin="0,0,0,24">
