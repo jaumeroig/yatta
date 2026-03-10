@@ -16,16 +16,21 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="42,12,42,42" MaxWidth="800">
 
-            <!-- === SECTION B: Status card (timeline + active record/play + stats) === -->
-            <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            <!-- === SECTION A: Header row (date + time + day type + configure) === -->
+            <!--Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"-->
+            <Border 
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     BorderThickness="0"
                     CornerRadius="8"
                     Padding="24"
                     Margin="0,0,0,20">
+                <Border.Background>
+                    <ImageBrush ImageSource="/Resources/background.jpg"
+                                Stretch="UniformToFill"
+                                Opacity="0.6"/>
+                </Border.Background>
                 <StackPanel>
-                    <!-- === SECTION A: Header row (date + time + day type + configure) === -->
-                    <Grid Margin="0,0,0,20">
+                    <Grid Margin="0,0,0,24">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
@@ -72,7 +77,7 @@
 
 
                     <!-- Stats row: Start Time / Worked / Target / Remaining / End Time -->
-                    <Grid Margin="0,0,0,16">
+                    <Grid Margin="0,0,0,24">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -153,14 +158,13 @@
                                                  SegmentDoubleClickedCommand="{Binding OpenEditRecordFromSegmentCommand}"
                                                  EditCommand="{Binding OpenEditRecordFromSegmentCommand}"
                                                  DeleteCommand="{Binding RequestDeleteRecordFromSegmentCommand}"
-                                                 BarHeight="28"
-                                                 CornerRadius="6"
-                                                 Margin="0,0,0,16"/>
+                                                 BarHeight="32"
+                                                 CornerRadius="6"                                                 />
 
                 </StackPanel>
             </Border>
 
-            <!-- === SECTION C: Completed Records (now includes active record) === -->
+            <!-- === SECTION B: Completed Records (now includes active record) === -->
             <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     BorderThickness="0"
