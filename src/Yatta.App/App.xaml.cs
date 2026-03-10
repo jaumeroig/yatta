@@ -25,6 +25,14 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // When launched automatically at Windows login (--autostart flag), the user profile
+        // may not be fully initialized yet. A short delay ensures LocalApplicationData and
+        // the database file are accessible before proceeding.
+        if (e.Args.Contains("--autostart"))
+        {
+            Thread.Sleep(3000);
+        }
+
         var services = new ServiceCollection();
         ConfigureServices(services);
         _serviceProvider = services.BuildServiceProvider();
@@ -82,13 +90,27 @@ public partial class App : Application
         // Initialize notification service
         InitializeNotificationService();
 
-        // Close stale activities from previous days
-        CloseStaleActivities().Wait();
+        // Close stale activities from previous days (data operation only, before window shows)
+        var staleResult = CloseStaleActivitiesSync();
 
         // Execute automatic purge if enabled
         ExecuteAutoPurge();
 
         mainWindow.Show();
+
+        // Show stale activity notification after the window is visible
+        if (staleResult != null)
+        {
+            mainWindow.Loaded += async (_, _) =>
+            {
+                var uiMessageBox = new Wpf.Ui.Controls.MessageBox
+                {
+                    Title = Yatta.App.Resources.Resources.TitleBar_Title,
+                    Content = string.Format(Yatta.App.Resources.Resources.StaleActivity_AutoClosed, staleResult.Date, staleResult.EndTime)
+                };
+                _ = await uiMessageBox.ShowDialogAsync();
+            };
+        }
     }
 
     /// <summary>
@@ -193,25 +215,16 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Closes stale activities from previous days and shows a notification.
+    /// Closes stale activities from previous days.
+    /// Returns the result if a stale record was found and closed, otherwise null.
+    /// Uses Task.Run so that EF Core async operations run off the UI thread's
+    /// SynchronizationContext, avoiding a potential deadlock from sync-over-async.
     /// </summary>
-    private async Task CloseStaleActivities()
+    private StaleActivityResult? CloseStaleActivitiesSync()
     {
         using var scope = _serviceProvider!.CreateScope();
         var staleActivityService = scope.ServiceProvider.GetRequiredService<IStaleActivityService>();
-
-        var result = staleActivityService.CloseStaleActivitiesAsync().GetAwaiter().GetResult();
-
-        if (result == null)
-            return;
-
-        var uiMessageBox = new Wpf.Ui.Controls.MessageBox
-        {
-            Title = Yatta.App.Resources.Resources.TitleBar_Title,
-            Content = string.Format(Yatta.App.Resources.Resources.StaleActivity_AutoClosed, result.Date, result.EndTime)
-        };
-
-        _ = await uiMessageBox.ShowDialogAsync();
+        return Task.Run(() => staleActivityService.CloseStaleActivitiesAsync()).GetAwaiter().GetResult();
     }
 
     /// <summary>

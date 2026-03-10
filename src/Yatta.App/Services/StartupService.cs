@@ -10,7 +10,7 @@ using Yatta.Core.Interfaces;
 /// </summary>
 public class StartupService : IStartupService
 {
-    private const string AppName = "TimeTracker";
+    private const string AppName = "Yatta";
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
     /// <summary>
@@ -25,7 +25,7 @@ public class StartupService : IStartupService
                 return;
 
             using var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true);
-            key?.SetValue(AppName, $"\"{exePath}\"");
+            key?.SetValue(AppName, $"\"{exePath}\" --autostart");
         }
         catch (Exception ex)
         {
