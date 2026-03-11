@@ -149,6 +149,32 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>
+    /// Handles the Tray Icon "Change Activity" menu click.
+    /// Opens the change activity dialog.
+    /// </summary>
+    private void TrayChangeActivity_Click(object sender, RoutedEventArgs e)
+    {
+        ShowChangeActivityDialog();
+    }
+
+    /// <summary>
+    /// Updates the tray icon context menu items dynamically based on the current state.
+    /// When there is an active record, shows "Change activity"; otherwise shows "Start activity".
+    /// </summary>
+    private async void TrayContextMenu_Opened(object sender, RoutedEventArgs e)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
+        var activeRecord = await timeRecordRepository.GetActiveAsync();
+
+        bool hasActive = activeRecord != null;
+        TrayChangeActivityItem.Header = hasActive
+            ? Yatta.App.Resources.Resources.Tray_ChangeActivity
+            : Yatta.App.Resources.Resources.Tray_StartActivity;
+        TrayChangeActivityItem.Icon = new SymbolIcon(hasActive ? SymbolRegular.ArrowSwap24 : SymbolRegular.Play24);
+    }
+
+    /// <summary>
     /// Handles the Tray Icon "Close" menu click.
     /// Shows close confirmation if there is an active record before closing.
     /// </summary>
@@ -254,19 +280,28 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>
-    /// Shows the change activity dialog from the global hotkey.
-    /// Brings the window to the foreground if needed and opens the dialog.
+    /// Shows the change activity dialog from the global hotkey, tray icon, or notification.
+    /// When the MainWindow is visible, shows the dialog within it.
+    /// When hidden or minimized, shows a standalone dialog window independent of the MainWindow.
     /// </summary>
     public void ShowChangeActivityDialog()
     {
-        // First, bring the main window to the foreground if hidden or minimized
-        if (!IsVisible || WindowState == WindowState.Minimized)
+        if (IsVisible && WindowState != WindowState.Minimized)
         {
-            ShowInTaskbar = true;
-            Show();
-            WindowState = WindowState.Normal;
+            ShowChangeActivityDialogInMainWindow();
         }
-        
+        else
+        {
+            ShowChangeActivityDialogStandalone();
+        }
+    }
+
+    /// <summary>
+    /// Shows the change activity dialog within the MainWindow.
+    /// Used when the MainWindow is already visible.
+    /// </summary>
+    private void ShowChangeActivityDialogInMainWindow()
+    {
         // Activate and bring to front
         Activate();
         Topmost = true;
@@ -274,13 +309,7 @@ public partial class MainWindow : FluentWindow
         Focus();
 
         // Navigate to TodayPage only if not already there
-        bool needsNavigation = true;
-        if (_todayPage != null && _todayPage.IsLoaded)
-        {
-            // TodayPage is already loaded, no need to navigate
-            needsNavigation = false;
-        }
-
+        bool needsNavigation = _todayPage == null || !_todayPage.IsLoaded;
         if (needsNavigation)
         {
             NavigationView.Navigate(typeof(TodayPage));
@@ -291,6 +320,31 @@ public partial class MainWindow : FluentWindow
         {
             _todayPage?.BringChangeActivityDialogToFront();
         }, System.Windows.Threading.DispatcherPriority.Background);
+    }
+
+    /// <summary>
+    /// Shows the change activity dialog in a standalone window, independent of the MainWindow.
+    /// Used when the MainWindow is hidden or minimized (e.g., tray icon or global hotkey).
+    /// </summary>
+    private void ShowChangeActivityDialogStandalone()
+    {
+        var window = new ChangeActivityWindow(_serviceProvider);
+        window.Closed += (_, _) =>
+        {
+            // Refresh TodayPage data if the activity was saved and the page is loaded
+            if (window.WasSaved && _todayPage != null && _todayPage.IsLoaded)
+            {
+                Dispatcher.InvokeAsync(async () =>
+                {
+                    var viewModel = _todayPage.DataContext as TodayViewModel;
+                    if (viewModel != null)
+                    {
+                        await viewModel.LoadDataAsync();
+                    }
+                });
+            }
+        };
+        window.Show();
     }
 
     /// <summary>

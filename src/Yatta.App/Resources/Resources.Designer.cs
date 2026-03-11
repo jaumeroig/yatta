@@ -2419,6 +2419,24 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cambiar actividad.
+        /// </summary>
+        internal static string Tray_ChangeActivity {
+            get {
+                return ResourceManager.GetString("Tray_ChangeActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Iniciar actividad.
+        /// </summary>
+        internal static string Tray_StartActivity {
+            get {
+                return ResourceManager.GetString("Tray_StartActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Abrir.
         /// </summary>
         internal static string Tray_Open {
