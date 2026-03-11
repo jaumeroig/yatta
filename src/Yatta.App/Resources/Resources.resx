@@ -561,6 +561,9 @@
   <data name="Tray_Close" xml:space="preserve">
     <value>Cerrar</value>
   </data>
+  <data name="Tray_StartActivity" xml:space="preserve">
+    <value>Iniciar actividad</value>
+  </data>
   <data name="Label_MinimizeToTray" xml:space="preserve">
     <value>Minimizar a la bandeja del sistema</value>
   </data>
