@@ -158,6 +158,28 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>
+    /// Handles the Tray Icon "Stop Activity" menu click.
+    /// Sets the end time of the active record to now and refreshes the TodayPage if loaded.
+    /// </summary>
+    private async void TrayStopActivity_Click(object sender, RoutedEventArgs e)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
+        var activeRecord = await timeRecordRepository.GetActiveAsync();
+        if (activeRecord == null) return;
+
+        activeRecord.EndTime = TimeOnly.FromDateTime(DateTime.Now);
+        await timeRecordRepository.UpdateAsync(activeRecord);
+
+        if (_todayPage != null && _todayPage.IsLoaded)
+        {
+            var viewModel = _todayPage.DataContext as TodayViewModel;
+            if (viewModel != null)
+                await viewModel.LoadDataAsync();
+        }
+    }
+
+    /// <summary>
     /// Updates the tray icon context menu items dynamically based on the current state.
     /// When there is an active record, shows "Change activity"; otherwise shows "Start activity".
     /// </summary>
@@ -172,6 +194,7 @@ public partial class MainWindow : FluentWindow
             ? Yatta.App.Resources.Resources.Tray_ChangeActivity
             : Yatta.App.Resources.Resources.Tray_StartActivity;
         TrayChangeActivityItem.Icon = new SymbolIcon(hasActive ? SymbolRegular.ArrowSwap24 : SymbolRegular.Play24);
+        TrayStopActivityItem.Visibility = hasActive ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>
