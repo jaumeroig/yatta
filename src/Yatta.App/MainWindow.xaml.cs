@@ -149,6 +149,15 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>
+    /// Handles the Tray Icon "Change Activity" menu click.
+    /// Opens the change activity dialog.
+    /// </summary>
+    private void TrayChangeActivity_Click(object sender, RoutedEventArgs e)
+    {
+        ShowChangeActivityDialog();
+    }
+
+    /// <summary>
     /// Handles the Tray Icon "Close" menu click.
     /// Shows close confirmation if there is an active record before closing.
     /// </summary>

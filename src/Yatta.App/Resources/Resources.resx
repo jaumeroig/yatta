@@ -555,6 +555,9 @@
   <data name="Tray_Open" xml:space="preserve">
     <value>Abrir</value>
   </data>
+  <data name="Tray_ChangeActivity" xml:space="preserve">
+    <value>Cambiar actividad</value>
+  </data>
   <data name="Tray_Close" xml:space="preserve">
     <value>Cerrar</value>
   </data>

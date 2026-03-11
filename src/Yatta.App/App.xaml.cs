@@ -11,7 +11,6 @@ using Yatta.Data.Repositories;
 using Yatta.App.ViewModels;
 using Yatta.App.Views.Pages;
 using Yatta.App.Services;
-using Yatta.App.Models;
 using Microsoft.Toolkit.Uwp.Notifications;
 
 /// <summary>
@@ -189,28 +188,14 @@ public partial class App : Application
 
     /// <summary>
     /// Handles the notification change activity event.
-    /// Brings window to foreground and navigates to edit the active record.
+    /// Brings window to foreground and shows the change activity dialog.
     /// </summary>
     private void OnNotificationChangeActivity(object? sender, Guid recordId)
     {
         Current.Dispatcher.Invoke(() =>
         {
-            var mainWindow = Current.MainWindow;
-            if (mainWindow != null)
-            {
-                mainWindow.ShowInTaskbar = true;
-                mainWindow.Show();
-                mainWindow.WindowState = WindowState.Normal;
-                mainWindow.Activate();
-            }
-
-            var navigationService = _serviceProvider!.GetRequiredService<INavigationService>();
-            var navParam = new HistoricNavigationParameter
-            {
-                RecordId = recordId,
-                FromNotification = true
-            };
-            navigationService.Navigate<HistoricDetailPage>(navParam);
+            var mainWindow = Current.MainWindow as MainWindow;
+            mainWindow?.ShowChangeActivityDialog();
         });
     }
 
@@ -344,7 +329,6 @@ public partial class App : Application
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<TodayViewModel>();
         services.AddTransient<HistoricViewModel>();
-        services.AddTransient<HistoricDetailViewModel>();
         services.AddTransient<ActivitiesViewModel>();
         services.AddTransient<ActivityDetailViewModel>();
         services.AddTransient<SettingsViewModel>();
@@ -358,7 +342,6 @@ public partial class App : Application
         // Register Pages
         services.AddTransient<TodayPage>();
         services.AddTransient<HistoricPage>();
-        services.AddTransient<HistoricDetailPage>();
         services.AddTransient<ActivitiesPage>();
         services.AddTransient<ActivityDetailPage>();
         services.AddTransient<SettingsPage>();

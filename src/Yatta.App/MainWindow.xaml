@@ -119,6 +119,11 @@
                             <ui:SymbolIcon Symbol="WindowNew24" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem Header="{local:Localize Tray_ChangeActivity}" Click="TrayChangeActivity_Click">
+                        <MenuItem.Icon>
+                            <ui:SymbolIcon Symbol="ArrowSwap24" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator />
                     <MenuItem Header="{local:Localize Tray_Close}" Click="TrayClose_Click">
                         <MenuItem.Icon>
