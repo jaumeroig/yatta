@@ -42,6 +42,15 @@ public partial class ChangeActivityWindow : FluentWindow
 
         // Subscribe to model changes to keep buttons in sync
         _viewModel.ChangeActivityModel.PropertyChanged += OnChangeActivityModelPropertyChanged;
+        Closed += Window_Closed;
+    }
+
+    /// <summary>
+    /// Unsubscribes from model property changes when the window is closed.
+    /// </summary>
+    private void Window_Closed(object? sender, EventArgs e)
+    {
+        _viewModel.ChangeActivityModel.PropertyChanged -= OnChangeActivityModelPropertyChanged;
     }
 
     /// <summary>
