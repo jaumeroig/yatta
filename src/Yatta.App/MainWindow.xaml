@@ -113,13 +113,13 @@
             TooltipText="{local:Localize App_Title}"
             Icon="/Resources/Logo.png">
             <tray:NotifyIcon.Menu>
-                <ContextMenu>
+                <ContextMenu Opened="TrayContextMenu_Opened">
                     <MenuItem Header="{local:Localize Tray_Open}" Click="TrayOpen_Click">
                         <MenuItem.Icon>
                             <ui:SymbolIcon Symbol="WindowNew24" />
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="{local:Localize Tray_ChangeActivity}" Click="TrayChangeActivity_Click">
+                    <MenuItem x:Name="TrayChangeActivityItem" Header="{local:Localize Tray_StartActivity}" Click="TrayChangeActivity_Click">
                         <MenuItem.Icon>
                             <ui:SymbolIcon Symbol="ArrowSwap24" />
                         </MenuItem.Icon>
