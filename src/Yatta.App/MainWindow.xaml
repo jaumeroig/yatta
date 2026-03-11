@@ -124,6 +124,11 @@
                             <ui:SymbolIcon Symbol="ArrowSwap24" />
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem x:Name="TrayStopActivityItem" Header="{local:Localize Tray_StopActivity}" Visibility="Collapsed" Click="TrayStopActivity_Click">
+                        <MenuItem.Icon>
+                            <ui:SymbolIcon Symbol="RecordStop24" />
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator />
                     <MenuItem Header="{local:Localize Tray_Close}" Click="TrayClose_Click">
                         <MenuItem.Icon>

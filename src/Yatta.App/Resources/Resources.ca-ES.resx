@@ -564,6 +564,9 @@
   <data name="Tray_StartActivity" xml:space="preserve">
     <value>Iniciar activitat</value>
   </data>
+  <data name="Tray_StopActivity" xml:space="preserve">
+    <value>Aturar activitat</value>
+  </data>
   <data name="Label_MinimizeToTray" xml:space="preserve">
     <value>Minimitzar a la safata del sistema</value>
   </data>
