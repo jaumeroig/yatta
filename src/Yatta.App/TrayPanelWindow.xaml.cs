@@ -51,8 +51,8 @@ public partial class TrayPanelWindow : FluentWindow
         var workingArea = SystemParameters.WorkArea;
 
         // Calculate position (bottom-right corner of screen, above taskbar)
-        var windowWidth = Width + 16; // Account for margin/shadow
-        var windowHeight = ActualHeight + 16; // Account for margin/shadow
+        var windowWidth = Width + 8; // Account for top margin
+        var windowHeight = ActualHeight + 8; // Account for top margin
 
         // Position the window
         Left = workingArea.Right - windowWidth;

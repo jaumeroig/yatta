@@ -6,12 +6,11 @@
     xmlns:converters="clr-namespace:Yatta.App.Converters"
     SizeToContent="Height"
     Width="380"
-    WindowStyle="None"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="True"
-    AllowsTransparency="True"
-    Background="Transparent"
+    ExtendsContentIntoTitleBar="True"
+    WindowCornerPreference="Round"
     Deactivated="Window_Deactivated"
     Loaded="Window_Loaded">
 
@@ -20,19 +19,14 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </ui:FluentWindow.Resources>
 
-    <Border Background="{DynamicResource ApplicationBackgroundBrush}"
-            BorderBrush="{DynamicResource ControlElevationBorderBrush}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Padding="0"
-            Margin="8">
-        <Border.Effect>
+    <Grid Margin="0,8,0,0">
+        <Grid.Effect>
             <DropShadowEffect BlurRadius="16"
                               ShadowDepth="4"
                               Direction="270"
                               Opacity="0.3"
                               Color="#000000"/>
-        </Border.Effect>
+        </Grid.Effect>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -222,5 +216,5 @@
                            Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverted}" />
             </StackPanel>
         </Grid>
-    </Border>
+    </Grid>
 </ui:FluentWindow>
