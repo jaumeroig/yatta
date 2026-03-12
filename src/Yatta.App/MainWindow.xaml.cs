@@ -208,6 +208,7 @@ public partial class MainWindow : FluentWindow
         _trayPanel = new TrayPanelWindow(_serviceProvider, this);
         _trayPanel.Closed += (_, _) => _trayPanel = null;
         _trayPanel.Show();
+        _trayPanel.Activate();
     }
 
     /// <summary>

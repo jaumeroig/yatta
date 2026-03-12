@@ -11,6 +11,7 @@
     Topmost="True"
     ExtendsContentIntoTitleBar="True"
     WindowCornerPreference="Round"
+    WindowBackdropType="Mica"
     Deactivated="Window_Deactivated"
     Loaded="Window_Loaded">
 
@@ -20,14 +21,6 @@
     </ui:FluentWindow.Resources>
 
     <Grid Margin="0,8,0,0">
-        <Grid.Effect>
-            <DropShadowEffect BlurRadius="16"
-                              ShadowDepth="4"
-                              Direction="270"
-                              Opacity="0.3"
-                              Color="#000000"/>
-        </Grid.Effect>
-
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
