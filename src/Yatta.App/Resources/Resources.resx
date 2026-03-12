@@ -567,6 +567,12 @@
   <data name="Tray_StopActivity" xml:space="preserve">
     <value>Detener actividad</value>
   </data>
+  <data name="Tray_NoActivity" xml:space="preserve">
+    <value>Ninguna actividad en curso</value>
+  </data>
+  <data name="Tray_TooltipActive" xml:space="preserve">
+    <value>{0} - {1} ({2})</value>
+  </data>
   <data name="Label_MinimizeToTray" xml:space="preserve">
     <value>Minimizar a la bandeja del sistema</value>
   </data>

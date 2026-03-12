@@ -2410,6 +2410,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cambiar actividad.
+        /// </summary>
+        internal static string Tray_ChangeActivity {
+            get {
+                return ResourceManager.GetString("Tray_ChangeActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cerrar.
         /// </summary>
         internal static string Tray_Close {
@@ -2419,11 +2428,20 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cambiar actividad.
+        ///   Looks up a localized string similar to Ninguna actividad en curso.
         /// </summary>
-        internal static string Tray_ChangeActivity {
+        internal static string Tray_NoActivity {
             get {
-                return ResourceManager.GetString("Tray_ChangeActivity", resourceCulture);
+                return ResourceManager.GetString("Tray_NoActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir.
+        /// </summary>
+        internal static string Tray_Open {
+            get {
+                return ResourceManager.GetString("Tray_Open", resourceCulture);
             }
         }
         
@@ -2435,7 +2453,7 @@ namespace Yatta.App.Resources {
                 return ResourceManager.GetString("Tray_StartActivity", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Detener actividad.
         /// </summary>
@@ -2444,13 +2462,13 @@ namespace Yatta.App.Resources {
                 return ResourceManager.GetString("Tray_StopActivity", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Abrir.
+        ///   Looks up a localized string similar to {0} - {1} ({2}).
         /// </summary>
-        internal static string Tray_Open {
+        internal static string Tray_TooltipActive {
             get {
-                return ResourceManager.GetString("Tray_Open", resourceCulture);
+                return ResourceManager.GetString("Tray_TooltipActive", resourceCulture);
             }
         }
         
