@@ -23,6 +23,9 @@ public partial class MainWindow : FluentWindow
     private bool _closeConfirmed = false;
     private TodayPage? _todayPage;
     private readonly DispatcherTimer _trayTooltipTimer;
+    private readonly DispatcherTimer _doubleClickTimer;
+    private int _trayClickCount = 0;
+    private TrayPanelWindow? _trayPanel;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
@@ -49,6 +52,10 @@ public partial class MainWindow : FluentWindow
         _trayTooltipTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         _trayTooltipTimer.Tick += async (_, _) => await UpdateTrayTooltipAsync();
         _trayTooltipTimer.Start();
+
+        // Configure the double-click detection timer (300ms is standard Windows double-click time)
+        _doubleClickTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        _doubleClickTimer.Tick += DoubleClickTimer_Tick;
 
         // Navigate to the Today page by default
         Loaded += async (_, _) => 
@@ -146,14 +153,80 @@ public partial class MainWindow : FluentWindow
     public ContentDialogHost DialogHost => RootContentDialogHost;
 
     /// <summary>
-    /// Handles the Tray Icon "Open" menu click.
+    /// Handles the Tray Icon left click.
+    /// Uses a timer to detect single vs double click.
+    /// Single click: Show tray panel
+    /// Double click: Open main window
     /// </summary>
     private void TrayOpen_Click(object sender, RoutedEventArgs e)
+    {
+        _trayClickCount++;
+
+        if (_trayClickCount == 1)
+        {
+            // Start the timer to wait for potential second click
+            _doubleClickTimer.Start();
+        }
+    }
+
+    /// <summary>
+    /// Handles the double-click timer tick.
+    /// Determines whether it was a single or double click based on click count.
+    /// </summary>
+    private void DoubleClickTimer_Tick(object? sender, EventArgs e)
+    {
+        _doubleClickTimer.Stop();
+
+        if (_trayClickCount == 1)
+        {
+            // Single click - show tray panel
+            ShowTrayPanel();
+        }
+        else if (_trayClickCount >= 2)
+        {
+            // Double click - open main window
+            ShowMainWindow();
+        }
+
+        _trayClickCount = 0;
+    }
+
+    /// <summary>
+    /// Shows the tray information panel.
+    /// </summary>
+    private void ShowTrayPanel()
+    {
+        // Close existing panel if open
+        if (_trayPanel != null && _trayPanel.IsLoaded)
+        {
+            _trayPanel.Close();
+            _trayPanel = null;
+            return; // Toggle behavior - if already open, close it
+        }
+
+        // Create and show new panel
+        _trayPanel = new TrayPanelWindow(_serviceProvider, this);
+        _trayPanel.Closed += (_, _) => _trayPanel = null;
+        _trayPanel.Show();
+    }
+
+    /// <summary>
+    /// Shows and activates the main application window.
+    /// </summary>
+    private void ShowMainWindow()
     {
         ShowInTaskbar = true;
         Show();
         WindowState = WindowState.Normal;
         Activate();
+    }
+
+    /// <summary>
+    /// Handles the context menu "Open" click - always opens the main window.
+    /// </summary>
+    private void TrayMenuOpen_Click(object sender, RoutedEventArgs e)
+    {
+        ShowMainWindow();
     }
 
     /// <summary>

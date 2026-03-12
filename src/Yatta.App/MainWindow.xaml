@@ -115,7 +115,7 @@
             Icon="/Resources/Logo.png">
             <tray:NotifyIcon.Menu>
                 <ContextMenu Opened="TrayContextMenu_Opened">
-                    <MenuItem Header="{local:Localize Tray_Open}" Click="TrayOpen_Click">
+                    <MenuItem Header="{local:Localize Tray_Open}" Click="TrayMenuOpen_Click">
                         <MenuItem.Icon>
                             <ui:SymbolIcon Symbol="WindowNew24" />
                         </MenuItem.Icon>
