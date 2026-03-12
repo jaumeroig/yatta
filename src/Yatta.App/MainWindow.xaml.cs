@@ -10,6 +10,7 @@ using System.Windows;
 using System.ComponentModel;
 using System;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -21,6 +22,7 @@ public partial class MainWindow : FluentWindow
     private bool _isRealClose = false;
     private bool _closeConfirmed = false;
     private TodayPage? _todayPage;
+    private readonly DispatcherTimer _trayTooltipTimer;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
@@ -43,10 +45,16 @@ public partial class MainWindow : FluentWindow
         breadcrumbService.SetBreadcrumbBar(BreadcrumbBar);
         
         
+        // Configure the tray tooltip timer to update every 30 seconds
+        _trayTooltipTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+        _trayTooltipTimer.Tick += async (_, _) => await UpdateTrayTooltipAsync();
+        _trayTooltipTimer.Start();
+
         // Navigate to the Today page by default
-        Loaded += (_, _) => 
+        Loaded += async (_, _) => 
         {
             NavigationView.Navigate(typeof(TodayPage));
+            await UpdateTrayTooltipAsync();
         };
         
         // Track when navigating to TodayPage
@@ -170,6 +178,8 @@ public partial class MainWindow : FluentWindow
 
         activeRecord.EndTime = TimeOnly.FromDateTime(DateTime.Now);
         await timeRecordRepository.UpdateAsync(activeRecord);
+
+        await UpdateTrayTooltipAsync();
 
         if (_todayPage != null && _todayPage.IsLoaded)
         {
@@ -368,6 +378,41 @@ public partial class MainWindow : FluentWindow
             }
         };
         window.Show();
+    }
+
+    /// <summary>
+    /// Updates the tray icon tooltip dynamically based on the current activity state.
+    /// Shows "Yatta - Ninguna actividad en curso" when idle,
+    /// or "Yatta - Activity (duration)" when an activity is running.
+    /// </summary>
+    private async Task UpdateTrayTooltipAsync()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
+        var activeRecord = await timeRecordRepository.GetActiveAsync();
+
+        string appTitle = Yatta.App.Resources.Resources.App_Title;
+
+        if (activeRecord == null)
+        {
+            TrayNotifyIcon.TooltipText = $"{appTitle} - {Yatta.App.Resources.Resources.Tray_NoActivity}";
+            return;
+        }
+
+        var activityRepository = scope.ServiceProvider.GetRequiredService<IActivityRepository>();
+        var activity = await activityRepository.GetByIdAsync(activeRecord.ActivityId);
+        string activityName = activity?.Name ?? string.Empty;
+
+        var startDateTime = activeRecord.Date.ToDateTime(activeRecord.StartTime);
+        var duration = DateTime.Now - startDateTime;
+        if (duration < TimeSpan.Zero)
+            duration = TimeSpan.Zero;
+
+        string durationText = $"{(int)duration.TotalHours:D2}:{duration.Minutes:D2}";
+
+        TrayNotifyIcon.TooltipText = string.Format(
+            Yatta.App.Resources.Resources.Tray_TooltipActive,
+            appTitle, activityName, durationText);
     }
 
     /// <summary>

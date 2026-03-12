@@ -4,14 +4,13 @@ using System.Globalization;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Yatta.App.Services;
+using Yatta.App.ViewModels;
+using Yatta.App.Views.Pages;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Services;
 using Yatta.Data;
 using Yatta.Data.Repositories;
-using Yatta.App.ViewModels;
-using Yatta.App.Views.Pages;
-using Yatta.App.Services;
-using Microsoft.Toolkit.Uwp.Notifications;
 
 /// <summary>
 /// Interaction logic for App.xaml
@@ -153,8 +152,7 @@ public partial class App : Application
     {
         Current.Dispatcher.Invoke(() =>
         {
-            var mainWindow = Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            if (Current.MainWindow is MainWindow mainWindow)
             {
                 mainWindow.ShowChangeActivityDialog();
             }
@@ -358,34 +356,10 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
-        // Cleanup notification service
         try
         {
-            var notificationService = _serviceProvider?.GetService<INotificationService>();
-            if (notificationService != null)
-            {
-                notificationService.OnChangeActivity -= OnNotificationChangeActivity;
-            }
-            notificationService?.Dispose();
-        }
-        catch
-        {
-            // Ignore cleanup errors
-        }
-
-        // Cleanup global hotkey service
-        try
-        {
-            var hotkeyService = _serviceProvider?.GetService<IGlobalHotkeyService>();
-            if (hotkeyService != null)
-            {
-                hotkeyService.HotkeyPressed -= OnGlobalHotkeyPressed;
-                hotkeyService.UnregisterHotkey();
-                if (hotkeyService is IDisposable disposable)
-                {
-                    disposable.Dispose();
-                }
-            }
+            CleanupNotificationService();
+            CleanupGlobalHotkeyService();
         }
         catch
         {
@@ -394,6 +368,33 @@ public partial class App : Application
 
         _serviceProvider?.Dispose();
         base.OnExit(e);
+    }
+
+    /// <summary>
+    /// Cleans up the global hotkey service by unregistering hotkeys and disconnecting events.
+    /// </summary>
+    private void CleanupGlobalHotkeyService()
+    {
+        var hotkeyService = _serviceProvider?.GetService<IGlobalHotkeyService>();
+        if (hotkeyService != null)
+        {
+            hotkeyService.HotkeyPressed -= OnGlobalHotkeyPressed;
+            hotkeyService.UnregisterHotkey();
+            if (hotkeyService is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Releases resources used by the notification service, unsubscribes from activity change events, and disposes of the service instance.
+    /// </summary>
+    private void CleanupNotificationService()
+    {
+        var notificationService = _serviceProvider?.GetService<INotificationService>();
+        notificationService?.OnChangeActivity -= OnNotificationChangeActivity;
+        notificationService?.Dispose();
     }
 }
 

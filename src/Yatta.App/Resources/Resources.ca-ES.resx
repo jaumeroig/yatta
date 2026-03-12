@@ -972,4 +972,10 @@
   <data name="StaleActivity_AutoClosed" xml:space="preserve">
     <value>S'ha finalitzat automàticament una activitat que havia quedat en curs el dia {0:d}. Hora de finalització: {1:t}.</value>
   </data>
+  <data name="Tray_NoActivity" xml:space="preserve">
+    <value>Cap activitat en curs</value>
+  </data>
+  <data name="Tray_TooltipActive" xml:space="preserve">
+    <value>{0} - {1} ({2})</value>
+  </data>
 </root>
