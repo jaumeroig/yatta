@@ -19,12 +19,14 @@ public partial class TrayPanelWindow : FluentWindow
     private readonly TrayPanelViewModel _viewModel;
     private readonly IServiceProvider _serviceProvider;
     private readonly MainWindow _mainWindow;
+    private readonly IServiceScope _scope;
 
     public TrayPanelWindow(IServiceProvider serviceProvider, MainWindow mainWindow)
     {
         _serviceProvider = serviceProvider;
         _mainWindow = mainWindow;
-        _viewModel = serviceProvider.GetRequiredService<TrayPanelViewModel>();
+        _scope = serviceProvider.CreateScope();
+        _viewModel = _scope.ServiceProvider.GetRequiredService<TrayPanelViewModel>();
         DataContext = _viewModel;
 
         InitializeComponent();
@@ -162,6 +164,7 @@ public partial class TrayPanelWindow : FluentWindow
     protected override void OnClosed(EventArgs e)
     {
         _viewModel.Cleanup();
+        _scope.Dispose();
         base.OnClosed(e);
     }
 
