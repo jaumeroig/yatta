@@ -20,6 +20,7 @@ public partial class TrayPanelWindow : FluentWindow
     private readonly IServiceProvider _serviceProvider;
     private readonly MainWindow _mainWindow;
     private readonly IServiceScope _scope;
+    private bool _isClosingRequested;
 
     public TrayPanelWindow(IServiceProvider serviceProvider, MainWindow mainWindow)
     {
@@ -99,7 +100,7 @@ public partial class TrayPanelWindow : FluentWindow
     /// </summary>
     private void Window_Deactivated(object? sender, EventArgs e)
     {
-        Close();
+        RequestClose();
     }
 
     /// <summary>
@@ -107,7 +108,7 @@ public partial class TrayPanelWindow : FluentWindow
     /// </summary>
     private void OnCloseClick(object sender, RoutedEventArgs e)
     {
-        Close();
+        RequestClose();
     }
 
     /// <summary>
@@ -119,7 +120,7 @@ public partial class TrayPanelWindow : FluentWindow
         _mainWindow.Show();
         _mainWindow.WindowState = WindowState.Normal;
         _mainWindow.Activate();
-        Close();
+        RequestClose();
     }
 
     /// <summary>
@@ -128,7 +129,7 @@ public partial class TrayPanelWindow : FluentWindow
     private void OnStartActivityClick(object sender, RoutedEventArgs e)
     {
         _mainWindow.ShowChangeActivityDialog();
-        Close();
+        RequestClose();
     }
 
     /// <summary>
@@ -137,7 +138,7 @@ public partial class TrayPanelWindow : FluentWindow
     private void OnChangeActivityClick(object sender, RoutedEventArgs e)
     {
         _mainWindow.ShowChangeActivityDialog();
-        Close();
+        RequestClose();
     }
 
     /// <summary>
@@ -155,6 +156,20 @@ public partial class TrayPanelWindow : FluentWindow
             await timeRecordRepository.UpdateAsync(activeRecord);
         }
 
+        RequestClose();
+    }
+
+    /// <summary>
+    /// Closes the panel only once, even if multiple events request it while the window is deactivating.
+    /// </summary>
+    private void RequestClose()
+    {
+        if (_isClosingRequested)
+        {
+            return;
+        }
+
+        _isClosingRequested = true;
         Close();
     }
 
