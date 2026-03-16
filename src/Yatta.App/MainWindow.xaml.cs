@@ -23,10 +23,7 @@ public partial class MainWindow : FluentWindow
     private bool _closeConfirmed = false;
     private TodayPage? _todayPage;
     private readonly DispatcherTimer _trayTooltipTimer;
-    private readonly DispatcherTimer _doubleClickTimer;
-    private int _trayClickCount = 0;
     private TrayPanelWindow? _trayPanel;
-    private bool _trayPanelWasOpenOnClick;
     private DateTime _lastTrayPanelClosedAt = DateTime.MinValue;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
@@ -54,10 +51,6 @@ public partial class MainWindow : FluentWindow
         _trayTooltipTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         _trayTooltipTimer.Tick += async (_, _) => await UpdateTrayTooltipAsync();
         _trayTooltipTimer.Start();
-
-        // Configure the double-click detection timer (300ms is standard Windows double-click time)
-        _doubleClickTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
-        _doubleClickTimer.Tick += DoubleClickTimer_Tick;
 
         // Navigate to the Today page by default
         Loaded += async (_, _) => 
@@ -156,57 +149,27 @@ public partial class MainWindow : FluentWindow
 
     /// <summary>
     /// Handles the Tray Icon left click.
-    /// Uses a timer to detect single vs double click.
-    /// Single click: Show tray panel
-    /// Double click: Open main window
+    /// Single click toggles the tray panel.
     /// </summary>
     private void TrayOpen_Click(object sender, RoutedEventArgs e)
     {
-        if (_trayClickCount == 0)
+        if (DateTime.UtcNow - _lastTrayPanelClosedAt <= TimeSpan.FromMilliseconds(400))
         {
-            _trayPanelWasOpenOnClick =
-                (_trayPanel != null && _trayPanel.IsLoaded)
-                || DateTime.UtcNow - _lastTrayPanelClosedAt <= TimeSpan.FromMilliseconds(400);
+            return;
         }
 
-        _trayClickCount++;
-
-        if (_trayClickCount == 1)
-        {
-            // Start the timer to wait for potential second click
-            _doubleClickTimer.Start();
-        }
+        ShowTrayPanel();
     }
 
     /// <summary>
-    /// Handles the double-click timer tick.
-    /// Determines whether it was a single or double click based on click count.
+    /// Handles the Tray Icon left double click.
+    /// Restores and foregrounds the main window without showing the tray panel.
     /// </summary>
-    private void DoubleClickTimer_Tick(object? sender, EventArgs e)
+    private void TrayOpen_DoubleClick(object sender, RoutedEventArgs e)
     {
-        _doubleClickTimer.Stop();
-
-        if (_trayClickCount == 1)
-        {
-            if (_trayPanelWasOpenOnClick)
-            {
-                _trayPanel?.Close();
-                _trayPanel = null;
-            }
-            else
-            {
-                // Single click - show tray panel
-                ShowTrayPanel();
-            }
-        }
-        else if (_trayClickCount >= 2)
-        {
-            // Double click - open main window
-            ShowMainWindow();
-        }
-
-        _trayClickCount = 0;
-        _trayPanelWasOpenOnClick = false;
+        _trayPanel?.Close();
+        _trayPanel = null;
+        ShowMainWindow();
     }
 
     /// <summary>

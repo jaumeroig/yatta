@@ -111,6 +111,7 @@
             FocusOnLeftClick="False"
             MenuOnRightClick="True"
             LeftClick="TrayOpen_Click"
+            LeftDoubleClick="TrayOpen_DoubleClick"
             TooltipText="{local:Localize App_Title}"
             Icon="/Resources/Logo.png">
             <tray:NotifyIcon.Menu>
