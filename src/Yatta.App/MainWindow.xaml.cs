@@ -26,6 +26,8 @@ public partial class MainWindow : FluentWindow
     private readonly DispatcherTimer _doubleClickTimer;
     private int _trayClickCount = 0;
     private TrayPanelWindow? _trayPanel;
+    private bool _trayPanelWasOpenOnClick;
+    private DateTime _lastTrayPanelClosedAt = DateTime.MinValue;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
@@ -160,6 +162,13 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     private void TrayOpen_Click(object sender, RoutedEventArgs e)
     {
+        if (_trayClickCount == 0)
+        {
+            _trayPanelWasOpenOnClick =
+                (_trayPanel != null && _trayPanel.IsLoaded)
+                || DateTime.UtcNow - _lastTrayPanelClosedAt <= TimeSpan.FromMilliseconds(400);
+        }
+
         _trayClickCount++;
 
         if (_trayClickCount == 1)
@@ -179,8 +188,16 @@ public partial class MainWindow : FluentWindow
 
         if (_trayClickCount == 1)
         {
-            // Single click - show tray panel
-            ShowTrayPanel();
+            if (_trayPanelWasOpenOnClick)
+            {
+                _trayPanel?.Close();
+                _trayPanel = null;
+            }
+            else
+            {
+                // Single click - show tray panel
+                ShowTrayPanel();
+            }
         }
         else if (_trayClickCount >= 2)
         {
@@ -189,6 +206,7 @@ public partial class MainWindow : FluentWindow
         }
 
         _trayClickCount = 0;
+        _trayPanelWasOpenOnClick = false;
     }
 
     /// <summary>
@@ -205,8 +223,13 @@ public partial class MainWindow : FluentWindow
         }
 
         // Create and show new panel
+        _lastTrayPanelClosedAt = DateTime.MinValue;
         _trayPanel = new TrayPanelWindow(_serviceProvider, this);
-        _trayPanel.Closed += (_, _) => _trayPanel = null;
+        _trayPanel.Closed += (_, _) =>
+        {
+            _lastTrayPanelClosedAt = DateTime.UtcNow;
+            _trayPanel = null;
+        };
         _trayPanel.Show();
         _trayPanel.Activate();
     }
@@ -214,12 +237,15 @@ public partial class MainWindow : FluentWindow
     /// <summary>
     /// Shows and activates the main application window.
     /// </summary>
-    private void ShowMainWindow()
+    public void ShowMainWindow()
     {
         ShowInTaskbar = true;
         Show();
         WindowState = WindowState.Normal;
         Activate();
+        Topmost = true;
+        Topmost = false;
+        Focus();
     }
 
     /// <summary>

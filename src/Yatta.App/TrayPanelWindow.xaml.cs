@@ -119,10 +119,7 @@ public partial class TrayPanelWindow : FluentWindow
     /// </summary>
     private void OnOpenAppClick(object sender, RoutedEventArgs e)
     {
-        _mainWindow.ShowInTaskbar = true;
-        _mainWindow.Show();
-        _mainWindow.WindowState = WindowState.Normal;
-        _mainWindow.Activate();
+        _mainWindow.ShowMainWindow();
         RequestClose();
     }
 
