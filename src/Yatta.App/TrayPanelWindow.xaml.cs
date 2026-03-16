@@ -8,7 +8,6 @@ using System.Windows.Interop;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Controls;
 using Yatta.App.ViewModels;
-using Yatta.Core.Interfaces;
 
 /// <summary>
 /// Tray icon information panel window.
@@ -17,14 +16,13 @@ using Yatta.Core.Interfaces;
 public partial class TrayPanelWindow : FluentWindow
 {
     private readonly TrayPanelViewModel _viewModel;
-    private readonly IServiceProvider _serviceProvider;
     private readonly MainWindow _mainWindow;
     private readonly IServiceScope _scope;
+    private bool _isStoppingActivity;
     private bool _isClosingRequested;
 
     public TrayPanelWindow(IServiceProvider serviceProvider, MainWindow mainWindow)
     {
-        _serviceProvider = serviceProvider;
         _mainWindow = mainWindow;
         _scope = serviceProvider.CreateScope();
         _viewModel = _scope.ServiceProvider.GetRequiredService<TrayPanelViewModel>();
@@ -100,6 +98,11 @@ public partial class TrayPanelWindow : FluentWindow
     /// </summary>
     private void Window_Deactivated(object? sender, EventArgs e)
     {
+        if (_isStoppingActivity)
+        {
+            return;
+        }
+
         RequestClose();
     }
 
@@ -146,17 +149,17 @@ public partial class TrayPanelWindow : FluentWindow
     /// </summary>
     private async void OnStopActivityClick(object sender, RoutedEventArgs e)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
-        var activeRecord = await timeRecordRepository.GetActiveAsync();
+        _isStoppingActivity = true;
 
-        if (activeRecord != null)
+        try
         {
-            activeRecord.EndTime = TimeOnly.FromDateTime(DateTime.Now);
-            await timeRecordRepository.UpdateAsync(activeRecord);
+            await _mainWindow.StopActiveRecordAsync();
+            RequestClose();
         }
-
-        RequestClose();
+        finally
+        {
+            _isStoppingActivity = false;
+        }
     }
 
     /// <summary>

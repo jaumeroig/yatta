@@ -19,6 +19,7 @@ public class TimeRecordRepository : ITimeRecordRepository
     public async Task<IEnumerable<TimeRecord>> GetAllAsync()
     {
         return await dbContext.TimeRecords
+            .AsNoTracking()
             .OrderByDescending(tr => tr.Date)
             .ThenByDescending(tr => tr.StartTime)
             .ToListAsync();
@@ -26,12 +27,15 @@ public class TimeRecordRepository : ITimeRecordRepository
 
     public async Task<TimeRecord?> GetByIdAsync(Guid id)
     {
-        return await dbContext.TimeRecords.FindAsync(id);
+        return await dbContext.TimeRecords
+            .AsNoTracking()
+            .FirstOrDefaultAsync(tr => tr.Id == id);
     }
 
     public async Task<IEnumerable<TimeRecord>> GetByDateAsync(DateOnly date)
     {
         return await dbContext.TimeRecords
+            .AsNoTracking()
             .Where(tr => tr.Date == date)
             .OrderBy(tr => tr.StartTime)
             .ToListAsync();
@@ -40,6 +44,7 @@ public class TimeRecordRepository : ITimeRecordRepository
     public async Task<IEnumerable<TimeRecord>> GetByDateRangeAsync(DateOnly startDate, DateOnly endDate)
     {
         return await dbContext.TimeRecords
+            .AsNoTracking()
             .Where(tr => tr.Date >= startDate && tr.Date <= endDate)
             .OrderBy(tr => tr.Date)
             .ThenBy(tr => tr.StartTime)
@@ -49,6 +54,7 @@ public class TimeRecordRepository : ITimeRecordRepository
     public async Task<IEnumerable<TimeRecord>> GetByActivityIdAsync(Guid activityId)
     {
         return await dbContext.TimeRecords
+            .AsNoTracking()
             .Where(tr => tr.ActivityId == activityId)
             .OrderByDescending(tr => tr.Date)
             .ThenByDescending(tr => tr.StartTime)
@@ -58,6 +64,7 @@ public class TimeRecordRepository : ITimeRecordRepository
     public async Task<TimeRecord?> GetActiveAsync()
     {
         return await dbContext.TimeRecords
+            .AsNoTracking()
             .Where(tr => tr.EndTime == null)
             .OrderByDescending(tr => tr.Date)
             .ThenByDescending(tr => tr.StartTime)

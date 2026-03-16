@@ -245,13 +245,28 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     private async void TrayStopActivity_Click(object sender, RoutedEventArgs e)
     {
+        await StopActiveRecordAsync();
+    }
+
+    /// <summary>
+    /// Stops the active record and refreshes tray-related UI state.
+    /// </summary>
+    public async Task StopActiveRecordAsync()
+    {
         using var scope = _serviceProvider.CreateScope();
         var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
         var activeRecord = await timeRecordRepository.GetActiveAsync();
-        if (activeRecord == null) return;
+        if (activeRecord == null)
+        {
+            await UpdateTrayTooltipAsync();
+            return;
+        }
 
         activeRecord.EndTime = TimeOnly.FromDateTime(DateTime.Now);
         await timeRecordRepository.UpdateAsync(activeRecord);
+
+        var notificationService = _serviceProvider.GetRequiredService<INotificationService>();
+        notificationService.ResetTimer();
 
         await UpdateTrayTooltipAsync();
 
@@ -259,7 +274,9 @@ public partial class MainWindow : FluentWindow
         {
             var viewModel = _todayPage.DataContext as TodayViewModel;
             if (viewModel != null)
+            {
                 await viewModel.LoadDataAsync();
+            }
         }
     }
 
