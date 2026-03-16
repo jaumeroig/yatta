@@ -4,8 +4,8 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:local="clr-namespace:Yatta.App.Markup"
     xmlns:converters="clr-namespace:Yatta.App.Converters"
-    SizeToContent="Height"
-    Width="380"
+                 SizeToContent="Height"
+    Width="300"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="True"
@@ -44,7 +44,8 @@
                            VerticalAlignment="Center" />
 
                 <ui:Button Grid.Column="1"
-                           Appearance="Secondary"
+                           Appearance="Transparent"
+                           BorderThickness="0"
                            Icon="{ui:SymbolIcon WindowNew24}"
                            ToolTip="{local:Localize TrayPanel_ButtonOpenApp}"
                            Click="OnOpenAppClick"
@@ -54,7 +55,8 @@
                            Width="32" />
 
                 <ui:Button Grid.Column="2"
-                           Appearance="Secondary"
+                           Appearance="Transparent"
+                           BorderThickness="0"
                            Icon="{ui:SymbolIcon Dismiss24}"
                            Click="OnCloseClick"
                            Padding="8"
