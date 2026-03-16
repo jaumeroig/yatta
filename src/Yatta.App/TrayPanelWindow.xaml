@@ -9,9 +9,9 @@
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="True"
-    ExtendsContentIntoTitleBar="True"
     WindowCornerPreference="Round"
     WindowBackdropType="Mica"
+    WindowStyle="None"
     Deactivated="Window_Deactivated"
     Loaded="Window_Loaded">
 
