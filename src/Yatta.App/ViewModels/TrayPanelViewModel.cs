@@ -21,6 +21,7 @@ public partial class TrayPanelViewModel : ObservableObject
     private readonly IWorkdayConfigService _workdayConfigService;
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly DispatcherTimer _timer;
+    private bool _isDisposed;
 
     [ObservableProperty]
     private string _currentDate = string.Empty;
@@ -122,25 +123,38 @@ public partial class TrayPanelViewModel : ObservableObject
     /// </summary>
     private async Task UpdateElapsedTimeAsync()
     {
+        // Early return if disposed to prevent accessing disposed resources
+        if (_isDisposed)
+        {
+            return;
+        }
+
         if (!HasActiveRecord)
         {
             ElapsedTime = "00:00";
             return;
         }
 
-        var activeRecord = await _timeRecordRepository.GetActiveAsync();
-        if (activeRecord == null)
+        try
         {
-            ElapsedTime = "00:00";
-            return;
+            var activeRecord = await _timeRecordRepository.GetActiveAsync();
+            if (activeRecord == null)
+            {
+                ElapsedTime = "00:00";
+                return;
+            }
+
+            var startDateTime = activeRecord.Date.ToDateTime(activeRecord.StartTime);
+            var duration = DateTime.Now - startDateTime;
+            if (duration < TimeSpan.Zero)
+                duration = TimeSpan.Zero;
+
+            ElapsedTime = $"{(int)duration.TotalHours:D2}:{duration.Minutes:D2}";
         }
-
-        var startDateTime = activeRecord.Date.ToDateTime(activeRecord.StartTime);
-        var duration = DateTime.Now - startDateTime;
-        if (duration < TimeSpan.Zero)
-            duration = TimeSpan.Zero;
-
-        ElapsedTime = $"{(int)duration.TotalHours:D2}:{duration.Minutes:D2}";
+        catch (ObjectDisposedException)
+        {
+            // Ignore if the repository/context has been disposed
+        }
     }
 
     /// <summary>
@@ -148,6 +162,11 @@ public partial class TrayPanelViewModel : ObservableObject
     /// </summary>
     public void Cleanup()
     {
-        _timer?.Stop();
+        _isDisposed = true;
+
+        if (_timer != null)
+        {
+            _timer.Stop();
+        }
     }
 }
