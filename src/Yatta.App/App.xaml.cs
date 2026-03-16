@@ -336,6 +336,7 @@ public partial class App : Application
         services.AddTransient<DashboardWeekViewModel>();
         services.AddTransient<DashboardMonthViewModel>();
         services.AddTransient<DashboardYearViewModel>();
+        services.AddTransient<TrayPanelViewModel>();
 
         // Register Pages
         services.AddTransient<TodayPage>();

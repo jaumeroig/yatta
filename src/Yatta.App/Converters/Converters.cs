@@ -9,6 +9,7 @@ using System.Windows.Media;
 
 /// <summary>
 /// Converts a boolean to Visibility (Visible if true, Collapsed if false).
+/// Supports ConverterParameter="Inverted" to invert the logic.
 /// </summary>
 public class BooleanToVisibilityConverter : IValueConverter
 {
@@ -16,7 +17,9 @@ public class BooleanToVisibilityConverter : IValueConverter
     {
         if (value is bool boolValue)
         {
-            return boolValue ? Visibility.Visible : Visibility.Collapsed;
+            var isInverted = parameter is string paramStr && paramStr.Equals("Inverted", StringComparison.OrdinalIgnoreCase);
+            var result = isInverted ? !boolValue : boolValue;
+            return result ? Visibility.Visible : Visibility.Collapsed;
         }
         return Visibility.Collapsed;
     }
@@ -25,7 +28,9 @@ public class BooleanToVisibilityConverter : IValueConverter
     {
         if (value is Visibility visibility)
         {
-            return visibility == Visibility.Visible;
+            var isInverted = parameter is string paramStr && paramStr.Equals("Inverted", StringComparison.OrdinalIgnoreCase);
+            var result = visibility == Visibility.Visible;
+            return isInverted ? !result : result;
         }
         return false;
     }

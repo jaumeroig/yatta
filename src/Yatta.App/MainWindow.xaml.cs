@@ -23,6 +23,8 @@ public partial class MainWindow : FluentWindow
     private bool _closeConfirmed = false;
     private TodayPage? _todayPage;
     private readonly DispatcherTimer _trayTooltipTimer;
+    private TrayPanelWindow? _trayPanel;
+    private DateTime _lastTrayPanelClosedAt = DateTime.MinValue;
 
     public MainWindow(IServiceProvider serviceProvider, MainWindowViewModel viewModel, ISettingsRepository settingsRepository)
     {
@@ -146,14 +148,75 @@ public partial class MainWindow : FluentWindow
     public ContentDialogHost DialogHost => RootContentDialogHost;
 
     /// <summary>
-    /// Handles the Tray Icon "Open" menu click.
+    /// Handles the Tray Icon left click.
+    /// Single click toggles the tray panel.
     /// </summary>
     private void TrayOpen_Click(object sender, RoutedEventArgs e)
+    {
+        if (DateTime.UtcNow - _lastTrayPanelClosedAt <= TimeSpan.FromMilliseconds(400))
+        {
+            return;
+        }
+
+        ShowTrayPanel();
+    }
+
+    /// <summary>
+    /// Handles the Tray Icon left double click.
+    /// Restores and foregrounds the main window without showing the tray panel.
+    /// </summary>
+    private void TrayOpen_DoubleClick(object sender, RoutedEventArgs e)
+    {
+        _trayPanel?.Close();
+        _trayPanel = null;
+        ShowMainWindow();
+    }
+
+    /// <summary>
+    /// Shows the tray information panel.
+    /// </summary>
+    private void ShowTrayPanel()
+    {
+        // Close existing panel if open
+        if (_trayPanel != null && _trayPanel.IsLoaded)
+        {
+            _trayPanel.Close();
+            _trayPanel = null;
+            return; // Toggle behavior - if already open, close it
+        }
+
+        // Create and show new panel
+        _lastTrayPanelClosedAt = DateTime.MinValue;
+        _trayPanel = new TrayPanelWindow(_serviceProvider, this);
+        _trayPanel.Closed += (_, _) =>
+        {
+            _lastTrayPanelClosedAt = DateTime.UtcNow;
+            _trayPanel = null;
+        };
+        _trayPanel.Show();
+        _trayPanel.Activate();
+    }
+
+    /// <summary>
+    /// Shows and activates the main application window.
+    /// </summary>
+    public void ShowMainWindow()
     {
         ShowInTaskbar = true;
         Show();
         WindowState = WindowState.Normal;
         Activate();
+        Topmost = true;
+        Topmost = false;
+        Focus();
+    }
+
+    /// <summary>
+    /// Handles the context menu "Open" click - always opens the main window.
+    /// </summary>
+    private void TrayMenuOpen_Click(object sender, RoutedEventArgs e)
+    {
+        ShowMainWindow();
     }
 
     /// <summary>
@@ -171,13 +234,28 @@ public partial class MainWindow : FluentWindow
     /// </summary>
     private async void TrayStopActivity_Click(object sender, RoutedEventArgs e)
     {
+        await StopActiveRecordAsync();
+    }
+
+    /// <summary>
+    /// Stops the active record and refreshes tray-related UI state.
+    /// </summary>
+    public async Task StopActiveRecordAsync()
+    {
         using var scope = _serviceProvider.CreateScope();
         var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
         var activeRecord = await timeRecordRepository.GetActiveAsync();
-        if (activeRecord == null) return;
+        if (activeRecord == null)
+        {
+            await UpdateTrayTooltipAsync();
+            return;
+        }
 
         activeRecord.EndTime = TimeOnly.FromDateTime(DateTime.Now);
         await timeRecordRepository.UpdateAsync(activeRecord);
+
+        var notificationService = _serviceProvider.GetRequiredService<INotificationService>();
+        notificationService.ResetTimer();
 
         await UpdateTrayTooltipAsync();
 
@@ -185,7 +263,9 @@ public partial class MainWindow : FluentWindow
         {
             var viewModel = _todayPage.DataContext as TodayViewModel;
             if (viewModel != null)
+            {
                 await viewModel.LoadDataAsync();
+            }
         }
     }
 

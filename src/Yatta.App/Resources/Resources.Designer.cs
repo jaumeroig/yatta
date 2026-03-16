@@ -2642,5 +2642,131 @@ namespace Yatta.App.Resources {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Estado de la jornada.
+        /// </summary>
+        internal static string TrayPanel_Title {
+            get {
+                return ResourceManager.GetString("TrayPanel_Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Hoy.
+        /// </summary>
+        internal static string TrayPanel_TodayLabel {
+            get {
+                return ResourceManager.GetString("TrayPanel_TodayLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo trabajado.
+        /// </summary>
+        internal static string TrayPanel_WorkedLabel {
+            get {
+                return ResourceManager.GetString("TrayPanel_WorkedLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Inicio.
+        /// </summary>
+        internal static string TrayPanel_StartLabel {
+            get {
+                return ResourceManager.GetString("TrayPanel_StartLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Estado.
+        /// </summary>
+        internal static string TrayPanel_StatusLabel {
+            get {
+                return ResourceManager.GetString("TrayPanel_StatusLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to En curso.
+        /// </summary>
+        internal static string TrayPanel_StatusActive {
+            get {
+                return ResourceManager.GetString("TrayPanel_StatusActive", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pausado.
+        /// </summary>
+        internal static string TrayPanel_StatusPaused {
+            get {
+                return ResourceManager.GetString("TrayPanel_StatusPaused", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to No iniciado.
+        /// </summary>
+        internal static string TrayPanel_StatusNotStarted {
+            get {
+                return ResourceManager.GetString("TrayPanel_StatusNotStarted", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Actividad actual.
+        /// </summary>
+        internal static string TrayPanel_CurrentActivityLabel {
+            get {
+                return ResourceManager.GetString("TrayPanel_CurrentActivityLabel", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to No hay ninguna actividad en curso.
+        /// </summary>
+        internal static string TrayPanel_NoActiveActivity {
+            get {
+                return ResourceManager.GetString("TrayPanel_NoActiveActivity", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Iniciar actividad.
+        /// </summary>
+        internal static string TrayPanel_ButtonStart {
+            get {
+                return ResourceManager.GetString("TrayPanel_ButtonStart", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar actividad.
+        /// </summary>
+        internal static string TrayPanel_ButtonChange {
+            get {
+                return ResourceManager.GetString("TrayPanel_ButtonChange", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Detener actividad.
+        /// </summary>
+        internal static string TrayPanel_ButtonStop {
+            get {
+                return ResourceManager.GetString("TrayPanel_ButtonStop", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Abrir aplicación.
+        /// </summary>
+        internal static string TrayPanel_ButtonOpenApp {
+            get {
+                return ResourceManager.GetString("TrayPanel_ButtonOpenApp", resourceCulture);
+            }
+        }
     }
 }

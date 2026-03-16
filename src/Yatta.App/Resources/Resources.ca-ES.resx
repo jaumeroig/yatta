@@ -978,4 +978,46 @@
   <data name="Tray_TooltipActive" xml:space="preserve">
     <value>{0} - {1} ({2})</value>
   </data>
+  <data name="TrayPanel_Title" xml:space="preserve">
+    <value>Estat de la jornada</value>
+  </data>
+  <data name="TrayPanel_TodayLabel" xml:space="preserve">
+    <value>Avui</value>
+  </data>
+  <data name="TrayPanel_WorkedLabel" xml:space="preserve">
+    <value>Temps treballat</value>
+  </data>
+  <data name="TrayPanel_StartLabel" xml:space="preserve">
+    <value>Inici</value>
+  </data>
+  <data name="TrayPanel_StatusLabel" xml:space="preserve">
+    <value>Estat</value>
+  </data>
+  <data name="TrayPanel_StatusActive" xml:space="preserve">
+    <value>En curs</value>
+  </data>
+  <data name="TrayPanel_StatusPaused" xml:space="preserve">
+    <value>Pausat</value>
+  </data>
+  <data name="TrayPanel_StatusNotStarted" xml:space="preserve">
+    <value>No iniciat</value>
+  </data>
+  <data name="TrayPanel_CurrentActivityLabel" xml:space="preserve">
+    <value>Activitat actual</value>
+  </data>
+  <data name="TrayPanel_NoActiveActivity" xml:space="preserve">
+    <value>No hi ha cap activitat en curs</value>
+  </data>
+  <data name="TrayPanel_ButtonStart" xml:space="preserve">
+    <value>Iniciar activitat</value>
+  </data>
+  <data name="TrayPanel_ButtonChange" xml:space="preserve">
+    <value>Canviar activitat</value>
+  </data>
+  <data name="TrayPanel_ButtonStop" xml:space="preserve">
+    <value>Aturar activitat</value>
+  </data>
+  <data name="TrayPanel_ButtonOpenApp" xml:space="preserve">
+    <value>Obrir aplicació</value>
+  </data>
 </root>
