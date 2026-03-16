@@ -10,7 +10,6 @@
     ShowInTaskbar="False"
     Topmost="True"
     WindowCornerPreference="Round"
-    WindowBackdropType="Mica"
     WindowStyle="None"
     Deactivated="Window_Deactivated"
     Loaded="Window_Loaded">
