@@ -108,7 +108,7 @@
 
         <tray:NotifyIcon
             x:Name="TrayNotifyIcon"
-            FocusOnLeftClick="True"
+            FocusOnLeftClick="False"
             MenuOnRightClick="True"
             LeftClick="TrayOpen_Click"
             TooltipText="{local:Localize App_Title}"
