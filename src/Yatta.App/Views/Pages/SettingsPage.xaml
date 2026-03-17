@@ -106,6 +106,25 @@
                                      Command="{Binding ToggleStartWithWindowsCommand}" />
                 </ui:CardControl>
 
+                <!-- Start timer on startup -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Play24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_StartTimerOnStartup}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_StartTimerOnStartup}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch IsChecked="{Binding StartTimerOnStartupEnabled, Mode=TwoWay}"
+                                     Command="{Binding ToggleStartTimerOnStartupCommand}" />
+                </ui:CardControl>
+
                 <!-- Global keyboard shortcut -->
                 <ui:CardControl Margin="0,0,0,4">
                     <ui:CardControl.Icon>

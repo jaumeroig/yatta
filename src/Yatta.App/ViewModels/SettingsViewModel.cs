@@ -196,6 +196,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private bool _startWithWindowsEnabled;
 
     /// <summary>
+    /// Indicates if the timer should start automatically on application startup.
+    /// </summary>
+    [ObservableProperty]
+    private bool _startTimerOnStartupEnabled;
+
+    /// <summary>
     /// Selected retention policy.
     /// </summary>
     [ObservableProperty]
@@ -324,6 +330,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ToggleStartWithWindowsAsync()
     {
         await SaveStartWithWindowsAsync(StartWithWindowsEnabled);
+    }
+
+    /// <summary>
+    /// Enables or disables automatic timer start on application startup.
+    /// </summary>
+    [RelayCommand]
+    private async Task ToggleStartTimerOnStartupAsync()
+    {
+        await SaveStartTimerOnStartupAsync(StartTimerOnStartupEnabled);
     }
 
     /// <summary>
@@ -502,6 +517,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         // Update start with Windows
         StartWithWindowsEnabled = _currentSettings.StartWithWindows;
 
+        // Update start timer on startup
+        StartTimerOnStartupEnabled = _currentSettings.StartTimerOnStartup;
+
         // Update workday time
         WorkdayHours = _currentSettings.WorkdayTotalTime.Hours;
         WorkdayMinutes = _currentSettings.WorkdayTotalTime.Minutes;
@@ -604,6 +622,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             _startupService.DisableStartup();
         }
+    }
+
+    /// <summary>
+    /// Saves the automatic timer start configuration.
+    /// </summary>
+    private async Task SaveStartTimerOnStartupAsync(bool enabled)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.StartTimerOnStartup = enabled;
+        await _settingsRepository.UpdateAsync(_currentSettings);
     }
 
     /// <summary>

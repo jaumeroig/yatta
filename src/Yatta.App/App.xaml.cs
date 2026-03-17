@@ -94,6 +94,9 @@ public partial class App : Application
         // Execute automatic purge if enabled
         ExecuteAutoPurge();
 
+        // Start the timer automatically with the previous day's last activity if configured
+        StartTimerOnStartup();
+
         mainWindow.Show();
 
         // Show stale activity notification after the window is visible
@@ -241,6 +244,24 @@ public partial class App : Application
     }
 
     /// <summary>
+    /// Starts the timer automatically on application startup when enabled in settings.
+    /// </summary>
+    private void StartTimerOnStartup()
+    {
+        using var scope = _serviceProvider!.CreateScope();
+        var autoStartActivityService = scope.ServiceProvider.GetRequiredService<IAutoStartActivityService>();
+
+        try
+        {
+            autoStartActivityService.TryStartPreviousDayActivityAsync().GetAwaiter().GetResult();
+        }
+        catch
+        {
+            // If there's an error during auto-start, continue startup normally
+        }
+    }
+
+    /// <summary>
     /// Inicialitza la localització carregant l'idioma guardat de la base de dades.
     /// S'ha de cridar ABANS de crear qualsevol finestra o pàgina.
     /// </summary>
@@ -312,6 +333,7 @@ public partial class App : Application
         services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IDataPurgeService, DataPurgeService>();
         services.AddScoped<IStaleActivityService, StaleActivityService>();
+        services.AddScoped<IAutoStartActivityService, AutoStartActivityService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<IDialogService, DialogService>();
@@ -398,4 +420,3 @@ public partial class App : Application
         notificationService?.Dispose();
     }
 }
-

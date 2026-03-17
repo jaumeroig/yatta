@@ -579,6 +579,12 @@
   <data name="Description_StartWithWindows" xml:space="preserve">
     <value>Obrir automàticament l'aplicació en iniciar la sessió</value>
   </data>
+  <data name="Label_StartTimerOnStartup" xml:space="preserve">
+    <value>Iniciar temporitzador en obrir l'aplicació</value>
+  </data>
+  <data name="Description_StartTimerOnStartup" xml:space="preserve">
+    <value>Inicia automàticament la mateixa activitat del dia anterior en obrir l'aplicació, només si avui encara no hi ha registres</value>
+  </data>
   <data name="Settings_Section_AppearanceBehavior" xml:space="preserve">
     <value>Aparença i comportament</value>
   </data>
