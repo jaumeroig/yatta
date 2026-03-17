@@ -20,7 +20,7 @@ namespace Yatta.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
 
-            modelBuilder.Entity("TimeTracker.Core.Models.Activity", b =>
+            modelBuilder.Entity("Yatta.Core.Models.Activity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,7 +47,7 @@ namespace Yatta.Data.Migrations
                     b.ToTable("Activities", (string)null);
                 });
 
-            modelBuilder.Entity("TimeTracker.Core.Models.AppSettings", b =>
+            modelBuilder.Entity("Yatta.Core.Models.AppSettings", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
@@ -107,7 +107,7 @@ namespace Yatta.Data.Migrations
                     b.ToTable("AppSettings", (string)null);
                 });
 
-            modelBuilder.Entity("TimeTracker.Core.Models.TimeRecord", b =>
+            modelBuilder.Entity("Yatta.Core.Models.TimeRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -141,7 +141,7 @@ namespace Yatta.Data.Migrations
                     b.ToTable("TimeRecords", (string)null);
                 });
 
-            modelBuilder.Entity("TimeTracker.Core.Models.Workday", b =>
+            modelBuilder.Entity("Yatta.Core.Models.Workday", b =>
                 {
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
