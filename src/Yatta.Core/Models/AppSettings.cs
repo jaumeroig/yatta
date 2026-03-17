@@ -49,6 +49,12 @@ public class AppSettings
     public bool StartWithWindows { get; set; } = false;
 
     /// <summary>
+    /// Indicates if the timer should start automatically on application startup
+    /// using the last activity from the previous day.
+    /// </summary>
+    public bool StartTimerOnStartup { get; set; } = false;
+
+    /// <summary>
     /// Data retention policy.
     /// </summary>
     public RetentionPolicy RetentionPolicy { get; set; } = RetentionPolicy.Forever;

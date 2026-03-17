@@ -41,6 +41,10 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
         builder.Property(s => s.GlobalHotkey)
             .IsRequired(false);
 
+        builder.Property(s => s.StartTimerOnStartup)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.Property(s => s.HistoricSortAscending)
             .IsRequired()
             .HasDefaultValue(false);

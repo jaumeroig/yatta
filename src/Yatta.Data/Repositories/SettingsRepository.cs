@@ -27,7 +27,8 @@ public class SettingsRepository : ISettingsRepository
                 Id = 1,
                 Theme = Theme.System,
                 Notifications = false,
-                WorkdayTotalTime = TimeSpan.FromHours(8)
+                WorkdayTotalTime = TimeSpan.FromHours(8),
+                StartTimerOnStartup = false
             };
             
             dbContext.AppSettings.Add(settings);
@@ -53,6 +54,7 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.MinimizeToTray = settings.MinimizeToTray;
             existingSettings.NotificationIntervalMinutes = settings.NotificationIntervalMinutes;
             existingSettings.StartWithWindows = settings.StartWithWindows;
+            existingSettings.StartTimerOnStartup = settings.StartTimerOnStartup;
             existingSettings.RetentionPolicy = settings.RetentionPolicy;
             existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
             existingSettings.GlobalHotkey = settings.GlobalHotkey;
