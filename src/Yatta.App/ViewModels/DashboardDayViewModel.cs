@@ -259,8 +259,8 @@ public partial class DashboardDayViewModel : ObservableObject
         // Telework donut
         TeleworkSeries = DashboardDisplayHelper.BuildTeleworkDonutSeries(
             report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours,
-            _localizationService.GetString("Label_OfficeBar"),
-            _localizationService.GetString("Label_TeleworkBar"),
+            _localizationService.GetString(nameof(Resources.Resources.Location_Office)),
+            _localizationService.GetString(nameof(Resources.Resources.Location_Telework)),
             OfficeTimeDisplay, TeleworkTimeDisplay);
 
         // Activity breakdown

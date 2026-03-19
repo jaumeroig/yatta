@@ -270,12 +270,6 @@
   <data name="Label_WorkLocation" xml:space="preserve">
     <value>Lugar de trabajo</value>
   </data>
-  <data name="RadioButton_Office" xml:space="preserve">
-    <value>Oficina</value>
-  </data>
-  <data name="RadioButton_Telework" xml:space="preserve">
-    <value>Casa (teletrabajo)</value>
-  </data>
   <data name="Button_AddSlot" xml:space="preserve">
     <value>Añadir franja</value>
   </data>
@@ -288,29 +282,11 @@
   <data name="Label_TotalWorked" xml:space="preserve">
     <value>Total trabajado</value>
   </data>
-  <data name="Label_TeleworkPercentage" xml:space="preserve">
-    <value>% Teletrabajo</value>
-  </data>
   <data name="Label_SelectedDay" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="Stat_Total" xml:space="preserve">
     <value>Total</value>
-  </data>
-  <data name="Stat_Office" xml:space="preserve">
-    <value>Oficina</value>
-  </data>
-  <data name="Stat_Telework" xml:space="preserve">
-    <value>Teletrabajo</value>
-  </data>
-  <data name="Stat_TeleworkPercentage" xml:space="preserve">
-    <value>% Teletrabajo</value>
-  </data>
-  <data name="Label_OfficeBar" xml:space="preserve">
-    <value>Oficina</value>
-  </data>
-  <data name="Label_TeleworkBar" xml:space="preserve">
-    <value>Teletrabajo</value>
   </data>
   <data name="Section_TimeSlots" xml:space="preserve">
     <value>Franjas horarias</value>
@@ -409,7 +385,7 @@
     <value>{0}h {1}m</value>
   </data>
   <data name="Location_Telework" xml:space="preserve">
-    <value>Casa (teletrabajo)</value>
+    <value>Teletrabajo</value>
   </data>
   <data name="Location_Office" xml:space="preserve">
     <value>Oficina</value>

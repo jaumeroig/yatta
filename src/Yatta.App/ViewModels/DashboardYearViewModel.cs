@@ -111,8 +111,8 @@ public partial class DashboardYearViewModel : ObservableObject
         // Telework donut
         TeleworkSeries = DashboardDisplayHelper.BuildTeleworkDonutSeries(
             report.OfficeTime.TotalHours, report.TeleworkTime.TotalHours,
-            _localizationService.GetString("Label_OfficeBar"),
-            _localizationService.GetString("Label_TeleworkBar"),
+            _localizationService.GetString(nameof(Resources.Resources.Location_Office)),
+            _localizationService.GetString(nameof(Resources.Resources.Location_Telework)),
             OfficeTimeDisplay, TeleworkTimeDisplay);
 
         // Day type counts
@@ -155,7 +155,7 @@ public partial class DashboardYearViewModel : ObservableObject
         [
             new StackedColumnSeries<double>
             {
-                Name = _localizationService.GetString("Label_OfficeBar"),
+                Name = _localizationService.GetString(nameof(Resources.Resources.Location_Office)),
                 Values = officeByMonth,
                 Fill = new SolidColorPaint(SKColor.Parse("#4CAF50")),
                 MaxBarWidth = 24,
@@ -164,7 +164,7 @@ public partial class DashboardYearViewModel : ObservableObject
             },
             new StackedColumnSeries<double>
             {
-                Name = _localizationService.GetString("Label_TeleworkBar"),
+                Name = _localizationService.GetString(nameof(Resources.Resources.Location_Telework)),
                 Values = teleworkByMonth,
                 Fill = new SolidColorPaint(SKColor.Parse("#2196F3")),
                 MaxBarWidth = 24,

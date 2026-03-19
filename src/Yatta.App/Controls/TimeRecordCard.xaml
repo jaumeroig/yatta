@@ -9,6 +9,14 @@
              d:DesignHeight="96"
              d:DesignWidth="760"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <Storyboard x:Key="ActiveRecordRotationStoryboard" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                             From="0"
+                             To="360"
+                             Duration="0:0:4" />
+        </Storyboard>
+    </UserControl.Resources>
     <Border x:Name="ActiveBorder"
             BorderThickness="1"
             CornerRadius="4"
@@ -88,10 +96,38 @@
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,18,0">
-                        <TextBlock Text="{Binding Duration, ElementName=Root}"
-                                   FontWeight="SemiBold"
-                                   FontSize="14"
-                                   HorizontalAlignment="Right" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <ui:SymbolIcon Symbol="ArrowClockwise16"
+                                           FontSize="16"
+                                           Margin="0,0,6,0"
+                                           Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                                           RenderTransformOrigin="0.5,0.5">
+                                <ui:SymbolIcon.RenderTransform>
+                                    <RotateTransform />
+                                </ui:SymbolIcon.RenderTransform>
+                                <ui:SymbolIcon.Style>
+                                    <Style TargetType="ui:SymbolIcon">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsActive, ElementName=Root}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard x:Name="ActiveRecordRotationBeginStoryboard" Storyboard="{StaticResource ActiveRecordRotationStoryboard}" />
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <StopStoryboard BeginStoryboardName="ActiveRecordRotationBeginStoryboard" />
+                                                </DataTrigger.ExitActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:SymbolIcon.Style>
+                            </ui:SymbolIcon>
+
+                            <TextBlock Text="{Binding Duration, ElementName=Root}"
+                                       FontWeight="SemiBold"
+                                       FontSize="14"
+                                       HorizontalAlignment="Right" />
+                        </StackPanel>
                         <TextBlock FontSize="12"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                    HorizontalAlignment="Right">
