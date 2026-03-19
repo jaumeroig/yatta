@@ -38,11 +38,11 @@
                    FontWeight="SemiBold"
                    Margin="0,0,0,8" />
         <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-            <RadioButton Content="{local:Localize RadioButton_Office}"
+            <RadioButton Content="{local:Localize Location_Office}"
                          IsChecked="{Binding ChangeActivityModel.IsOffice}"
                          GroupName="ChangeActivityLocation"
                          Margin="0,0,16,0" />
-            <RadioButton Content="{local:Localize RadioButton_Telework}"
+            <RadioButton Content="{local:Localize Location_Telework}"
                          IsChecked="{Binding ChangeActivityModel.Telework}"
                          GroupName="ChangeActivityLocation" />
         </StackPanel>

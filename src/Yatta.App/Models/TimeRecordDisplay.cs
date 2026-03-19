@@ -8,19 +8,35 @@ using CommunityToolkit.Mvvm.ComponentModel;
 /// </summary>
 public partial class TimeRecordDisplay : ObservableObject
 {
+    public const string ActiveEndTimePlaceholder = "--:--";
+
     public Guid Id { get; set; }
     public string ActivityName { get; set; } = string.Empty;
     public string ActivityColor { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
     public string StartTime { get; set; } = string.Empty;
-    public string EndTime { get; set; } = string.Empty;
+
+    private string _endTime = ActiveEndTimePlaceholder;
 
     [ObservableProperty]
     private string _duration = string.Empty;
 
     public DateOnly Date { get; set; }
-    public bool IsActive { get; set; }
     public bool Telework { get; set; }
+
+    public string EndTime
+    {
+        get => _endTime;
+        set
+        {
+            if (SetProperty(ref _endTime, value))
+            {
+                OnPropertyChanged(nameof(IsActive));
+            }
+        }
+    }
+
+    public bool IsActive => EndTime == ActiveEndTimePlaceholder;
 
     /// <summary>
     /// Returns the color as a SolidColorBrush to facilitate binding.

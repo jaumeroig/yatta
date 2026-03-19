@@ -270,12 +270,6 @@
   <data name="Label_WorkLocation" xml:space="preserve">
     <value>Lloc de treball</value>
   </data>
-  <data name="RadioButton_Office" xml:space="preserve">
-    <value>Oficina</value>
-  </data>
-  <data name="RadioButton_Telework" xml:space="preserve">
-    <value>Casa (teletreball)</value>
-  </data>
   <data name="Button_AddSlot" xml:space="preserve">
     <value>Afegir franja</value>
   </data>
@@ -288,29 +282,11 @@
   <data name="Label_TotalWorked" xml:space="preserve">
     <value>Total treballat</value>
   </data>
-  <data name="Label_TeleworkPercentage" xml:space="preserve">
-    <value>% Teletreball</value>
-  </data>
   <data name="Label_SelectedDay" xml:space="preserve">
     <value>{0}</value>
   </data>
   <data name="Stat_Total" xml:space="preserve">
     <value>Total</value>
-  </data>
-  <data name="Stat_Office" xml:space="preserve">
-    <value>Oficina</value>
-  </data>
-  <data name="Stat_Telework" xml:space="preserve">
-    <value>Teletreball</value>
-  </data>
-  <data name="Stat_TeleworkPercentage" xml:space="preserve">
-    <value>% Teletreball</value>
-  </data>
-  <data name="Label_OfficeBar" xml:space="preserve">
-    <value>Oficina</value>
-  </data>
-  <data name="Label_TeleworkBar" xml:space="preserve">
-    <value>Teletreball</value>
   </data>
   <data name="Section_TimeSlots" xml:space="preserve">
     <value>Franges horàries</value>
@@ -409,7 +385,7 @@
     <value>{0}h {1}m</value>
   </data>
   <data name="Location_Telework" xml:space="preserve">
-    <value>Casa (teletreball)</value>
+    <value>Teletreball</value>
   </data>
   <data name="Location_Office" xml:space="preserve">
     <value>Oficina</value>
@@ -567,6 +543,12 @@
   <data name="Tray_StopActivity" xml:space="preserve">
     <value>Aturar activitat</value>
   </data>
+  <data name="Tray_NoActivity" xml:space="preserve">
+    <value>Cap activitat en curs</value>
+  </data>
+  <data name="Tray_TooltipActive" xml:space="preserve">
+    <value>{0} - {1} ({2})</value>
+  </data>
   <data name="Label_MinimizeToTray" xml:space="preserve">
     <value>Minimitzar a la safata del sistema</value>
   </data>
@@ -617,9 +599,6 @@
   </data>
   <data name="Notification_UnknownActivity" xml:space="preserve">
     <value>Activitat desconeguda</value>
-  </data>
-  <data name="TitleBar_Title" xml:space="preserve">
-    <value>TimeTracker</value>
   </data>
   <data name="Settings_Section_User_Config" xml:space="preserve">
     <value>User settings</value>
@@ -894,6 +873,9 @@
   <data name="Key_Down" xml:space="preserve">
     <value>Avall</value>
   </data>
+  <data name="TitleBar_Title" xml:space="preserve">
+    <value>TimeTracker</value>
+  </data>
   <data name="Dialog_CloseApp_Title" xml:space="preserve">
     <value>Activitat en curs</value>
   </data>
@@ -977,12 +959,6 @@
   </data>
   <data name="StaleActivity_AutoClosed" xml:space="preserve">
     <value>S'ha finalitzat automàticament una activitat que havia quedat en curs el dia {0:d}. Hora de finalització: {1:t}.</value>
-  </data>
-  <data name="Tray_NoActivity" xml:space="preserve">
-    <value>Cap activitat en curs</value>
-  </data>
-  <data name="Tray_TooltipActive" xml:space="preserve">
-    <value>{0} - {1} ({2})</value>
   </data>
   <data name="TrayPanel_Title" xml:space="preserve">
     <value>Estat de la jornada</value>

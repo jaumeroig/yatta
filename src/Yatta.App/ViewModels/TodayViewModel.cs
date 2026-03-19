@@ -190,7 +190,7 @@ public partial class TodayViewModel : ObservableObject
 
         if (activeRecord != null)
         {
-            ActiveRecord = CreateRecordDisplay(activeRecord, true);
+            ActiveRecord = CreateRecordDisplay(activeRecord);
             UpdateElapsedTime();
         }
         else
@@ -200,15 +200,15 @@ public partial class TodayViewModel : ObservableObject
         }
 
         CompletedRecords = new ObservableCollection<TimeRecordDisplay>(
-            completedRecords.Select(r => CreateRecordDisplay(r, false)));
+            completedRecords.Select(CreateRecordDisplay));
 
         // Combine active and completed records into AllRecords collection
         var allRecordsList = new List<TimeRecordDisplay>();
         if (activeRecord != null)
         {
-            allRecordsList.Add(CreateRecordDisplay(activeRecord, true));
+            allRecordsList.Add(CreateRecordDisplay(activeRecord));
         }
-        allRecordsList.AddRange(completedRecords.Select(r => CreateRecordDisplay(r, false)));
+        allRecordsList.AddRange(completedRecords.Select(CreateRecordDisplay));
         AllRecords = new ObservableCollection<TimeRecordDisplay>(allRecordsList);
 
         UpdateTimelineSegments(records);
@@ -217,7 +217,7 @@ public partial class TodayViewModel : ObservableObject
         UpdateWorkdayStartTime(records);
     }
 
-    private TimeRecordDisplay CreateRecordDisplay(TimeRecord record, bool isActive)
+    private TimeRecordDisplay CreateRecordDisplay(TimeRecord record)
     {
         var activity = _allActivities.FirstOrDefault(a => a.Id == record.ActivityId);
         var duration = record.EndTime.HasValue
@@ -231,10 +231,9 @@ public partial class TodayViewModel : ObservableObject
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
-            EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
+            EndTime = record.EndTime?.ToString("HH:mm") ?? TimeRecordDisplay.ActiveEndTimePlaceholder,
             Duration = DurationFormatHelper.FormatDuration(duration),
             Date = record.Date,
-            IsActive = isActive,
             Telework = record.Telework
         };
     }

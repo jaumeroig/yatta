@@ -219,7 +219,7 @@ public partial class HistoricViewModel : ObservableObject
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
-            EndTime = record.EndTime?.ToString("HH:mm") ?? "--:--",
+            EndTime = record.EndTime?.ToString("HH:mm") ?? TimeRecordDisplay.ActiveEndTimePlaceholder,
             Duration = FormatDuration(duration),
             Date = record.Date,
             Telework = record.Telework
