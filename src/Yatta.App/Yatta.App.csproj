@@ -48,6 +48,7 @@
     <EmbeddedResource Update="Resources\Resources.ca-ES.resx">
       <DependentUpon>Resources.resx</DependentUpon>
     </EmbeddedResource>
+
   </ItemGroup>
 
   <ItemGroup>
@@ -63,6 +64,10 @@
     <Resource Include="Resources\Logo.png" />
     <Resource Include="Resources\Logo.ico" />
     <EmbeddedResource Include="Resources\changelog.md" />
+    <EmbeddedResource Include="Resources\changelog-ca.md">
+      <WithCulture>false</WithCulture>
+      <LogicalName>Yatta.App.Resources.changelog.ca.md</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
