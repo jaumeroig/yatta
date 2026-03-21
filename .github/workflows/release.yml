@@ -51,6 +51,14 @@ jobs:
       - name: Install Velopack CLI (vpk)
         run: dotnet tool install -g vpk
 
+      - name: Download existing Velopack releases feed
+        shell: pwsh
+        run: >
+          vpk download github
+          --repoUrl https://github.com/${{ github.repository }}
+          --token ${{ secrets.GITHUB_TOKEN }}
+          --outputDir Releases
+
       - name: Pack with Velopack
         shell: pwsh
         run: >
