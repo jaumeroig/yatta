@@ -49,7 +49,7 @@ jobs:
           -o publish
 
       - name: Install Velopack CLI (vpk)
-        run: dotnet tool install -g vpk
+        run: dotnet tool install -g vpk --version 0.0.1298
 
       - name: Pack with Velopack
         shell: pwsh
