@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Yatta.App.Services;
 using Yatta.App.ViewModels;
 using Yatta.App.Views.Pages;
+using Yatta.App.Services;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Services;
 using Yatta.Data;
@@ -80,7 +81,11 @@ public partial class App : Application
         // Load and apply theme after creating the main window
         // This ensures that the system theme is detected correctly
         var themeService = _serviceProvider.GetRequiredService<ThemeService>();
-        mainWindow.Loaded += async (_, _) => await themeService.LoadThemeAsync();
+        mainWindow.Loaded += async (_, _) =>
+        {
+            await themeService.LoadThemeAsync();
+            await CheckForUpdatesAsync();
+        };
 
         // Initialize global hotkey service AFTER window handle is created
         mainWindow.SourceInitialized += (_, _) => InitializeGlobalHotkey(mainWindow);
@@ -262,6 +267,42 @@ public partial class App : Application
     }
 
     /// <summary>
+    /// Checks for application updates in the background.
+    /// Shows a dialog if a new version is available.
+    /// </summary>
+    private async Task CheckForUpdatesAsync()
+    {
+        try
+        {
+            var updateService = _serviceProvider!.GetRequiredService<IUpdateService>();
+            if (!updateService.IsInstalled)
+                return;
+
+            var hasUpdate = await updateService.IsUpdateAvailableAsync();
+            if (!hasUpdate)
+                return;
+
+            var messageBox = new Wpf.Ui.Controls.MessageBox
+            {
+                Title = Yatta.App.Resources.Resources.TitleBar_Title,
+                Content = Yatta.App.Resources.Resources.Update_Available,
+                PrimaryButtonText = Yatta.App.Resources.Resources.Update_InstallAndRestart,
+                SecondaryButtonText = Yatta.App.Resources.Resources.Update_Later,
+            };
+
+            var result = await messageBox.ShowDialogAsync();
+            if (result == Wpf.Ui.Controls.MessageBoxResult.Primary)
+            {
+                await updateService.ApplyUpdateAndRestartAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Update check failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// Inicialitza la localització carregant l'idioma guardat de la base de dades.
     /// S'ha de cridar ABANS de crear qualsevol finestra o pàgina.
     /// </summary>
@@ -344,6 +385,7 @@ public partial class App : Application
         services.AddSingleton<IStartupService, StartupService>();
         services.AddSingleton<IPageStateService, PageStateService>();
         services.AddSingleton<IGlobalHotkeyService, GlobalHotkeyService>();
+        services.AddSingleton<IUpdateService, UpdateService>();
 
         // Register ViewModels
         services.AddSingleton<MainWindowViewModel>();
