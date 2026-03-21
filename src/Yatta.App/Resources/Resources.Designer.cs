@@ -2714,5 +2714,32 @@ namespace Yatta.App.Resources {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Hay una nueva versión de Yatta disponible. ¿Deseas instalarla ahora?.
+        /// </summary>
+        internal static string Update_Available {
+            get {
+                return ResourceManager.GetString("Update_Available", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Instalar y reiniciar.
+        /// </summary>
+        internal static string Update_InstallAndRestart {
+            get {
+                return ResourceManager.GetString("Update_InstallAndRestart", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Más tarde.
+        /// </summary>
+        internal static string Update_Later {
+            get {
+                return ResourceManager.GetString("Update_Later", resourceCulture);
+            }
+        }
     }
 }
