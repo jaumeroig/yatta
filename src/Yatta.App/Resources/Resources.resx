@@ -1002,4 +1002,13 @@
   <data name="TrayPanel_ButtonOpenApp" xml:space="preserve">
     <value>Abrir aplicación</value>
   </data>
+  <data name="Update_Available" xml:space="preserve">
+    <value>Hay una nueva versión de Yatta disponible. ¿Deseas instalarla ahora?</value>
+  </data>
+  <data name="Update_InstallAndRestart" xml:space="preserve">
+    <value>Instalar y reiniciar</value>
+  </data>
+  <data name="Update_Later" xml:space="preserve">
+    <value>Más tarde</value>
+  </data>
 </root>

@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag.TrimStart('v')
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "tag=$tag" >> $env:GITHUB_OUTPUT
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/Yatta.slnx
+
+      - name: Run tests
+        run: dotnet build src/Yatta.slnx -c Release -p:Version=${{ steps.version.outputs.version }} --no-restore && dotnet test src/Yatta.slnx -c Release --no-build --verbosity normal
+
+      - name: Publish
+        run: >
+          dotnet publish src/Yatta.App/Yatta.App.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:Version=${{ steps.version.outputs.version }}
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Install Velopack CLI (vpk)
+        run: dotnet tool install -g vpk --version 0.0.1298
+
+      - name: Download existing Velopack releases feed
+        shell: pwsh
+        run: >
+          vpk download github
+          --repoUrl https://github.com/${{ github.repository }}
+          --token ${{ secrets.GITHUB_TOKEN }}
+          --outputDir Releases
+
+      - name: Pack with Velopack
+        shell: pwsh
+        run: >
+          vpk pack
+          --packId Yatta
+          --packVersion ${{ steps.version.outputs.version }}
+          --packDir publish
+          --mainExe Yatta.exe
+          --packTitle "Yatta"
+          --icon src/Yatta.App/Resources/Logo.ico
+          --outputDir Releases
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Yatta ${{ steps.version.outputs.tag }}
+          files: Releases/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false
