@@ -15,6 +15,11 @@ internal static class ValidationErrorHelper
     /// <returns>The localized error message.</returns>
     public static string Localize(string errorMessage)
     {
+        if (string.IsNullOrEmpty(errorMessage))
+        {
+            return string.Empty;
+        }
+
         var parts = errorMessage.Split('|');
         var key = parts[0];
         var format = AppResources.ResourceManager.GetString(key) ?? key;

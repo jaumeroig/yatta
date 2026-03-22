@@ -712,7 +712,7 @@ public partial class TodayViewModel : ObservableObject
             if (activeRecord != null)
             {
                 // Validate that the switch time is after the active record's start time
-                if (switchTime <= activeRecord.StartTime)
+                if (!_validationService.ValidateTimeRange(activeRecord.StartTime, switchTime))
                 {
                     ChangeActivityModel.ValidationError = AppResources.Validation_EndTimeAfterStartTime;
                     return;
