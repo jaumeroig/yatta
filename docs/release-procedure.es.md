@@ -1,20 +1,14 @@
 # Procedimiento de publicación de una nueva versión
 
-## Requisitos previos
-
-- Acceso de push al repositorio
-- Git configurado localmente
-
----
-
 ## Pasos
 
 ### 1. Actualizar el changelog
 
-Añade una entrada al principio de `src/Yatta.App/Resources/changelog.md` y `src/Yatta.App/Resources/changelog-ca.md`:
+Añade una entrada al principio de `src/Yatta.App/Resources/changelog.md`, `src/Yatta.App/Resources/changelog-ca.md`, etc.
+La entrada debería tener el siguiente formato:
 
 ```markdown
-## v1.2.0 (2026-XX-XX)
+## v1.2.0 (DD/MM/YYYY)
 
 ### Novedades
 - Descripción de la nueva funcionalidad
@@ -23,7 +17,14 @@ Añade una entrada al principio de `src/Yatta.App/Resources/changelog.md` y `src
 - Descripción del bug corregido
 ```
 
-Haz commit y push de los changelogs a `master`:
+> [!TIP]
+> La versión en `Directory.Build.props` **no afecta al release**: el workflow
+> la extrae del tag (`v1.2.0 → 1.2.0`) y la sobreescribe en tiempo de compilación
+> mediante `-p:Version=`.
+> 
+> Sin embargo, actualizarla es recomendable para que refleje la versión correcta al depurar o ejecutar la app en local con `dotnet run`.
+
+Haz commit y push de los cambios a `master`.
 
 ```bash
 git add src/Yatta.App/Resources/changelog.md \
@@ -41,11 +42,6 @@ git push origin v1.2.0
 
 **Listo.** Esto activa automáticamente el workflow `release.yml` de GitHub Actions.
 
-> La versión en `Directory.Build.props` **no afecta al release**: el workflow
-> la extrae del tag (`v1.2.0 → 1.2.0`) y la sobreescribe en tiempo de compilación
-> mediante `-p:Version=`. Sin embargo, actualizarla es recomendable para que refleje
-> la versión correcta al ejecutar la app en local con `dotnet run`.
-
 ### 3. Verificar el release en GitHub Actions
 
 1. Ve a **GitHub → Actions → Release** y comprueba que el workflow ha finalizado correctamente.
@@ -55,7 +51,7 @@ git push origin v1.2.0
    - `Yatta-1.2.0-full.nupkg` — paquete de actualización completo (Velopack)
    - `RELEASES` — archivo de índice que Velopack consulta para detectar actualizaciones
 
-> [!IMPORTANT]
+> [!WARNING]
 > No elimines ni modifiques nunca los artefactos de un release publicado. Velopack necesita todos los releases anteriores para calcular las actualizaciones incrementales.
 
 ---
@@ -94,7 +90,8 @@ UpdateService.IsUpdateAvailableAsync()
               Descarga + aplica + reinicia
 ```
 
-Las actualizaciones **solo funcionan** si la app se ha instalado con el instalador (`Yatta-Setup.exe`). En entornos de desarrollo (`dotnet run`) el auto-update queda desactivado automáticamente.
+> [!NOTE]
+> Las actualizaciones **solo funcionan** si la app se ha instalado con el instalador (`Yatta-Setup.exe`). En entornos de desarrollo (ejecutando desde Visual Studio o mediante `dotnet run`) el auto-update queda desactivado automáticamente.
 
 ---
 
