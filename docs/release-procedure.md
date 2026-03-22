@@ -41,9 +41,10 @@ git push origin v1.2.0
 
 **Ja està.** Això activa automàticament el workflow `release.yml` de GitHub Actions.
 
-> La versió **no cal tocar-la** a `Directory.Build.props`. El workflow
-> l'extrau directament del nom del tag (`v1.2.0 → 1.2.0`) i la passa
-> a `dotnet publish` i `vpk pack` en temps de compilació.
+> La versió a `Directory.Build.props` **no afecta el release**: el workflow
+> l'extrau del tag (`v1.2.0 → 1.2.0`) i la sobreescriu en temps de compilació
+> via `-p:Version=`. Tanmateix, actualitzar-la és recomanable perquè reflecteixi
+> la versió correcta quan s'executa l'app en local amb `dotnet run`.
 
 ### 3. Verificar el release a GitHub Actions
 
