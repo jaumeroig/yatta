@@ -97,11 +97,12 @@ public class TimeRecordRepository : ITimeRecordRepository
         existing.Telework = timeRecord.Telework;
 
         await dbContext.SaveChangesAsync();
+        dbContext.Entry(existing).State = EntityState.Detached;
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var timeRecord = await GetByIdAsync(id);
+        var timeRecord = await dbContext.TimeRecords.FindAsync(id);
 
         if (timeRecord is null)
             return;
