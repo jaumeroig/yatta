@@ -82,4 +82,12 @@ public class AppSettings
     /// If true, uses ToastScenario.Reminder. If false (default), uses ToastScenario.Default.
     /// </summary>
     public bool KeepNotificationsVisible { get; set; } = false;
+
+    /// <summary>
+    /// Bitmask of the days of the week that are working days by default.
+    /// Uses <see cref="WeeklyWorkingDays"/> flags. Default is Monday through Friday.
+    /// When a date has no explicit <c>Workday</c> configuration, this mask determines
+    /// whether it is treated as a <see cref="DayType.WorkDay"/> or <see cref="DayType.NonWorkingDay"/>.
+    /// </summary>
+    public int DefaultWorkingDaysMask { get; set; } = (int)WeeklyWorkingDays.Weekdays;
 }

@@ -2041,6 +2041,96 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Días laborables por defecto.
+        /// </summary>
+        internal static string Settings_Section_DefaultWorkingDays {
+            get {
+                return ResourceManager.GetString("Settings_Section_DefaultWorkingDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Días laborables semanales.
+        /// </summary>
+        internal static string Label_DefaultWorkingDays {
+            get {
+                return ResourceManager.GetString("Label_DefaultWorkingDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define qué días de la semana son laborables por defecto.
+        /// </summary>
+        internal static string Description_DefaultWorkingDays {
+            get {
+                return ResourceManager.GetString("Description_DefaultWorkingDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lunes.
+        /// </summary>
+        internal static string Label_Day_Monday {
+            get {
+                return ResourceManager.GetString("Label_Day_Monday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Martes.
+        /// </summary>
+        internal static string Label_Day_Tuesday {
+            get {
+                return ResourceManager.GetString("Label_Day_Tuesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miércoles.
+        /// </summary>
+        internal static string Label_Day_Wednesday {
+            get {
+                return ResourceManager.GetString("Label_Day_Wednesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jueves.
+        /// </summary>
+        internal static string Label_Day_Thursday {
+            get {
+                return ResourceManager.GetString("Label_Day_Thursday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Viernes.
+        /// </summary>
+        internal static string Label_Day_Friday {
+            get {
+                return ResourceManager.GetString("Label_Day_Friday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sábado.
+        /// </summary>
+        internal static string Label_Day_Saturday {
+            get {
+                return ResourceManager.GetString("Label_Day_Saturday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Domingo.
+        /// </summary>
+        internal static string Label_Day_Sunday {
+            get {
+                return ResourceManager.GetString("Label_Day_Sunday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configuración de usuario.
         /// </summary>
         internal static string Settings_Section_User_Config {
@@ -2244,6 +2334,15 @@ namespace Yatta.App.Resources {
         internal static string Today_DayType_Vacation {
             get {
                 return ResourceManager.GetString("Today_DayType_Vacation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No laborable.
+        /// </summary>
+        internal static string Today_DayType_NonWorkingDay {
+            get {
+                return ResourceManager.GetString("Today_DayType_NonWorkingDay", resourceCulture);
             }
         }
         

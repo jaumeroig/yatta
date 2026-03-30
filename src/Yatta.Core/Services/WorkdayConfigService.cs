@@ -35,14 +35,26 @@ public class WorkdayConfigService : IWorkdayConfigService
             return workday;
         }
 
-        // Return default configuration based on app settings
+        // Return default configuration based on the weekly working days mask in app settings
         var settings = await _settingsRepository.GetAsync();
+
+        if (IsDefaultWorkingDay(date, settings.DefaultWorkingDaysMask))
+        {
+            return new Workday
+            {
+                Id = Guid.Empty,
+                Date = date,
+                DayType = DayType.WorkDay,
+                TargetDuration = settings.WorkdayTotalTime
+            };
+        }
+
         return new Workday
         {
             Id = Guid.Empty,
             Date = date,
-            DayType = DayType.WorkDay,
-            TargetDuration = settings.WorkdayTotalTime
+            DayType = DayType.NonWorkingDay,
+            TargetDuration = TimeSpan.Zero
         };
     }
 
@@ -135,7 +147,39 @@ public class WorkdayConfigService : IWorkdayConfigService
         DateOnly endDate,
         CancellationToken cancellationToken = default)
     {
-        return await _workdayRepository.GetDayTypeCountsAsync(startDate, endDate);
+        var counts = new Dictionary<DayType, int>();
+
+        for (var date = startDate; date <= endDate; date = date.AddDays(1))
+        {
+            var dayType = await GetDayTypeAsync(date, cancellationToken);
+            counts[dayType] = counts.GetValueOrDefault(dayType) + 1;
+        }
+
+        return counts;
+    }
+
+    /// <summary>
+    /// Returns true when the specified date falls on a day of the week that is marked
+    /// as a working day in the given bitmask.
+    /// </summary>
+    /// <param name="date">The date to evaluate.</param>
+    /// <param name="mask">The <see cref="WeeklyWorkingDays"/> bitmask (stored as int).</param>
+    /// <returns>True if the date's weekday is a working day according to the mask.</returns>
+    private static bool IsDefaultWorkingDay(DateOnly date, int mask)
+    {
+        var flag = date.DayOfWeek switch
+        {
+            DayOfWeek.Monday => WeeklyWorkingDays.Monday,
+            DayOfWeek.Tuesday => WeeklyWorkingDays.Tuesday,
+            DayOfWeek.Wednesday => WeeklyWorkingDays.Wednesday,
+            DayOfWeek.Thursday => WeeklyWorkingDays.Thursday,
+            DayOfWeek.Friday => WeeklyWorkingDays.Friday,
+            DayOfWeek.Saturday => WeeklyWorkingDays.Saturday,
+            DayOfWeek.Sunday => WeeklyWorkingDays.Sunday,
+            _ => WeeklyWorkingDays.None
+        };
+
+        return flag != WeeklyWorkingDays.None && (((WeeklyWorkingDays)mask) & flag) != 0;
     }
 
     /// <inheritdoc/>

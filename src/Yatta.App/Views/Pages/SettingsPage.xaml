@@ -279,6 +279,88 @@
                     </StackPanel>
                 </ui:CardControl>
 
+                <!-- Default Working Days Section -->
+                <TextBlock Text="{local:Localize Settings_Section_DefaultWorkingDays}"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,42,0,12" />
+
+                <!-- Default Working Days -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="CalendarWeekNumbers24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_DefaultWorkingDays}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_DefaultWorkingDays}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Margin="0,0,16,0" HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsMondayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Monday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0" HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsTuesdayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Tuesday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0" HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsWednesdayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Wednesday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0" HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsThursdayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Thursday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0" HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsFridayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Friday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0" HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsSaturdayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Saturday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel HorizontalAlignment="Center">
+                            <ui:ToggleSwitch IsChecked="{Binding IsSundayWorkingDay, Mode=TwoWay}"
+                                             Command="{Binding SaveDefaultWorkingDaysMaskCommand}"
+                                             HorizontalAlignment="Center" />
+                            <TextBlock Text="{local:Localize Label_Day_Sunday}"
+                                       FontSize="11"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
+                </ui:CardControl>
+
                 <!-- Data Retention Section -->
                 <TextBlock Text="{local:Localize Settings_Section_DataRetention}"
                            FontSize="14"
