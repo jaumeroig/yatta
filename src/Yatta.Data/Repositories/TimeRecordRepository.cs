@@ -86,7 +86,7 @@ public class TimeRecordRepository : ITimeRecordRepository
         // identity conflicts when a different instance with the same key
         // is provided (EF Core throws if two instances with same key are tracked).
 
-        var existing = await dbContext.TimeRecords.FindAsync(timeRecord.Id) ??
+        var existing = await GetTrackedByIdAsync(timeRecord.Id) ??
             throw new InvalidOperationException($"TimeRecord with Id '{timeRecord.Id}' not found.");
 
         existing.ActivityId = timeRecord.ActivityId;
@@ -97,11 +97,12 @@ public class TimeRecordRepository : ITimeRecordRepository
         existing.Telework = timeRecord.Telework;
 
         await dbContext.SaveChangesAsync();
+        dbContext.Entry(existing).State = EntityState.Detached;
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var timeRecord = await GetByIdAsync(id);
+        var timeRecord = await GetTrackedByIdAsync(id);
 
         if (timeRecord is null)
             return;
@@ -124,5 +125,10 @@ public class TimeRecordRepository : ITimeRecordRepository
         return await dbContext.TimeRecords
             .Where(tr => tr.Date < date)
             .ExecuteDeleteAsync();
+    }
+
+    private async Task<TimeRecord?> GetTrackedByIdAsync(Guid id)
+    {
+        return await dbContext.TimeRecords.FindAsync(id);
     }
 }
