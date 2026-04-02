@@ -24,6 +24,7 @@ public partial class TodayViewModel : ObservableObject
     private readonly IWorkdayConfigService _workdayConfigService;
     private readonly ITimeCalculatorService _timeCalculatorService;
     private readonly INotificationService _notificationService;
+    private readonly IValidationService _validationService;
     private readonly DispatcherTimer _timer;
     private List<Activity> _allActivities = [];
 
@@ -112,13 +113,15 @@ public partial class TodayViewModel : ObservableObject
         IActivityRepository activityRepository,
         IWorkdayConfigService workdayConfigService,
         ITimeCalculatorService timeCalculatorService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        IValidationService validationService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
         _workdayConfigService = workdayConfigService;
         _timeCalculatorService = timeCalculatorService;
         _notificationService = notificationService;
+        _validationService = validationService;
 
         _timer = new DispatcherTimer
         {
@@ -294,6 +297,14 @@ public partial class TodayViewModel : ObservableObject
             Notes = string.IsNullOrWhiteSpace(EditRecordModel.Notes) ? null : EditRecordModel.Notes,
             Telework = EditRecordModel.Telework
         };
+
+        // Validate overlap with existing records on the same date
+        var existingRecords = await _timeRecordRepository.GetByDateAsync(record.Date);
+        if (!_validationService.ValidateNoOverlap(record, existingRecords, out var overlapError))
+        {
+            EditRecordModel.ValidationError = ValidationErrorHelper.Localize(overlapError);
+            return;
+        }
 
         try
         {
@@ -694,12 +705,35 @@ public partial class TodayViewModel : ObservableObject
 
         var switchDate = DateOnly.FromDateTime(ChangeActivityModel.StartDate);
 
-        // If there's an active record, finalize it with the switch time as EndTime
+        // If there's an active record, validate and finalize it with the switch time as EndTime
         if (ChangeActivityModel.HasActiveRecord)
         {
             var activeRecord = await _timeRecordRepository.GetActiveAsync();
             if (activeRecord != null)
             {
+                // Validate that the switch time is after the active record's start time
+                if (!_validationService.ValidateTimeRange(activeRecord.StartTime, switchTime))
+                {
+                    ChangeActivityModel.ValidationError = AppResources.Validation_EndTimeAfterStartTime;
+                    return;
+                }
+
+                // Validate overlap of the finalized active record against existing records
+                var tempRecord = new TimeRecord
+                {
+                    Id = activeRecord.Id,
+                    Date = activeRecord.Date,
+                    StartTime = activeRecord.StartTime,
+                    EndTime = switchTime
+                };
+
+                var existingRecords = await _timeRecordRepository.GetByDateAsync(activeRecord.Date);
+                if (!_validationService.ValidateNoOverlap(tempRecord, existingRecords, out var overlapError))
+                {
+                    ChangeActivityModel.ValidationError = ValidationErrorHelper.Localize(overlapError);
+                    return;
+                }
+
                 activeRecord.EndTime = switchTime;
                 await _timeRecordRepository.UpdateAsync(activeRecord);
             }

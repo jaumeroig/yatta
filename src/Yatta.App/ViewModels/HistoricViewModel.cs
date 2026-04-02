@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Humanizer;
 using Yatta.App.Controls;
+using Yatta.App.Helpers;
 using Yatta.App.Models;
 using Yatta.App.Services;
 using Yatta.App.Views.Pages;
@@ -26,6 +27,7 @@ public partial class HistoricViewModel : ObservableObject
     private readonly ISettingsRepository _settingsRepository;
     private readonly INotificationService _notificationService;
     private readonly IWorkdayConfigService _workdayConfigService;
+    private readonly IValidationService _validationService;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
 
@@ -74,7 +76,8 @@ public partial class HistoricViewModel : ObservableObject
         INavigationService navigationService,
         ISettingsRepository settingsRepository,
         INotificationService notificationService,
-        IWorkdayConfigService workdayConfigService)
+        IWorkdayConfigService workdayConfigService,
+        IValidationService validationService)
     {
         _timeRecordRepository = timeRecordRepository;
         _activityRepository = activityRepository;
@@ -83,6 +86,7 @@ public partial class HistoricViewModel : ObservableObject
         _settingsRepository = settingsRepository;
         _notificationService = notificationService;
         _workdayConfigService = workdayConfigService;
+        _validationService = validationService;
     }
 
     /// <summary>
@@ -402,6 +406,14 @@ public partial class HistoricViewModel : ObservableObject
             Notes = string.IsNullOrWhiteSpace(EditRecordModel.Notes) ? null : EditRecordModel.Notes,
             Telework = EditRecordModel.Telework
         };
+
+        // Validate overlap with existing records on the same date
+        var existingRecords = await _timeRecordRepository.GetByDateAsync(record.Date);
+        if (!_validationService.ValidateNoOverlap(record, existingRecords, out var overlapError))
+        {
+            EditRecordModel.ValidationError = ValidationErrorHelper.Localize(overlapError);
+            return;
+        }
 
         try
         {
