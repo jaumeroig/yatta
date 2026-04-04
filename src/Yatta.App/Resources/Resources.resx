@@ -343,7 +343,7 @@
     <value>minutos</value>
   </data>
   <data name="Section_WorkdaySettings" xml:space="preserve">
-    <value>Jornada laboral</value>
+    <value>Jornada</value>
   </data>
   <data name="Label_WorkdayDuration" xml:space="preserve">
     <value>Tiempo total de la jornada</value>
@@ -820,7 +820,10 @@
     <value>La política de retención está configurada como "Para siempre". No se ejecutará el purgado.</value>
   </data>
   <data name="Label_GlobalHotkey" xml:space="preserve">
-    <value>Atajo de teclado global</value>
+    <value>Cambio de actividad</value>
+  </data>
+  <data name="Settings_Section_KeyboardShortcuts" xml:space="preserve">
+    <value>Atajos de teclado</value>
   </data>
   <data name="Description_GlobalHotkey" xml:space="preserve">
     <value>Define un atajo de teclado para abrir el diálogo de cambio de actividad desde cualquier aplicación.</value>
