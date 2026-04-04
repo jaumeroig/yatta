@@ -639,6 +639,9 @@
   <data name="Today_DayType_Vacation" xml:space="preserve">
     <value>Vacaciones</value>
   </data>
+  <data name="Today_DayType_NonWorkingDay" xml:space="preserve">
+    <value>No laborable</value>
+  </data>
   <data name="Today_TargetDuration" xml:space="preserve">
     <value>Duración objetivo</value>
   </data>
@@ -719,6 +722,36 @@
   </data>
   <data name="Button_Start" xml:space="preserve">
     <value>Iniciar</value>
+  </data>
+  <data name="Settings_Section_DefaultWorkingDays" xml:space="preserve">
+    <value>Días laborables por defecto</value>
+  </data>
+  <data name="Label_DefaultWorkingDays" xml:space="preserve">
+    <value>Días laborables semanales</value>
+  </data>
+  <data name="Description_DefaultWorkingDays" xml:space="preserve">
+    <value>Define qué días de la semana son laborables por defecto cuando no hay una configuración específica para la fecha.</value>
+  </data>
+  <data name="Label_Day_Monday" xml:space="preserve">
+    <value>Lunes</value>
+  </data>
+  <data name="Label_Day_Tuesday" xml:space="preserve">
+    <value>Martes</value>
+  </data>
+  <data name="Label_Day_Wednesday" xml:space="preserve">
+    <value>Miércoles</value>
+  </data>
+  <data name="Label_Day_Thursday" xml:space="preserve">
+    <value>Jueves</value>
+  </data>
+  <data name="Label_Day_Friday" xml:space="preserve">
+    <value>Viernes</value>
+  </data>
+  <data name="Label_Day_Saturday" xml:space="preserve">
+    <value>Sábado</value>
+  </data>
+  <data name="Label_Day_Sunday" xml:space="preserve">
+    <value>Domingo</value>
   </data>
   <data name="Settings_Section_DataRetention" xml:space="preserve">
     <value>Retención de datos</value>

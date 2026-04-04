@@ -36,5 +36,12 @@ public enum DayType
     /// Vacation day.
     /// </summary>
     [WorkableDay(false)]
-    Vacation = 4
+    Vacation = 4,
+
+    /// <summary>
+    /// Non-working day based on the default weekly schedule (e.g. Saturday/Sunday).
+    /// Does not count as a holiday, vacation, or free-choice day.
+    /// </summary>
+    [WorkableDay(false)]
+    NonWorkingDay = 5
 }

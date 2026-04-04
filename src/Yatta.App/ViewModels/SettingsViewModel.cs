@@ -249,6 +249,48 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private bool _keepNotificationsVisible;
 
+    /// <summary>
+    /// Whether Monday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isMondayWorkingDay;
+
+    /// <summary>
+    /// Whether Tuesday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isTuesdayWorkingDay;
+
+    /// <summary>
+    /// Whether Wednesday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isWednesdayWorkingDay;
+
+    /// <summary>
+    /// Whether Thursday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isThursdayWorkingDay;
+
+    /// <summary>
+    /// Whether Friday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isFridayWorkingDay;
+
+    /// <summary>
+    /// Whether Saturday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isSaturdayWorkingDay;
+
+    /// <summary>
+    /// Whether Sunday is a default working day.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isSundayWorkingDay;
+
     #endregion
 
     #region Property Changed Handlers
@@ -348,6 +390,49 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ToggleKeepNotificationsVisibleAsync()
     {
         await SaveKeepNotificationsVisibleAsync(KeepNotificationsVisible);
+    }
+
+    /// <summary>
+    /// Saves the default working days mask when any day toggle changes.
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveDefaultWorkingDaysMaskAsync()
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.DefaultWorkingDaysMask = (int)BuildWorkingDaysMask();
+        await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Builds the <see cref="WeeklyWorkingDays"/> bitmask from the individual day toggle properties.
+    /// </summary>
+    private WeeklyWorkingDays BuildWorkingDaysMask()
+    {
+        return (IsMondayWorkingDay ? WeeklyWorkingDays.Monday : WeeklyWorkingDays.None)
+            | (IsTuesdayWorkingDay ? WeeklyWorkingDays.Tuesday : WeeklyWorkingDays.None)
+            | (IsWednesdayWorkingDay ? WeeklyWorkingDays.Wednesday : WeeklyWorkingDays.None)
+            | (IsThursdayWorkingDay ? WeeklyWorkingDays.Thursday : WeeklyWorkingDays.None)
+            | (IsFridayWorkingDay ? WeeklyWorkingDays.Friday : WeeklyWorkingDays.None)
+            | (IsSaturdayWorkingDay ? WeeklyWorkingDays.Saturday : WeeklyWorkingDays.None)
+            | (IsSundayWorkingDay ? WeeklyWorkingDays.Sunday : WeeklyWorkingDays.None);
+    }
+
+    /// <summary>
+    /// Decomposes the given <see cref="WeeklyWorkingDays"/> bitmask into the individual day toggle properties.
+    /// </summary>
+    private void ApplyWorkingDaysMask(WeeklyWorkingDays mask)
+    {
+        IsMondayWorkingDay = (mask & WeeklyWorkingDays.Monday) != 0;
+        IsTuesdayWorkingDay = (mask & WeeklyWorkingDays.Tuesday) != 0;
+        IsWednesdayWorkingDay = (mask & WeeklyWorkingDays.Wednesday) != 0;
+        IsThursdayWorkingDay = (mask & WeeklyWorkingDays.Thursday) != 0;
+        IsFridayWorkingDay = (mask & WeeklyWorkingDays.Friday) != 0;
+        IsSaturdayWorkingDay = (mask & WeeklyWorkingDays.Saturday) != 0;
+        IsSundayWorkingDay = (mask & WeeklyWorkingDays.Sunday) != 0;
     }
 
     /// <summary>
@@ -537,6 +622,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Update keep notifications visible
         KeepNotificationsVisible = _currentSettings.KeepNotificationsVisible;
+
+        // Update default working days mask
+        ApplyWorkingDaysMask((WeeklyWorkingDays)_currentSettings.DefaultWorkingDaysMask);
     }
 
     /// <summary>

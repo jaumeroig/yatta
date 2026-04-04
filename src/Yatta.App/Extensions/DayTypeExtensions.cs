@@ -15,6 +15,7 @@ internal static class DayTypeExtensions
                 DayType.Holiday => Resources.Resources.Today_DayType_Holiday,
                 DayType.FreeChoice => Resources.Resources.Today_DayType_FreeChoice,
                 DayType.Vacation => Resources.Resources.Today_DayType_Vacation,
+                DayType.NonWorkingDay => Resources.Resources.Today_DayType_NonWorkingDay,
                 _ => throw new Exception($"No resource found for DayType: {dayType}")
             };
         }

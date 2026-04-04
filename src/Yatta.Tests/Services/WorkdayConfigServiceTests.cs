@@ -72,8 +72,8 @@ public class WorkdayConfigServiceTests
     [Fact]
     public async Task GetEffectiveConfigurationAsync_WhenNoConfiguration_ShouldReturnDefaultConfiguration()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
 
         _mockRepository
             .Setup(r => r.GetByDateAsync(date))
@@ -99,8 +99,8 @@ public class WorkdayConfigServiceTests
     [Fact]
     public async Task GetTargetDurationAsync_ForWorkDay_ShouldReturnTargetDuration()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
 
         _mockRepository
             .Setup(r => r.GetByDateAsync(date))
@@ -199,13 +199,13 @@ public class WorkdayConfigServiceTests
     #region GetDayTypeAsync Tests
 
     /// <summary>
-    /// Verifies that GetDayTypeAsync returns WorkDay when no configuration exists.
+    /// Verifies that GetDayTypeAsync returns WorkDay when no configuration exists and the date is a weekday.
     /// </summary>
     [Fact]
     public async Task GetDayTypeAsync_WhenNoConfiguration_ShouldReturnWorkDay()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
 
         _mockRepository
             .Setup(r => r.GetByDateAsync(date))
@@ -255,8 +255,8 @@ public class WorkdayConfigServiceTests
     [Fact]
     public async Task IsWorkingDayAsync_ForWorkDay_ShouldReturnTrue()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
 
         _mockRepository
             .Setup(r => r.GetByDateAsync(date))
@@ -518,30 +518,43 @@ public class WorkdayConfigServiceTests
     #region GetDayTypeCountsAsync Tests
 
     /// <summary>
-    /// Verifies that GetDayTypeCountsAsync returns counts from repository.
+    /// Verifies that GetDayTypeCountsAsync uses effective day types including the weekly default mask.
     /// </summary>
     [Fact]
-    public async Task GetDayTypeCountsAsync_ShouldReturnRepositoryCounts()
+    public async Task GetDayTypeCountsAsync_UsesEffectiveConfigurationFromMask()
     {
-        // Arrange
-        var startDate = DateOnly.FromDateTime(DateTime.Today);
-        var endDate = startDate.AddDays(30);
-        var expectedCounts = new Dictionary<DayType, int>
+        // Arrange: use a Mon–Sun week (2026-03-30 to 2026-04-05)
+        // Mon=2026-03-30, Tue=2026-03-31, Wed=2026-04-01, Thu=2026-04-02, Fri=2026-04-03
+        // Sat=2026-04-04, Sun=2026-04-05
+        // Default mask = Weekdays (Mon–Fri), so Sat/Sun → NonWorkingDay
+        // Wed is configured explicitly as Vacation
+        var startDate = new DateOnly(2026, 3, 30);
+        var endDate = new DateOnly(2026, 4, 5);
+
+        var wednesday = new DateOnly(2026, 4, 1);
+        var vacation = new Workday
         {
-            { DayType.Holiday, 2 },
-            { DayType.Vacation, 5 }
+            Id = Guid.NewGuid(),
+            Date = wednesday,
+            DayType = DayType.Vacation,
+            TargetDuration = TimeSpan.Zero
         };
 
         _mockRepository
-            .Setup(r => r.GetDayTypeCountsAsync(startDate, endDate))
-            .ReturnsAsync(expectedCounts);
+            .Setup(r => r.GetByDateAsync(It.IsAny<DateOnly>()))
+            .ReturnsAsync((Workday?)null);
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(wednesday))
+            .ReturnsAsync(vacation);
 
         // Act
         var result = await _sut.GetDayTypeCountsAsync(startDate, endDate);
 
         // Assert
-        Assert.Equal(2, result[DayType.Holiday]);
-        Assert.Equal(5, result[DayType.Vacation]);
+        Assert.Equal(4, result.GetValueOrDefault(DayType.WorkDay));    // Mon, Tue, Thu, Fri
+        Assert.Equal(1, result.GetValueOrDefault(DayType.Vacation));   // Wed
+        Assert.Equal(2, result.GetValueOrDefault(DayType.NonWorkingDay)); // Sat, Sun
     }
 
     #endregion
@@ -554,8 +567,8 @@ public class WorkdayConfigServiceTests
     [Fact]
     public async Task GetRemainingWorkTimeAsync_ForWorkingDay_ShouldReturnRemainingTime()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
         var workedDuration = TimeSpan.FromHours(5);
 
         _mockRepository
@@ -603,8 +616,8 @@ public class WorkdayConfigServiceTests
     [Fact]
     public async Task GetRemainingWorkTimeAsync_WhenTargetReached_ShouldReturnZero()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
         var workedDuration = TimeSpan.FromHours(10);
 
         _mockRepository
@@ -624,8 +637,8 @@ public class WorkdayConfigServiceTests
     [Fact]
     public async Task GetRemainingWorkTimeAsync_WhenExactlyAtTarget_ShouldReturnZero()
     {
-        // Arrange
-        var date = DateOnly.FromDateTime(DateTime.Today);
+        // Arrange - use a Monday so that the default weekday mask returns WorkDay
+        var date = new DateOnly(2026, 3, 30); // Monday
         var workedDuration = TimeSpan.FromHours(8);
 
         _mockRepository
@@ -637,6 +650,176 @@ public class WorkdayConfigServiceTests
 
         // Assert
         Assert.Equal(TimeSpan.Zero, result);
+    }
+
+    #endregion
+
+    #region DefaultWorkingDaysMask Tests
+
+    /// <summary>
+    /// Verifies that GetEffectiveConfigurationAsync returns WorkDay for a date whose weekday
+    /// is included in the DefaultWorkingDaysMask.
+    /// </summary>
+    [Fact]
+    public async Task GetEffectiveConfigurationAsync_WhenNoOverride_AndDayIncludedInMask_ReturnsWorkDay()
+    {
+        // Arrange - Monday is in the default Weekdays mask
+        var monday = new DateOnly(2026, 3, 30);
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(monday))
+            .ReturnsAsync((Workday?)null);
+
+        // Act
+        var result = await _sut.GetEffectiveConfigurationAsync(monday);
+
+        // Assert
+        Assert.Equal(DayType.WorkDay, result.DayType);
+        Assert.Equal(TimeSpan.FromHours(8), result.TargetDuration);
+    }
+
+    /// <summary>
+    /// Verifies that GetEffectiveConfigurationAsync returns NonWorkingDay for a date whose
+    /// weekday is NOT included in the DefaultWorkingDaysMask.
+    /// </summary>
+    [Fact]
+    public async Task GetEffectiveConfigurationAsync_WhenNoOverride_AndDayNotIncludedInMask_ReturnsNonWorkingDay()
+    {
+        // Arrange - Saturday is NOT in the default Weekdays mask
+        var saturday = new DateOnly(2026, 3, 28);
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(saturday))
+            .ReturnsAsync((Workday?)null);
+
+        // Act
+        var result = await _sut.GetEffectiveConfigurationAsync(saturday);
+
+        // Assert
+        Assert.Equal(DayType.NonWorkingDay, result.DayType);
+        Assert.Equal(TimeSpan.Zero, result.TargetDuration);
+    }
+
+    /// <summary>
+    /// Verifies that GetEffectiveConfigurationAsync returns NonWorkingDay for Sunday when
+    /// Sunday is not in the mask.
+    /// </summary>
+    [Fact]
+    public async Task GetEffectiveConfigurationAsync_WhenNoOverride_AndSundayNotInMask_ReturnsNonWorkingDay()
+    {
+        // Arrange - Sunday is NOT in the default Weekdays mask
+        var sunday = new DateOnly(2026, 3, 29);
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(sunday))
+            .ReturnsAsync((Workday?)null);
+
+        // Act
+        var result = await _sut.GetEffectiveConfigurationAsync(sunday);
+
+        // Assert
+        Assert.Equal(DayType.NonWorkingDay, result.DayType);
+        Assert.Equal(TimeSpan.Zero, result.TargetDuration);
+    }
+
+    /// <summary>
+    /// Verifies that GetTargetDurationAsync returns zero when the date's weekday is not
+    /// included in the DefaultWorkingDaysMask.
+    /// </summary>
+    [Fact]
+    public async Task GetTargetDurationAsync_WhenDayNotIncludedInMask_ReturnsZero()
+    {
+        // Arrange - Saturday is NOT in the default Weekdays mask
+        var saturday = new DateOnly(2026, 3, 28);
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(saturday))
+            .ReturnsAsync((Workday?)null);
+
+        // Act
+        var result = await _sut.GetTargetDurationAsync(saturday);
+
+        // Assert
+        Assert.Equal(TimeSpan.Zero, result);
+    }
+
+    /// <summary>
+    /// Verifies that an explicit per-date configuration overrides the DefaultWorkingDaysMask.
+    /// </summary>
+    [Fact]
+    public async Task ExplicitConfiguration_OverridesWeeklyMask()
+    {
+        // Arrange - Saturday explicitly configured as WorkDay
+        var saturday = new DateOnly(2026, 3, 28);
+        var explicitWorkday = new Workday
+        {
+            Id = Guid.NewGuid(),
+            Date = saturday,
+            DayType = DayType.WorkDay,
+            TargetDuration = TimeSpan.FromHours(4)
+        };
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(saturday))
+            .ReturnsAsync(explicitWorkday);
+
+        // Act
+        var result = await _sut.GetEffectiveConfigurationAsync(saturday);
+
+        // Assert
+        Assert.Equal(DayType.WorkDay, result.DayType);
+        Assert.Equal(TimeSpan.FromHours(4), result.TargetDuration);
+    }
+
+    /// <summary>
+    /// Verifies that an explicit NonWorkingDay configuration on a weekday overrides the mask.
+    /// </summary>
+    [Fact]
+    public async Task ExplicitNonWorkingDay_OnWeekday_OverridesWeeklyMask()
+    {
+        // Arrange - Monday explicitly configured as NonWorkingDay
+        var monday = new DateOnly(2026, 3, 30);
+        var explicitWorkday = new Workday
+        {
+            Id = Guid.NewGuid(),
+            Date = monday,
+            DayType = DayType.NonWorkingDay,
+            TargetDuration = TimeSpan.Zero
+        };
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(monday))
+            .ReturnsAsync(explicitWorkday);
+
+        // Act
+        var result = await _sut.GetEffectiveConfigurationAsync(monday);
+
+        // Assert
+        Assert.Equal(DayType.NonWorkingDay, result.DayType);
+        Assert.Equal(TimeSpan.Zero, result.TargetDuration);
+    }
+
+    /// <summary>
+    /// Verifies that when Saturday is added to the mask, GetEffectiveConfigurationAsync
+    /// returns WorkDay for it.
+    /// </summary>
+    [Fact]
+    public async Task GetEffectiveConfigurationAsync_WhenSaturdayAddedToMask_ReturnsSaturdayAsWorkDay()
+    {
+        // Arrange - override settings to include Saturday
+        _defaultSettings.DefaultWorkingDaysMask = (int)(WeeklyWorkingDays.Weekdays | WeeklyWorkingDays.Saturday);
+
+        var saturday = new DateOnly(2026, 3, 28);
+
+        _mockRepository
+            .Setup(r => r.GetByDateAsync(saturday))
+            .ReturnsAsync((Workday?)null);
+
+        // Act
+        var result = await _sut.GetEffectiveConfigurationAsync(saturday);
+
+        // Assert
+        Assert.Equal(DayType.WorkDay, result.DayType);
     }
 
     #endregion

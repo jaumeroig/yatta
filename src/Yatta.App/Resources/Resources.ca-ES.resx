@@ -639,6 +639,9 @@
   <data name="Today_DayType_Vacation" xml:space="preserve">
     <value>Vacances</value>
   </data>
+  <data name="Today_DayType_NonWorkingDay" xml:space="preserve">
+    <value>No laborable</value>
+  </data>
   <data name="Today_TargetDuration" xml:space="preserve">
     <value>Durada objectiu</value>
   </data>
@@ -719,6 +722,36 @@
   </data>
   <data name="Button_Start" xml:space="preserve">
     <value>Iniciar</value>
+  </data>
+  <data name="Settings_Section_DefaultWorkingDays" xml:space="preserve">
+    <value>Dies laborables per defecte</value>
+  </data>
+  <data name="Label_DefaultWorkingDays" xml:space="preserve">
+    <value>Dies laborables setmanals</value>
+  </data>
+  <data name="Description_DefaultWorkingDays" xml:space="preserve">
+    <value>Defineix quins dies de la setmana són laborables per defecte quan no hi ha una configuració específica per a la data.</value>
+  </data>
+  <data name="Label_Day_Monday" xml:space="preserve">
+    <value>Dilluns</value>
+  </data>
+  <data name="Label_Day_Tuesday" xml:space="preserve">
+    <value>Dimarts</value>
+  </data>
+  <data name="Label_Day_Wednesday" xml:space="preserve">
+    <value>Dimecres</value>
+  </data>
+  <data name="Label_Day_Thursday" xml:space="preserve">
+    <value>Dijous</value>
+  </data>
+  <data name="Label_Day_Friday" xml:space="preserve">
+    <value>Divendres</value>
+  </data>
+  <data name="Label_Day_Saturday" xml:space="preserve">
+    <value>Dissabte</value>
+  </data>
+  <data name="Label_Day_Sunday" xml:space="preserve">
+    <value>Diumenge</value>
   </data>
   <data name="Settings_Section_DataRetention" xml:space="preserve">
     <value>Retenció de dades</value>
