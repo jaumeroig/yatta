@@ -52,5 +52,9 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
         builder.Property(s => s.KeepNotificationsVisible)
             .IsRequired()
             .HasDefaultValue(false);
+
+        builder.Property(s => s.DefaultWorkingDaysMask)
+            .IsRequired()
+            .HasDefaultValue((int)WeeklyWorkingDays.Weekdays);
     }
 }
