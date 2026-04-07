@@ -151,6 +151,22 @@ public partial class DashboardDayViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task PreviousDay()
+    {
+        SelectedDate = SelectedDate.AddDays(-1);
+        await LoadDayDataAsync();
+        await LoadCalendarIndicatorsAsync();
+    }
+
+    [RelayCommand]
+    private async Task NextDay()
+    {
+        SelectedDate = SelectedDate.AddDays(1);
+        await LoadDayDataAsync();
+        await LoadCalendarIndicatorsAsync();
+    }
+
+    [RelayCommand]
     private async Task PreviousMonth()
     {
         SelectedDate = SelectedDate.AddMonths(-1);

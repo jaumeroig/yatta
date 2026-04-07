@@ -145,7 +145,9 @@ public partial class DashboardDayPage : Page
                 return;
             }
 
-            Keyboard.Focus(this);
+            // Move focus out of the Calendar control so the next click on any
+            // button is not consumed just to re-activate the window focus scope.
+            DashboardCalendar.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
         }, DispatcherPriority.Input);
     }
 
