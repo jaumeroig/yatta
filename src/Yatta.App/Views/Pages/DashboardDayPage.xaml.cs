@@ -101,6 +101,13 @@ public partial class DashboardDayPage : Page
         // Guard: event fires during InitializeComponent before _viewModel is assigned
         if (_viewModel is null) return;
 
+        if (e.AddedDate.HasValue &&
+            DashboardCalendar.SelectedDate.HasValue &&
+            e.AddedDate.Value.Date == DashboardCalendar.SelectedDate.Value.Date)
+        {
+            return;
+        }
+
         // Reload calendar indicators when month changes
         if (e.AddedDate.HasValue)
         {

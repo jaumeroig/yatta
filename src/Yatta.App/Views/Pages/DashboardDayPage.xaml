@@ -143,6 +143,13 @@
                            VerticalAlignment="Center" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:Button Content="{local:Localize Today_ConfigureDay}"
+                               Icon="{ui:SymbolIcon Settings24}"
+                               Appearance="Secondary"
+                               Command="{Binding ConfigureDayCommand}"
+                               Height="32px"
+                               Margin="0,0,12,0"
+                               Padding="12,0" />
                     <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousDayCommand}" Height="32px" Margin="0,0,4,0" />
                     <ui:Button Content="{local:Localize Button_Today}" Command="{Binding TodayCommand}" Height="32px" Margin="0,0,4,0" />
                     <ui:Button Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextDayCommand}" Height="32px" />
@@ -245,15 +252,6 @@
                             </StackPanel>
                         </ui:Card>
                     </UniformGrid>
-
-                    <!-- Configure day button -->
-                    <ui:Card Padding="16" Margin="0,0,0,16" BorderThickness="0">
-                        <ui:Button Content="{local:Localize Today_ConfigureDay}"
-                                   Icon="{ui:SymbolIcon Settings24}"
-                                   Appearance="Secondary"
-                                   Command="{Binding ConfigureDayCommand}"
-                                   HorizontalAlignment="Stretch" />
-                    </ui:Card>
 
                     <!-- Worked time and differential -->
                     <UniformGrid Columns="2" Margin="0,0,0,16">
