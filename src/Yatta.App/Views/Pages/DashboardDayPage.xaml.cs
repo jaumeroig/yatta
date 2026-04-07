@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Yatta.App.Services;
 using Yatta.App.ViewModels;
 using Yatta.App.Views.Dialogs;
@@ -91,8 +93,15 @@ public partial class DashboardDayPage : Page
         if (DashboardCalendar.SelectedDate.HasValue && DashboardCalendar.SelectedDate.Value != _viewModel.SelectedDate)
         {
             _isUpdatingCalendar = true;
-            await _viewModel.SelectDateCommand.ExecuteAsync(DashboardCalendar.SelectedDate.Value);
-            _isUpdatingCalendar = false;
+            try
+            {
+                await _viewModel.SelectDateCommand.ExecuteAsync(DashboardCalendar.SelectedDate.Value);
+            }
+            finally
+            {
+                _isUpdatingCalendar = false;
+                RestorePageFocus();
+            }
         }
     }
 
@@ -114,10 +123,31 @@ public partial class DashboardDayPage : Page
         if (e.AddedDate.HasValue)
         {
             _isUpdatingCalendar = true;
-            _viewModel.SelectedDate = e.AddedDate.Value;
-            await _viewModel.LoadDataAsync();
-            _isUpdatingCalendar = false;
+            try
+            {
+                _viewModel.SelectedDate = e.AddedDate.Value;
+                await _viewModel.LoadDataAsync();
+            }
+            finally
+            {
+                _isUpdatingCalendar = false;
+                RestorePageFocus();
+            }
         }
+    }
+
+    private void RestorePageFocus()
+    {
+        _ = Dispatcher.InvokeAsync(() =>
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            Focus();
+            Keyboard.Focus(this);
+        }, DispatcherPriority.Input);
     }
 
     private async Task ShowConfigureDayDialogAsync()
