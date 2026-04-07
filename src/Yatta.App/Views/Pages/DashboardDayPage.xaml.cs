@@ -100,7 +100,7 @@ public partial class DashboardDayPage : Page
             finally
             {
                 _isUpdatingCalendar = false;
-                RestorePageFocus();
+                await RestorePageFocusAsync();
             }
         }
     }
@@ -131,21 +131,20 @@ public partial class DashboardDayPage : Page
             finally
             {
                 _isUpdatingCalendar = false;
-                RestorePageFocus();
+                await RestorePageFocusAsync();
             }
         }
     }
 
-    private void RestorePageFocus()
+    private async Task RestorePageFocusAsync()
     {
-        _ = Dispatcher.InvokeAsync(() =>
+        await Dispatcher.InvokeAsync(() =>
         {
             if (!IsLoaded)
             {
                 return;
             }
 
-            Focus();
             Keyboard.Focus(this);
         }, DispatcherPriority.Input);
     }
