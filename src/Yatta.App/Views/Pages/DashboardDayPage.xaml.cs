@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 using Yatta.App.Services;
 using Yatta.App.ViewModels;
 using Yatta.App.Views.Dialogs;
@@ -91,8 +93,15 @@ public partial class DashboardDayPage : Page
         if (DashboardCalendar.SelectedDate.HasValue && DashboardCalendar.SelectedDate.Value != _viewModel.SelectedDate)
         {
             _isUpdatingCalendar = true;
-            await _viewModel.SelectDateCommand.ExecuteAsync(DashboardCalendar.SelectedDate.Value);
-            _isUpdatingCalendar = false;
+            try
+            {
+                await _viewModel.SelectDateCommand.ExecuteAsync(DashboardCalendar.SelectedDate.Value);
+            }
+            finally
+            {
+                _isUpdatingCalendar = false;
+                await RestorePageFocusAsync();
+            }
         }
     }
 
@@ -101,14 +110,55 @@ public partial class DashboardDayPage : Page
         // Guard: event fires during InitializeComponent before _viewModel is assigned
         if (_viewModel is null) return;
 
+        // Selecting a day can also update the calendar display date. Skip the duplicate
+        // reload in that case so the next click on the configure button is not swallowed.
+        if (e.AddedDate.HasValue &&
+            DashboardCalendar.SelectedDate.HasValue &&
+            e.AddedDate.Value.Date == DashboardCalendar.SelectedDate.Value.Date)
+        {
+            return;
+        }
+
         // Reload calendar indicators when month changes
         if (e.AddedDate.HasValue)
         {
             _isUpdatingCalendar = true;
-            _viewModel.SelectedDate = e.AddedDate.Value;
-            await _viewModel.LoadDataAsync();
-            _isUpdatingCalendar = false;
+            try
+            {
+                _viewModel.SelectedDate = e.AddedDate.Value;
+                await _viewModel.LoadDataAsync();
+            }
+            finally
+            {
+                _isUpdatingCalendar = false;
+                await RestorePageFocusAsync();
+            }
         }
+    }
+
+    private async Task RestorePageFocusAsync()
+    {
+        // Use Background priority so this runs after all Calendar binding updates
+        // and internal focus/capture operations have completed.
+        await Dispatcher.InvokeAsync(() =>
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            // The WPF Calendar control keeps mouse capture and an internal focus
+            // scope after a day is selected, which causes the first click on any
+            // other UI element to merely release the capture/scope instead of
+            // activating the target. Release both explicitly.
+            if (Mouse.Captured != null)
+            {
+                Mouse.Capture(null);
+            }
+
+            Keyboard.ClearFocus();
+            Focus();
+        }, DispatcherPriority.Background);
     }
 
     private async Task ShowConfigureDayDialogAsync()
