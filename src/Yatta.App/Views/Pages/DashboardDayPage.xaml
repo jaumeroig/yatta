@@ -147,7 +147,7 @@
                                Icon="{ui:SymbolIcon Settings24}"
                                Appearance="Secondary"
                                Command="{Binding ConfigureDayCommand}"
-                               Height="32px"
+                               Height="32"
                                Margin="0,0,12,0"
                                Padding="12,0" />
                     <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousDayCommand}" Height="32px" Margin="0,0,4,0" />

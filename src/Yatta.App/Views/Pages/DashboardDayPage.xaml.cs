@@ -101,6 +101,8 @@ public partial class DashboardDayPage : Page
         // Guard: event fires during InitializeComponent before _viewModel is assigned
         if (_viewModel is null) return;
 
+        // Selecting a day can also update the calendar display date. Skip the duplicate
+        // reload in that case so the next click on the configure button is not swallowed.
         if (e.AddedDate.HasValue &&
             DashboardCalendar.SelectedDate.HasValue &&
             e.AddedDate.Value.Date == DashboardCalendar.SelectedDate.Value.Date)
