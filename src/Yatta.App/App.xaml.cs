@@ -365,6 +365,7 @@ public partial class App : Application
         services.AddScoped<ITimeRecordRepository, TimeRecordRepository>();
         services.AddScoped<ISettingsRepository, SettingsRepository>();
         services.AddScoped<IWorkdayRepository, WorkdayRepository>();
+        services.AddScoped<IAnnualQuotaRepository, AnnualQuotaRepository>();
 
         // Register services
         services.AddScoped<ITimeCalculatorService, TimeCalculatorService>();

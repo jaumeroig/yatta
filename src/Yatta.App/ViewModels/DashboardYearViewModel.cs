@@ -23,6 +23,7 @@ public partial class DashboardYearViewModel : ObservableObject
     private readonly IPageStateService _pageStateService;
     private readonly IDashboardService _dashboardService;
     private readonly ILocalizationService _localizationService;
+    private readonly IAnnualQuotaRepository _annualQuotaRepository;
 
     [ObservableProperty]
     private int _selectedYear;
@@ -65,6 +66,52 @@ public partial class DashboardYearViewModel : ObservableObject
     [ObservableProperty]
     private string _freeChoiceCount = "0";
 
+    // Annual quota
+    [ObservableProperty]
+    private bool _isConfigureYearQuotaDialogOpen;
+
+    [ObservableProperty]
+    private ConfigureYearQuotaModel _configureYearQuotaModel = new();
+
+    [ObservableProperty]
+    private int _vacationAvailable;
+
+    [ObservableProperty]
+    private int _vacationUsed;
+
+    [ObservableProperty]
+    private int _vacationRemaining;
+
+    [ObservableProperty]
+    private bool _isVacationRemainingNegative;
+
+    [ObservableProperty]
+    private int _freeChoiceAvailable;
+
+    [ObservableProperty]
+    private int _freeChoiceUsed;
+
+    [ObservableProperty]
+    private int _freeChoiceRemaining;
+
+    [ObservableProperty]
+    private bool _isFreeChoiceRemainingNegative;
+
+    [ObservableProperty]
+    private int _intensiveAvailable;
+
+    [ObservableProperty]
+    private int _intensiveUsed;
+
+    [ObservableProperty]
+    private int _intensiveRemaining;
+
+    [ObservableProperty]
+    private bool _isIntensiveRemainingNegative;
+
+    [ObservableProperty]
+    private bool _hasQuotaConfigured;
+
     // Charts
     [ObservableProperty]
     private ISeries[] _monthlyBarSeries = [];
@@ -84,11 +131,13 @@ public partial class DashboardYearViewModel : ObservableObject
     public DashboardYearViewModel(
         IPageStateService pageStateService,
         IDashboardService dashboardService,
-        ILocalizationService localizationService)
+        ILocalizationService localizationService,
+        IAnnualQuotaRepository annualQuotaRepository)
     {
         _pageStateService = pageStateService ?? throw new ArgumentNullException(nameof(pageStateService));
         _dashboardService = dashboardService ?? throw new ArgumentNullException(nameof(dashboardService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+        _annualQuotaRepository = annualQuotaRepository ?? throw new ArgumentNullException(nameof(annualQuotaRepository));
         _selectedYear = _pageStateService.DashboardPage.ContextDate.Year;
     }
 
@@ -121,6 +170,9 @@ public partial class DashboardYearViewModel : ObservableObject
         VacationCount = report.DayTypeCounts.GetValueOrDefault(DayType.Vacation).ToString();
         FreeChoiceCount = report.DayTypeCounts.GetValueOrDefault(DayType.FreeChoice).ToString();
 
+        // Load annual quota data
+        await LoadQuotaDataAsync(report.DayTypeCounts);
+
         // Monthly bar chart (aggregate daily to monthly)
         BuildMonthlyBarChart(report.DailyBreakdown);
 
@@ -128,6 +180,52 @@ public partial class DashboardYearViewModel : ObservableObject
         ActivityBreakdown = DashboardDisplayHelper.BuildActivityBreakdown(report.Activities);
 
         ActivitySeries = DashboardDisplayHelper.BuildActivityDonutSeries(report.Activities);
+    }
+
+    private async Task LoadQuotaDataAsync(Dictionary<DayType, int> dayTypeCounts)
+    {
+        var quota = await _annualQuotaRepository.GetByYearAsync(SelectedYear);
+
+        if (quota != null)
+        {
+            HasQuotaConfigured = true;
+
+            // Vacation
+            VacationAvailable = quota.VacationDays;
+            VacationUsed = dayTypeCounts.GetValueOrDefault(DayType.Vacation);
+            VacationRemaining = VacationAvailable - VacationUsed;
+            IsVacationRemainingNegative = VacationRemaining < 0;
+
+            // Free choice
+            FreeChoiceAvailable = quota.FreeChoiceDays;
+            FreeChoiceUsed = dayTypeCounts.GetValueOrDefault(DayType.FreeChoice);
+            FreeChoiceRemaining = FreeChoiceAvailable - FreeChoiceUsed;
+            IsFreeChoiceRemainingNegative = FreeChoiceRemaining < 0;
+
+            // Intensive days
+            IntensiveAvailable = quota.IntensiveDays;
+            IntensiveUsed = dayTypeCounts.GetValueOrDefault(DayType.IntensiveDay);
+            IntensiveRemaining = IntensiveAvailable - IntensiveUsed;
+            IsIntensiveRemainingNegative = IntensiveRemaining < 0;
+        }
+        else
+        {
+            HasQuotaConfigured = false;
+            VacationAvailable = 0;
+            VacationUsed = 0;
+            VacationRemaining = 0;
+            IsVacationRemainingNegative = false;
+
+            FreeChoiceAvailable = 0;
+            FreeChoiceUsed = 0;
+            FreeChoiceRemaining = 0;
+            IsFreeChoiceRemainingNegative = false;
+
+            IntensiveAvailable = 0;
+            IntensiveUsed = 0;
+            IntensiveRemaining = 0;
+            IsIntensiveRemainingNegative = false;
+        }
     }
 
     private void BuildMonthlyBarChart(List<DailyHoursSummary> daily)
@@ -221,5 +319,40 @@ public partial class DashboardYearViewModel : ObservableObject
     private void UpdateContextDate()
     {
         _pageStateService.DashboardPage.ContextDate = new DateOnly(SelectedYear, 1, 1);
+    }
+
+    [RelayCommand]
+    private async Task ConfigureQuota()
+    {
+        var quota = await _annualQuotaRepository.GetByYearAsync(SelectedYear);
+
+        ConfigureYearQuotaModel = new ConfigureYearQuotaModel
+        {
+            Year = SelectedYear,
+            VacationDays = quota?.VacationDays ?? 0,
+            FreeChoiceDays = quota?.FreeChoiceDays ?? 0,
+            IntensiveDays = quota?.IntensiveDays ?? 0,
+            ValidationError = string.Empty
+        };
+
+        IsConfigureYearQuotaDialogOpen = true;
+    }
+
+    [RelayCommand]
+    private async Task SaveConfigureQuota()
+    {
+        // No validation needed - NumberBox handles min/max
+        var quota = new AnnualQuota
+        {
+            Year = SelectedYear,
+            VacationDays = ConfigureYearQuotaModel.VacationDays,
+            FreeChoiceDays = ConfigureYearQuotaModel.FreeChoiceDays,
+            IntensiveDays = ConfigureYearQuotaModel.IntensiveDays
+        };
+
+        await _annualQuotaRepository.SaveAsync(quota);
+
+        IsConfigureYearQuotaDialogOpen = false;
+        await LoadDataAsync();
     }
 }

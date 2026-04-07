@@ -29,6 +29,10 @@ public class YattaDbContext : DbContext
     /// </summary>
     public DbSet<TimeRecord> TimeRecords { get; set; } = null!;
 
+    /// <summary>
+    /// DbSet for annual quotas.
+    /// </summary>
+    public DbSet<AnnualQuota> AnnualQuotas { get; set; } = null!;
 
     public YattaDbContext(DbContextOptions<YattaDbContext> options)
         : base(options)
@@ -44,5 +48,6 @@ public class YattaDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ActivityConfiguration());
         modelBuilder.ApplyConfiguration(new WorkdayEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TimeRecordConfiguration());
+        modelBuilder.ApplyConfiguration(new AnnualQuotaConfiguration());
     }
 }

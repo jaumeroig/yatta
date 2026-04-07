@@ -44,6 +44,32 @@ namespace Yatta.Data.Migrations
                     b.ToTable("Activities", (string)null);
                 });
 
+            modelBuilder.Entity("Yatta.Core.Models.AnnualQuota", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("VacationDays")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("FreeChoiceDays")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IntensiveDays")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year")
+                        .IsUnique();
+
+                    b.ToTable("AnnualQuotas", (string)null);
+                });
+
             modelBuilder.Entity("Yatta.Core.Models.AppSettings", b =>
                 {
                     b.Property<int>("Id")

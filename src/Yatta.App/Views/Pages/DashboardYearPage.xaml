@@ -26,15 +26,23 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Text="{Binding SelectedYear}"
-                           FontSize="22" 
-                           FontWeight="SemiBold" 
+                           FontSize="22"
+                           FontWeight="SemiBold"
                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
                            VerticalAlignment="Center" />
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <ui:Button Grid.Column="1"
+                           Content="{local:Localize Button_Configure}"
+                           Command="{Binding ConfigureQuotaCommand}"
+                           Height="32px"
+                           Margin="0,0,8,0"
+                           VerticalAlignment="Center" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                     <ui:Button Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousYearCommand}" Height="32px" Margin="0,0,4,0" />
                     <ui:Button Content="{local:Localize Button_Today}" Command="{Binding ThisYearCommand}" Height="32px" Margin="0,0,4,0" />
                     <ui:Button Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextYearCommand}" Height="32px" />
@@ -106,6 +114,120 @@
                             <TextBlock Text="{Binding FreeChoiceCount}" FontSize="20" FontWeight="Bold" />
                         </StackPanel>
                     </Grid>
+                </ui:Card>
+            </UniformGrid>
+
+            <!-- Annual quota cards (only shown if configured) -->
+            <UniformGrid Rows="1" Columns="3" Margin="0,0,0,16" Visibility="{Binding HasQuotaConfigured, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <!-- Vacation quota -->
+                <ui:Card Padding="16" Margin="0,0,8,0" VerticalAlignment="Stretch">
+                    <StackPanel>
+                        <TextBlock Text="{local:Localize Label_Vacation}" FontSize="13" Opacity="0.6" Margin="0,0,0,8" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{local:Localize Label_Available}" FontSize="12" Opacity="0.6" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding VacationAvailable}" FontSize="14" FontWeight="SemiBold" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Localize Label_Used}" FontSize="12" Opacity="0.6" Margin="0,4,0,0" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VacationUsed}" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{local:Localize Label_Remaining}" FontSize="12" Opacity="0.6" Margin="0,4,0,0" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding VacationRemaining}" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsVacationRemainingNegative}" Value="True">
+                                                <Setter Property="Foreground" Value="#F44336" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Free choice quota -->
+                <ui:Card Padding="16" Margin="4,0,4,0" VerticalAlignment="Stretch">
+                    <StackPanel>
+                        <TextBlock Text="{local:Localize Label_FreeChoice}" FontSize="13" Opacity="0.6" Margin="0,0,0,8" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{local:Localize Label_Available}" FontSize="12" Opacity="0.6" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FreeChoiceAvailable}" FontSize="14" FontWeight="SemiBold" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Localize Label_Used}" FontSize="12" Opacity="0.6" Margin="0,4,0,0" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding FreeChoiceUsed}" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{local:Localize Label_Remaining}" FontSize="12" Opacity="0.6" Margin="0,4,0,0" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding FreeChoiceRemaining}" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsFreeChoiceRemainingNegative}" Value="True">
+                                                <Setter Property="Foreground" Value="#F44336" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Intensive days quota -->
+                <ui:Card Padding="16" Margin="8,0,0,0" VerticalAlignment="Stretch">
+                    <StackPanel>
+                        <TextBlock Text="{local:Localize Label_IntensiveDays}" FontSize="13" Opacity="0.6" Margin="0,0,0,8" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="{local:Localize Label_Available}" FontSize="12" Opacity="0.6" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding IntensiveAvailable}" FontSize="14" FontWeight="SemiBold" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="{local:Localize Label_Used}" FontSize="12" Opacity="0.6" Margin="0,4,0,0" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding IntensiveUsed}" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="{local:Localize Label_Remaining}" FontSize="12" Opacity="0.6" Margin="0,4,0,0" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding IntensiveRemaining}" FontSize="14" FontWeight="SemiBold" Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsIntensiveRemainingNegative}" Value="True">
+                                                <Setter Property="Foreground" Value="#F44336" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </StackPanel>
                 </ui:Card>
             </UniformGrid>
 

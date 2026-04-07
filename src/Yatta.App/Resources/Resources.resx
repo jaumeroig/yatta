@@ -1047,4 +1047,34 @@
   <data name="Update_Later" xml:space="preserve">
     <value>Más tarde</value>
   </data>
+  <data name="Button_Configure" xml:space="preserve">
+    <value>Configurar</value>
+  </data>
+  <data name="Dialog_ConfigureYearQuota_Title" xml:space="preserve">
+    <value>Configurar cupos anuales</value>
+  </data>
+  <data name="Label_VacationDays" xml:space="preserve">
+    <value>Días de vacaciones</value>
+  </data>
+  <data name="Label_FreeChoiceDays" xml:space="preserve">
+    <value>Días de libre disposición</value>
+  </data>
+  <data name="Label_IntensiveDays" xml:space="preserve">
+    <value>Jornadas intensivas</value>
+  </data>
+  <data name="Label_Vacation" xml:space="preserve">
+    <value>Vacaciones</value>
+  </data>
+  <data name="Label_FreeChoice" xml:space="preserve">
+    <value>Libre disposición</value>
+  </data>
+  <data name="Label_Available" xml:space="preserve">
+    <value>Disponibles</value>
+  </data>
+  <data name="Label_Used" xml:space="preserve">
+    <value>Disfrutados</value>
+  </data>
+  <data name="Label_Remaining" xml:space="preserve">
+    <value>Restantes</value>
+  </data>
 </root>

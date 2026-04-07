@@ -1,0 +1,54 @@
+<UserControl x:Class="Yatta.App.Views.Dialogs.ConfigureYearQuotaDialogControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:local="clr-namespace:Yatta.App.Markup"
+             d:DesignHeight="450"
+             d:DesignWidth="480"
+             mc:Ignorable="d">
+    <StackPanel Width="480">
+        <TextBlock Text="{local:Localize Label_VacationDays}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <ui:NumberBox Value="{Binding ConfigureYearQuotaModel.VacationDays, Mode=TwoWay}"
+                      Minimum="0"
+                      Maximum="365"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,0,0,16"
+                      Height="40" />
+
+        <TextBlock Text="{local:Localize Label_FreeChoiceDays}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <ui:NumberBox Value="{Binding ConfigureYearQuotaModel.FreeChoiceDays, Mode=TwoWay}"
+                      Minimum="0"
+                      Maximum="365"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,0,0,16"
+                      Height="40" />
+
+        <TextBlock Text="{local:Localize Label_IntensiveDays}"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,8" />
+        <ui:NumberBox Value="{Binding ConfigureYearQuotaModel.IntensiveDays, Mode=TwoWay}"
+                      Minimum="0"
+                      Maximum="365"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,0,0,16"
+                      Height="40" />
+
+        <Border Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12,8"
+                Margin="0,0,0,0"
+                Visibility="{Binding ConfigureYearQuotaModel.ValidationError, Converter={StaticResource StringToVisibilityConverter}}">
+            <TextBlock Text="{Binding ConfigureYearQuotaModel.ValidationError}"
+                       Foreground="White"
+                       TextWrapping="Wrap"
+                       FontSize="13" />
+        </Border>
+    </StackPanel>
+</UserControl>
