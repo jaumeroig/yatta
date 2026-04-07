@@ -95,10 +95,14 @@ public partial class DashboardYearPage : Page
             DataContext = _viewModel
         };
 
+        var dialogTitle = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "ca"
+            ? $"Configurar quotes anuals {_viewModel.SelectedYear}"
+            : $"Configurar cupos anuales {_viewModel.SelectedYear}";
+
         _configureQuotaDialog = new ContentDialog(dialogHost)
         {
             Content = content,
-            Title = _viewModel.ConfigureYearQuotaModel.DialogTitle,
+            Title = dialogTitle,
             PrimaryButtonText = AppResources.Button_SaveChanges,
             CloseButtonText = AppResources.Button_Cancel,
             DefaultButton = ContentDialogButton.Primary,

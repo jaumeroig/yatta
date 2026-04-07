@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Yatta.App.Services;
 using Yatta.App.ViewModels;
 using Yatta.App.Views.Pages;
-using Yatta.App.Services;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Services;
 using Yatta.Data;

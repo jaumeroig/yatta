@@ -22,10 +22,4 @@ public partial class ConfigureYearQuotaModel : ObservableObject
 
     [ObservableProperty]
     private string _validationError = string.Empty;
-
-    /// <summary>
-    /// Title shown in the dialog header, including the year.
-    /// </summary>
-    public string DialogTitle =>
-        $"Configurar cupos anuales {Year}";
 }
