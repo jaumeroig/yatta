@@ -138,6 +138,8 @@ public partial class DashboardDayPage : Page
 
     private async Task RestorePageFocusAsync()
     {
+        // Use Background priority so this runs after all Calendar binding updates
+        // and internal focus/capture operations have completed.
         await Dispatcher.InvokeAsync(() =>
         {
             if (!IsLoaded)
@@ -145,10 +147,18 @@ public partial class DashboardDayPage : Page
                 return;
             }
 
-            // Move focus out of the Calendar control so the next click on any
-            // button is not consumed just to re-activate the window focus scope.
-            DashboardCalendar.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-        }, DispatcherPriority.Input);
+            // The WPF Calendar control keeps mouse capture and an internal focus
+            // scope after a day is selected, which causes the first click on any
+            // other UI element to merely release the capture/scope instead of
+            // activating the target. Release both explicitly.
+            if (Mouse.Captured != null)
+            {
+                Mouse.Capture(null);
+            }
+
+            Keyboard.ClearFocus();
+            Focus();
+        }, DispatcherPriority.Background);
     }
 
     private async Task ShowConfigureDayDialogAsync()
