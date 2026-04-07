@@ -383,6 +383,7 @@ public partial class DashboardDayViewModel : ObservableObject
             DayType.Holiday => _localizationService.GetString("Today_DayType_Holiday"),
             DayType.FreeChoice => _localizationService.GetString("Today_DayType_FreeChoice"),
             DayType.Vacation => _localizationService.GetString("Today_DayType_Vacation"),
+            DayType.NonWorkingDay => _localizationService.GetString("Today_DayType_NonWorkingDay"),
             _ => dayType.ToString()
         };
     }
@@ -415,4 +416,3 @@ public class DayRecordDisplay
     public string Notes { get; set; } = string.Empty;
     public bool IsTelework { get; set; }
 }
-
