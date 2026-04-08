@@ -212,9 +212,9 @@ mc:Ignorable="d"
                                 WorkdayStart="{Binding WorkdayStart}"
                                 WorkdayEnd="{Binding WorkdayEnd}"
                                 Segments="{Binding TimelineSegments}"
-                                SegmentDoubleClickedCommand="{Binding OpenEditRecordFromSegmentCommand}"
-                                EditCommand="{Binding OpenEditRecordFromSegmentCommand}"
-                                DeleteCommand="{Binding RequestDeleteRecordFromSegmentCommand}" />
+                                 SegmentDoubleClickedCommand="{Binding DataContext.OpenEditRecordFromSegmentCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                 EditCommand="{Binding DataContext.OpenEditRecordFromSegmentCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                 DeleteCommand="{Binding DataContext.RequestDeleteRecordFromSegmentCommand, RelativeSource={RelativeSource AncestorType=Page}}" />
 
                             <!-- Records for this day -->
                             <ItemsControl ItemsSource="{Binding Records}">
