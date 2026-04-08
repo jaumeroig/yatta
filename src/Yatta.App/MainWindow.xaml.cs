@@ -134,7 +134,7 @@ public partial class MainWindow : FluentWindow
         if (WindowState == WindowState.Minimized)
         {
             var settings = await _settingsRepository.GetAsync();
-            if (settings.MinimizeToTray)
+            if (settings.MinimizeToTray && WindowState == WindowState.Minimized)
             {
                 ShowInTaskbar = false;
                 Hide();
