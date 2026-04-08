@@ -1044,4 +1044,34 @@
   <data name="Update_Later" xml:space="preserve">
     <value>Més tard</value>
   </data>
+  <data name="Button_Configure" xml:space="preserve">
+    <value>Configurar</value>
+  </data>
+  <data name="Dialog_ConfigureYearQuota_Title" xml:space="preserve">
+    <value>Configurar quotes anuals</value>
+  </data>
+  <data name="Label_VacationDays" xml:space="preserve">
+    <value>Dies de vacances</value>
+  </data>
+  <data name="Label_FreeChoiceDays" xml:space="preserve">
+    <value>Dies de lliure disposició</value>
+  </data>
+  <data name="Label_IntensiveDays" xml:space="preserve">
+    <value>Jornades intensives</value>
+  </data>
+  <data name="Label_Vacation" xml:space="preserve">
+    <value>Vacances</value>
+  </data>
+  <data name="Label_FreeChoice" xml:space="preserve">
+    <value>Lliure disposició</value>
+  </data>
+  <data name="Label_Available" xml:space="preserve">
+    <value>Disponibles</value>
+  </data>
+  <data name="Label_Used" xml:space="preserve">
+    <value>Gaudits</value>
+  </data>
+  <data name="Label_Remaining" xml:space="preserve">
+    <value>Restants</value>
+  </data>
 </root>

@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Yatta.App.Services;
 using Yatta.App.ViewModels;
 using Yatta.App.Views.Pages;
-using Yatta.App.Services;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Services;
 using Yatta.Data;
@@ -365,6 +364,7 @@ public partial class App : Application
         services.AddScoped<ITimeRecordRepository, TimeRecordRepository>();
         services.AddScoped<ISettingsRepository, SettingsRepository>();
         services.AddScoped<IWorkdayRepository, WorkdayRepository>();
+        services.AddScoped<IAnnualQuotaRepository, AnnualQuotaRepository>();
 
         // Register services
         services.AddScoped<ITimeCalculatorService, TimeCalculatorService>();
