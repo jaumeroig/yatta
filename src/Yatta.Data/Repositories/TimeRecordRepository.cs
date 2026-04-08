@@ -112,6 +112,13 @@ public class TimeRecordRepository : ITimeRecordRepository
     }
 
     /// <inheritdoc/>
+    public async Task<bool> HasRecordsBeforeDateAsync(DateOnly date)
+    {
+        return await dbContext.TimeRecords
+            .AnyAsync(tr => tr.Date < date);
+    }
+
+    /// <inheritdoc/>
     public async Task<int> CountBeforeDateAsync(DateOnly date)
     {
         return await dbContext.TimeRecords

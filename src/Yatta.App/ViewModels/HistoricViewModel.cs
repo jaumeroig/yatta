@@ -26,6 +26,9 @@ public partial class HistoricViewModel : ObservableObject
     private readonly ISettingsRepository _settingsRepository;
     private readonly INotificationService _notificationService;
     private readonly IWorkdayConfigService _workdayConfigService;
+    private const int PageDays = 30;
+    private DateOnly _pageStartDate;
+    private bool _isFullyLoaded;
     private List<TimeRecord> _allRecords = [];
     private List<Activity> _allActivities = [];
 
@@ -46,6 +49,12 @@ public partial class HistoricViewModel : ObservableObject
 
     [ObservableProperty]
     private string _todayWorkedTime = "0h 0m";
+
+    [ObservableProperty]
+    private bool _hasMoreRecords;
+
+    [ObservableProperty]
+    private bool _isLoadingMore;
 
     [ObservableProperty]
     private bool _sortAscending = false;
@@ -104,7 +113,12 @@ public partial class HistoricViewModel : ObservableObject
         activitiesWithAll.AddRange(_allActivities);
         Activities = new ObservableCollection<Activity>(activitiesWithAll);
 
-        _allRecords = (await _timeRecordRepository.GetAllAsync()).ToList();
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        _pageStartDate = today.AddDays(-(PageDays - 1));
+        _isFullyLoaded = false;
+        _allRecords = (await _timeRecordRepository.GetByDateRangeAsync(_pageStartDate, today)).ToList();
+        HasMoreRecords = await _timeRecordRepository.HasRecordsBeforeDateAsync(_pageStartDate);
+        _isFullyLoaded = !HasMoreRecords;
         ApplyFilters();
         CalculateTodayWorkedTime();
     }
@@ -147,8 +161,25 @@ public partial class HistoricViewModel : ObservableObject
         }
     }
 
-    private void ApplyFilters()
+    private void ApplyFilters() => _ = ApplyFiltersAsync();
+
+    private async Task ApplyFiltersAsync()
     {
+        bool dateOutsideWindow = SelectedDate.HasValue &&
+                                DateOnly.FromDateTime(SelectedDate.Value) < _pageStartDate;
+        bool needsFullLoad = !string.IsNullOrWhiteSpace(SearchText) ||
+                             (SelectedActivityFilter != null && SelectedActivityFilter.Id != Guid.Empty) ||
+                             dateOutsideWindow;
+
+        if (needsFullLoad && !_isFullyLoaded)
+        {
+            IsLoadingMore = true;
+            _allRecords = (await _timeRecordRepository.GetAllAsync()).ToList();
+            _isFullyLoaded = true;
+            HasMoreRecords = false;
+            IsLoadingMore = false;
+        }
+
         var filtered = _allRecords.AsEnumerable();
 
         // Filter by text (search in notes and activity name)
@@ -566,6 +597,29 @@ public partial class HistoricViewModel : ObservableObject
         SearchText = string.Empty;
         SelectedActivityFilter = null;
         SelectedDate = null;
+    }
+
+    /// <summary>
+    /// Loads the next older page of records.
+    /// </summary>
+    [RelayCommand]
+    private async Task LoadMoreAsync()
+    {
+        if (IsLoadingMore || !HasMoreRecords)
+            return;
+
+        IsLoadingMore = true;
+        var newEndDate = _pageStartDate.AddDays(-1);
+        var newStartDate = newEndDate.AddDays(-(PageDays - 1));
+        _pageStartDate = newStartDate;
+
+        var olderRecords = await _timeRecordRepository.GetByDateRangeAsync(newStartDate, newEndDate);
+        _allRecords.AddRange(olderRecords);
+        HasMoreRecords = await _timeRecordRepository.HasRecordsBeforeDateAsync(_pageStartDate);
+        _isFullyLoaded = !HasMoreRecords;
+        IsLoadingMore = false;
+
+        ApplyFilters();
     }
 
     /// <summary>

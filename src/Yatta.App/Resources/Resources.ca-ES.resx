@@ -237,6 +237,9 @@
   <data name="Button_NewRecord" xml:space="preserve">
     <value>Nova entrada</value>
   </data>
+  <data name="Button_LoadMore" xml:space="preserve">
+    <value>Carrega més registres</value>
+  </data>
   <data name="Placeholder_Search" xml:space="preserve">
     <value>Cerca per activitat o notes...</value>
   </data>

@@ -54,6 +54,12 @@ public interface ITimeRecordRepository
     Task DeleteAsync(Guid id);
 
     /// <summary>
+    /// Returns true if any time record exists before the specified date.
+    /// </summary>
+    /// <param name="date">The cutoff date (exclusive).</param>
+    Task<bool> HasRecordsBeforeDateAsync(DateOnly date);
+
+    /// <summary>
     /// Counts time records before the specified date.
     /// </summary>
     /// <param name="date">The cutoff date (exclusive).</param>

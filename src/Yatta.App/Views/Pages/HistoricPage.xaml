@@ -159,6 +159,7 @@ mc:Ignorable="d"
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled" >
 
+            <StackPanel>
             <ItemsControl ItemsSource="{Binding GroupedRecords}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -240,6 +241,22 @@ mc:Ignorable="d"
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <!-- Load more / pagination -->
+            <StackPanel Margin="0,0,20,24"
+                        HorizontalAlignment="Center"
+                        Visibility="{Binding HasMoreRecords, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ui:Button Appearance="Secondary"
+                           Command="{Binding LoadMoreCommand}"
+                           IsEnabled="{Binding IsLoadingMore, Converter={StaticResource BoolInverterConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:ProgressRing Width="16" Height="16" Margin="0,0,8,0" IsIndeterminate="True"
+                                         Visibility="{Binding IsLoadingMore, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <TextBlock Text="{local:Localize Button_LoadMore}" />
+                    </StackPanel>
+                </ui:Button>
+            </StackPanel>
+            </StackPanel>
         </ScrollViewer>
 
         <!-- Empty State -->
