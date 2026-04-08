@@ -214,6 +214,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configurar.
+        /// </summary>
+        internal static string Button_Configure {
+            get {
+                return ResourceManager.GetString("Button_Configure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crear actividad.
         /// </summary>
         internal static string Button_CreateActivity {
@@ -538,6 +547,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Define qué días de la semana son laborables por defecto cuando no hay una configuración específica para la fecha..
+        /// </summary>
+        internal static string Description_DefaultWorkingDays {
+            get {
+                return ResourceManager.GetString("Description_DefaultWorkingDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Define un atajo de teclado para abrir el diálogo de cambio de actividad desde cualquier aplicación..
         /// </summary>
         internal static string Description_GlobalHotkey {
@@ -696,6 +714,15 @@ namespace Yatta.App.Resources {
         internal static string Dialog_ConfigureDay_Title {
             get {
                 return ResourceManager.GetString("Dialog_ConfigureDay_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configurar cupos anuales.
+        /// </summary>
+        internal static string Dialog_ConfigureYearQuota_Title {
+            get {
+                return ResourceManager.GetString("Dialog_ConfigureYearQuota_Title", resourceCulture);
             }
         }
         
@@ -1213,6 +1240,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disponibles.
+        /// </summary>
+        internal static string Label_Available {
+            get {
+                return ResourceManager.GetString("Label_Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
         internal static string Label_Color {
@@ -1249,6 +1285,69 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Viernes.
+        /// </summary>
+        internal static string Label_Day_Friday {
+            get {
+                return ResourceManager.GetString("Label_Day_Friday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lunes.
+        /// </summary>
+        internal static string Label_Day_Monday {
+            get {
+                return ResourceManager.GetString("Label_Day_Monday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sábado.
+        /// </summary>
+        internal static string Label_Day_Saturday {
+            get {
+                return ResourceManager.GetString("Label_Day_Saturday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Domingo.
+        /// </summary>
+        internal static string Label_Day_Sunday {
+            get {
+                return ResourceManager.GetString("Label_Day_Sunday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jueves.
+        /// </summary>
+        internal static string Label_Day_Thursday {
+            get {
+                return ResourceManager.GetString("Label_Day_Thursday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Martes.
+        /// </summary>
+        internal static string Label_Day_Tuesday {
+            get {
+                return ResourceManager.GetString("Label_Day_Tuesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miércoles.
+        /// </summary>
+        internal static string Label_Day_Wednesday {
+            get {
+                return ResourceManager.GetString("Label_Day_Wednesday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to días.
         /// </summary>
         internal static string Label_Days {
@@ -1263,6 +1362,15 @@ namespace Yatta.App.Resources {
         internal static string Label_DayType {
             get {
                 return ResourceManager.GetString("Label_DayType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Días laborables semanales.
+        /// </summary>
+        internal static string Label_DefaultWorkingDays {
+            get {
+                return ResourceManager.GetString("Label_DefaultWorkingDays", resourceCulture);
             }
         }
         
@@ -1285,7 +1393,25 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Atajo de teclado global.
+        ///   Looks up a localized string similar to Libre disposición.
+        /// </summary>
+        internal static string Label_FreeChoice {
+            get {
+                return ResourceManager.GetString("Label_FreeChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Días de libre disposición.
+        /// </summary>
+        internal static string Label_FreeChoiceDays {
+            get {
+                return ResourceManager.GetString("Label_FreeChoiceDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambio de actividad.
         /// </summary>
         internal static string Label_GlobalHotkey {
             get {
@@ -1299,6 +1425,15 @@ namespace Yatta.App.Resources {
         internal static string Label_Hour {
             get {
                 return ResourceManager.GetString("Label_Hour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jornadas intensivas.
+        /// </summary>
+        internal static string Label_IntensiveDays {
+            get {
+                return ResourceManager.GetString("Label_IntensiveDays", resourceCulture);
             }
         }
         
@@ -1371,6 +1506,15 @@ namespace Yatta.App.Resources {
         internal static string Label_NotificationInterval {
             get {
                 return ResourceManager.GetString("Label_NotificationInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restantes.
+        /// </summary>
+        internal static string Label_Remaining {
+            get {
+                return ResourceManager.GetString("Label_Remaining", resourceCulture);
             }
         }
         
@@ -1479,6 +1623,33 @@ namespace Yatta.App.Resources {
         internal static string Label_TotalWorkedDay {
             get {
                 return ResourceManager.GetString("Label_TotalWorkedDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disfrutados.
+        /// </summary>
+        internal static string Label_Used {
+            get {
+                return ResourceManager.GetString("Label_Used", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vacaciones.
+        /// </summary>
+        internal static string Label_Vacation {
+            get {
+                return ResourceManager.GetString("Label_Vacation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Días de vacaciones.
+        /// </summary>
+        internal static string Label_VacationDays {
+            get {
+                return ResourceManager.GetString("Label_VacationDays", resourceCulture);
             }
         }
         
@@ -2005,7 +2176,7 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Jornada laboral.
+        ///   Looks up a localized string similar to Jornada.
         /// </summary>
         internal static string Section_WorkdaySettings {
             get {
@@ -2050,83 +2221,11 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Días laborables semanales.
+        ///   Looks up a localized string similar to Atajos de teclado.
         /// </summary>
-        internal static string Label_DefaultWorkingDays {
+        internal static string Settings_Section_KeyboardShortcuts {
             get {
-                return ResourceManager.GetString("Label_DefaultWorkingDays", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Define qué días de la semana son laborables por defecto.
-        /// </summary>
-        internal static string Description_DefaultWorkingDays {
-            get {
-                return ResourceManager.GetString("Description_DefaultWorkingDays", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lunes.
-        /// </summary>
-        internal static string Label_Day_Monday {
-            get {
-                return ResourceManager.GetString("Label_Day_Monday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Martes.
-        /// </summary>
-        internal static string Label_Day_Tuesday {
-            get {
-                return ResourceManager.GetString("Label_Day_Tuesday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Miércoles.
-        /// </summary>
-        internal static string Label_Day_Wednesday {
-            get {
-                return ResourceManager.GetString("Label_Day_Wednesday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Jueves.
-        /// </summary>
-        internal static string Label_Day_Thursday {
-            get {
-                return ResourceManager.GetString("Label_Day_Thursday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Viernes.
-        /// </summary>
-        internal static string Label_Day_Friday {
-            get {
-                return ResourceManager.GetString("Label_Day_Friday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sábado.
-        /// </summary>
-        internal static string Label_Day_Saturday {
-            get {
-                return ResourceManager.GetString("Label_Day_Saturday", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Domingo.
-        /// </summary>
-        internal static string Label_Day_Sunday {
-            get {
-                return ResourceManager.GetString("Label_Day_Sunday", resourceCulture);
+                return ResourceManager.GetString("Settings_Section_KeyboardShortcuts", resourceCulture);
             }
         }
         
@@ -2329,20 +2428,20 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Vacaciones.
-        /// </summary>
-        internal static string Today_DayType_Vacation {
-            get {
-                return ResourceManager.GetString("Today_DayType_Vacation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No laborable.
         /// </summary>
         internal static string Today_DayType_NonWorkingDay {
             get {
                 return ResourceManager.GetString("Today_DayType_NonWorkingDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vacaciones.
+        /// </summary>
+        internal static string Today_DayType_Vacation {
+            get {
+                return ResourceManager.GetString("Today_DayType_Vacation", resourceCulture);
             }
         }
         
@@ -2662,6 +2761,33 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hay una nueva versión de Yatta disponible. ¿Deseas instalarla ahora?.
+        /// </summary>
+        internal static string Update_Available {
+            get {
+                return ResourceManager.GetString("Update_Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instalar y reiniciar.
+        /// </summary>
+        internal static string Update_InstallAndRestart {
+            get {
+                return ResourceManager.GetString("Update_InstallAndRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Más tarde.
+        /// </summary>
+        internal static string Update_Later {
+            get {
+                return ResourceManager.GetString("Update_Later", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ya existe una actividad con este nombre..
         /// </summary>
         internal static string Validation_ActivityNameExists {
@@ -2811,33 +2937,6 @@ namespace Yatta.App.Resources {
         internal static string Value_Technology {
             get {
                 return ResourceManager.GetString("Value_Technology", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Hay una nueva versión de Yatta disponible. ¿Deseas instalarla ahora?.
-        /// </summary>
-        internal static string Update_Available {
-            get {
-                return ResourceManager.GetString("Update_Available", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Instalar y reiniciar.
-        /// </summary>
-        internal static string Update_InstallAndRestart {
-            get {
-                return ResourceManager.GetString("Update_InstallAndRestart", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Más tarde.
-        /// </summary>
-        internal static string Update_Later {
-            get {
-                return ResourceManager.GetString("Update_Later", resourceCulture);
             }
         }
     }
