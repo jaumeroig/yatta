@@ -48,6 +48,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Activity Color Indicator -->
@@ -138,6 +139,18 @@
                     </StackPanel>
 
                     <ui:Button Grid.Column="3"
+                               x:Name="OpenLinkButton"
+                               Appearance="Transparent"
+                               Padding="4"
+                               BorderThickness="0"
+                               VerticalAlignment="Center"
+                               ToolTip="{Binding RecordLink, ElementName=Root}"
+                               Visibility="Collapsed"
+                               Click="OpenLinkButton_Click">
+                        <ui:SymbolIcon Symbol="Open24" FontSize="16" />
+                    </ui:Button>
+
+                    <ui:Button Grid.Column="4"
                                x:Name="RecordMenuButton"
                                Appearance="Transparent"
                                Padding="4"

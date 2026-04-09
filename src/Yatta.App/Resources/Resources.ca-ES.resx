@@ -228,6 +228,15 @@
   <data name="Placeholder_RecordNotes" xml:space="preserve">
     <value>Afegeix notes sobre aquesta entrada...</value>
   </data>
+  <data name="Label_Link" xml:space="preserve">
+    <value>Enllaç (opcional)</value>
+  </data>
+  <data name="Placeholder_RecordLink" xml:space="preserve">
+    <value>https://exemple.com/recurs</value>
+  </data>
+  <data name="Validation_InvalidRecordLink" xml:space="preserve">
+    <value>L'enllaç ha de ser una URL absoluta vàlida amb http o https.</value>
+  </data>
   <data name="Button_AddRecord" xml:space="preserve">
     <value>Afegir entrada</value>
   </data>

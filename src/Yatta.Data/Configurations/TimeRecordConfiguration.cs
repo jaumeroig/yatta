@@ -29,6 +29,9 @@ public class TimeRecordConfiguration : IEntityTypeConfiguration<TimeRecord>
         builder.Property(tr => tr.Notes)
             .HasMaxLength(500);
 
+        builder.Property(tr => tr.Link)
+            .HasMaxLength(2048);
+
         builder.Property(tr => tr.Telework)
             .HasDefaultValue(false);
 

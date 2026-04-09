@@ -1,9 +1,12 @@
 namespace Yatta.App.Controls;
 
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
+using Yatta.Core.Helpers;
 using AppResources = Yatta.App.Resources.Resources;
 
 /// <summary>
@@ -37,6 +40,9 @@ public partial class TimeRecordCard : UserControl
 
     public static readonly DependencyProperty NotesProperty =
         DependencyProperty.Register(nameof(Notes), typeof(string), typeof(TimeRecordCard), new PropertyMetadata(string.Empty, OnNotesChanged));
+
+    public static readonly DependencyProperty RecordLinkProperty =
+        DependencyProperty.Register(nameof(RecordLink), typeof(string), typeof(TimeRecordCard), new PropertyMetadata(string.Empty, OnRecordLinkChanged));
 
     public static readonly DependencyProperty IsTeleworkProperty =
         DependencyProperty.Register(nameof(IsTelework), typeof(bool), typeof(TimeRecordCard), new PropertyMetadata(false, OnIsTeleworkChanged));
@@ -92,6 +98,12 @@ public partial class TimeRecordCard : UserControl
         set => SetValue(NotesProperty, value);
     }
 
+    public string RecordLink
+    {
+        get => (string)GetValue(RecordLinkProperty);
+        set => SetValue(RecordLinkProperty, value);
+    }
+
     public bool IsTelework
     {
         get => (bool)GetValue(IsTeleworkProperty);
@@ -145,10 +157,19 @@ public partial class TimeRecordCard : UserControl
         }
     }
 
+    private static void OnRecordLinkChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+    {
+        if (dependencyObject is TimeRecordCard control)
+        {
+            control.UpdateLinkPresentation();
+        }
+    }
+
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         UpdateLocationIcon();
         UpdateNotesPresentation();
+        UpdateLinkPresentation();
     }
 
     private void UpdateLocationIcon()
@@ -182,10 +203,43 @@ public partial class TimeRecordCard : UserControl
             : $"{Notes[..MaxCollapsedNotesLength].TrimEnd()}…";
     }
 
+    private void UpdateLinkPresentation()
+    {
+        OpenLinkButton.Visibility = TimeRecordLinkHelper.IsValid(RecordLink)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
     private void ToggleNotesButton_Click(object sender, RoutedEventArgs e)
     {
         _isNotesExpanded = !_isNotesExpanded;
         UpdateNotesPresentation();
+    }
+
+    private void OpenLinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        e.Handled = true;
+
+        if (!TimeRecordLinkHelper.TryCreateUri(RecordLink, out var uri) || uri == null)
+        {
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(uri.AbsoluteUri)
+            {
+                UseShellExecute = true
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            Debug.WriteLine($"Error opening record link: {ex.Message}");
+        }
+        catch (Win32Exception ex)
+        {
+            Debug.WriteLine($"Error opening record link: {ex.Message}");
+        }
     }
 
     private void RecordMenuButton_Click(object sender, RoutedEventArgs e)

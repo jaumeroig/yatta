@@ -230,6 +230,7 @@ public partial class TodayViewModel : ObservableObject
             ActivityName = activity?.Name ?? AppResources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
+            RecordLink = record.Link ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
             EndTime = record.EndTime?.ToString("HH:mm") ?? TimeRecordDisplay.ActiveEndTimePlaceholder,
             Duration = DurationFormatHelper.FormatDuration(duration),
@@ -265,6 +266,7 @@ public partial class TodayViewModel : ObservableObject
             StartTimeText = record.StartTime.ToString("HH:mm"),
             EndTimeText = record.EndTime?.ToString("HH:mm") ?? string.Empty,
             Notes = record.Notes ?? string.Empty,
+            Link = record.Link ?? string.Empty,
             Telework = record.Telework
         };
 
@@ -292,6 +294,7 @@ public partial class TodayViewModel : ObservableObject
             StartTime = startTime,
             EndTime = endTime,
             Notes = string.IsNullOrWhiteSpace(EditRecordModel.Notes) ? null : EditRecordModel.Notes,
+            Link = string.IsNullOrWhiteSpace(EditRecordModel.Link) ? null : EditRecordModel.Link.Trim(),
             Telework = EditRecordModel.Telework
         };
 
