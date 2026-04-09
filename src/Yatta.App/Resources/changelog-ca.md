@@ -1,15 +1,14 @@
 # Historial de versions
 
-## v1.0.0 (01/01/0001)
+## v1.0.0 09/04/2026
 
 ### 🚀 Llançament inicial
-
 - Control del temps amb activitats personalitzables
 - Gestió de la jornada laboral amb franges horàries
 - Suport per a teletreball i oficina
-- Estadístiques mensuals de treball
+- Estadístiques mensuals de feina
 - Notificacions de recordatori personalitzables
-- Suport multiidioma (Español i Català)
+- Suport multillengua (Espanyol i Català)
 - Temes clar, fosc i del sistema
-- Minimitzar a la safata del sistema
+- Minimització a la safata del sistema
 - Inici automàtic amb Windows
