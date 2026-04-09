@@ -253,6 +253,7 @@
                                                          EndTime="{Binding EndTime}"
                                                          Duration="{Binding Duration}"
                                                          Notes="{Binding Notes}"
+                                                         RecordLink="{Binding RecordLink}"
                                                          IsActive="{Binding IsActive}"
                                                          CardClickCommand="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                                                          EditCommand="{Binding DataContext.OpenEditRecordDialogCommand, RelativeSource={RelativeSource AncestorType=Page}}"

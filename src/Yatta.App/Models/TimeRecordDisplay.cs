@@ -14,6 +14,7 @@ public partial class TimeRecordDisplay : ObservableObject
     public string ActivityName { get; set; } = string.Empty;
     public string ActivityColor { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
+    public string RecordLink { get; set; } = string.Empty;
     public string StartTime { get; set; } = string.Empty;
 
     private string _endTime = ActiveEndTimePlaceholder;

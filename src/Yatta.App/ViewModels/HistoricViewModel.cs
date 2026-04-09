@@ -249,6 +249,7 @@ public partial class HistoricViewModel : ObservableObject
             ActivityName = activity?.Name ?? AppResources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
             Notes = record.Notes ?? string.Empty,
+            RecordLink = record.Link ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),
             EndTime = record.EndTime?.ToString("HH:mm") ?? TimeRecordDisplay.ActiveEndTimePlaceholder,
             Duration = FormatDuration(duration),
@@ -365,6 +366,7 @@ public partial class HistoricViewModel : ObservableObject
             StartTimeText = await GetDefaultStartTimeAsync(DateOnly.FromDateTime(DateTime.Today)),
             EndTimeText = "",
             Notes = string.Empty,
+            Link = string.Empty,
             Telework = false
         };
         IsEditRecordDialogOpen = true;
@@ -401,6 +403,7 @@ public partial class HistoricViewModel : ObservableObject
             StartTimeText = record.StartTime.ToString("HH:mm"),
             EndTimeText = record.EndTime?.ToString("HH:mm") ?? "",
             Notes = record.Notes ?? string.Empty,
+            Link = record.Link ?? string.Empty,
             Telework = record.Telework
         };
         IsEditRecordDialogOpen = true;
@@ -431,6 +434,7 @@ public partial class HistoricViewModel : ObservableObject
             StartTime = startTime,
             EndTime = endTime,
             Notes = string.IsNullOrWhiteSpace(EditRecordModel.Notes) ? null : EditRecordModel.Notes,
+            Link = string.IsNullOrWhiteSpace(EditRecordModel.Link) ? null : EditRecordModel.Link.Trim(),
             Telework = EditRecordModel.Telework
         };
 

@@ -2,6 +2,7 @@ namespace Yatta.App.Models;
 
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Yatta.Core.Helpers;
 using Yatta.Core.Models;
 using AppResources = Yatta.App.Resources.Resources;
 
@@ -41,6 +42,10 @@ public partial class TimeRecordEditModel : ObservableObject
     private string _notes = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSave))]
+    private string _link = string.Empty;
+
+    [ObservableProperty]
     private bool _telework;
 
     [ObservableProperty]
@@ -67,7 +72,8 @@ public partial class TimeRecordEditModel : ObservableObject
     /// </summary>
     public bool CanSave => SelectedActivityId != Guid.Empty &&
                            TimeOnly.TryParse(StartTimeText, out _) &&
-                           (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _));
+                           (string.IsNullOrWhiteSpace(EndTimeText) || TimeOnly.TryParse(EndTimeText, out _)) &&
+                           (string.IsNullOrWhiteSpace(Link) || TimeRecordLinkHelper.IsValid(Link));
 
     /// <summary>
     /// Validates the record data.
@@ -101,6 +107,13 @@ public partial class TimeRecordEditModel : ObservableObject
                 ValidationError = AppResources.Validation_EndTimeAfterStartTime;
                 return false;
             }
+        }
+
+        if (!string.IsNullOrWhiteSpace(Link) && !TimeRecordLinkHelper.IsValid(Link))
+        {
+            ValidationError = AppResources.ResourceManager.GetString("Validation_InvalidRecordLink", AppResources.Culture)
+                ?? string.Empty;
+            return false;
         }
 
         return true;

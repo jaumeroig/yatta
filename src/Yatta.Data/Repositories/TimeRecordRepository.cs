@@ -94,6 +94,7 @@ public class TimeRecordRepository : ITimeRecordRepository
         existing.StartTime = timeRecord.StartTime;
         existing.EndTime = timeRecord.EndTime;
         existing.Notes = timeRecord.Notes;
+        existing.Link = timeRecord.Link;
         existing.Telework = timeRecord.Telework;
 
         await dbContext.SaveChangesAsync();

@@ -82,6 +82,14 @@
                     MinHeight="80"
                     Margin="0,0,0,16" />
 
+        <TextBlock Text="{local:Localize Label_Link}"
+                   FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                   Margin="0,0,0,8" />
+        <ui:TextBox PlaceholderText="{local:Localize Placeholder_RecordLink}"
+                    Text="{Binding EditRecordModel.Link, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Margin="0,0,0,16" />
+
         <Border Background="#FEE2E2"
                 BorderBrush="#EF4444"
                 BorderThickness="1"
