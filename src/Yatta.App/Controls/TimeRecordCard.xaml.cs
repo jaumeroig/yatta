@@ -1,5 +1,6 @@
 namespace Yatta.App.Controls;
 
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -217,6 +218,8 @@ public partial class TimeRecordCard : UserControl
 
     private void OpenLinkButton_Click(object sender, RoutedEventArgs e)
     {
+        e.Handled = true;
+
         if (!TimeRecordLinkHelper.TryCreateUri(RecordLink, out var uri) || uri == null)
         {
             return;
@@ -229,13 +232,13 @@ public partial class TimeRecordCard : UserControl
                 UseShellExecute = true
             });
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
             Debug.WriteLine($"Error opening record link: {ex.Message}");
         }
-        finally
+        catch (Win32Exception ex)
         {
-            e.Handled = true;
+            Debug.WriteLine($"Error opening record link: {ex.Message}");
         }
     }
 

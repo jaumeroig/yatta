@@ -235,7 +235,7 @@
     <value>https://exemple.com/recurs</value>
   </data>
   <data name="Validation_InvalidRecordLink" xml:space="preserve">
-    <value>L'enllaç ha de ser un URL absolut vàlid amb http o https.</value>
+    <value>L'enllaç ha de ser una URL absoluta vàlida amb http o https.</value>
   </data>
   <data name="Button_AddRecord" xml:space="preserve">
     <value>Afegir entrada</value>
