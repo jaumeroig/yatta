@@ -33,6 +33,9 @@ public partial class ActivityDetailViewModel : ObservableObject
     private string _name = string.Empty;
 
     [ObservableProperty]
+    private string _jiraCode = string.Empty;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ColorBrush))]
     private string _color = "#0078D4";
 
@@ -140,6 +143,7 @@ public partial class ActivityDetailViewModel : ObservableObject
             PageTitle = Resources.Resources.ActivityDetail_NewTitle;
             Name = string.Empty;
             _originalName = string.Empty;
+            JiraCode = string.Empty;
             Color = "#0078D4";
             Active = true;
             RecordCount = 0;
@@ -162,6 +166,7 @@ public partial class ActivityDetailViewModel : ObservableObject
         PageTitle = activity.Name;
         Name = activity.Name;
         _originalName = activity.Name;
+        JiraCode = activity.JiraCode ?? string.Empty;
         Color = activity.Color;
         Active = activity.Active;
         OnPropertyChanged(nameof(ArchiveButtonText));
@@ -273,6 +278,7 @@ public partial class ActivityDetailViewModel : ObservableObject
         {
             Id = _activityId,
             Name = Name.Trim(),
+            JiraCode = string.IsNullOrWhiteSpace(JiraCode) ? null : JiraCode.Trim(),
             Color = Color,
             Active = Active
         };

@@ -23,6 +23,9 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             .IsRequired()
             .HasMaxLength(20);
 
+        builder.Property(a => a.JiraCode)
+            .HasMaxLength(50);
+
         builder.Property(a => a.Active)
             .IsRequired();
 

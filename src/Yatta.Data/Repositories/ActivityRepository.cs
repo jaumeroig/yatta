@@ -54,6 +54,7 @@ public class ActivityRepository : IActivityRepository
         {
             existingActivity.Name = activity.Name;
             existingActivity.Color = activity.Color;
+            existingActivity.JiraCode = activity.JiraCode;
             existingActivity.Active = activity.Active;
             await dbContext.SaveChangesAsync();
         }

@@ -73,6 +73,11 @@
                                    FontSize="14"
                                    Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
 
+                        <TextBlock Text="{Binding ActivityJiraCode, ElementName=Root}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                   Visibility="{Binding ActivityJiraCode, ElementName=Root, Converter={StaticResource StringToVisibilityConverter}}" />
+
                         <TextBlock x:Name="NotesTextBlock"
                                    FontSize="12"
                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"

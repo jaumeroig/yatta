@@ -13,6 +13,7 @@ public partial class TimeRecordDisplay : ObservableObject
     public Guid Id { get; set; }
     public string ActivityName { get; set; } = string.Empty;
     public string ActivityColor { get; set; } = string.Empty;
+    public string ActivityJiraCode { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
     public string RecordLink { get; set; } = string.Empty;
     public string StartTime { get; set; } = string.Empty;

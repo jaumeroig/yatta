@@ -94,7 +94,9 @@ public partial class ActivitiesViewModel : ObservableObject
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
             var searchLower = SearchText.ToLower();
-            filtered = filtered.Where(a => a.Name.ToLower().Contains(searchLower));
+            filtered = filtered.Where(a =>
+                a.Name.ToLower().Contains(searchLower) ||
+                (a.JiraCode != null && a.JiraCode.ToLower().Contains(searchLower)));
         }
 
         var activityDisplays = filtered.Select(activity =>
@@ -116,6 +118,7 @@ public partial class ActivitiesViewModel : ObservableObject
                 Id = activity.Id,
                 Name = activity.Name,
                 Color = activity.Color,
+                JiraCode = activity.JiraCode,
                 Active = activity.Active,
                 RecordCount = records.Count,
                 TotalTime = totalTime,
@@ -156,6 +159,7 @@ public class ActivityDisplay
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Color { get; set; } = string.Empty;
+    public string? JiraCode { get; set; }
     public bool Active { get; set; }
     public int RecordCount { get; set; }
     public string TotalTime { get; set; } = string.Empty;
