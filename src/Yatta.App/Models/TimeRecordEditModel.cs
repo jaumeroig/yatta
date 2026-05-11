@@ -59,12 +59,16 @@ public partial class TimeRecordEditModel : ObservableObject
         get => !Telework;
         set
         {
-            if (value != !Telework)
+            if (value)
             {
-                Telework = !value;
-                OnPropertyChanged();
+                Telework = false;
             }
         }
+    }
+
+    partial void OnTeleworkChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsOffice));
     }
 
     /// <summary>
