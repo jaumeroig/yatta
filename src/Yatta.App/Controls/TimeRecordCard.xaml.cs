@@ -29,6 +29,9 @@ public partial class TimeRecordCard : UserControl
     public static readonly DependencyProperty ActivityNameProperty =
         DependencyProperty.Register(nameof(ActivityName), typeof(string), typeof(TimeRecordCard), new PropertyMetadata(string.Empty));
 
+    public static readonly DependencyProperty ActivityJiraCodeProperty =
+        DependencyProperty.Register(nameof(ActivityJiraCode), typeof(string), typeof(TimeRecordCard), new PropertyMetadata(string.Empty));
+
     public static readonly DependencyProperty StartTimeProperty =
         DependencyProperty.Register(nameof(StartTime), typeof(string), typeof(TimeRecordCard), new PropertyMetadata(string.Empty));
 
@@ -72,6 +75,12 @@ public partial class TimeRecordCard : UserControl
     {
         get => (string)GetValue(ActivityNameProperty);
         set => SetValue(ActivityNameProperty, value);
+    }
+
+    public string ActivityJiraCode
+    {
+        get => (string)GetValue(ActivityJiraCodeProperty);
+        set => SetValue(ActivityJiraCodeProperty, value);
     }
 
     public string StartTime

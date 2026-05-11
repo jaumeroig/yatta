@@ -151,6 +151,12 @@
                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                                TextTrimming="CharacterEllipsis"
                                                Margin="0,2,0,0" />
+                                    <TextBlock Text="{Binding JiraCode}"
+                                               FontSize="11"
+                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="0,2,0,0"
+                                               Visibility="{Binding JiraCode, Converter={StaticResource StringToVisibilityConverter}}" />
                                 </StackPanel>
                             </Grid>
                         </ui:CardAction>

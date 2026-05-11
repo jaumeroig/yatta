@@ -62,6 +62,16 @@
                            Margin="0,0,0,20"
                            Visibility="{Binding HasNameError, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+                <!-- Codi Jira -->
+                <TextBlock Text="{local:Localize Label_JiraCode}"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Margin="0,0,0,8" />
+                <ui:TextBox Text="{Binding JiraCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="{local:Localize Placeholder_JiraCode}"
+                            Height="40"
+                            Margin="0,0,0,4" />
+
                 <!-- Color -->
                 <TextBlock Text="{local:Localize Label_Color}"
                            FontWeight="SemiBold"

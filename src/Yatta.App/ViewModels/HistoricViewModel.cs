@@ -248,6 +248,7 @@ public partial class HistoricViewModel : ObservableObject
             Id = record.Id,
             ActivityName = activity?.Name ?? AppResources.Activity_Unknown,
             ActivityColor = activity?.Color ?? "#808080",
+            ActivityJiraCode = activity?.JiraCode ?? string.Empty,
             Notes = record.Notes ?? string.Empty,
             RecordLink = record.Link ?? string.Empty,
             StartTime = record.StartTime.ToString("HH:mm"),

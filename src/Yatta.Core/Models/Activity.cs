@@ -21,6 +21,11 @@ public class Activity
     public string Color { get; set; } = string.Empty;
 
     /// <summary>
+    /// Optional Jira issue code associated with this activity.
+    /// </summary>
+    public string? JiraCode { get; set; }
+
+    /// <summary>
     /// Indicates if the activity is active.
     /// </summary>
     public bool Active { get; set; } = true;

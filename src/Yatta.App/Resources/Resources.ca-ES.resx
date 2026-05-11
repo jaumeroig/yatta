@@ -150,6 +150,12 @@
   <data name="Placeholder_ActivityName" xml:space="preserve">
     <value>Nom de l'activitat...</value>
   </data>
+  <data name="Label_JiraCode" xml:space="preserve">
+    <value>Codi Jira</value>
+  </data>
+  <data name="Placeholder_JiraCode" xml:space="preserve">
+    <value>Codi de la tasca a Jira...</value>
+  </data>
   <data name="Label_Color" xml:space="preserve">
     <value>Color</value>
   </data>
