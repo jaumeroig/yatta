@@ -11,6 +11,7 @@
              mc:Ignorable="d">
     <ui:AutoSuggestBox x:Name="SuggestBox"
                        PlaceholderText="{local:Localize Placeholder_SearchActivity}"
+                       UpdateTextOnSelect="False"
                        TextChanged="SuggestBox_TextChanged"
                        SuggestionChosen="SuggestBox_SuggestionChosen"
                        QuerySubmitted="SuggestBox_QuerySubmitted"

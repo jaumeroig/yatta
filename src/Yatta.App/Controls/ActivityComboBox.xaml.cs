@@ -130,6 +130,9 @@ public partial class ActivityComboBox : UserControl
 
         if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
         {
+            // Prevent the control's DefaultFiltering from overriding our results
+            args.Handled = true;
+
             string searchText = sender.Text?.Trim() ?? string.Empty;
 
             if (string.IsNullOrEmpty(searchText))
@@ -155,6 +158,7 @@ public partial class ActivityComboBox : UserControl
             _isUpdatingText = true;
             SelectedValue = activity.Id;
             sender.Text = GetDisplayText(activity);
+            sender.IsSuggestionListOpen = false;
             _isUpdatingText = false;
         }
     }
