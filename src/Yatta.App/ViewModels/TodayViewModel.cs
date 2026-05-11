@@ -872,26 +872,6 @@ public partial class ChangeActivityModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasChanges))]
     private bool _telework;
 
-    /// <summary>
-    /// Inverse of Telework for radio button binding (office mode).
-    /// </summary>
-    public bool IsOffice
-    {
-        get => !Telework;
-        set
-        {
-            if (value)
-            {
-                Telework = false;
-            }
-        }
-    }
-
-    partial void OnTeleworkChanged(bool value)
-    {
-        OnPropertyChanged(nameof(IsOffice));
-    }
-
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasChanges))]
     private string _notes = string.Empty;
