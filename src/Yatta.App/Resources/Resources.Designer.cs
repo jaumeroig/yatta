@@ -241,6 +241,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cargar más registros.
+        /// </summary>
+        internal static string Button_LoadMore {
+            get {
+                return ResourceManager.GetString("Button_LoadMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nueva actividad.
         /// </summary>
         internal static string Button_NewActivity {
@@ -1438,6 +1447,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Código Jira.
+        /// </summary>
+        internal static string Label_JiraCode {
+            get {
+                return ResourceManager.GetString("Label_JiraCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mantener notificaciones visibles.
         /// </summary>
         internal static string Label_KeepNotificationsVisible {
@@ -1452,6 +1470,15 @@ namespace Yatta.App.Resources {
         internal static string Label_LanguageRequiresRestart {
             get {
                 return ResourceManager.GetString("Label_LanguageRequiresRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enlace (opcional).
+        /// </summary>
+        internal static string Label_Link {
+            get {
+                return ResourceManager.GetString("Label_Link", resourceCulture);
             }
         }
         
@@ -2023,11 +2050,29 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Código de la tarea en Jira....
+        /// </summary>
+        internal static string Placeholder_JiraCode {
+            get {
+                return ResourceManager.GetString("Placeholder_JiraCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pulsa las teclas....
         /// </summary>
         internal static string Placeholder_PressKeys {
             get {
                 return ResourceManager.GetString("Placeholder_PressKeys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://ejemplo.com/recurso.
+        /// </summary>
+        internal static string Placeholder_RecordLink {
+            get {
+                return ResourceManager.GetString("Placeholder_RecordLink", resourceCulture);
             }
         }
         
@@ -2046,6 +2091,15 @@ namespace Yatta.App.Resources {
         internal static string Placeholder_Search {
             get {
                 return ResourceManager.GetString("Placeholder_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buscar actividad....
+        /// </summary>
+        internal static string Placeholder_SearchActivity {
+            get {
+                return ResourceManager.GetString("Placeholder_SearchActivity", resourceCulture);
             }
         }
         
@@ -2874,6 +2928,15 @@ namespace Yatta.App.Resources {
         internal static string Validation_InvalidEndTime {
             get {
                 return ResourceManager.GetString("Validation_InvalidEndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El enlace debe ser una URL absoluta válida con http o https..
+        /// </summary>
+        internal static string Validation_InvalidRecordLink {
+            get {
+                return ResourceManager.GetString("Validation_InvalidRecordLink", resourceCulture);
             }
         }
         
