@@ -216,6 +216,9 @@
   <data name="Placeholder_SelectActivity" xml:space="preserve">
     <value>Selecciona una actividad</value>
   </data>
+  <data name="Placeholder_SearchActivity" xml:space="preserve">
+    <value>Buscar actividad...</value>
+  </data>
   <data name="Label_Date" xml:space="preserve">
     <value>Fecha</value>
   </data>

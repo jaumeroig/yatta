@@ -3,17 +3,27 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:local="clr-namespace:Yatta.App.Markup"
              x:Name="Root"
              d:DesignHeight="40"
              d:DesignWidth="300"
              mc:Ignorable="d">
-    <ComboBox ItemsSource="{Binding ItemsSource, ElementName=Root}"
-              SelectedValue="{Binding SelectedValue, ElementName=Root}"
-              SelectedValuePath="Id"
-              Height="40"
-              HorizontalAlignment="Stretch">
-        <ComboBox.ItemTemplate>
+    <ui:AutoSuggestBox x:Name="SuggestBox"
+                       PlaceholderText="{local:Localize Placeholder_SearchActivity}"
+                       TextChanged="SuggestBox_TextChanged"
+                       SuggestionChosen="SuggestBox_SuggestionChosen"
+                       QuerySubmitted="SuggestBox_QuerySubmitted"
+                       GotFocus="SuggestBox_GotFocus"
+                       LostFocus="SuggestBox_LostFocus"
+                       Height="40"
+                       HorizontalAlignment="Stretch">
+        <ui:AutoSuggestBox.Icon>
+            <ui:IconSourceElement>
+                <ui:SymbolIconSource Symbol="Search24" />
+            </ui:IconSourceElement>
+        </ui:AutoSuggestBox.Icon>
+        <ui:AutoSuggestBox.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Ellipse Width="12"
@@ -21,14 +31,15 @@
                              VerticalAlignment="Center"
                              Margin="0,0,8,0"
                              Fill="{Binding Color, Converter={StaticResource StringToBrushConverter}}" />
-                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Name}"
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding JiraCode, StringFormat=' ({0})'}"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               FontSize="12"
+                               Visibility="{Binding JiraCode, Converter={StaticResource StringToVisibilityConverter}}" />
                 </StackPanel>
             </DataTemplate>
-        </ComboBox.ItemTemplate>
-        <ComboBox.Style>
-            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-                <Setter Property="Tag" Value="{local:Localize Placeholder_SelectActivity}" />
-            </Style>
-        </ComboBox.Style>
-    </ComboBox>
+        </ui:AutoSuggestBox.ItemTemplate>
+    </ui:AutoSuggestBox>
 </UserControl>
