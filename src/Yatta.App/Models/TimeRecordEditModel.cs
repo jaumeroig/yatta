@@ -52,26 +52,6 @@ public partial class TimeRecordEditModel : ObservableObject
     private string _validationError = string.Empty;
 
     /// <summary>
-    /// Inverse of Telework for radio button binding (Office selected).
-    /// </summary>
-    public bool IsOffice
-    {
-        get => !Telework;
-        set
-        {
-            if (value)
-            {
-                Telework = false;
-            }
-        }
-    }
-
-    partial void OnTeleworkChanged(bool value)
-    {
-        OnPropertyChanged(nameof(IsOffice));
-    }
-
-    /// <summary>
     /// Indicates if the record can be saved (basic validation).
     /// </summary>
     public bool CanSave => SelectedActivityId != Guid.Empty &&
