@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using System.Windows.Input;
 
 using Wpf.Ui.Controls;
 
@@ -19,6 +19,7 @@ public partial class ActivityComboBox : UserControl
 {
     private List<Activity> _allActivities = new();
     private bool _isUpdatingText;
+    private bool _suppressFocusOpen;
 
     /// <summary>
     /// Identifies the <see cref="ItemsSource"/> dependency property.
@@ -80,35 +81,39 @@ public partial class ActivityComboBox : UserControl
             }
 
             control.SuggestBox.ItemsSource = control._allActivities;
-            control.UpdateTextFromSelectedValue();
+            control.SetTextFromSelectedValue();
         }
     }
 
     private static void OnSelectedValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is ActivityComboBox control)
+        if (d is ActivityComboBox control && !control._isUpdatingText)
         {
-            control.UpdateTextFromSelectedValue();
+            control.SetTextFromSelectedValue();
         }
     }
 
-    private void UpdateTextFromSelectedValue()
+    private void SetTextFromSelectedValue()
     {
-        if (SelectedValue is Guid selectedId && selectedId != Guid.Empty)
-        {
-            Activity? activity = _allActivities.FirstOrDefault(a => a.Id == selectedId);
-            if (activity != null)
-            {
-                _isUpdatingText = true;
-                SuggestBox.Text = GetDisplayText(activity);
-                _isUpdatingText = false;
-                return;
-            }
-        }
-
         _isUpdatingText = true;
-        SuggestBox.Text = string.Empty;
-        _isUpdatingText = false;
+        try
+        {
+            if (SelectedValue is Guid selectedId && selectedId != Guid.Empty)
+            {
+                Activity? activity = _allActivities.FirstOrDefault(a => a.Id == selectedId);
+                if (activity != null)
+                {
+                    SuggestBox.Text = GetDisplayText(activity);
+                    return;
+                }
+            }
+
+            SuggestBox.Text = string.Empty;
+        }
+        finally
+        {
+            _isUpdatingText = false;
+        }
     }
 
     private static string GetDisplayText(Activity activity)
@@ -156,16 +161,22 @@ public partial class ActivityComboBox : UserControl
         if (args.SelectedItem is Activity activity)
         {
             _isUpdatingText = true;
-            SelectedValue = activity.Id;
-            sender.Text = GetDisplayText(activity);
-            sender.IsSuggestionListOpen = false;
-            _isUpdatingText = false;
+            _suppressFocusOpen = true;
+            try
+            {
+                SelectedValue = activity.Id;
+                sender.Text = GetDisplayText(activity);
+                sender.IsSuggestionListOpen = false;
+            }
+            finally
+            {
+                _isUpdatingText = false;
+            }
         }
     }
 
     private void SuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        // Try to find an activity matching the submitted text
         string queryText = args.QueryText?.Trim() ?? string.Empty;
         if (!string.IsNullOrEmpty(queryText))
         {
@@ -176,35 +187,35 @@ public partial class ActivityComboBox : UserControl
             if (match != null)
             {
                 _isUpdatingText = true;
-                SelectedValue = match.Id;
-                sender.Text = GetDisplayText(match);
-                _isUpdatingText = false;
+                try
+                {
+                    SelectedValue = match.Id;
+                    sender.Text = GetDisplayText(match);
+                }
+                finally
+                {
+                    _isUpdatingText = false;
+                }
+
                 return;
             }
         }
 
-        // No match found — revert to the previously selected value
-        UpdateTextFromSelectedValue();
+        SetTextFromSelectedValue();
     }
 
-    private void SuggestBox_GotFocus(object sender, RoutedEventArgs e)
+    private void SuggestBox_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-        if (sender is AutoSuggestBox suggestBox)
+        if (_suppressFocusOpen)
+        {
+            _suppressFocusOpen = false;
+            return;
+        }
+
+        if (sender is AutoSuggestBox suggestBox && e.NewFocus is System.Windows.Controls.TextBox)
         {
             suggestBox.ItemsSource = _allActivities;
             suggestBox.IsSuggestionListOpen = true;
         }
-    }
-
-    private void SuggestBox_LostFocus(object sender, RoutedEventArgs e)
-    {
-        // Delay to allow SuggestionChosen to fire first when clicking a dropdown item
-        Dispatcher.BeginInvoke(new Action(() =>
-        {
-            if (!SuggestBox.IsKeyboardFocusWithin)
-            {
-                UpdateTextFromSelectedValue();
-            }
-        }), DispatcherPriority.Background);
     }
 }

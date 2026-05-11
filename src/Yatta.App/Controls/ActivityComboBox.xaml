@@ -15,8 +15,7 @@
                        TextChanged="SuggestBox_TextChanged"
                        SuggestionChosen="SuggestBox_SuggestionChosen"
                        QuerySubmitted="SuggestBox_QuerySubmitted"
-                       GotFocus="SuggestBox_GotFocus"
-                       LostFocus="SuggestBox_LostFocus"
+                       PreviewGotKeyboardFocus="SuggestBox_PreviewGotKeyboardFocus"
                        Height="40"
                        HorizontalAlignment="Stretch">
         <ui:AutoSuggestBox.Icon>
