@@ -204,7 +204,7 @@ public partial class ActivityComboBox : UserControl
         SetTextFromSelectedValue();
     }
 
-    private void SuggestBox_PreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    private void SuggestBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
         if (_suppressFocusOpen)
         {
@@ -212,7 +212,7 @@ public partial class ActivityComboBox : UserControl
             return;
         }
 
-        if (sender is AutoSuggestBox suggestBox && e.NewFocus is System.Windows.Controls.TextBox)
+        if (sender is AutoSuggestBox suggestBox && !suggestBox.IsSuggestionListOpen)
         {
             suggestBox.ItemsSource = _allActivities;
             suggestBox.IsSuggestionListOpen = true;
