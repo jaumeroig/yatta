@@ -356,19 +356,23 @@ public partial class HistoricViewModel : ObservableObject
     [RelayCommand]
     private async Task OpenNewRecordDialogAsync()
     {
+        var lastRecord = await _timeRecordRepository.GetLastRecordAsync();
+
         EditRecordModel = new TimeRecordEditModel
         {
             DialogTitle = AppResources.Dialog_NewRecord_Title,
             RecordId = Guid.NewGuid(),
             IsNewRecord = true,
             AvailableActivities = new ObservableCollection<Activity>(_allActivities),
-            SelectedActivityId = Guid.Empty,
+            SelectedActivityId = lastRecord != null && _allActivities.Any(a => a.Id == lastRecord.ActivityId)
+                ? lastRecord.ActivityId
+                : Guid.Empty,
             Date = DateTime.Today,
             StartTimeText = await GetDefaultStartTimeAsync(DateOnly.FromDateTime(DateTime.Today)),
             EndTimeText = "",
             Notes = string.Empty,
             Link = string.Empty,
-            Telework = false
+            Telework = lastRecord?.Telework ?? false
         };
         IsEditRecordDialogOpen = true;
     }

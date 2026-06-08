@@ -113,6 +113,16 @@ public class TimeRecordRepository : ITimeRecordRepository
     }
 
     /// <inheritdoc/>
+    public async Task<TimeRecord?> GetLastRecordAsync()
+    {
+        return await dbContext.TimeRecords
+            .AsNoTracking()
+            .Where(tr => tr.EndTime != null)
+            .OrderByDescending(tr => tr.Date)
+            .ThenByDescending(tr => tr.EndTime)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<bool> HasRecordsBeforeDateAsync(DateOnly date)
     {
         return await dbContext.TimeRecords

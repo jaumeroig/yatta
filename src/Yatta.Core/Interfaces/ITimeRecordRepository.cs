@@ -54,6 +54,11 @@ public interface ITimeRecordRepository
     Task DeleteAsync(Guid id);
 
     /// <summary>
+    /// Gets the most recent completed time record (EndTime is not null).
+    /// </summary>
+    Task<TimeRecord?> GetLastRecordAsync();
+
+    /// <summary>
     /// Returns true if any time record exists before the specified date.
     /// </summary>
     /// <param name="date">The cutoff date (exclusive).</param>
