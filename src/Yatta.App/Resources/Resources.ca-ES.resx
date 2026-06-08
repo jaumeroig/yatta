@@ -498,6 +498,15 @@
   <data name="Activity_NoRecords" xml:space="preserve">
     <value>Sense registres</value>
   </data>
+  <data name="Activity_LastRecordPrefix" xml:space="preserve">
+    <value>Última imp.</value>
+  </data>
+  <data name="Sort_ByName" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Sort_ByLastRecordDate" xml:space="preserve">
+    <value>Última imputació</value>
+  </data>
   <data name="Filter_SearchByName" xml:space="preserve">
     <value>Cerca per nom...</value>
   </data>

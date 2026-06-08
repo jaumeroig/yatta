@@ -28,6 +28,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- Camp de cerca per nom -->
@@ -37,55 +38,30 @@
                         Icon="{ui:SymbolIcon Search24}"
                         Height="40" />
 
-            <!-- Botó toggle per mostrar activitats arxivades -->
-            <ToggleButton Grid.Column="1"
-                          IsChecked="{Binding ShowInactive}"
-                          VerticalAlignment="Center"
-                          Margin="12,0,0,0"
-                          Height="40"
-                          Padding="12,0">
-                <ToggleButton.Style>
-                    <Style TargetType="ToggleButton">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorSecondaryBrush}" />
-                        <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="Bd"
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="6"
-                                            Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSecondaryBackgroundBrush}" />
-                                        </Trigger>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ToggleButton.Style>
-                <StackPanel Orientation="Horizontal">
-                    <ui:SymbolIcon Symbol="Archive24" Margin="0,0,8,0" />
-                    <TextBlock Text="{local:Localize Filter_ShowArchived}"
-                           VerticalAlignment="Center"
-                           FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-                </StackPanel>
-            </ToggleButton>
+            <!-- Selector d'ordenació -->
+            <ComboBox Grid.Column="1"
+                      ItemsSource="{Binding AvailableSortCriteria}"
+                      SelectedValue="{Binding SelectedSortCriteria}"
+                      DisplayMemberPath="DisplayName"
+                      SelectedValuePath="Value"
+                      Margin="12,0,0,0"
+                      Height="40"
+                      Width="160"
+                      VerticalAlignment="Center" />
 
-            <ui:Button Grid.Column="2"
+            <!-- Switch per mostrar activitats arxivades -->
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Center">
+                <ui:ToggleSwitch IsChecked="{Binding ShowInactive}" />
+                <TextBlock Text="{local:Localize Filter_ShowArchived}"
+                           VerticalAlignment="Center"
+                           Margin="8,0,0,0"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+
+            <ui:Button Grid.Column="3"
                        Appearance="Primary"
                        Command="{Binding NavigateToNewActivityCommand}"
                        Margin="42,0,0,0"
