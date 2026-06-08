@@ -498,6 +498,15 @@
   <data name="Activity_NoRecords" xml:space="preserve">
     <value>Sin entradas</value>
   </data>
+  <data name="Activity_LastRecordPrefix" xml:space="preserve">
+    <value>Última imp.</value>
+  </data>
+  <data name="Sort_ByName" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Sort_ByLastRecordDate" xml:space="preserve">
+    <value>Última imputación</value>
+  </data>
   <data name="Filter_SearchByName" xml:space="preserve">
     <value>Buscar por nombre...</value>
   </data>

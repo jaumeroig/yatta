@@ -10,6 +10,22 @@ using Yatta.Core.Interfaces;
 using Yatta.Core.Models;
 
 /// <summary>
+/// Criteria for sorting activities in the list.
+/// </summary>
+public enum ActivitySortCriteria
+{
+    /// <summary>
+    /// Sort by activity name.
+    /// </summary>
+    Name,
+
+    /// <summary>
+    /// Sort by last record date.
+    /// </summary>
+    LastRecordDate
+}
+
+/// <summary>
 /// ViewModel for activities management.
 /// </summary>
 public partial class ActivitiesViewModel : ObservableObject
@@ -31,6 +47,14 @@ public partial class ActivitiesViewModel : ObservableObject
     [ObservableProperty]
     private bool _showInactive = false;
 
+    [ObservableProperty]
+    private ActivitySortCriteria _selectedSortCriteria;
+
+    /// <summary>
+    /// Available sort options for the activities list.
+    /// </summary>
+    public List<SortOption> AvailableSortCriteria { get; }
+
     /// <summary>
     /// Executes when the search text changes.
     /// </summary>
@@ -49,6 +73,15 @@ public partial class ActivitiesViewModel : ObservableObject
         ApplyFilters();
     }
 
+    /// <summary>
+    /// Executes when the sort criteria changes.
+    /// </summary>
+    partial void OnSelectedSortCriteriaChanged(ActivitySortCriteria value)
+    {
+        _pageStateService.ActivitiesPage.SelectedSortCriteria = value;
+        ApplyFilters();
+    }
+
     public ActivitiesViewModel(
         IActivityRepository activityRepository,
         ITimeRecordRepository timeRecordRepository,
@@ -62,9 +95,17 @@ public partial class ActivitiesViewModel : ObservableObject
         _navigationService = navigationService;
         _pageStateService = pageStateService;
 
+        // Initialize sort options with localized display names
+        AvailableSortCriteria =
+        [
+            new SortOption(ActivitySortCriteria.Name, Resources.Resources.Sort_ByName),
+            new SortOption(ActivitySortCriteria.LastRecordDate, Resources.Resources.Sort_ByLastRecordDate)
+        ];
+
         // Restore filter state from previous session
         SearchText = _pageStateService.ActivitiesPage.SearchText;
         ShowInactive = _pageStateService.ActivitiesPage.ShowInactive;
+        SelectedSortCriteria = _pageStateService.ActivitiesPage.SelectedSortCriteria;
     }
 
     /// <summary>
@@ -78,7 +119,7 @@ public partial class ActivitiesViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Applies search and active/inactive status filters to the activities list.
+    /// Applies search, active/inactive status filters and sort criteria to the activities list.
     /// </summary>
     private void ApplyFilters()
     {
@@ -104,13 +145,16 @@ public partial class ActivitiesViewModel : ObservableObject
             var records = _allRecords.Where(r => r.ActivityId == activity.Id).ToList();
             var totalHours = _timeCalculatorService.CalculateTotalHours(records);
             var totalTime = DurationFormatHelper.FormatDuration(totalHours);
+            var lastRecordDate = records.Any()
+                ? records.Max(r => r.Date)
+                : (DateOnly?)null;
 
-            // Create subtitle with format: "X records · Xh Xm"
+            // Create subtitle with format: "X records · Xh Xm · Última imp. dd/MM/yyyy"
             var recordsText = records.Count == 1
                 ? Resources.Resources.Activity_SingleRecord
                 : string.Format(Resources.Resources.Activity_MultipleRecords, records.Count);
             var subtitle = records.Count > 0
-                ? $"{recordsText} · {totalTime}"
+                ? $"{recordsText} · {totalTime} · {Resources.Resources.Activity_LastRecordPrefix} {lastRecordDate:d}"
                 : Resources.Resources.Activity_NoRecords;
 
             return new ActivityDisplay
@@ -122,12 +166,22 @@ public partial class ActivitiesViewModel : ObservableObject
                 Active = activity.Active,
                 RecordCount = records.Count,
                 TotalTime = totalTime,
+                LastRecordDate = lastRecordDate,
                 Subtitle = subtitle,
                 StatusText = activity.Active
                     ? Resources.Resources.Status_Active
                     : Resources.Resources.Status_Inactive
             };
-        }).OrderBy(a => a.Name);
+        });
+
+        // Apply sort criteria
+        activityDisplays = SelectedSortCriteria switch
+        {
+            ActivitySortCriteria.LastRecordDate => activityDisplays
+                .OrderByDescending(a => a.LastRecordDate)
+                .ThenBy(a => a.Name),
+            _ => activityDisplays.OrderBy(a => a.Name)
+        };
 
         Activities = new ObservableCollection<ActivityDisplay>(activityDisplays);
     }
@@ -152,6 +206,28 @@ public partial class ActivitiesViewModel : ObservableObject
 }
 
 /// <summary>
+/// Represents a sort option with a display name.
+/// </summary>
+public class SortOption
+{
+    /// <summary>
+    /// The sort criteria value.
+    /// </summary>
+    public ActivitySortCriteria Value { get; }
+
+    /// <summary>
+    /// The localized display name.
+    /// </summary>
+    public string DisplayName { get; }
+
+    public SortOption(ActivitySortCriteria value, string displayName)
+    {
+        Value = value;
+        DisplayName = displayName;
+    }
+}
+
+/// <summary>
 /// Display model for an activity.
 /// </summary>
 public class ActivityDisplay
@@ -163,10 +239,11 @@ public class ActivityDisplay
     public bool Active { get; set; }
     public int RecordCount { get; set; }
     public string TotalTime { get; set; } = string.Empty;
+    public DateOnly? LastRecordDate { get; set; }
     public string StatusText { get; set; } = string.Empty;
 
     /// <summary>
-    /// Subtitle with summary of records and total time.
+    /// Subtitle with summary of records, total time and last record date.
     /// </summary>
     public string Subtitle { get; set; } = string.Empty;
 

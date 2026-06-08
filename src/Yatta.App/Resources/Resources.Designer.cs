@@ -70,6 +70,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Última imp..
+        /// </summary>
+        internal static string Activity_LastRecordPrefix {
+            get {
+                return ResourceManager.GetString("Activity_LastRecordPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0:n0} entradas.
         /// </summary>
         internal static string Activity_MultipleRecords {
@@ -2289,6 +2298,24 @@ namespace Yatta.App.Resources {
         internal static string Settings_Section_User_Config {
             get {
                 return ResourceManager.GetString("Settings_Section_User_Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Última imputación.
+        /// </summary>
+        internal static string Sort_ByLastRecordDate {
+            get {
+                return ResourceManager.GetString("Sort_ByLastRecordDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nombre.
+        /// </summary>
+        internal static string Sort_ByName {
+            get {
+                return ResourceManager.GetString("Sort_ByName", resourceCulture);
             }
         }
         

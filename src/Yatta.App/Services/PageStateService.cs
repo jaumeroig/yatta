@@ -1,5 +1,7 @@
 namespace Yatta.App.Services;
 
+using Yatta.App.ViewModels;
+
 /// <summary>
 /// Interface for managing page state across navigations.
 /// </summary>
@@ -30,6 +32,11 @@ public class ActivitiesPageState
     /// Whether to show inactive (archived) activities.
     /// </summary>
     public bool ShowInactive { get; set; } = false;
+
+    /// <summary>
+    /// Selected sort criteria for the activities list.
+    /// </summary>
+    public ActivitySortCriteria SelectedSortCriteria { get; set; } = ActivitySortCriteria.Name;
 }
 
 /// <summary>
