@@ -364,7 +364,9 @@ public partial class HistoricViewModel : ObservableObject
             RecordId = Guid.NewGuid(),
             IsNewRecord = true,
             AvailableActivities = new ObservableCollection<Activity>(_allActivities),
-            SelectedActivityId = lastRecord?.ActivityId ?? Guid.Empty,
+            SelectedActivityId = lastRecord != null && _allActivities.Any(a => a.Id == lastRecord.ActivityId)
+                ? lastRecord.ActivityId
+                : Guid.Empty,
             Date = DateTime.Today,
             StartTimeText = await GetDefaultStartTimeAsync(DateOnly.FromDateTime(DateTime.Today)),
             EndTimeText = "",

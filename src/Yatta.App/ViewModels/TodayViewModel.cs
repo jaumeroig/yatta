@@ -671,7 +671,9 @@ public partial class TodayViewModel : ObservableObject
             // record's activity and location so consecutive entries stay consistent.
             var lastRecord = await _timeRecordRepository.GetLastRecordAsync();
             model.HasActiveRecord = false;
-            model.SelectedActivityId = lastRecord?.ActivityId ?? Guid.Empty;
+            model.SelectedActivityId = lastRecord != null && _allActivities.Any(a => a.Id == lastRecord.ActivityId)
+                ? lastRecord.ActivityId
+                : Guid.Empty;
             model.Telework = lastRecord?.Telework ?? false;
         }
 
@@ -923,10 +925,11 @@ public partial class ChangeActivityModel : ObservableObject
                     && TimeOnly.TryParse(StartTimeText, out _);
             }
 
-            return SelectedActivityId != OriginalActivityId
-                || Telework != OriginalTelework
-                || !string.Equals(Notes, OriginalNotes, StringComparison.Ordinal)
-                || !string.Equals(StartTimeText, OriginalStartTimeText, StringComparison.Ordinal);
+            return SelectedActivityId != Guid.Empty
+                && (SelectedActivityId != OriginalActivityId
+                    || Telework != OriginalTelework
+                    || !string.Equals(Notes, OriginalNotes, StringComparison.Ordinal)
+                    || !string.Equals(StartTimeText, OriginalStartTimeText, StringComparison.Ordinal));
         }
     }
 
