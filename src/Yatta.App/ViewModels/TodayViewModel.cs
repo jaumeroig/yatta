@@ -646,18 +646,20 @@ public partial class TodayViewModel : ObservableObject
 
         if (ActiveRecord != null)
         {
-            // Pre-select the current activity and copy its properties
+            // For activity change, keep location from active record but leave activity
+            // selection blank so the user must explicitly choose the new activity.
+            // Notes are always cleared for a new activity switch.
             var activeTimeRecord = await _timeRecordRepository.GetActiveAsync();
             if (activeTimeRecord != null)
             {
-                model.SelectedActivityId = activeTimeRecord.ActivityId;
+                model.SelectedActivityId = Guid.Empty;
                 model.Telework = activeTimeRecord.Telework;
-                model.Notes = activeTimeRecord.Notes ?? string.Empty;
+                model.Notes = string.Empty;
 
                 // Store original values to detect changes
                 model.OriginalActivityId = activeTimeRecord.ActivityId;
                 model.OriginalTelework = activeTimeRecord.Telework;
-                model.OriginalNotes = activeTimeRecord.Notes ?? string.Empty;
+                model.OriginalNotes = string.Empty;
                 model.OriginalStartTimeText = now.ToString("HH:mm");
             }
 
@@ -665,8 +667,12 @@ public partial class TodayViewModel : ObservableObject
         }
         else
         {
+            // Starting a new record with no active one: default to the last completed
+            // record's activity and location so consecutive entries stay consistent.
+            var lastRecord = await _timeRecordRepository.GetLastRecordAsync();
             model.HasActiveRecord = false;
-            model.SelectedActivityId = Guid.Empty;
+            model.SelectedActivityId = lastRecord?.ActivityId ?? Guid.Empty;
+            model.Telework = lastRecord?.Telework ?? false;
         }
 
         ChangeActivityModel = model;
