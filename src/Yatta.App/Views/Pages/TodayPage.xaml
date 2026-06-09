@@ -186,39 +186,51 @@
                                    FontWeight="SemiBold"
                                    VerticalAlignment="Center"/>
 
-                        <!-- Action buttons: Stop and Change (when active record exists) -->
+                        <!-- Action buttons container -->
                         <StackPanel Grid.Column="1"
                                     Orientation="Horizontal"
-                                    VerticalAlignment="Center"
-                                    Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <ui:Button Appearance="Transparent"
-                                       Command="{Binding StopRecordCommand}"
-                                       ToolTip="{local:Localize Button_Stop}"
-                                       Padding="6"
-                                       BorderThickness="0">
-                                <ui:SymbolIcon Symbol="RecordStop24"/>
+                                    VerticalAlignment="Center">
+
+                            <!-- Play button (when no active record exists but there are completed records) -->
+                            <ui:Button Appearance="Primary"
+                                       Command="{Binding PlayRecordCommand}"
+                                       Height="35"
+                                       Padding="8,4"
+                                       Visibility="{Binding HasCompletedRecordsOnly, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Play24" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{local:Localize Button_Play}"/>
+                                </StackPanel>
                             </ui:Button>
+
+                            <!-- Stop and Change buttons (when active record exists) -->
+                            <StackPanel Orientation="Horizontal"
+                                        Visibility="{Binding HasActiveRecord, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ui:Button Appearance="Transparent"
+                                           Command="{Binding StopRecordCommand}"
+                                           ToolTip="{local:Localize Button_Stop}"
+                                           Padding="6"
+                                           BorderThickness="0">
+                                    <ui:SymbolIcon Symbol="RecordStop24"/>
+                                </ui:Button>
+                                <ui:Button Appearance="Transparent"
+                                           Command="{Binding ChangeActivityCommand}"
+                                           ToolTip="{local:Localize Button_Change}"
+                                           Padding="6"
+                                           BorderThickness="0">
+                                    <ui:SymbolIcon Symbol="ArrowSwap24"/>
+                                </ui:Button>
+                            </StackPanel>
+
+                            <!-- New Record button (always visible) -->
                             <ui:Button Appearance="Transparent"
-                                       Command="{Binding ChangeActivityCommand}"
-                                       ToolTip="{local:Localize Button_Change}"
+                                       Command="{Binding OpenNewRecordDialogCommand}"
+                                       ToolTip="{local:Localize Button_NewRecord}"
                                        Padding="6"
                                        BorderThickness="0">
-                                <ui:SymbolIcon Symbol="ArrowSwap24"/>
+                                <ui:SymbolIcon Symbol="Add24"/>
                             </ui:Button>
                         </StackPanel>
-
-                        <!-- Play button (when no active record exists but there are completed records) -->
-                        <ui:Button Grid.Column="1"
-                                   Appearance="Primary"
-                                   Command="{Binding PlayRecordCommand}"
-                                   Height="35"
-                                   Padding="8,4"
-                                   Visibility="{Binding HasCompletedRecordsOnly, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <StackPanel Orientation="Horizontal">
-                                <ui:SymbolIcon Symbol="Play24" Margin="0,0,6,0"/>
-                                <TextBlock Text="{local:Localize Button_Play}"/>
-                            </StackPanel>
-                        </ui:Button>
                     </Grid>
 
                     <!-- No Records Message with centered Play button -->
