@@ -245,6 +245,51 @@ public partial class TodayViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task OpenNewRecordDialogAsync()
+    {
+        var lastRecord = await _timeRecordRepository.GetLastRecordAsync();
+
+        EditRecordModel = new TimeRecordEditModel
+        {
+            DialogTitle = AppResources.Dialog_NewRecord_Title,
+            RecordId = Guid.NewGuid(),
+            IsNewRecord = true,
+            AvailableActivities = new ObservableCollection<Activity>(_allActivities),
+            SelectedActivityId = lastRecord != null && _allActivities.Any(a => a.Id == lastRecord.ActivityId)
+                ? lastRecord.ActivityId
+                : Guid.Empty,
+            Date = DateTime.Today,
+            StartTimeText = await GetDefaultStartTimeAsync(DateOnly.FromDateTime(DateTime.Today)),
+            EndTimeText = string.Empty,
+            Notes = string.Empty,
+            Link = string.Empty,
+            Telework = lastRecord?.Telework ?? false
+        };
+        IsEditRecordDialogOpen = true;
+    }
+
+    /// <summary>
+    /// Gets the default start time for a new record on the given date.
+    /// If there are existing records, returns the end time of the last one.
+    /// Otherwise, returns the current time.
+    /// </summary>
+    private async Task<string> GetDefaultStartTimeAsync(DateOnly date)
+    {
+        var records = await _timeRecordRepository.GetByDateAsync(date);
+        var lastRecord = records
+            .Where(r => r.EndTime.HasValue)
+            .OrderByDescending(r => r.EndTime)
+            .FirstOrDefault();
+
+        if (lastRecord?.EndTime != null)
+        {
+            return lastRecord.EndTime.Value.ToString("HH:mm");
+        }
+
+        return DateTime.Now.ToString("HH:mm");
+    }
+
+    [RelayCommand]
     private async Task OpenEditRecordDialogAsync(TimeRecordDisplay recordDisplay)
     {
         var record = await _timeRecordRepository.GetByIdAsync(recordDisplay.Id);
@@ -305,15 +350,28 @@ public partial class TodayViewModel : ObservableObject
 
         try
         {
-            var existingRecord = await _timeRecordRepository.GetByIdAsync(EditRecordModel.RecordId);
-            var wasActive = existingRecord?.EndTime == null;
-            var isNowActive = !record.EndTime.HasValue;
-
-            await _timeRecordRepository.UpdateAsync(record);
-
-            if (isNowActive || wasActive)
+            if (EditRecordModel.IsNewRecord)
             {
-                _notificationService.ResetTimer();
+                await _timeRecordRepository.AddAsync(record);
+
+                // Reset notification timer if the new record is active (no end time)
+                if (!record.EndTime.HasValue)
+                {
+                    _notificationService.ResetTimer();
+                }
+            }
+            else
+            {
+                var existingRecord = await _timeRecordRepository.GetByIdAsync(EditRecordModel.RecordId);
+                var wasActive = existingRecord?.EndTime == null;
+                var isNowActive = !record.EndTime.HasValue;
+
+                await _timeRecordRepository.UpdateAsync(record);
+
+                if (isNowActive || wasActive)
+                {
+                    _notificationService.ResetTimer();
+                }
             }
 
             IsEditRecordDialogOpen = false;
