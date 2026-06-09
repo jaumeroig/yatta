@@ -32,6 +32,7 @@
             <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
             <converters:DateToWorkdayStartConverter x:Key="DateToWorkdayStartConverter" />
             <converters:DateToWorkdayEndConverter x:Key="DateToWorkdayEndConverter" />
+            <converters:DayTypeToBrushConverter x:Key="DayTypeToBrushConverter" />
 
             <converters:DateInMultipleCollectionsToVisibilityConverter x:Key="DateInMultipleCollectionsToVisibilityConverter" />
             <!-- calendar converters registered above -->
