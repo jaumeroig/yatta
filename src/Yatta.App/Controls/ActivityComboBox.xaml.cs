@@ -143,6 +143,7 @@ public partial class ActivityComboBox : UserControl
             if (string.IsNullOrEmpty(searchText))
             {
                 sender.ItemsSource = _allActivities;
+                SelectedValue = Guid.Empty;
             }
             else
             {
