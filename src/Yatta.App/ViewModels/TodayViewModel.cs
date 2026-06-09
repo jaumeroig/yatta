@@ -37,6 +37,9 @@ public partial class TodayViewModel : ObservableObject
     private string _dayTypeDisplay = string.Empty;
 
     [ObservableProperty]
+    private DayType _currentDayType;
+
+    [ObservableProperty]
     private string _targetDuration = string.Empty;
 
     [ObservableProperty]
@@ -164,6 +167,7 @@ public partial class TodayViewModel : ObservableObject
 
         IsWorkingDay = isWorking;
         DayTypeDisplay = workday.DayType.GetDisplayName();
+        CurrentDayType = workday.DayType;
 
         if (isWorking)
         {
