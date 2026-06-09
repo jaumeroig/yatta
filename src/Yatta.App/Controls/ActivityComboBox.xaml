@@ -10,6 +10,7 @@
              d:DesignWidth="300"
              mc:Ignorable="d">
     <ui:AutoSuggestBox x:Name="SuggestBox"
+                       ClearButtonEnabled="True"
                        PlaceholderText="{local:Localize Placeholder_SearchActivity}"
                        UpdateTextOnSelect="False"
                        TextChanged="SuggestBox_TextChanged"
@@ -18,11 +19,6 @@
                        PreviewMouseLeftButtonDown="SuggestBox_PreviewMouseLeftButtonDown"
                        Height="40"
                        HorizontalAlignment="Stretch">
-        <ui:AutoSuggestBox.Icon>
-            <ui:IconSourceElement>
-                <ui:SymbolIconSource Symbol="Search24" />
-            </ui:IconSourceElement>
-        </ui:AutoSuggestBox.Icon>
         <ui:AutoSuggestBox.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

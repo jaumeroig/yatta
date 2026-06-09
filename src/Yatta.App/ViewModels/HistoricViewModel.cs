@@ -42,7 +42,7 @@ public partial class HistoricViewModel : ObservableObject
     private string _searchText = string.Empty;
 
     [ObservableProperty]
-    private Activity? _selectedActivityFilter;
+    private Guid _selectedActivityFilterId = Guid.Empty;
 
     [ObservableProperty]
     private DateTime? _selectedDate;
@@ -105,13 +105,7 @@ public partial class HistoricViewModel : ObservableObject
         SortAscending = settings.HistoricSortAscending;
 
         _allActivities = (await _activityRepository.GetActiveAsync()).ToList();
-
-        // Add "All activities" option at the beginning
-        var allActivitiesText = AppResources.Filter_AllActivities;
-        var allActivitiesOption = new Activity { Id = Guid.Empty, Name = allActivitiesText };
-        var activitiesWithAll = new List<Activity> { allActivitiesOption };
-        activitiesWithAll.AddRange(_allActivities);
-        Activities = new ObservableCollection<Activity>(activitiesWithAll);
+        Activities = new ObservableCollection<Activity>(_allActivities);
 
         var today = DateOnly.FromDateTime(DateTime.Today);
         _pageStartDate = today.AddDays(-(PageDays - 1));
@@ -128,7 +122,7 @@ public partial class HistoricViewModel : ObservableObject
         ApplyFilters();
     }
 
-    partial void OnSelectedActivityFilterChanged(Activity? value)
+    partial void OnSelectedActivityFilterIdChanged(Guid value)
     {
         ApplyFilters();
     }
@@ -168,7 +162,7 @@ public partial class HistoricViewModel : ObservableObject
         bool dateOutsideWindow = SelectedDate.HasValue &&
                                 DateOnly.FromDateTime(SelectedDate.Value) < _pageStartDate;
         bool needsFullLoad = !string.IsNullOrWhiteSpace(SearchText) ||
-                             (SelectedActivityFilter != null && SelectedActivityFilter.Id != Guid.Empty) ||
+                             SelectedActivityFilterId != Guid.Empty ||
                              dateOutsideWindow;
 
         if (needsFullLoad && !_isFullyLoaded)
@@ -192,9 +186,9 @@ public partial class HistoricViewModel : ObservableObject
         }
 
         // Filter by activity (except "All activities")
-        if (SelectedActivityFilter != null && SelectedActivityFilter.Id != Guid.Empty)
+        if (SelectedActivityFilterId != Guid.Empty)
         {
-            filtered = filtered.Where(r => r.ActivityId == SelectedActivityFilter.Id);
+            filtered = filtered.Where(r => r.ActivityId == SelectedActivityFilterId);
         }
 
         // Filter by date
@@ -604,7 +598,7 @@ public partial class HistoricViewModel : ObservableObject
     private void ClearFilters()
     {
         SearchText = string.Empty;
-        SelectedActivityFilter = null;
+        SelectedActivityFilterId = Guid.Empty;
         SelectedDate = null;
     }
 
