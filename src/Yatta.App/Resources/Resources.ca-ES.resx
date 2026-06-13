@@ -525,6 +525,18 @@
   <data name="Filter_Sort_Tooltip" xml:space="preserve">
     <value>Canviar ordre cronològic</value>
   </data>
+  <data name="Filter_StartDate" xml:space="preserve">
+    <value>Des de</value>
+  </data>
+  <data name="Filter_EndDate" xml:space="preserve">
+    <value>Fins a</value>
+  </data>
+  <data name="Filter_DateRangeSeparator" xml:space="preserve">
+    <value>a</value>
+  </data>
+  <data name="Button_ClearFilters" xml:space="preserve">
+    <value>Netejar filtres</value>
+  </data>
   <data name="RecordDetail_NewTitle" xml:space="preserve">
     <value>Nou registre</value>
   </data>

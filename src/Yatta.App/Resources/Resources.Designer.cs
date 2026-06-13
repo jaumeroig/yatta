@@ -223,6 +223,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Limpiar filtros.
+        /// </summary>
+        internal static string Button_ClearFilters {
+            get {
+                return ResourceManager.GetString("Button_ClearFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configurar.
         /// </summary>
         internal static string Button_Configure {
@@ -961,6 +970,24 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to a.
+        /// </summary>
+        internal static string Filter_DateRangeSeparator {
+            get {
+                return ResourceManager.GetString("Filter_DateRangeSeparator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hasta.
+        /// </summary>
+        internal static string Filter_EndDate {
+            get {
+                return ResourceManager.GetString("Filter_EndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buscar por actividad o notas....
         /// </summary>
         internal static string Filter_SearchByActivityOrNotes {
@@ -1020,6 +1047,15 @@ namespace Yatta.App.Resources {
         internal static string Filter_Sort_Tooltip {
             get {
                 return ResourceManager.GetString("Filter_Sort_Tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desde.
+        /// </summary>
+        internal static string Filter_StartDate {
+            get {
+                return ResourceManager.GetString("Filter_StartDate", resourceCulture);
             }
         }
         

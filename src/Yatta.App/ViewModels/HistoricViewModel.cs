@@ -45,7 +45,10 @@ public partial class HistoricViewModel : ObservableObject
     private Guid _selectedActivityFilterId = Guid.Empty;
 
     [ObservableProperty]
-    private DateTime? _selectedDate;
+    private DateTime? _startDate;
+
+    [ObservableProperty]
+    private DateTime? _endDate;
 
     [ObservableProperty]
     private string _todayWorkedTime = "0h 0m";
@@ -127,8 +130,23 @@ public partial class HistoricViewModel : ObservableObject
         ApplyFilters();
     }
 
-    partial void OnSelectedDateChanged(DateTime? value)
+    partial void OnStartDateChanged(DateTime? value)
     {
+        if (value.HasValue && EndDate.HasValue && value.Value > EndDate.Value)
+        {
+            EndDate = value.Value;
+        }
+
+        ApplyFilters();
+    }
+
+    partial void OnEndDateChanged(DateTime? value)
+    {
+        if (value.HasValue && StartDate.HasValue && value.Value < StartDate.Value)
+        {
+            StartDate = value.Value;
+        }
+
         ApplyFilters();
     }
 
@@ -159,8 +177,10 @@ public partial class HistoricViewModel : ObservableObject
 
     private async Task ApplyFiltersAsync()
     {
-        bool dateOutsideWindow = SelectedDate.HasValue &&
-                                DateOnly.FromDateTime(SelectedDate.Value) < _pageStartDate;
+        bool dateOutsideWindow = (StartDate.HasValue &&
+                                  DateOnly.FromDateTime(StartDate.Value) < _pageStartDate) ||
+                                 (EndDate.HasValue &&
+                                  DateOnly.FromDateTime(EndDate.Value) < _pageStartDate);
         bool needsFullLoad = !string.IsNullOrWhiteSpace(SearchText) ||
                              SelectedActivityFilterId != Guid.Empty ||
                              dateOutsideWindow;
@@ -191,11 +211,16 @@ public partial class HistoricViewModel : ObservableObject
             filtered = filtered.Where(r => r.ActivityId == SelectedActivityFilterId);
         }
 
-        // Filter by date
-        if (SelectedDate.HasValue)
+        // Filter by date range
+        if (StartDate.HasValue || EndDate.HasValue)
         {
-            var date = DateOnly.FromDateTime(SelectedDate.Value);
-            filtered = filtered.Where(r => r.Date == date);
+            var start = StartDate.HasValue
+                ? DateOnly.FromDateTime(StartDate.Value)
+                : DateOnly.MinValue;
+            var end = EndDate.HasValue
+                ? DateOnly.FromDateTime(EndDate.Value)
+                : DateOnly.MaxValue;
+            filtered = filtered.Where(r => r.Date >= start && r.Date <= end);
         }
 
         // Group by day
@@ -599,7 +624,8 @@ public partial class HistoricViewModel : ObservableObject
     {
         SearchText = string.Empty;
         SelectedActivityFilterId = Guid.Empty;
-        SelectedDate = null;
+        StartDate = null;
+        EndDate = null;
     }
 
     /// <summary>
