@@ -133,7 +133,9 @@ public partial class ActivityComboBox : UserControl
             return;
         }
 
-        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        // Handle both user input and programmatic clear (e.g., ClearButton click)
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput ||
+            (args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange && string.IsNullOrEmpty(sender.Text)))
         {
             // Prevent the control's DefaultFiltering from overriding our results
             args.Handled = true;

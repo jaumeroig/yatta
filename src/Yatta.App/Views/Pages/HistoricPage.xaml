@@ -25,7 +25,11 @@ mc:Ignorable="d"
         </Grid.RowDefinitions>
 
         <!-- Filters -->
-        <Grid Grid.Row="1" Margin="0,0,20,24" Height="35">
+        <Grid Grid.Row="1" Margin="0,0,20,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -34,35 +38,83 @@ mc:Ignorable="d"
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <ui:TextBox Grid.Column="0"
-                            PlaceholderText="{local:Localize Filter_SearchByActivityOrNotes}"
-                            Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            VerticalAlignment="Stretch"
-                            VerticalContentAlignment="Center"
-                            Margin="0,0,0,0">
+            <!-- Search by text -->
+            <ui:TextBox Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="4"
+                        PlaceholderText="{local:Localize Filter_SearchByActivityOrNotes}"
+                        Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        Margin="0,0,0,12">
                 <ui:TextBox.Icon>
                     <ui:SymbolIcon Symbol="Search24" />
                 </ui:TextBox.Icon>
             </ui:TextBox>
 
-            <controls:ActivityComboBox Grid.Column="1"
+            <!-- New record button -->
+            <ui:Button Grid.Row="0"
+                       Grid.Column="4"
+                       Appearance="Primary"
+                       VerticalAlignment="Stretch"
+                       Command="{Binding OpenNewRecordDialogCommand}"
+                       Margin="12,0,0,12"
+                       Padding="16,0"
+                       HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
+                    <TextBlock Text="{local:Localize Button_NewRecord}" />
+                </StackPanel>
+            </ui:Button>
+
+            <!-- Activity filter -->
+            <controls:ActivityComboBox Grid.Row="1"
+                                       Grid.Column="0"
                                        Width="200"
+                                       HorizontalAlignment="Left"
                                        VerticalAlignment="Stretch"
                                        ItemsSource="{Binding Activities}"
-                                       SelectedValue="{Binding SelectedActivityFilterId, Mode=TwoWay}"
-                                       Margin="12,0,0,0" />
+                                       SelectedValue="{Binding SelectedActivityFilterId, Mode=TwoWay}" />
 
-            <DatePicker Grid.Column="2"
-                        Width="130"
-                        Padding="12"
+            <!-- Date range filter -->
+            <StackPanel Grid.Row="1"
+                        Grid.Column="1"
+                        Orientation="Horizontal"
                         VerticalAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        Margin="12,0,0,0"
-                        SelectedDateFormat="Short"
-                        SelectedDate="{Binding SelectedDate}" />
+                        Margin="12,0,0,0">
+                <DatePicker Width="130"
+                            Padding="12"
+                            VerticalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            SelectedDateFormat="Short"
+                            SelectedDate="{Binding StartDate}">
+                    <DatePicker.Resources>
+                        <Style TargetType="Calendar" BasedOn="{StaticResource {x:Type Calendar}}">
+                            <Setter Property="Background" Value="{DynamicResource LayerFillColorDefaultBrush}" />
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+                <TextBlock Text="{local:Localize Filter_DateRangeSeparator}"
+                           VerticalAlignment="Center"
+                           Margin="8,0"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <DatePicker Width="130"
+                            Padding="12"
+                            VerticalAlignment="Stretch"
+                            VerticalContentAlignment="Center"
+                            SelectedDateFormat="Short"
+                            SelectedDate="{Binding EndDate}">
+                    <DatePicker.Resources>
+                        <Style TargetType="Calendar" BasedOn="{StaticResource {x:Type Calendar}}">
+                            <Setter Property="Background" Value="{DynamicResource LayerFillColorDefaultBrush}" />
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+            </StackPanel>
 
             <!-- Sort Direction Toggle -->
-            <ToggleButton Grid.Column="3"
+            <ToggleButton Grid.Row="1"
+                          Grid.Column="2"
                           IsChecked="{Binding SortAscending}"
                           VerticalAlignment="Stretch"
                           Margin="12,0,0,0"
@@ -89,11 +141,7 @@ mc:Ignorable="d"
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSecondaryBackgroundBrush}" />
                                         </Trigger>
-                                        <Trigger Property="IsChecked" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
-                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-                                        </Trigger>
+
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -119,18 +167,17 @@ mc:Ignorable="d"
 
                 </StackPanel>
             </ToggleButton>
-            
-            <ui:Button Grid.Column="4"
-                       Appearance="Primary"
+
+            <ui:Button Grid.Row="1"
+                       Grid.Column="3"
+                       Appearance="Transparent"
                        VerticalAlignment="Stretch"
-                       Command="{Binding OpenNewRecordDialogCommand}"
-                       Margin="48,0,0,0"
-                       Padding="16,0"
-                       HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <ui:SymbolIcon Symbol="Add24" Margin="0,0,8,0" />
-                    <TextBlock Text="{local:Localize Button_NewRecord}" />
-                </StackPanel>
+                       Command="{Binding ClearFiltersCommand}"
+                       Margin="12,0,0,0"
+                       Padding="0"
+                       Width="35"
+                       ToolTip="{local:Localize Button_ClearFilters}">
+                <ui:SymbolIcon Symbol="Dismiss24" />
             </ui:Button>
         </Grid>
 
