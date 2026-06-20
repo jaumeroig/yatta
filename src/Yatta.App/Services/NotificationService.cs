@@ -3,9 +3,10 @@ namespace Yatta.App.Services;
 using System.IO;
 using System.Reflection;
 using System.Timers;
+using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.Notifications;
-using Microsoft.Win32;
+using Yatta.App.Views.Dialogs;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Models;
 
@@ -19,13 +20,15 @@ public class NotificationService : INotificationService
 
     private Timer? _timer;
     private DateTime _lastNotificationTime;
-    private int _snoozeMinutes;
+    private int _nextReminderMinutes;
+    private DateTime? _snoozeUntil;
     private bool _isEnabled;
     private bool _isDisposed;
 
     public event EventHandler? OnContinueActivity;
     public event EventHandler<Guid>? OnChangeActivity;
     public event EventHandler<int>? OnSnooze;
+    public event EventHandler? OnStopActivity;
 
     public bool IsEnabled
     {
@@ -71,7 +74,8 @@ public class NotificationService : INotificationService
         _timer.AutoReset = true;
         _timer.Start();
         _lastNotificationTime = DateTime.Now;
-        _snoozeMinutes = 0;
+        _nextReminderMinutes = 0;
+        _snoozeUntil = null;
     }
 
     public void Stop()
@@ -84,7 +88,38 @@ public class NotificationService : INotificationService
     public void ResetTimer()
     {
         _lastNotificationTime = DateTime.Now;
-        _snoozeMinutes = 0;
+        _nextReminderMinutes = 0;
+        _snoozeUntil = null;
+    }
+
+    /// <summary>
+    /// Computes the effective reminder interval in minutes for the given settings preset.
+    /// </summary>
+    private static int GetPresetMinutes(ReminderInterval interval)
+    {
+        return interval switch
+        {
+            ReminderInterval.Minutes5 => 15,
+            ReminderInterval.Minutes30 => 30,
+            ReminderInterval.Hour1 => 60,
+            ReminderInterval.Hours2 => 120,
+            _ => 0
+        };
+    }
+
+    /// <summary>
+    /// Formats a minute value as a localized display string (e.g. "15 minuts" or "1 hora").
+    /// </summary>
+    private string FormatMinutes(int minutes)
+    {
+        return minutes switch
+        {
+            15 => _localizationService.GetString("Notification_15min"),
+            30 => _localizationService.GetString("Notification_30min"),
+            60 => _localizationService.GetString("Notification_1hour"),
+            120 => _localizationService.GetString("Notification_2hours"),
+            _ => $"{minutes} {_localizationService.GetString("Label_Minutes")}"
+        };
     }
 
     public async Task CheckAndNotifyAsync()
@@ -105,27 +140,53 @@ public class NotificationService : INotificationService
             {
                 // No active record, reset timer for when one starts
                 _lastNotificationTime = DateTime.Now;
-                _snoozeMinutes = 0;
+                _nextReminderMinutes = 0;
+                _snoozeUntil = null;
                 return;
             }
 
-            var intervalMinutes = settings.NotificationIntervalMinutes;
+            // Snooze-until-tomorrow path: do not notify until the target time has passed
+            if (_snoozeUntil.HasValue)
+            {
+                if (DateTime.Now < _snoozeUntil.Value)
+                    return;
+
+                // Target reached: show immediately and reset
+                await ShowNotificationAsync(activeRecord);
+                _lastNotificationTime = DateTime.Now;
+                _nextReminderMinutes = 0;
+                _snoozeUntil = null;
+                return;
+            }
+
+            // Standard interval path
+            var threshold = _nextReminderMinutes > 0
+                ? _nextReminderMinutes
+                : GetEffectiveIntervalMinutes(settings);
+
             var timeSinceLastNotification = DateTime.Now - _lastNotificationTime;
 
-            // Consider snooze time
-            var effectiveInterval = intervalMinutes + _snoozeMinutes;
-
-            if (timeSinceLastNotification.TotalMinutes >= effectiveInterval)
+            if (timeSinceLastNotification.TotalMinutes >= threshold)
             {
                 await ShowNotificationAsync(activeRecord);
                 _lastNotificationTime = DateTime.Now;
-                _snoozeMinutes = 0; // Reset snooze after showing
+                _nextReminderMinutes = 0;
+                _snoozeUntil = null;
             }
         }
         catch
         {
             // Silently handle errors to avoid crashing the timer
         }
+    }
+
+    /// <summary>
+    /// Computes the effective interval in minutes from the current settings preset.
+    /// </summary>
+    private static int GetEffectiveIntervalMinutes(AppSettings settings)
+    {
+        var presetMinutes = GetPresetMinutes(settings.ReminderInterval);
+        return presetMinutes > 0 ? presetMinutes : settings.NotificationIntervalMinutes;
     }
 
     public async Task ForceShowNotificationAsync()
@@ -136,14 +197,15 @@ public class NotificationService : INotificationService
             var timeRecordRepository = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
 
             var activeRecord = await timeRecordRepository.GetActiveAsync();
+            System.Diagnostics.Debug.WriteLine($"[NotificationService] ForceShow: activeRecord={(activeRecord != null ? activeRecord.Id.ToString() : "null")}");
             if (activeRecord != null)
             {
                 await ShowNotificationAsync(activeRecord);
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Silently handle errors
+            System.Diagnostics.Debug.WriteLine($"[NotificationService] ForceShow error: {ex}");
         }
     }
 
@@ -167,14 +229,35 @@ public class NotificationService : INotificationService
 
             var continueText = _localizationService.GetString("Notification_Continue");
             var changeText = _localizationService.GetString("Notification_ChangeActivity");
-            var snoozeText = _localizationService.GetString("Notification_Snooze");
+            var stopText = _localizationService.GetString("Notification_Stop");
+            var customizeText = _localizationService.GetString("Notification_Customize");
 
             // Get the logo path
             var logoPath = GetLogoPath();
 
-            // Get settings to determine notification behavior
+            // Get settings to determine notification behavior and default snooze selection
             var settings = await settingsRepository.GetAsync();
             var scenario = settings.KeepNotificationsVisible ? ToastScenario.Reminder : ToastScenario.Default;
+
+            // Build dynamic combo values: 15, 30, 60 plus either the custom value or 120
+            var comboValues = new List<int> { 15, 30, 60 };
+            if (settings.ReminderInterval == ReminderInterval.Custom && !comboValues.Contains(settings.NotificationIntervalMinutes))
+            {
+                comboValues.Add(settings.NotificationIntervalMinutes);
+            }
+            else
+            {
+                comboValues.Add(120);
+            }
+            comboValues.Sort();
+
+            // Determine default selection (the configured interval, or closest preset)
+            var defaultValue = settings.ReminderInterval == ReminderInterval.Custom
+                ? settings.NotificationIntervalMinutes
+                : GetPresetMinutes(settings.ReminderInterval);
+            var defaultSelectionId = comboValues.Contains(defaultValue)
+                ? defaultValue.ToString()
+                : comboValues.OrderBy(v => Math.Abs(v - defaultValue)).First().ToString();
 
             var builder = new ToastContentBuilder()
                 .AddText(title)
@@ -187,7 +270,12 @@ public class NotificationService : INotificationService
                 builder.AddAppLogoOverride(new Uri(logoPath), ToastGenericAppLogoCrop.Circle);
             }
 
-            builder.AddButton(new ToastButton()
+            // Build combo box dynamically with 4 numeric values + "Personalitzar..."
+            var comboChoices = comboValues.Select(v => (v.ToString(), FormatMinutes(v))).ToList();
+            comboChoices.Add(("custom", customizeText));
+
+            builder.AddComboBox("reminderTime", _localizationService.GetString("Notification_ReminderPlaceholder"), defaultSelectionId, comboChoices.ToArray())
+                .AddButton(new ToastButton()
                     .SetContent(continueText)
                     .AddArgument("action", "continue")
                     .AddArgument("recordId", record.Id.ToString()))
@@ -195,19 +283,15 @@ public class NotificationService : INotificationService
                     .SetContent(changeText)
                     .AddArgument("action", "change")
                     .AddArgument("recordId", record.Id.ToString()))
-                .AddComboBox("snoozeTime", snoozeText, "15",
-                    ("15", _localizationService.GetString("Notification_15min")),
-                    ("30", _localizationService.GetString("Notification_30min")),
-                    ("60", _localizationService.GetString("Notification_1hour")),
-                    ("120", _localizationService.GetString("Notification_2hours")))
                 .AddButton(new ToastButton()
-                    .SetContent(snoozeText)
-                    .AddArgument("action", "snooze")
+                    .SetContent(stopText)
+                    .AddArgument("action", "stop")
                     .AddArgument("recordId", record.Id.ToString()))
                 .Show();
         }
-        catch
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"[NotificationService] ShowNotificationAsync error: {ex}");
             // Silently handle notification errors
         }
     }
@@ -215,7 +299,7 @@ public class NotificationService : INotificationService
     /// <summary>
     /// Gets the absolute path to the application logo.
     /// </summary>
-    private string? GetLogoPath()
+    private static string? GetLogoPath()
     {
         try
         {
@@ -241,9 +325,7 @@ public class NotificationService : INotificationService
         switch (action)
         {
             case "continue":
-                _lastNotificationTime = DateTime.Now; // Reset timer
-                _snoozeMinutes = 0;
-                OnContinueActivity?.Invoke(this, EventArgs.Empty);
+                HandleContinue(e);
                 break;
 
             case "change":
@@ -254,16 +336,112 @@ public class NotificationService : INotificationService
                 }
                 break;
 
-            case "snooze":
-                if (e.UserInput.TryGetValue("snoozeTime", out var snoozeValue) &&
-                    int.TryParse(snoozeValue?.ToString(), out var minutes))
-                {
-                    _snoozeMinutes = minutes;
-                    _lastNotificationTime = DateTime.Now;
-                    OnSnooze?.Invoke(this, minutes);
-                }
+            case "stop":
+                OnStopActivity?.Invoke(this, EventArgs.Empty);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Handles the "Continue" action, reading the dropdown selection to determine
+    /// the next reminder time in minutes. When "Personalitzar..." is selected,
+    /// opens the custom dialog.
+    /// </summary>
+    private void HandleContinue(ToastNotificationActivatedEventArgsCompat e)
+    {
+        if (e.UserInput.TryGetValue("reminderTime", out var selection) &&
+            selection != null &&
+            selection.ToString() == "custom")
+        {
+            HandleCustom();
+            return;
+        }
+
+        int minutes = 0;
+
+        if (selection != null && int.TryParse(selection.ToString(), out var parsed))
+        {
+            minutes = parsed;
+        }
+
+        _nextReminderMinutes = minutes;
+        _snoozeUntil = null;
+        _lastNotificationTime = DateTime.Now;
+
+        if (minutes > 0)
+            OnSnooze?.Invoke(this, minutes);
+
+        OnContinueActivity?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Handles the "Customize" action, opening a modal dialog to collect a custom
+    /// snooze duration in minutes.
+    /// </summary>
+    private void HandleCustom()
+    {
+        int defaultMinutes = ReadCustomIntervalDefault();
+        int? customMinutes = PromptForCustomMinutes(defaultMinutes);
+
+        if (customMinutes.HasValue)
+        {
+            _nextReminderMinutes = customMinutes.Value;
+            _snoozeUntil = null;
+            _lastNotificationTime = DateTime.Now;
+            OnSnooze?.Invoke(this, customMinutes.Value);
+            OnContinueActivity?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            // Cancelled: fall back to settings default
+            _nextReminderMinutes = 0;
+            _snoozeUntil = null;
+            _lastNotificationTime = DateTime.Now;
+        }
+    }
+
+    /// <summary>
+    /// Reads the current custom interval default from settings.
+    /// </summary>
+    private int ReadCustomIntervalDefault()
+    {
+        try
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+            var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
+            return settings.NotificationIntervalMinutes;
+        }
+        catch
+        {
+            return 120;
+        }
+    }
+
+    /// <summary>
+    /// Opens a modal WPF dialog to collect a custom snooze duration in minutes.
+    /// Returns null if the user cancels.
+    /// </summary>
+    private int? PromptForCustomMinutes(int defaultMinutes)
+    {
+        int? result = null;
+
+        void ShowDialog()
+        {
+            var dialog = new ReminderCustomDialogWindow(_serviceProvider, defaultMinutes)
+            {
+                Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+            };
+            dialog.ShowDialog();
+            result = dialog.CustomMinutes;
+        }
+
+        if (Application.Current?.Dispatcher?.CheckAccess() == false)
+            Application.Current.Dispatcher.Invoke(ShowDialog);
+        else
+            ShowDialog();
+
+        return result;
     }
 
     public void Dispose()

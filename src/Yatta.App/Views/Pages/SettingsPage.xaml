@@ -128,7 +128,7 @@
                                      Command="{Binding ToggleNotificationsCommand}" />
                 </ui:CardControl>
 
-                <!-- Intervalo de notificaciones -->
+                <!-- Intervalo de recordatorio -->
                 <ui:CardControl Margin="0,0,0,4"
                                 IsEnabled="{Binding NotificationsEnabled}">
                     <ui:CardControl.Icon>
@@ -136,17 +136,48 @@
                     </ui:CardControl.Icon>
                     <ui:CardControl.Header>
                         <StackPanel>
-                            <TextBlock Text="{local:Localize Label_NotificationInterval}"
+                            <TextBlock Text="{local:Localize Label_ReminderInterval}"
                                        FontWeight="SemiBold" />
-                            <TextBlock Text="{local:Localize Description_NotificationInterval}"
+                            <TextBlock Text="{local:Localize Description_ReminderInterval}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ComboBox Width="200"
+                              Height="40"
+                              ItemsSource="{Binding ReminderIntervalOptions}"
+                              SelectedItem="{Binding SelectedReminderInterval, Mode=TwoWay}"
+                              DisplayMemberPath="DisplayName" />
+                </ui:CardControl>
+
+                <!-- Interval personalitzat (hores + minuts) -->
+                <ui:CardControl Margin="0,0,0,4"
+                                IsEnabled="{Binding NotificationsEnabled}"
+                                Visibility="{Binding IsCustomReminderVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="Clock24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_CustomReminderMinutes}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_CustomReminderMinutes}"
                                        FontSize="12"
                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                        TextWrapping="Wrap" />
                         </StackPanel>
                     </ui:CardControl.Header>
                     <StackPanel Orientation="Horizontal">
-                        <ui:TextBox Text="{Binding NotificationIntervalMinutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    Width="80"
+                        <ui:TextBox Text="{Binding CustomReminderHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="60"
+                                    Height="40"
+                                    Margin="0,0,4,0" />
+                        <TextBlock Text="{local:Localize Label_Hours}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0" />
+                        <ui:TextBox Text="{Binding CustomReminderMinutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Width="60"
                                     Height="40"
                                     Margin="0,0,4,0" />
                         <TextBlock Text="{local:Localize Label_Minutes}"
@@ -155,6 +186,11 @@
                         <ui:Button Content="{local:Localize Button_Save}"
                                    Command="{Binding SaveNotificationIntervalCommand}"
                                    Appearance="Primary"
+                                   Height="40"
+                                   Padding="16,0"
+                                   Margin="0,0,8,0" />
+                        <ui:Button Content="{local:Localize Button_UntilMidnight}"
+                                   Command="{Binding SetUntilMidnightCommand}"
                                    Height="40"
                                    Padding="16,0" />
                     </StackPanel>

@@ -53,6 +53,11 @@ public class AppSettingsConfiguration : IEntityTypeConfiguration<AppSettings>
             .IsRequired()
             .HasDefaultValue(false);
 
+        builder.Property(s => s.ReminderInterval)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasDefaultValue(ReminderInterval.Hours2);
+
         builder.Property(s => s.DefaultWorkingDaysMask)
             .IsRequired()
             .HasDefaultValue((int)WeeklyWorkingDays.Weekdays);

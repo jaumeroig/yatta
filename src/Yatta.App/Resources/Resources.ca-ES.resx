@@ -622,7 +622,7 @@
     <value>Continuar</value>
   </data>
   <data name="Notification_ChangeActivity" xml:space="preserve">
-    <value>Canviar activitat</value>
+    <value>Canviar</value>
   </data>
   <data name="Notification_Snooze" xml:space="preserve">
     <value>Posposar</value>
@@ -639,8 +639,53 @@
   <data name="Notification_2hours" xml:space="preserve">
     <value>2 hores</value>
   </data>
+  <data name="Notification_5min" xml:space="preserve">
+    <value>5 minuts</value>
+  </data>
+  <data name="Notification_10min" xml:space="preserve">
+    <value>10 minuts</value>
+  </data>
+  <data name="Notification_UntilTomorrow" xml:space="preserve">
+    <value>Fins demà</value>
+  </data>
+  <data name="Notification_Customize" xml:space="preserve">
+    <value>Personalitzar...</value>
+  </data>
+  <data name="Notification_Stop" xml:space="preserve">
+    <value>Aturar</value>
+  </data>
+  <data name="Notification_ReminderPlaceholder" xml:space="preserve">
+    <value>Recorda en</value>
+  </data>
   <data name="Notification_UnknownActivity" xml:space="preserve">
     <value>Activitat desconeguda</value>
+  </data>
+  <data name="Dialog_CustomReminder_Title" xml:space="preserve">
+    <value>Personalitzar recordatori</value>
+  </data>
+  <data name="Dialog_CustomReminder_Description" xml:space="preserve">
+    <value>Indica les hores i minuts fins a la propera notificació.</value>
+  </data>
+  <data name="Dialog_ReminderUntilLabel" xml:space="preserve">
+    <value>No tornar a recordar fins d'aquí a:</value>
+  </data>
+  <data name="Dialog_ReminderUntilTomorrow" xml:space="preserve">
+    <value>No recordar fins demà.</value>
+  </data>
+  <data name="Label_ReminderInterval" xml:space="preserve">
+    <value>Interval de recordatori</value>
+  </data>
+  <data name="Description_ReminderInterval" xml:space="preserve">
+    <value>Temps que ha de passar abans de mostrar la propera notificació de recordatori</value>
+  </data>
+  <data name="Label_CustomReminderMinutes" xml:space="preserve">
+    <value>Minuts personalitzats</value>
+  </data>
+  <data name="Description_CustomReminderMinutes" xml:space="preserve">
+    <value>Nombre de minuts entre notificacions (entre 1 i 1440)</value>
+  </data>
+  <data name="Validation_CustomReminderRange" xml:space="preserve">
+    <value>Introdueix un valor entre 1 i 1440 minuts</value>
   </data>
   <data name="Settings_Section_User_Config" xml:space="preserve">
     <value>User settings</value>
@@ -723,8 +768,23 @@
   <data name="Button_Stop" xml:space="preserve">
     <value>Aturar</value>
   </data>
+  <data name="Button_UntilMidnight" xml:space="preserve">
+    <value>La resta de la jornada</value>
+  </data>
   <data name="Button_Play" xml:space="preserve">
     <value>Iniciar</value>
+  </data>
+  <data name="Button_Minus15m" xml:space="preserve">
+    <value>-15m</value>
+  </data>
+  <data name="Button_Minus1h" xml:space="preserve">
+    <value>-1h</value>
+  </data>
+  <data name="Button_Plus15m" xml:space="preserve">
+    <value>+15m</value>
+  </data>
+  <data name="Button_Plus1h" xml:space="preserve">
+    <value>+1h</value>
   </data>
   <data name="Button_Change" xml:space="preserve">
     <value>Canviar</value>
@@ -1028,6 +1088,9 @@
   </data>
   <data name="Label_Hour" xml:space="preserve">
     <value>Hora</value>
+  </data>
+  <data name="Label_Hours" xml:space="preserve">
+    <value>Hores</value>
   </data>
   <data name="Label_Minute" xml:space="preserve">
     <value>Minut</value>

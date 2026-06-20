@@ -39,9 +39,15 @@ public class AppSettings
 
     /// <summary>
     /// Interval in minutes between notification reminders when there is an active time record.
-    /// Default is 120 minutes (2 hours).
+    /// Default is 120 minutes (2 hours). Only used when <see cref="ReminderInterval"/> is <see cref="Models.ReminderInterval.Custom"/>.
     /// </summary>
     public int NotificationIntervalMinutes { get; set; } = 120;
+
+    /// <summary>
+    /// The reminder interval preset used for notification snooze.
+    /// Default is 2 hours.
+    /// </summary>
+    public ReminderInterval ReminderInterval { get; set; } = ReminderInterval.Hours2;
 
     /// <summary>
     /// Indicates if the application should start automatically when Windows starts.

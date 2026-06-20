@@ -52,4 +52,9 @@ public interface INotificationService : IDisposable
     /// The int parameter is the number of minutes to snooze.
     /// </summary>
     event EventHandler<int>? OnSnooze;
+
+    /// <summary>
+    /// Event raised when user wants to stop the current activity.
+    /// </summary>
+    event EventHandler? OnStopActivity;
 }

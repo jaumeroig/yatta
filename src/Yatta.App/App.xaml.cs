@@ -175,6 +175,7 @@ public partial class App : Application
 
         // Connect event to bring window to foreground and navigate to edit record
         notificationService.OnChangeActivity += OnNotificationChangeActivity;
+        notificationService.OnStopActivity += OnNotificationStopActivity;
 
         // Load settings and enable if notifications are enabled
         using var scope = _serviceProvider!.CreateScope();
@@ -201,6 +202,22 @@ public partial class App : Application
         {
             var mainWindow = Current.MainWindow as MainWindow;
             mainWindow?.ShowChangeActivityDialog();
+        });
+    }
+
+    /// <summary>
+    /// Handles the notification stop activity event.
+    /// Stops the currently active record.
+    /// </summary>
+    private void OnNotificationStopActivity(object? sender, EventArgs e)
+    {
+        Current.Dispatcher.Invoke(async () =>
+        {
+            var mainWindow = Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                await mainWindow.StopActiveRecordAsync();
+            }
         });
     }
 
@@ -459,6 +476,7 @@ public partial class App : Application
     {
         var notificationService = _serviceProvider?.GetService<INotificationService>();
         notificationService?.OnChangeActivity -= OnNotificationChangeActivity;
+        notificationService?.OnStopActivity -= OnNotificationStopActivity;
         notificationService?.Dispose();
     }
 }

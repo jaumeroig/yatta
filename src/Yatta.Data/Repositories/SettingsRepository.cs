@@ -58,6 +58,7 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.RetentionPolicy = settings.RetentionPolicy;
             existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
             existingSettings.GlobalHotkey = settings.GlobalHotkey;
+            existingSettings.ReminderInterval = settings.ReminderInterval;
 
             dbContext.AppSettings.Update(existingSettings);
         }

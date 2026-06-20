@@ -56,6 +56,22 @@ public class RetentionPolicyOption
 }
 
 /// <summary>
+/// Represents a reminder interval option for the dropdown.
+/// </summary>
+public class ReminderIntervalOption
+{
+    /// <summary>
+    /// Reminder interval value.
+    /// </summary>
+    public ReminderInterval Value { get; set; }
+
+    /// <summary>
+    /// Name to display in the UI.
+    /// </summary>
+    public string DisplayName { get; set; } = string.Empty;
+}
+
+/// <summary>
 /// ViewModel for the settings and configuration page.
 /// </summary>
 public partial class SettingsViewModel : ObservableObject, IDisposable
@@ -115,10 +131,21 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             new RetentionPolicyOption { Value = RetentionPolicy.Custom, DisplayName = Resources.Resources.RetentionPolicy_Custom }
         ];
 
+        // Initialize reminder interval options
+        ReminderIntervalOptions =
+        [
+            new ReminderIntervalOption { Value = ReminderInterval.Minutes5, DisplayName = Resources.Resources.Notification_15min },
+            new ReminderIntervalOption { Value = ReminderInterval.Minutes30, DisplayName = Resources.Resources.Notification_30min },
+            new ReminderIntervalOption { Value = ReminderInterval.Hour1, DisplayName = Resources.Resources.Notification_1hour },
+            new ReminderIntervalOption { Value = ReminderInterval.Hours2, DisplayName = Resources.Resources.Notification_2hours },
+            new ReminderIntervalOption { Value = ReminderInterval.Custom, DisplayName = Resources.Resources.Notification_Customize }
+        ];
+
         // Default values
         _selectedTheme = ThemeOptions[0];
         _selectedLanguage = LanguageOptions[0];
         _selectedRetentionPolicy = RetentionPolicyOptions[0];
+        _selectedReminderInterval = ReminderIntervalOptions[3]; // Hours2
         NotificationsEnabled = false;
         WorkdayHours = 8;
         WorkdayMinutes = 0;
@@ -140,6 +167,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// Available retention policy options.
     /// </summary>
     public ObservableCollection<RetentionPolicyOption> RetentionPolicyOptions { get; }
+
+    /// <summary>
+    /// Available reminder interval options.
+    /// </summary>
+    public ObservableCollection<ReminderIntervalOption> ReminderIntervalOptions { get; }
 
     /// <summary>
     /// Selected theme.
@@ -190,6 +222,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private int _notificationIntervalMinutes;
 
     /// <summary>
+    /// Hours part of the custom reminder interval.
+    /// </summary>
+    [ObservableProperty]
+    private int _customReminderHours;
+
+    /// <summary>
+    /// Minutes part of the custom reminder interval.
+    /// </summary>
+    [ObservableProperty]
+    private int _customReminderMinutes;
+
+    /// <summary>
     /// Indicates if the application should start with Windows.
     /// </summary>
     [ObservableProperty]
@@ -206,6 +250,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// </summary>
     [ObservableProperty]
     private RetentionPolicyOption _selectedRetentionPolicy;
+
+    /// <summary>
+    /// Selected reminder interval.
+    /// </summary>
+    [ObservableProperty]
+    private ReminderIntervalOption _selectedReminderInterval;
+
+    /// <summary>
+    /// Indicates whether the custom reminder minutes card is visible.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isCustomReminderVisible;
 
     /// <summary>
     /// Custom retention days.
@@ -333,6 +389,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
     }
 
+    /// <summary>
+    /// Executes when the selected reminder interval changes.
+    /// </summary>
+    partial void OnSelectedReminderIntervalChanged(ReminderIntervalOption value)
+    {
+        if (_currentSettings != null && value != null)
+        {
+            IsCustomReminderVisible = value.Value == ReminderInterval.Custom;
+            _ = SaveReminderIntervalAsync(value.Value);
+        }
+    }
+
     #endregion
 
     #region Commands
@@ -457,22 +525,45 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    /// Saves the notification interval.
+    /// Saves the custom notification interval derived from hours and minutes.
     /// </summary>
     [RelayCommand]
     private async Task SaveNotificationIntervalAsync()
     {
-        // Validate that interval is valid (between 15 and 480 minutes = 8 hours)
-        if (NotificationIntervalMinutes < 15)
+        var totalMinutes = (CustomReminderHours * 60) + CustomReminderMinutes;
+
+        // Validate that interval is valid (between 1 and 1440 minutes = 24 hours)
+        if (totalMinutes < 1)
         {
-            NotificationIntervalMinutes = 15;
+            totalMinutes = 1;
+            CustomReminderHours = 0;
+            CustomReminderMinutes = 1;
         }
-        else if (NotificationIntervalMinutes > 480)
+        else if (totalMinutes > 1440)
         {
-            NotificationIntervalMinutes = 480;
+            totalMinutes = 1440;
+            CustomReminderHours = 24;
+            CustomReminderMinutes = 0;
         }
 
-        await SaveNotificationIntervalMinutesAsync(NotificationIntervalMinutes);
+        NotificationIntervalMinutes = totalMinutes;
+        await SaveNotificationIntervalMinutesAsync(totalMinutes);
+    }
+
+    /// <summary>
+    /// Sets the custom reminder interval to the remaining time until midnight (00:00).
+    /// </summary>
+    [RelayCommand]
+    private void SetUntilMidnight()
+    {
+        var remaining = DateTime.Today.AddDays(1) - DateTime.Now;
+        var totalMinutes = (int)remaining.TotalMinutes;
+        if (totalMinutes < 1) totalMinutes = 1;
+        if (totalMinutes > 1440) totalMinutes = 1440;
+
+        CustomReminderHours = totalMinutes / 60;
+        CustomReminderMinutes = totalMinutes % 60;
+        NotificationIntervalMinutes = totalMinutes;
     }
 
     /// <summary>
@@ -611,6 +702,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Update notification interval
         NotificationIntervalMinutes = _currentSettings.NotificationIntervalMinutes;
+        CustomReminderHours = _currentSettings.NotificationIntervalMinutes / 60;
+        CustomReminderMinutes = _currentSettings.NotificationIntervalMinutes % 60;
+
+        // Update reminder interval preset
+        SelectedReminderInterval = ReminderIntervalOptions.FirstOrDefault(r => r.Value == _currentSettings.ReminderInterval) ?? ReminderIntervalOptions[3];
+        IsCustomReminderVisible = _currentSettings.ReminderInterval == ReminderInterval.Custom;
 
         // Update retention policy
         SelectedRetentionPolicy = RetentionPolicyOptions.FirstOrDefault(r => r.Value == _currentSettings.RetentionPolicy) ?? RetentionPolicyOptions[0];
@@ -765,6 +862,41 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
 
         _currentSettings.NotificationIntervalMinutes = intervalMinutes;
+        await _settingsRepository.UpdateAsync(_currentSettings);
+    }
+
+    /// <summary>
+    /// Saves the reminder interval preset and keeps NotificationIntervalMinutes in sync
+    /// for the preset values (so the toast default selection matches the settings value).
+    /// </summary>
+    private async Task SaveReminderIntervalAsync(ReminderInterval interval)
+    {
+        if (_currentSettings == null)
+        {
+            return;
+        }
+
+        _currentSettings.ReminderInterval = interval;
+
+        // Sync NotificationIntervalMinutes for preset values so the toast's
+        // default combo selection matches the configured interval.
+        var presetMinutes = interval switch
+        {
+            ReminderInterval.Minutes5 => 15,
+            ReminderInterval.Minutes30 => 30,
+            ReminderInterval.Hour1 => 60,
+            ReminderInterval.Hours2 => 120,
+            _ => (int?)null // Custom: keep the existing custom minutes
+        };
+
+        if (presetMinutes.HasValue)
+        {
+            _currentSettings.NotificationIntervalMinutes = presetMinutes.Value;
+            NotificationIntervalMinutes = presetMinutes.Value;
+            CustomReminderHours = presetMinutes.Value / 60;
+            CustomReminderMinutes = presetMinutes.Value % 60;
+        }
+
         await _settingsRepository.UpdateAsync(_currentSettings);
     }
 

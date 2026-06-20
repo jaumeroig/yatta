@@ -268,6 +268,24 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -15m.
+        /// </summary>
+        internal static string Button_Minus15m {
+            get {
+                return ResourceManager.GetString("Button_Minus15m", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -1h.
+        /// </summary>
+        internal static string Button_Minus1h {
+            get {
+                return ResourceManager.GetString("Button_Minus1h", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nueva actividad.
         /// </summary>
         internal static string Button_NewActivity {
@@ -300,6 +318,24 @@ namespace Yatta.App.Resources {
         internal static string Button_Play {
             get {
                 return ResourceManager.GetString("Button_Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +15m.
+        /// </summary>
+        internal static string Button_Plus15m {
+            get {
+                return ResourceManager.GetString("Button_Plus15m", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +1h.
+        /// </summary>
+        internal static string Button_Plus1h {
+            get {
+                return ResourceManager.GetString("Button_Plus1h", resourceCulture);
             }
         }
         
@@ -381,6 +417,15 @@ namespace Yatta.App.Resources {
         internal static string Button_Unarchive {
             get {
                 return ResourceManager.GetString("Button_Unarchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El resto de la jornada.
+        /// </summary>
+        internal static string Button_UntilMidnight {
+            get {
+                return ResourceManager.GetString("Button_UntilMidnight", resourceCulture);
             }
         }
         
@@ -565,6 +610,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Número de minutos entre notificaciones (entre 1 y 1440).
+        /// </summary>
+        internal static string Description_CustomReminderMinutes {
+            get {
+                return ResourceManager.GetString("Description_CustomReminderMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Número de días a conservar (mayor que 0).
         /// </summary>
         internal static string Description_CustomRetentionDays {
@@ -642,6 +696,15 @@ namespace Yatta.App.Resources {
         internal static string Description_Notifications {
             get {
                 return ResourceManager.GetString("Description_Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tiempo que debe pasar antes de mostrar la siguiente notificación de recordatorio.
+        /// </summary>
+        internal static string Description_ReminderInterval {
+            get {
+                return ResourceManager.GetString("Description_ReminderInterval", resourceCulture);
             }
         }
         
@@ -750,6 +813,24 @@ namespace Yatta.App.Resources {
         internal static string Dialog_ConfigureYearQuota_Title {
             get {
                 return ResourceManager.GetString("Dialog_ConfigureYearQuota_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indica las horas y minutos hasta la próxima notificación..
+        /// </summary>
+        internal static string Dialog_CustomReminder_Description {
+            get {
+                return ResourceManager.GetString("Dialog_CustomReminder_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Personalizar recordatorio.
+        /// </summary>
+        internal static string Dialog_CustomReminder_Title {
+            get {
+                return ResourceManager.GetString("Dialog_CustomReminder_Title", resourceCulture);
             }
         }
         
@@ -894,6 +975,24 @@ namespace Yatta.App.Resources {
         internal static string Dialog_Purge_Warning {
             get {
                 return ResourceManager.GetString("Dialog_Purge_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No volver a recordar hasta dentro de:.
+        /// </summary>
+        internal static string Dialog_ReminderUntilLabel {
+            get {
+                return ResourceManager.GetString("Dialog_ReminderUntilLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No recordar hasta mañana..
+        /// </summary>
+        internal static string Dialog_ReminderUntilTomorrow {
+            get {
+                return ResourceManager.GetString("Dialog_ReminderUntilTomorrow", resourceCulture);
             }
         }
         
@@ -1312,6 +1411,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minutos personalizados.
+        /// </summary>
+        internal static string Label_CustomReminderMinutes {
+            get {
+                return ResourceManager.GetString("Label_CustomReminderMinutes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retención personalizada.
         /// </summary>
         internal static string Label_CustomRetentionDays {
@@ -1483,6 +1591,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Horas.
+        /// </summary>
+        internal static string Label_Hours {
+            get {
+                return ResourceManager.GetString("Label_Hours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Jornadas intensivas.
         /// </summary>
         internal static string Label_IntensiveDays {
@@ -1587,6 +1704,15 @@ namespace Yatta.App.Resources {
         internal static string Label_Remaining {
             get {
                 return ResourceManager.GetString("Label_Remaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intervalo de recordatorio.
+        /// </summary>
+        internal static string Label_ReminderInterval {
+            get {
+                return ResourceManager.GetString("Label_ReminderInterval", resourceCulture);
             }
         }
         
@@ -1897,6 +2023,15 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 10 minutos.
+        /// </summary>
+        internal static string Notification_10min {
+            get {
+                return ResourceManager.GetString("Notification_10min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 15 minutos.
         /// </summary>
         internal static string Notification_15min {
@@ -1933,7 +2068,16 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cambiar actividad.
+        ///   Looks up a localized string similar to 5 minutos.
+        /// </summary>
+        internal static string Notification_5min {
+            get {
+                return ResourceManager.GetString("Notification_5min", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar.
         /// </summary>
         internal static string Notification_ChangeActivity {
             get {
@@ -1951,11 +2095,29 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Personalizar....
+        /// </summary>
+        internal static string Notification_Customize {
+            get {
+                return ResourceManager.GetString("Notification_Customize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tiempo transcurrido: {0}.
         /// </summary>
         internal static string Notification_Duration {
             get {
                 return ResourceManager.GetString("Notification_Duration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recordar en.
+        /// </summary>
+        internal static string Notification_ReminderPlaceholder {
+            get {
+                return ResourceManager.GetString("Notification_ReminderPlaceholder", resourceCulture);
             }
         }
         
@@ -1978,11 +2140,29 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Detener.
+        /// </summary>
+        internal static string Notification_Stop {
+            get {
+                return ResourceManager.GetString("Notification_Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actividad desconocida.
         /// </summary>
         internal static string Notification_UnknownActivity {
             get {
                 return ResourceManager.GetString("Notification_UnknownActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hasta mañana.
+        /// </summary>
+        internal static string Notification_UntilTomorrow {
+            get {
+                return ResourceManager.GetString("Notification_UntilTomorrow", resourceCulture);
             }
         }
         
@@ -2946,6 +3126,15 @@ namespace Yatta.App.Resources {
         internal static string Validation_ActivitySaveError {
             get {
                 return ResourceManager.GetString("Validation_ActivitySaveError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Introduce un valor entre 1 y 1440 minutos.
+        /// </summary>
+        internal static string Validation_CustomReminderRange {
+            get {
+                return ResourceManager.GetString("Validation_CustomReminderRange", resourceCulture);
             }
         }
         
