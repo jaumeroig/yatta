@@ -275,18 +275,9 @@ public class NotificationService : INotificationService
             comboChoices.Add(("custom", customizeText));
 
             builder.AddComboBox("reminderTime", _localizationService.GetString("Notification_ReminderPlaceholder"), defaultSelectionId, comboChoices.ToArray())
-                .AddButton(new ToastButton()
-                    .SetContent(continueText)
-                    .AddArgument("action", "continue")
-                    .AddArgument("recordId", record.Id.ToString()))
-                .AddButton(new ToastButton()
-                    .SetContent(changeText)
-                    .AddArgument("action", "change")
-                    .AddArgument("recordId", record.Id.ToString()))
-                .AddButton(new ToastButton()
-                    .SetContent(stopText)
-                    .AddArgument("action", "stop")
-                    .AddArgument("recordId", record.Id.ToString()))
+                .AddButton(CreateButton(continueText, "continue", record.Id, "check"))
+                .AddButton(CreateButton(changeText, "change", record.Id, "arrowleftright"))
+                .AddButton(CreateButton(stopText, "stop", record.Id, "x"))
                 .Show();
         }
         catch (Exception ex)
@@ -309,6 +300,45 @@ public class NotificationService : INotificationService
 
             var logoPath = Path.Combine(appDirectory, "Resources", "Logo.ico");
             return File.Exists(logoPath) ? logoPath : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Creates a toast button with the specified content, action arguments, and optional icon.
+    /// </summary>
+    private static ToastButton CreateButton(string content, string action, Guid recordId, string iconName)
+    {
+        var button = new ToastButton()
+            .SetContent(content)
+            .AddArgument("action", action)
+            .AddArgument("recordId", recordId.ToString());
+
+        var iconPath = GetIconPath(iconName);
+        if (!string.IsNullOrEmpty(iconPath))
+        {
+            button.SetImageUri(new Uri(iconPath));
+        }
+
+        return button;
+    }
+
+    /// <summary>
+    /// Gets the absolute path to a notification button icon.
+    /// </summary>
+    private static string? GetIconPath(string iconName)
+    {
+        try
+        {
+            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            var appDirectory = Path.GetDirectoryName(assemblyLocation);
+            if (string.IsNullOrEmpty(appDirectory)) return null;
+
+            var iconPath = Path.Combine(appDirectory, "Resources", "Notification", $"{iconName}.png");
+            return File.Exists(iconPath) ? iconPath : null;
         }
         catch
         {
