@@ -133,6 +133,12 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
+                    <MenuItem x:Name="TrayReminderItem" Header="{local:Localize Tray_ManageReminders}" Click="TrayReminder_Click">
+                        <MenuItem.Icon>
+                            <ui:SymbolIcon x:Name="TrayReminderIcon" Symbol="Alert24" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
                     <MenuItem Header="{local:Localize Tray_Close}" Click="TrayClose_Click">
                         <MenuItem.Icon>
                             <ui:SymbolIcon Symbol="Dismiss32" />

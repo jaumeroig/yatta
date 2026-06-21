@@ -230,6 +230,15 @@
                                        BorderThickness="0">
                                 <ui:SymbolIcon Symbol="Add24"/>
                             </ui:Button>
+
+                            <!-- Reminder management button (discreet, dynamic icon) -->
+                            <ui:Button Appearance="Transparent"
+                                       Command="{Binding OpenReminderDialogCommand}"
+                                       ToolTip="{local:Localize ToolTip_ManageReminders}"
+                                       Padding="6"
+                                       BorderThickness="0">
+                                <ui:SymbolIcon Symbol="{Binding ReminderIconSymbol}"/>
+                            </ui:Button>
                         </StackPanel>
                     </Grid>
 

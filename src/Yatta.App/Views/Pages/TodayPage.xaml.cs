@@ -55,6 +55,7 @@ public partial class TodayPage : Page
             _isSubscribedToChanges = false;
         }
 
+        _viewModel.Cleanup();
         DisposeDialogs();
     }
 

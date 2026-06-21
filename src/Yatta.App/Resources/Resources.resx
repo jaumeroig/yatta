@@ -669,8 +669,35 @@
   <data name="Dialog_ReminderUntilLabel" xml:space="preserve">
     <value>No volver a recordar hasta dentro de:</value>
   </data>
+  <data name="Dialog_ReminderUntilSpecificTime" xml:space="preserve">
+    <value>No recordar hasta una hora concreta</value>
+  </data>
   <data name="Dialog_ReminderUntilTomorrow" xml:space="preserve">
     <value>No recordar hasta mañana.</value>
+  </data>
+  <data name="Label_At" xml:space="preserve">
+    <value>a las</value>
+  </data>
+  <data name="Dialog_ReminderNotificationState" xml:space="preserve">
+    <value>Estado de las notificaciones</value>
+  </data>
+  <data name="Dialog_ReminderNextReminder" xml:space="preserve">
+    <value>Próximo recordatorio</value>
+  </data>
+  <data name="Label_NextReminder" xml:space="preserve">
+    <value>Gestionar recordatorios</value>
+  </data>
+  <data name="Description_NextReminder" xml:space="preserve">
+    <value>Configura cuándo quieres recibir la próxima notificación y ajusta las opciones de notificación</value>
+  </data>
+  <data name="Button_ManageReminders" xml:space="preserve">
+    <value>Gestionar</value>
+  </data>
+  <data name="ToolTip_ManageReminders" xml:space="preserve">
+    <value>Gestionar recordatorios</value>
+  </data>
+  <data name="Tray_ManageReminders" xml:space="preserve">
+    <value>Gestionar recordatorios</value>
   </data>
   <data name="Label_ReminderInterval" xml:space="preserve">
     <value>Intervalo de recordatorio</value>
@@ -686,6 +713,9 @@
   </data>
   <data name="Validation_CustomReminderRange" xml:space="preserve">
     <value>Introduce un valor entre 1 y 1440 minutos</value>
+  </data>
+  <data name="Validation_InvalidTimeFormat" xml:space="preserve">
+    <value>Introduce una hora válida en formato HH:mm</value>
   </data>
   <data name="Settings_Section_User_Config" xml:space="preserve">
     <value>Configuración de usuario</value>

@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Wpf.Ui.Controls;
 using Yatta.App.Controls;
 using Yatta.App.Extensions;
 using Yatta.App.Helpers;
@@ -108,6 +109,9 @@ public partial class TodayViewModel : ObservableObject
     [ObservableProperty]
     private bool _isDeleteConfirmationOpen;
 
+    [ObservableProperty]
+    private SymbolRegular _reminderIconSymbol = SymbolRegular.Alert24;
+
     private TimeRecordDisplay? _pendingDeleteRecord;
 
     public TodayViewModel(
@@ -122,6 +126,9 @@ public partial class TodayViewModel : ObservableObject
         _workdayConfigService = workdayConfigService;
         _timeCalculatorService = timeCalculatorService;
         _notificationService = notificationService;
+
+        _notificationService.StateChanged += OnNotificationStateChanged;
+        UpdateReminderIcon();
 
         _timer = new DispatcherTimer
         {
@@ -429,6 +436,54 @@ public partial class TodayViewModel : ObservableObject
     {
         _pendingDeleteRecord = null;
         IsDeleteConfirmationOpen = false;
+    }
+
+    /// <summary>
+    /// Opens the custom reminder dialog so the user can manage notification
+    /// settings and schedule the next reminder.
+    /// </summary>
+    [RelayCommand]
+    private void OpenReminderDialog()
+    {
+        _notificationService.ShowCustomReminderDialog();
+    }
+
+    /// <summary>
+    /// Handles notification state changes by refreshing the reminder icon.
+    /// </summary>
+    private void OnNotificationStateChanged(object? sender, EventArgs e)
+    {
+        UpdateReminderIcon();
+    }
+
+    /// <summary>
+    /// Updates the reminder bell icon based on the current notification state:
+    /// bell-off when disabled, bell-dot when a custom snooze is active,
+    /// bell when notifications are enabled with the standard interval.
+    /// </summary>
+    private void UpdateReminderIcon()
+    {
+        if (!_notificationService.IsEnabled)
+        {
+            ReminderIconSymbol = SymbolRegular.AlertOff24;
+        }
+        else if (_notificationService.IsCustomReminderActive)
+        {
+            ReminderIconSymbol = SymbolRegular.AlertSnooze24;
+        }
+        else
+        {
+            ReminderIconSymbol = SymbolRegular.Alert24;
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribes from notification service events to prevent memory leaks
+    /// when the page is unloaded.
+    /// </summary>
+    public void Cleanup()
+    {
+        _notificationService.StateChanged -= OnNotificationStateChanged;
     }
 
     [RelayCommand]

@@ -6,6 +6,7 @@ using System.Timers;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.Notifications;
+using Yatta.App.Models;
 using Yatta.App.Views.Dialogs;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Models;
@@ -30,6 +31,7 @@ public class NotificationService : INotificationService
     public event EventHandler<Guid>? OnChangeActivity;
     public event EventHandler<int>? OnSnooze;
     public event EventHandler? OnStopActivity;
+    public event EventHandler? StateChanged;
 
     public bool IsEnabled
     {
@@ -43,6 +45,34 @@ public class NotificationService : INotificationService
                     Start();
                 else
                     Stop();
+                OnStateChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether a custom (non-default) reminder is
+    /// currently scheduled. Returns false when notifications are disabled or
+    /// when the next reminder matches the standard interval from settings.
+    /// </summary>
+    public bool IsCustomReminderActive
+    {
+        get
+        {
+            if (!_isEnabled || _nextReminderMinutes <= 0)
+                return false;
+
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+                var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
+                var defaultMinutes = GetEffectiveIntervalMinutes(settings);
+                return _nextReminderMinutes != defaultMinutes;
+            }
+            catch
+            {
+                return false;
             }
         }
     }
@@ -91,6 +121,16 @@ public class NotificationService : INotificationService
         _lastNotificationTime = DateTime.Now;
         _nextReminderMinutes = 0;
         _snoozeUntil = null;
+        OnStateChanged();
+    }
+
+    /// <summary>
+    /// Raises the <see cref="StateChanged"/> event so listeners can refresh
+    /// their notification-related UI (e.g. bell icon state).
+    /// </summary>
+    protected virtual void OnStateChanged()
+    {
+        StateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -142,8 +182,10 @@ public class NotificationService : INotificationService
             {
                 // No active record, reset timer for when one starts
                 _lastNotificationTime = DateTime.Now;
+                var wasCustom = _nextReminderMinutes > 0 || _snoozeUntil.HasValue;
                 _nextReminderMinutes = 0;
                 _snoozeUntil = null;
+                if (wasCustom) OnStateChanged();
                 return;
             }
 
@@ -158,6 +200,7 @@ public class NotificationService : INotificationService
                 _lastNotificationTime = DateTime.Now;
                 _nextReminderMinutes = 0;
                 _snoozeUntil = null;
+                OnStateChanged();
                 return;
             }
 
@@ -172,8 +215,10 @@ public class NotificationService : INotificationService
             {
                 await ShowNotificationAsync(activeRecord);
                 _lastNotificationTime = DateTime.Now;
+                var wasCustom = _nextReminderMinutes > 0;
                 _nextReminderMinutes = 0;
                 _snoozeUntil = null;
+                if (wasCustom) OnStateChanged();
             }
         }
         catch
@@ -399,6 +444,7 @@ public class NotificationService : INotificationService
         _nextReminderMinutes = minutes;
         _snoozeUntil = null;
         _lastNotificationTime = DateTime.Now;
+        OnStateChanged();
 
         if (minutes > 0)
             OnSnooze?.Invoke(this, minutes);
@@ -407,80 +453,160 @@ public class NotificationService : INotificationService
     }
 
     /// <summary>
-    /// Handles the "Customize" action, opening a modal dialog to collect a custom
-    /// snooze duration in minutes. Notifications are suppressed while the dialog
-    /// is open so the reminder does not pop up again until the user has finished.
+    /// Handles the "Customize" action by opening the reminder management dialog.
+    /// Notifications are suppressed while the dialog is open so the reminder does
+    /// not pop up again until the user has finished.
     /// </summary>
     private void HandleCustom()
     {
-        int defaultMinutes = ReadCustomIntervalDefault();
+        ShowCustomReminderDialog();
+    }
+
+    /// <summary>
+    /// Opens the custom reminder dialog so the user can manage notification
+    /// settings and schedule the next reminder. Applies any changes made.
+    /// </summary>
+    public void ShowCustomReminderDialog()
+    {
+        if (_isCustomReminderDialogOpen)
+            return;
+
+        var currentSettings = ReadCurrentSettings();
+        int defaultMinutes = currentSettings?.NotificationIntervalMinutes ?? 120;
+        bool notificationsEnabled = currentSettings?.Notifications ?? false;
+        bool keepVisible = currentSettings?.KeepNotificationsVisible ?? false;
 
         // Reset the reference time before showing the dialog so the timer does not
         // treat the time spent in the dialog as elapsed reminder time.
         _lastNotificationTime = DateTime.Now;
         _isCustomReminderDialogOpen = true;
 
-        int? customMinutes;
+        ReminderDialogResult? result;
         try
         {
-            customMinutes = PromptForCustomMinutes(defaultMinutes);
+            result = ShowReminderDialog(defaultMinutes, notificationsEnabled, keepVisible);
         }
         finally
         {
             _isCustomReminderDialogOpen = false;
         }
 
-        if (customMinutes.HasValue)
-        {
-            _nextReminderMinutes = customMinutes.Value;
-            _snoozeUntil = null;
-            _lastNotificationTime = DateTime.Now;
-            OnSnooze?.Invoke(this, customMinutes.Value);
-            OnContinueActivity?.Invoke(this, EventArgs.Empty);
-        }
-        else
+        if (result == null)
         {
             // Cancelled: fall back to settings default
             _nextReminderMinutes = 0;
             _snoozeUntil = null;
             _lastNotificationTime = DateTime.Now;
+            return;
         }
+
+        ApplyReminderDialogResult(result);
     }
 
     /// <summary>
-    /// Reads the current custom interval default from settings.
+    /// Applies the dialog result to the notification settings and internal state.
     /// </summary>
-    private int ReadCustomIntervalDefault()
+    private void ApplyReminderDialogResult(ReminderDialogResult result)
+    {
+        // Persist the keep-visible setting when it changed.
+        if (TryUpdateKeepNotificationsVisible(result.KeepNotificationsVisible))
+        {
+            OnStateChanged();
+        }
+
+        // Sync the notification enabled state.
+        if (_isEnabled != result.NotificationsEnabled)
+        {
+            IsEnabled = result.NotificationsEnabled;
+        }
+
+        if (!result.NotificationsEnabled)
+        {
+            _nextReminderMinutes = 0;
+            _snoozeUntil = null;
+            _lastNotificationTime = DateTime.Now;
+            return;
+        }
+
+        if (result.CustomMinutes.HasValue)
+        {
+            _nextReminderMinutes = result.CustomMinutes.Value;
+            _snoozeUntil = null;
+            _lastNotificationTime = DateTime.Now;
+            OnSnooze?.Invoke(this, result.CustomMinutes.Value);
+            OnContinueActivity?.Invoke(this, EventArgs.Empty);
+        }
+        else
+        {
+            _nextReminderMinutes = 0;
+            _snoozeUntil = null;
+            _lastNotificationTime = DateTime.Now;
+        }
+
+        OnStateChanged();
+    }
+
+    /// <summary>
+    /// Updates the KeepNotificationsVisible setting in the database if it changed.
+    /// Returns true if the value was updated; otherwise false.
+    /// </summary>
+    private bool TryUpdateKeepNotificationsVisible(bool keepVisible)
     {
         try
         {
             using var scope = _serviceProvider.CreateScope();
             var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
             var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
-            return settings.NotificationIntervalMinutes;
+            if (settings.KeepNotificationsVisible == keepVisible)
+                return false;
+
+            settings.KeepNotificationsVisible = keepVisible;
+            settingsRepository.UpdateAsync(settings).GetAwaiter().GetResult();
+            return true;
         }
         catch
         {
-            return 120;
+            return false;
         }
     }
 
     /// <summary>
-    /// Opens a modal WPF dialog to collect a custom snooze duration in minutes.
+    /// Reads the current application settings from the database.
+    /// </summary>
+    private AppSettings? ReadCurrentSettings()
+    {
+        try
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+            return settingsRepository.GetAsync().GetAwaiter().GetResult();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Opens a modal WPF dialog to collect the reminder configuration.
     /// Returns null if the user cancels.
     /// </summary>
-    private int? PromptForCustomMinutes(int defaultMinutes)
+    private ReminderDialogResult? ShowReminderDialog(int defaultMinutes, bool notificationsEnabled, bool keepVisible)
     {
-        int? result = null;
+        ReminderDialogResult? result = null;
 
         void ShowDialog()
         {
-            var dialog = new ReminderCustomDialogWindow(_serviceProvider, defaultMinutes)
+            var dialog = new ReminderCustomDialogWindow(
+                _serviceProvider,
+                defaultMinutes,
+                notificationsEnabled,
+                keepVisible)
             {
                 Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
             };
             dialog.ShowDialog();
-            result = dialog.CustomMinutes;
+            result = dialog.Result;
         }
 
         if (Application.Current?.Dispatcher?.CheckAccess() == false)

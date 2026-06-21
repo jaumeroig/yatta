@@ -7,41 +7,55 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Controls;
+using Yatta.App.Models;
 using Yatta.Core.Interfaces;
-using AppResources = Yatta.App.Resources.Resources;
 
 /// <summary>
-/// Modal dialog to collect a custom reminder interval in hours and minutes,
-/// or to snooze until midnight (tomorrow at 00:00).
+/// Modal dialog to manage notification settings and schedule the next reminder.
 /// </summary>
 public partial class ReminderCustomDialogWindow : FluentWindow
 {
     private readonly ILocalizationService _localizationService;
     private readonly int _defaultMinutes;
+    private readonly bool _initialNotificationsEnabled;
+    private readonly bool _initialKeepNotificationsVisible;
 
     /// <summary>
-    /// The custom minutes entered by the user, or null if cancelled.
-    /// When the "until tomorrow" option is selected, this is the number of
-    /// minutes from now until midnight.
+    /// Gets the dialog result, or null if the dialog was cancelled.
     /// </summary>
-    public int? CustomMinutes { get; private set; }
+    public ReminderDialogResult? Result { get; private set; }
 
-    public ReminderCustomDialogWindow(IServiceProvider serviceProvider, int defaultMinutes)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReminderCustomDialogWindow"/> class.
+    /// </summary>
+    /// <param name="serviceProvider">The service provider used to resolve services.</param>
+    /// <param name="defaultMinutes">The default custom reminder interval in minutes.</param>
+    /// <param name="notificationsEnabled">Whether notifications are currently enabled.</param>
+    /// <param name="keepNotificationsVisible">Whether notifications should remain visible until dismissed.</param>
+    public ReminderCustomDialogWindow(
+        IServiceProvider serviceProvider,
+        int defaultMinutes,
+        bool notificationsEnabled,
+        bool keepNotificationsVisible)
     {
         _localizationService = serviceProvider.GetRequiredService<ILocalizationService>();
         _defaultMinutes = defaultMinutes;
+        _initialNotificationsEnabled = notificationsEnabled;
+        _initialKeepNotificationsVisible = keepNotificationsVisible;
         InitializeComponent();
 
         // Subscribe radio button events after initialization to avoid firing
         // handlers before the visual tree is fully created.
         UntilTimeRadioButton.Checked += OnReminderOptionChanged;
         UntilTimeRadioButton.Unchecked += OnReminderOptionChanged;
+        UntilSpecificTimeRadioButton.Checked += OnReminderOptionChanged;
+        UntilSpecificTimeRadioButton.Unchecked += OnReminderOptionChanged;
         UntilTomorrowRadioButton.Checked += OnReminderOptionChanged;
         UntilTomorrowRadioButton.Unchecked += OnReminderOptionChanged;
     }
 
     /// <summary>
-    /// Initializes localized text and pre-fills the inputs with the current custom interval.
+    /// Initializes localized text and pre-fills the inputs with the current values.
     /// </summary>
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
@@ -51,15 +65,24 @@ public partial class ReminderCustomDialogWindow : FluentWindow
         CancelButton.Content = _localizationService.GetString("Button_Cancel");
         Title = _localizationService.GetString("Dialog_CustomReminder_Title");
 
+        NotificationsEnabledToggle.Content = _localizationService.GetString("Label_EnableNotifications");
+        KeepNotificationsVisibleToggle.Content = _localizationService.GetString("Label_KeepNotificationsVisible");
+
+        NotificationsEnabledToggle.IsChecked = _initialNotificationsEnabled;
+        KeepNotificationsVisibleToggle.IsChecked = _initialKeepNotificationsVisible;
+
         HoursNumberBox.Value = _defaultMinutes / 60;
         MinutesNumberBox.Value = _defaultMinutes % 60;
+
+        // Default the specific time picker to the next hour from now.
+        var nextHour = DateTime.Now.AddHours(1);
+        SpecificTimePicker.TimeText = $"{nextHour.Hour:D2}:00";
 
         FixWindowSize();
         AttachCyclicSpin(HoursNumberBox);
         AttachCyclicSpin(MinutesNumberBox);
 
         UpdateInputControlsState();
-        HoursNumberBox.Focus();
     }
 
     /// <summary>
@@ -151,7 +174,17 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     }
 
     /// <summary>
-    /// Enables or disables the time input controls based on the selected radio option.
+    /// Enables or disables the reminder time section based on the notifications toggle.
+    /// </summary>
+    private void OnNotificationsEnabledChanged(object sender, RoutedEventArgs e)
+    {
+        UpdateInputControlsState();
+        ErrorText.Visibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Enables or disables the time input controls based on the selected radio option
+    /// and the notifications toggle state.
     /// </summary>
     private void OnReminderOptionChanged(object sender, RoutedEventArgs e)
     {
@@ -161,12 +194,23 @@ public partial class ReminderCustomDialogWindow : FluentWindow
 
     private void UpdateInputControlsState()
     {
-        if (UntilTimeRadioButton == null || TimeInputPanel == null || AdjustButtonsPanel == null)
+        if (UntilTimeRadioButton == null || TimeInputPanel == null || AdjustButtonsPanel == null
+            || UntilSpecificTimeRadioButton == null || SpecificTimePanel == null
+            || ReminderOptionsPanel == null || KeepNotificationsVisibleToggle == null)
+            return;
+
+        bool notificationsEnabled = NotificationsEnabledToggle.IsChecked == true;
+        KeepNotificationsVisibleToggle.IsEnabled = notificationsEnabled;
+        ReminderOptionsPanel.IsEnabled = notificationsEnabled;
+
+        if (!notificationsEnabled)
             return;
 
         var isTimeSelected = UntilTimeRadioButton.IsChecked == true;
+        var isSpecificTimeSelected = UntilSpecificTimeRadioButton.IsChecked == true;
         TimeInputPanel.IsEnabled = isTimeSelected;
         AdjustButtonsPanel.IsEnabled = isTimeSelected;
+        SpecificTimePanel.IsEnabled = isSpecificTimeSelected;
     }
 
     /// <summary>
@@ -197,34 +241,85 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     private void OnPlus15mClick(object sender, RoutedEventArgs e) => AdjustMinutes(15);
 
     /// <summary>
-    /// Handles the accept button click. Validates and stores the value.
+    /// Handles the accept button click. Validates and stores the result.
     /// </summary>
     private void OnPrimaryClick(object sender, RoutedEventArgs e)
     {
-        if (UntilTomorrowRadioButton.IsChecked == true)
+        bool notificationsEnabled = NotificationsEnabledToggle.IsChecked == true;
+        bool keepVisible = KeepNotificationsVisibleToggle.IsChecked == true;
+
+        // When notifications are disabled, ignore the time selection.
+        if (!notificationsEnabled)
+        {
+            Result = new ReminderDialogResult
+            {
+                NotificationsEnabled = false,
+                KeepNotificationsVisible = keepVisible,
+                CustomMinutes = null
+            };
+            Close();
+            return;
+        }
+
+        int? customMinutes = null;
+
+        if (UntilSpecificTimeRadioButton.IsChecked == true)
+        {
+            var timeText = SpecificTimePicker.TimeText?.Trim() ?? string.Empty;
+            var parts = timeText.Split(':');
+            if (parts.Length != 2
+                || !int.TryParse(parts[0], out int hour)
+                || !int.TryParse(parts[1], out int minute)
+                || hour < 0 || hour > 23
+                || minute < 0 || minute > 59)
+            {
+                ErrorText.Text = _localizationService.GetString("Validation_InvalidTimeFormat");
+                ErrorText.Visibility = Visibility.Visible;
+                return;
+            }
+
+            var now = DateTime.Now;
+            var target = now.Date.Add(new TimeOnly(hour, minute).ToTimeSpan());
+            if (target <= now)
+                target = target.AddDays(1);
+
+            var totalMinutes = (int)Math.Ceiling((target - now).TotalMinutes);
+            if (totalMinutes < 1) totalMinutes = 1;
+            if (totalMinutes > 1440) totalMinutes = 1440;
+
+            customMinutes = totalMinutes;
+        }
+        else if (UntilTomorrowRadioButton.IsChecked == true)
         {
             var remaining = DateTime.Today.AddDays(1) - DateTime.Now;
             var totalMinutes = (int)remaining.TotalMinutes;
             if (totalMinutes < 1) totalMinutes = 1;
             if (totalMinutes > 1440) totalMinutes = 1440;
 
-            CustomMinutes = totalMinutes;
-            Close();
-            return;
+            customMinutes = totalMinutes;
         }
-
-        var hours = (int)(HoursNumberBox.Value ?? 0);
-        var minutes = (int)(MinutesNumberBox.Value ?? 0);
-        var total = (hours * 60) + minutes;
-
-        if (total < 1 || total > 1440)
+        else
         {
-            ErrorText.Text = _localizationService.GetString("Validation_CustomReminderRange");
-            ErrorText.Visibility = Visibility.Visible;
-            return;
+            var hours = (int)(HoursNumberBox.Value ?? 0);
+            var minutes = (int)(MinutesNumberBox.Value ?? 0);
+            var total = (hours * 60) + minutes;
+
+            if (total < 1 || total > 1440)
+            {
+                ErrorText.Text = _localizationService.GetString("Validation_CustomReminderRange");
+                ErrorText.Visibility = Visibility.Visible;
+                return;
+            }
+
+            customMinutes = total;
         }
 
-        CustomMinutes = total;
+        Result = new ReminderDialogResult
+        {
+            NotificationsEnabled = true,
+            KeepNotificationsVisible = keepVisible,
+            CustomMinutes = customMinutes
+        };
         Close();
     }
 
@@ -233,7 +328,7 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     /// </summary>
     private void OnCancelClick(object sender, RoutedEventArgs e)
     {
-        CustomMinutes = null;
+        Result = null;
         Close();
     }
 }

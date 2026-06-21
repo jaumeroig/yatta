@@ -216,6 +216,27 @@
                                      Command="{Binding ToggleKeepNotificationsVisibleCommand}" />
                 </ui:CardControl>
 
+                <!-- Manage next reminder -->
+                <ui:CardControl Margin="0,0,0,4">
+                    <ui:CardControl.Icon>
+                        <ui:SymbolIcon Symbol="ClockAlarm24" />
+                    </ui:CardControl.Icon>
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <TextBlock Text="{local:Localize Label_NextReminder}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Description_NextReminder}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:Button Content="{local:Localize Button_ManageReminders}"
+                               Command="{Binding OpenReminderDialogCommand}"
+                               Height="40"
+                               Padding="16,0" />
+                </ui:CardControl>
+
                 <TextBlock Text="{local:Localize Section_WorkdaySettings}"
                            FontSize="14"
                            FontWeight="SemiBold"

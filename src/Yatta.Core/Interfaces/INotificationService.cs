@@ -21,6 +21,13 @@ public interface INotificationService : IDisposable
     bool IsEnabled { get; set; }
 
     /// <summary>
+    /// Gets a value indicating whether a custom (non-default) reminder is
+    /// currently scheduled, meaning the next notification will not fire at
+    /// the standard interval defined in settings.
+    /// </summary>
+    bool IsCustomReminderActive { get; }
+
+    /// <summary>
     /// Triggers a notification check immediately.
     /// </summary>
     Task CheckAndNotifyAsync();
@@ -35,6 +42,18 @@ public interface INotificationService : IDisposable
     /// Should be called when the current activity changes or is modified.
     /// </summary>
     void ResetTimer();
+
+    /// <summary>
+    /// Opens the custom reminder dialog so the user can manage notification
+    /// settings and schedule the next reminder. Applies any changes made.
+    /// </summary>
+    void ShowCustomReminderDialog();
+
+    /// <summary>
+    /// Event raised when the notification state (enabled/disabled or custom
+    /// reminder active) changes, so listeners can update their UI.
+    /// </summary>
+    event EventHandler? StateChanged;
 
     /// <summary>
     /// Event raised when user responds to continue with current activity.

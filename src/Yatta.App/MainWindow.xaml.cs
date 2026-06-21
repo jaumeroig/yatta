@@ -72,8 +72,43 @@ public partial class MainWindow : FluentWindow
         Closing += MainWindow_Closing;
         StateChanged += MainWindow_StateChanged;
 
+        // Subscribe to notification state changes to update the tray reminder icon
+        var notificationService = serviceProvider.GetRequiredService<INotificationService>();
+        notificationService.StateChanged += OnNotificationStateChanged;
+
         // DEBUG: Keyboard shortcut to test notifications (Ctrl+Shift+T)
         KeyDown += MainWindow_KeyDown;
+    }
+
+    /// <summary>
+    /// Updates the tray reminder icon when the notification state changes.
+    /// </summary>
+    private void OnNotificationStateChanged(object? sender, EventArgs e)
+    {
+        Dispatcher.Invoke(UpdateTrayReminderIcon);
+    }
+
+    /// <summary>
+    /// Updates the tray reminder menu item icon based on the current notification state.
+    /// </summary>
+    private void UpdateTrayReminderIcon()
+    {
+        if (TrayReminderIcon == null)
+            return;
+
+        var notificationService = _serviceProvider.GetRequiredService<INotificationService>();
+        if (!notificationService.IsEnabled)
+        {
+            TrayReminderIcon.Symbol = SymbolRegular.AlertOff24;
+        }
+        else if (notificationService.IsCustomReminderActive)
+        {
+            TrayReminderIcon.Symbol = SymbolRegular.AlertSnooze24;
+        }
+        else
+        {
+            TrayReminderIcon.Symbol = SymbolRegular.Alert24;
+        }
     }
 
     /// <summary>
@@ -285,6 +320,18 @@ public partial class MainWindow : FluentWindow
             : Yatta.App.Resources.Resources.Tray_StartActivity;
         TrayChangeActivityItem.Icon = new SymbolIcon(hasActive ? SymbolRegular.ArrowSwap24 : SymbolRegular.Play24);
         TrayStopActivityItem.Visibility = hasActive ? Visibility.Visible : Visibility.Collapsed;
+
+        UpdateTrayReminderIcon();
+    }
+
+    /// <summary>
+    /// Handles the Tray Icon "Manage reminders" menu click.
+    /// Opens the custom reminder dialog.
+    /// </summary>
+    private void TrayReminder_Click(object sender, RoutedEventArgs e)
+    {
+        var notificationService = _serviceProvider.GetRequiredService<INotificationService>();
+        notificationService.ShowCustomReminderDialog();
     }
 
     /// <summary>

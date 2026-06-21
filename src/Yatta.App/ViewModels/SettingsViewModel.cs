@@ -567,6 +567,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
+    /// Opens the custom reminder dialog so the user can manage notification
+    /// settings and schedule the next reminder. Reloads settings afterwards
+    /// to reflect any changes made in the dialog.
+    /// </summary>
+    [RelayCommand]
+    private async Task OpenReminderDialogAsync()
+    {
+        _notificationService.ShowCustomReminderDialog();
+        await LoadSettingsAsync();
+    }
+
+    /// <summary>
     /// Saves the custom retention days.
     /// </summary>
     [RelayCommand]

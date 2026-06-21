@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:local="clr-namespace:Yatta.App.Markup"
+    xmlns:controls="clr-namespace:Yatta.App.Controls"
      SizeToContent="Height"
      Width="420"
      MinWidth="420"
@@ -33,67 +34,110 @@
                        FontSize="13"
                        TextWrapping="Wrap"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Margin="0,0,0,20" />
+                       Margin="0,0,0,16" />
 
-            <!-- Opción 1: hasta horas/minutos -->
-            <RadioButton x:Name="UntilTimeRadioButton"
-                         GroupName="ReminderOptions"
-                         IsChecked="True"
-                         Margin="0,0,0,12">
-                <TextBlock Text="{local:Localize Dialog_ReminderUntilLabel}"
-                           FontWeight="SemiBold" />
-            </RadioButton>
+            <!-- Sección: Estado de las notificaciones -->
+            <TextBlock Text="{local:Localize Dialog_ReminderNotificationState}"
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,0,0,8" />
 
-            <StackPanel x:Name="TimeInputPanel"
-                        Orientation="Horizontal"
-                        Margin="24,0,0,12">
-                <ui:NumberBox x:Name="HoursNumberBox"
-                              Width="140"
-                              Height="40"
-                              Margin="0,0,8,0"
-                              Minimum="0"
-                              Maximum="23" />
-                <TextBlock Text="{local:Localize Label_Hours}"
-                           VerticalAlignment="Center"
-                           Margin="0,0,16,0" />
-                <ui:NumberBox x:Name="MinutesNumberBox"
-                              Width="140"
-                              Height="40"
-                              Margin="0,0,8,0"
-                              Minimum="0"
-                              Maximum="59" />
-                <TextBlock Text="{local:Localize Label_Minutes}"
-                           VerticalAlignment="Center" />
+            <ui:ToggleSwitch x:Name="NotificationsEnabledToggle"
+                             Checked="OnNotificationsEnabledChanged"
+                             Unchecked="OnNotificationsEnabledChanged"
+                             Margin="0,0,0,8" />
+            <ui:ToggleSwitch x:Name="KeepNotificationsVisibleToggle"
+                             Margin="0,0,0,16" />
+
+            <!-- Sección: Próximo recordatorio -->
+            <TextBlock x:Name="NextReminderSectionHeader"
+                       Text="{local:Localize Dialog_ReminderNextReminder}"
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,0,0,8" />
+
+            <StackPanel x:Name="ReminderOptionsPanel">
+                <!-- Opción 1: hasta horas/minutos -->
+                <RadioButton x:Name="UntilTimeRadioButton"
+                             GroupName="ReminderOptions"
+                             IsChecked="True"
+                             Margin="0,0,0,12">
+                    <TextBlock Text="{local:Localize Dialog_ReminderUntilLabel}"
+                               FontWeight="SemiBold" />
+                </RadioButton>
+
+                <StackPanel x:Name="TimeInputPanel"
+                            Orientation="Horizontal"
+                            Margin="24,0,0,12">
+                    <ui:NumberBox x:Name="HoursNumberBox"
+                                  Width="140"
+                                  Height="40"
+                                  Margin="0,0,8,0"
+                                  Minimum="0"
+                                  Maximum="23" />
+                    <TextBlock Text="{local:Localize Label_Hours}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,16,0" />
+                    <ui:NumberBox x:Name="MinutesNumberBox"
+                                  Width="140"
+                                  Height="40"
+                                  Margin="0,0,8,0"
+                                  Minimum="0"
+                                  Maximum="59" />
+                    <TextBlock Text="{local:Localize Label_Minutes}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Botones de ajuste -->
+                <StackPanel x:Name="AdjustButtonsPanel"
+                            Orientation="Horizontal"
+                            Margin="24,0,0,20">
+                    <ui:Button Content="{local:Localize Button_Minus15m}"
+                               Click="OnMinus15mClick"
+                               Height="32"
+                               Margin="0,0,8,0" />
+                    <ui:Button Content="{local:Localize Button_Minus1h}"
+                               Click="OnMinus1hClick"
+                               Height="32"
+                               Margin="0,0,8,0" />
+                    <ui:Button Content="{local:Localize Button_Plus1h}"
+                               Click="OnPlus1hClick"
+                               Height="32"
+                               Margin="0,0,8,0" />
+                    <ui:Button Content="{local:Localize Button_Plus15m}"
+                               Click="OnPlus15mClick"
+                               Height="32" />
+                </StackPanel>
+
+                <!-- Opción 2: hasta una hora concreta -->
+                <RadioButton x:Name="UntilSpecificTimeRadioButton"
+                             GroupName="ReminderOptions"
+                             Margin="0,0,0,12">
+                    <TextBlock Text="{local:Localize Dialog_ReminderUntilSpecificTime}"
+                               FontWeight="SemiBold" />
+                </RadioButton>
+
+                <StackPanel x:Name="SpecificTimePanel"
+                            Orientation="Horizontal"
+                            Margin="24,0,0,20">
+                    <TextBlock Text="{local:Localize Label_At}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0" />
+                    <controls:TimePickerControl x:Name="SpecificTimePicker"
+                                                Width="140"
+                                                Height="40" />
+                </StackPanel>
+
+                <!-- Opción 3: hasta mañana -->
+                <RadioButton x:Name="UntilTomorrowRadioButton"
+                             GroupName="ReminderOptions"
+                             Margin="0,0,0,12">
+                    <TextBlock Text="{local:Localize Dialog_ReminderUntilTomorrow}"
+                               FontWeight="SemiBold" />
+                </RadioButton>
             </StackPanel>
-
-            <!-- Botones de ajuste -->
-            <StackPanel x:Name="AdjustButtonsPanel"
-                        Orientation="Horizontal"
-                        Margin="24,0,0,20">
-                <ui:Button Content="{local:Localize Button_Minus15m}"
-                           Click="OnMinus15mClick"
-                           Height="32"
-                           Margin="0,0,8,0" />
-                <ui:Button Content="{local:Localize Button_Minus1h}"
-                           Click="OnMinus1hClick"
-                           Height="32"
-                           Margin="0,0,8,0" />
-                <ui:Button Content="{local:Localize Button_Plus1h}"
-                           Click="OnPlus1hClick"
-                           Height="32"
-                           Margin="0,0,8,0" />
-                <ui:Button Content="{local:Localize Button_Plus15m}"
-                           Click="OnPlus15mClick"
-                           Height="32" />
-            </StackPanel>
-
-            <!-- Opción 2: hasta mañana -->
-            <RadioButton x:Name="UntilTomorrowRadioButton"
-                         GroupName="ReminderOptions"
-                         Margin="0,0,0,12">
-                <TextBlock Text="{local:Localize Dialog_ReminderUntilTomorrow}"
-                           FontWeight="SemiBold" />
-            </RadioButton>
 
             <TextBlock x:Name="ErrorText"
                        FontSize="12"
