@@ -24,6 +24,7 @@ public class NotificationService : INotificationService
     private DateTime? _snoozeUntil;
     private bool _isEnabled;
     private bool _isDisposed;
+    private volatile bool _isCustomReminderDialogOpen;
 
     public event EventHandler? OnContinueActivity;
     public event EventHandler<Guid>? OnChangeActivity;
@@ -125,6 +126,7 @@ public class NotificationService : INotificationService
     public async Task CheckAndNotifyAsync()
     {
         if (!_isEnabled) return;
+        if (_isCustomReminderDialogOpen) return;
 
         try
         {
@@ -406,12 +408,27 @@ public class NotificationService : INotificationService
 
     /// <summary>
     /// Handles the "Customize" action, opening a modal dialog to collect a custom
-    /// snooze duration in minutes.
+    /// snooze duration in minutes. Notifications are suppressed while the dialog
+    /// is open so the reminder does not pop up again until the user has finished.
     /// </summary>
     private void HandleCustom()
     {
         int defaultMinutes = ReadCustomIntervalDefault();
-        int? customMinutes = PromptForCustomMinutes(defaultMinutes);
+
+        // Reset the reference time before showing the dialog so the timer does not
+        // treat the time spent in the dialog as elapsed reminder time.
+        _lastNotificationTime = DateTime.Now;
+        _isCustomReminderDialogOpen = true;
+
+        int? customMinutes;
+        try
+        {
+            customMinutes = PromptForCustomMinutes(defaultMinutes);
+        }
+        finally
+        {
+            _isCustomReminderDialogOpen = false;
+        }
 
         if (customMinutes.HasValue)
         {
