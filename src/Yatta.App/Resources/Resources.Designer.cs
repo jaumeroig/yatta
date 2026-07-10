@@ -835,7 +835,7 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Indica las horas y minutos hasta la próxima notificación..
+        ///   Looks up a localized string similar to Elige cuándo quieres recibir el próximo aviso..
         /// </summary>
         internal static string Dialog_CustomReminder_Description {
             get {
@@ -844,7 +844,7 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Personalizar recordatorio.
+        ///   Looks up a localized string similar to Posponer recordatorio.
         /// </summary>
         internal static string Dialog_CustomReminder_Title {
             get {
@@ -997,6 +997,24 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cadencia habitual.
+        /// </summary>
+        internal static string Dialog_ReminderDefaultInterval {
+            get {
+                return ResourceManager.GetString("Dialog_ReminderDefaultInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Se usará como intervalo por defecto entre recordatorios..
+        /// </summary>
+        internal static string Dialog_ReminderDefaultIntervalDescription {
+            get {
+                return ResourceManager.GetString("Dialog_ReminderDefaultIntervalDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Próximo recordatorio.
         /// </summary>
         internal static string Dialog_ReminderNextReminder {
@@ -1015,7 +1033,16 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No volver a recordar hasta dentro de:.
+        ///   Looks up a localized string similar to Te avisaremos a primera hora..
+        /// </summary>
+        internal static string Dialog_ReminderTomorrowDescription {
+            get {
+                return ResourceManager.GetString("Dialog_ReminderTomorrowDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dentro de un tiempo.
         /// </summary>
         internal static string Dialog_ReminderUntilLabel {
             get {
@@ -1033,11 +1060,20 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No recordar hasta mañana..
+        ///   Looks up a localized string similar to Mañana.
         /// </summary>
         internal static string Dialog_ReminderUntilTomorrow {
             get {
                 return ResourceManager.GetString("Dialog_ReminderUntilTomorrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Cuándo te lo recordamos?.
+        /// </summary>
+        internal static string Dialog_ReminderWhenQuestion {
+            get {
+                return ResourceManager.GetString("Dialog_ReminderWhenQuestion", resourceCulture);
             }
         }
         
@@ -2127,15 +2163,6 @@ namespace Yatta.App.Resources {
         internal static string Notification_30min {
             get {
                 return ResourceManager.GetString("Notification_30min", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 5 minutos.
-        /// </summary>
-        internal static string Notification_5min {
-            get {
-                return ResourceManager.GetString("Notification_5min", resourceCulture);
             }
         }
         

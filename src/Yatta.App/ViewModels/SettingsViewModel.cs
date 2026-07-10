@@ -134,7 +134,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         // Initialize reminder interval options
         ReminderIntervalOptions =
         [
-            new ReminderIntervalOption { Value = ReminderInterval.Minutes5, DisplayName = Resources.Resources.Notification_15min },
+            new ReminderIntervalOption { Value = ReminderInterval.Minutes15, DisplayName = Resources.Resources.Notification_15min },
+            new ReminderIntervalOption { Value = ReminderInterval.Minutes10, DisplayName = Resources.Resources.Notification_10min },
             new ReminderIntervalOption { Value = ReminderInterval.Minutes30, DisplayName = Resources.Resources.Notification_30min },
             new ReminderIntervalOption { Value = ReminderInterval.Hour1, DisplayName = Resources.Resources.Notification_1hour },
             new ReminderIntervalOption { Value = ReminderInterval.Hours2, DisplayName = Resources.Resources.Notification_2hours },
@@ -145,7 +146,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _selectedTheme = ThemeOptions[0];
         _selectedLanguage = LanguageOptions[0];
         _selectedRetentionPolicy = RetentionPolicyOptions[0];
-        _selectedReminderInterval = ReminderIntervalOptions[3]; // Hours2
+        _selectedReminderInterval = ReminderIntervalOptions[4]; // Hours2
         NotificationsEnabled = false;
         WorkdayHours = 8;
         WorkdayMinutes = 0;
@@ -718,7 +719,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         CustomReminderMinutes = _currentSettings.NotificationIntervalMinutes % 60;
 
         // Update reminder interval preset
-        SelectedReminderInterval = ReminderIntervalOptions.FirstOrDefault(r => r.Value == _currentSettings.ReminderInterval) ?? ReminderIntervalOptions[3];
+        SelectedReminderInterval = ReminderIntervalOptions.FirstOrDefault(r => r.Value == _currentSettings.ReminderInterval) ?? ReminderIntervalOptions[4];
         IsCustomReminderVisible = _currentSettings.ReminderInterval == ReminderInterval.Custom;
 
         // Update retention policy
@@ -894,7 +895,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         // default combo selection matches the configured interval.
         var presetMinutes = interval switch
         {
-            ReminderInterval.Minutes5 => 15,
+            ReminderInterval.Minutes15 => 15,
+            ReminderInterval.Minutes10 => 10,
             ReminderInterval.Minutes30 => 30,
             ReminderInterval.Hour1 => 60,
             ReminderInterval.Hours2 => 120,

@@ -5,10 +5,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Controls;
 using Yatta.App.Models;
 using Yatta.Core.Interfaces;
+using Yatta.Core.Models;
 
 /// <summary>
 /// Modal dialog to manage notification settings and schedule the next reminder.
@@ -17,6 +19,7 @@ public partial class ReminderCustomDialogWindow : FluentWindow
 {
     private readonly ILocalizationService _localizationService;
     private readonly int _defaultMinutes;
+    private readonly ReminderInterval _defaultInterval;
     private readonly bool _initialNotificationsEnabled;
     private readonly bool _initialKeepNotificationsVisible;
 
@@ -30,16 +33,19 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     /// </summary>
     /// <param name="serviceProvider">The service provider used to resolve services.</param>
     /// <param name="defaultMinutes">The default custom reminder interval in minutes.</param>
+    /// <param name="defaultInterval">The default reminder interval preset.</param>
     /// <param name="notificationsEnabled">Whether notifications are currently enabled.</param>
     /// <param name="keepNotificationsVisible">Whether notifications should remain visible until dismissed.</param>
     public ReminderCustomDialogWindow(
         IServiceProvider serviceProvider,
         int defaultMinutes,
+        ReminderInterval defaultInterval,
         bool notificationsEnabled,
         bool keepNotificationsVisible)
     {
         _localizationService = serviceProvider.GetRequiredService<ILocalizationService>();
         _defaultMinutes = defaultMinutes;
+        _defaultInterval = defaultInterval;
         _initialNotificationsEnabled = notificationsEnabled;
         _initialKeepNotificationsVisible = keepNotificationsVisible;
         InitializeComponent();
@@ -65,22 +71,24 @@ public partial class ReminderCustomDialogWindow : FluentWindow
         CancelButton.Content = _localizationService.GetString("Button_Cancel");
         Title = _localizationService.GetString("Dialog_CustomReminder_Title");
 
-        NotificationsEnabledToggle.Content = _localizationService.GetString("Label_EnableNotifications");
-        KeepNotificationsVisibleToggle.Content = _localizationService.GetString("Label_KeepNotificationsVisible");
-
         NotificationsEnabledToggle.IsChecked = _initialNotificationsEnabled;
         KeepNotificationsVisibleToggle.IsChecked = _initialKeepNotificationsVisible;
 
-        HoursNumberBox.Value = _defaultMinutes / 60;
-        MinutesNumberBox.Value = _defaultMinutes % 60;
+        SelectDefaultInterval(_defaultInterval);
+        DefaultHoursNumberBox.Value = _defaultMinutes / 60;
+        DefaultMinutesNumberBox.Value = _defaultMinutes % 60;
+        NextHoursNumberBox.Value = _defaultMinutes / 60;
+        NextMinutesNumberBox.Value = _defaultMinutes % 60;
 
         // Default the specific time picker to the next hour from now.
         var nextHour = DateTime.Now.AddHours(1);
         SpecificTimePicker.TimeText = $"{nextHour.Hour:D2}:00";
 
         FixWindowSize();
-        AttachCyclicSpin(HoursNumberBox);
-        AttachCyclicSpin(MinutesNumberBox);
+        AttachCyclicSpin(DefaultHoursNumberBox);
+        AttachCyclicSpin(DefaultMinutesNumberBox);
+        AttachCyclicSpin(NextHoursNumberBox);
+        AttachCyclicSpin(NextMinutesNumberBox);
 
         UpdateInputControlsState();
     }
@@ -196,21 +204,103 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     {
         if (UntilTimeRadioButton == null || TimeInputPanel == null || AdjustButtonsPanel == null
             || UntilSpecificTimeRadioButton == null || SpecificTimePanel == null
-            || ReminderOptionsPanel == null || KeepNotificationsVisibleToggle == null)
+            || ReminderOptionsPanel == null || KeepNotificationsVisibleToggle == null
+            || DefaultIntervalComboBox == null || DefaultCustomIntervalPanel == null
+            || UntilTimeOptionBorder == null || SpecificTimeOptionBorder == null || UntilTomorrowOptionBorder == null)
             return;
 
         bool notificationsEnabled = NotificationsEnabledToggle.IsChecked == true;
         KeepNotificationsVisibleToggle.IsEnabled = notificationsEnabled;
+        DefaultIntervalComboBox.IsEnabled = notificationsEnabled;
+        DefaultCustomIntervalPanel.IsEnabled = notificationsEnabled && GetSelectedDefaultInterval() == ReminderInterval.Custom;
+        DefaultCustomIntervalPanel.Visibility = GetSelectedDefaultInterval() == ReminderInterval.Custom
+            ? Visibility.Visible
+            : Visibility.Collapsed;
         ReminderOptionsPanel.IsEnabled = notificationsEnabled;
 
         if (!notificationsEnabled)
+        {
+            UpdateReminderOptionVisualState();
             return;
+        }
 
         var isTimeSelected = UntilTimeRadioButton.IsChecked == true;
         var isSpecificTimeSelected = UntilSpecificTimeRadioButton.IsChecked == true;
         TimeInputPanel.IsEnabled = isTimeSelected;
         AdjustButtonsPanel.IsEnabled = isTimeSelected;
         SpecificTimePanel.IsEnabled = isSpecificTimeSelected;
+        SpecificTimePanel.Visibility = isSpecificTimeSelected ? Visibility.Visible : Visibility.Collapsed;
+
+        UpdateReminderOptionVisualState();
+    }
+
+    private void OnUntilTimeOptionClick(object sender, MouseButtonEventArgs e)
+    {
+        UntilTimeRadioButton.IsChecked = true;
+    }
+
+    private void OnSpecificTimeOptionClick(object sender, MouseButtonEventArgs e)
+    {
+        UntilSpecificTimeRadioButton.IsChecked = true;
+    }
+
+    private void OnUntilTomorrowOptionClick(object sender, MouseButtonEventArgs e)
+    {
+        UntilTomorrowRadioButton.IsChecked = true;
+    }
+
+    private void UpdateReminderOptionVisualState()
+    {
+        SetOptionVisualState(UntilTimeOptionBorder, UntilTimeRadioButton.IsChecked == true);
+        SetOptionVisualState(SpecificTimeOptionBorder, UntilSpecificTimeRadioButton.IsChecked == true);
+        SetOptionVisualState(UntilTomorrowOptionBorder, UntilTomorrowRadioButton.IsChecked == true);
+    }
+
+    private void SetOptionVisualState(Border border, bool isSelected)
+    {
+        border.BorderBrush = GetBrush(isSelected
+            ? "SystemAccentColorPrimaryBrush"
+            : "ControlStrokeColorDefaultBrush");
+        border.Background = GetBrush(isSelected
+            ? "ControlFillColorSecondaryBrush"
+            : "SubtleFillColorTransparentBrush");
+    }
+
+    private Brush GetBrush(string resourceKey)
+    {
+        return TryFindResource(resourceKey) as Brush ?? Brushes.Transparent;
+    }
+
+    private void OnDefaultIntervalSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateInputControlsState();
+        ErrorText.Visibility = Visibility.Collapsed;
+    }
+
+    private void SelectDefaultInterval(ReminderInterval interval)
+    {
+        foreach (var item in DefaultIntervalComboBox.Items.OfType<ComboBoxItem>())
+        {
+            if (Enum.TryParse(item.Tag?.ToString(), out ReminderInterval itemInterval)
+                && itemInterval == interval)
+            {
+                DefaultIntervalComboBox.SelectedItem = item;
+                return;
+            }
+        }
+
+        DefaultIntervalComboBox.SelectedIndex = 4;
+    }
+
+    private ReminderInterval GetSelectedDefaultInterval()
+    {
+        if (DefaultIntervalComboBox.SelectedItem is ComboBoxItem item
+            && Enum.TryParse(item.Tag?.ToString(), out ReminderInterval interval))
+        {
+            return interval;
+        }
+
+        return ReminderInterval.Hours2;
     }
 
     /// <summary>
@@ -218,8 +308,8 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     /// </summary>
     private void AdjustMinutes(int minutesDelta)
     {
-        var hours = (int)(HoursNumberBox.Value ?? 0);
-        var minutes = (int)(MinutesNumberBox.Value ?? 0);
+        var hours = (int)(NextHoursNumberBox.Value ?? 0);
+        var minutes = (int)(NextMinutesNumberBox.Value ?? 0);
         var totalMinutes = (hours * 60) + minutes + minutesDelta;
 
         if (totalMinutes < 1)
@@ -227,8 +317,8 @@ public partial class ReminderCustomDialogWindow : FluentWindow
         if (totalMinutes > 1440)
             totalMinutes = 1440;
 
-        HoursNumberBox.Value = totalMinutes / 60;
-        MinutesNumberBox.Value = totalMinutes % 60;
+        NextHoursNumberBox.Value = totalMinutes / 60;
+        NextMinutesNumberBox.Value = totalMinutes % 60;
         ErrorText.Visibility = Visibility.Collapsed;
     }
 
@@ -247,6 +337,13 @@ public partial class ReminderCustomDialogWindow : FluentWindow
     {
         bool notificationsEnabled = NotificationsEnabledToggle.IsChecked == true;
         bool keepVisible = KeepNotificationsVisibleToggle.IsChecked == true;
+        ReminderInterval defaultInterval = GetSelectedDefaultInterval();
+        var defaultMinutes = GetDefaultReminderMinutes(defaultInterval);
+
+        if (!defaultMinutes.HasValue)
+        {
+            return;
+        }
 
         // When notifications are disabled, ignore the time selection.
         if (!notificationsEnabled)
@@ -255,6 +352,8 @@ public partial class ReminderCustomDialogWindow : FluentWindow
             {
                 NotificationsEnabled = false,
                 KeepNotificationsVisible = keepVisible,
+                DefaultReminderInterval = defaultInterval,
+                DefaultReminderMinutes = defaultMinutes.Value,
                 CustomMinutes = null
             };
             Close();
@@ -300,8 +399,8 @@ public partial class ReminderCustomDialogWindow : FluentWindow
         }
         else
         {
-            var hours = (int)(HoursNumberBox.Value ?? 0);
-            var minutes = (int)(MinutesNumberBox.Value ?? 0);
+            var hours = (int)(NextHoursNumberBox.Value ?? 0);
+            var minutes = (int)(NextMinutesNumberBox.Value ?? 0);
             var total = (hours * 60) + minutes;
 
             if (total < 1 || total > 1440)
@@ -318,9 +417,40 @@ public partial class ReminderCustomDialogWindow : FluentWindow
         {
             NotificationsEnabled = true,
             KeepNotificationsVisible = keepVisible,
+            DefaultReminderInterval = defaultInterval,
+            DefaultReminderMinutes = defaultMinutes.Value,
             CustomMinutes = customMinutes
         };
         Close();
+    }
+
+    private int? GetDefaultReminderMinutes(ReminderInterval defaultInterval)
+    {
+        var presetMinutes = defaultInterval switch
+        {
+            ReminderInterval.Minutes15 => 15,
+            ReminderInterval.Minutes10 => 10,
+            ReminderInterval.Minutes30 => 30,
+            ReminderInterval.Hour1 => 60,
+            ReminderInterval.Hours2 => 120,
+            _ => (int?)null
+        };
+
+        if (presetMinutes.HasValue)
+            return presetMinutes.Value;
+
+        var hours = (int)(DefaultHoursNumberBox.Value ?? 0);
+        var minutes = (int)(DefaultMinutesNumberBox.Value ?? 0);
+        var total = (hours * 60) + minutes;
+
+        if (total < 1 || total > 1440)
+        {
+            ErrorText.Text = _localizationService.GetString("Validation_CustomReminderRange");
+            ErrorText.Visibility = Visibility.Visible;
+            return null;
+        }
+
+        return total;
     }
 
     /// <summary>
