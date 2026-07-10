@@ -639,9 +639,6 @@
   <data name="Notification_2hours" xml:space="preserve">
     <value>2 hores</value>
   </data>
-  <data name="Notification_5min" xml:space="preserve">
-    <value>5 minuts</value>
-  </data>
   <data name="Notification_10min" xml:space="preserve">
     <value>10 minuts</value>
   </data>
@@ -661,19 +658,25 @@
     <value>Activitat desconeguda</value>
   </data>
   <data name="Dialog_CustomReminder_Title" xml:space="preserve">
-    <value>Personalitzar recordatori</value>
+    <value>Posposar recordatori</value>
   </data>
   <data name="Dialog_CustomReminder_Description" xml:space="preserve">
-    <value>Indica les hores i minuts fins a la propera notificació.</value>
+    <value>Tria quan vols rebre el proper avís.</value>
+  </data>
+  <data name="Dialog_ReminderWhenQuestion" xml:space="preserve">
+    <value>Quan t'ho recordem?</value>
   </data>
   <data name="Dialog_ReminderUntilLabel" xml:space="preserve">
-    <value>No tornar a recordar fins d'aquí a:</value>
+    <value>D'aquí a un temps</value>
   </data>
   <data name="Dialog_ReminderUntilSpecificTime" xml:space="preserve">
     <value>No recordar fins a una hora concreta</value>
   </data>
   <data name="Dialog_ReminderUntilTomorrow" xml:space="preserve">
-    <value>No recordar fins demà.</value>
+    <value>Demà</value>
+  </data>
+  <data name="Dialog_ReminderTomorrowDescription" xml:space="preserve">
+    <value>T'avisarem a primera hora.</value>
   </data>
   <data name="Label_At" xml:space="preserve">
     <value>a les</value>
@@ -683,6 +686,12 @@
   </data>
   <data name="Dialog_ReminderNextReminder" xml:space="preserve">
     <value>Proper recordatori</value>
+  </data>
+  <data name="Dialog_ReminderDefaultInterval" xml:space="preserve">
+    <value>Cadència habitual</value>
+  </data>
+  <data name="Dialog_ReminderDefaultIntervalDescription" xml:space="preserve">
+    <value>S'utilitzarà com a interval per defecte entre recordatoris.</value>
   </data>
   <data name="Label_NextReminder" xml:space="preserve">
     <value>Gestionar recordatoris</value>

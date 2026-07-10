@@ -639,9 +639,6 @@
   <data name="Notification_2hours" xml:space="preserve">
     <value>2 horas</value>
   </data>
-  <data name="Notification_5min" xml:space="preserve">
-    <value>5 minutos</value>
-  </data>
   <data name="Notification_10min" xml:space="preserve">
     <value>10 minutos</value>
   </data>
@@ -661,19 +658,25 @@
     <value>Actividad desconocida</value>
   </data>
   <data name="Dialog_CustomReminder_Title" xml:space="preserve">
-    <value>Personalizar recordatorio</value>
+    <value>Posponer recordatorio</value>
   </data>
   <data name="Dialog_CustomReminder_Description" xml:space="preserve">
-    <value>Indica las horas y minutos hasta la próxima notificación.</value>
+    <value>Elige cuándo quieres recibir el próximo aviso.</value>
+  </data>
+  <data name="Dialog_ReminderWhenQuestion" xml:space="preserve">
+    <value>¿Cuándo te lo recordamos?</value>
   </data>
   <data name="Dialog_ReminderUntilLabel" xml:space="preserve">
-    <value>No volver a recordar hasta dentro de:</value>
+    <value>Dentro de un tiempo</value>
   </data>
   <data name="Dialog_ReminderUntilSpecificTime" xml:space="preserve">
     <value>No recordar hasta una hora concreta</value>
   </data>
   <data name="Dialog_ReminderUntilTomorrow" xml:space="preserve">
-    <value>No recordar hasta mañana.</value>
+    <value>Mañana</value>
+  </data>
+  <data name="Dialog_ReminderTomorrowDescription" xml:space="preserve">
+    <value>Te avisaremos a primera hora.</value>
   </data>
   <data name="Label_At" xml:space="preserve">
     <value>a las</value>
@@ -683,6 +686,12 @@
   </data>
   <data name="Dialog_ReminderNextReminder" xml:space="preserve">
     <value>Próximo recordatorio</value>
+  </data>
+  <data name="Dialog_ReminderDefaultInterval" xml:space="preserve">
+    <value>Cadencia habitual</value>
+  </data>
+  <data name="Dialog_ReminderDefaultIntervalDescription" xml:space="preserve">
+    <value>Se usará como intervalo por defecto entre recordatorios.</value>
   </data>
   <data name="Label_NextReminder" xml:space="preserve">
     <value>Gestionar recordatorios</value>

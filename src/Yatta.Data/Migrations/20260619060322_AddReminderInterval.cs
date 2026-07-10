@@ -23,7 +23,7 @@ namespace Yatta.Data.Migrations
             migrationBuilder.Sql(@"
 UPDATE AppSettings
 SET ReminderInterval = CASE
-    WHEN NotificationIntervalMinutes = 5 THEN 'Minutes5'
+    WHEN NotificationIntervalMinutes = 15 THEN 'Minutes15'
     WHEN NotificationIntervalMinutes = 10 THEN 'Minutes10'
     WHEN NotificationIntervalMinutes = 30 THEN 'Minutes30'
     WHEN NotificationIntervalMinutes = 60 THEN 'Hour1'

@@ -4,12 +4,12 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:local="clr-namespace:Yatta.App.Markup"
     xmlns:controls="clr-namespace:Yatta.App.Controls"
-     SizeToContent="Height"
-     Width="420"
-     MinWidth="420"
-     MaxWidth="420"
-     WindowStartupLocation="CenterOwner"
-     ResizeMode="NoResize"
+    SizeToContent="Height"
+    Width="500"
+    MinWidth="500"
+    MaxWidth="500"
+    WindowStartupLocation="CenterOwner"
+    ResizeMode="NoResize"
     ShowInTaskbar="False"
     Topmost="True"
     ExtendsContentIntoTitleBar="True"
@@ -34,115 +34,262 @@
                        FontSize="13"
                        TextWrapping="Wrap"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Margin="0,0,0,16" />
+                       Margin="0,0,0,28" />
 
-            <!-- Sección: Estado de las notificaciones -->
+            <TextBlock Text="{local:Localize Dialog_ReminderWhenQuestion}"
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,0,0,12" />
+
+            <StackPanel x:Name="ReminderOptionsPanel">
+                <Border x:Name="UntilTimeOptionBorder"
+                        Padding="12"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        Margin="0,0,0,10"
+                        MouseLeftButtonDown="OnUntilTimeOptionClick">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton x:Name="UntilTimeRadioButton"
+                                         GroupName="ReminderOptions"
+                                         IsChecked="True"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,12,0" />
+                            <ui:SymbolIcon Grid.Column="1"
+                                           Symbol="Timer24"
+                                           FontSize="16"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Margin="0,0,12,0" />
+                            <TextBlock Grid.Column="2"
+                                       Text="{local:Localize Dialog_ReminderUntilLabel}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+
+                        <StackPanel x:Name="TimeInputPanel"
+                                    Orientation="Horizontal"
+                                    Margin="44,0,0,12">
+                            <ui:NumberBox x:Name="NextHoursNumberBox"
+                                          Width="96"
+                                          Height="38"
+                                          Margin="0,0,8,0"
+                                          Minimum="0"
+                                          Maximum="24" />
+                            <TextBlock Text="{local:Localize Label_Hours}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,14,0" />
+                            <ui:NumberBox x:Name="NextMinutesNumberBox"
+                                          Width="96"
+                                          Height="38"
+                                          Margin="0,0,8,0"
+                                          Minimum="0"
+                                          Maximum="59" />
+                            <TextBlock Text="{local:Localize Label_Minutes}"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <StackPanel x:Name="AdjustButtonsPanel"
+                                    Orientation="Horizontal"
+                                    Margin="44,0,0,0">
+                            <ui:Button Content="{local:Localize Button_Minus1h}"
+                                       Click="OnMinus1hClick"
+                                       Height="30"
+                                       MinWidth="64"
+                                       Margin="0,0,8,0" />
+                            <ui:Button Content="{local:Localize Button_Minus15m}"
+                                       Click="OnMinus15mClick"
+                                       Height="30"
+                                       MinWidth="64"
+                                       Margin="0,0,8,0" />
+                            <ui:Button Content="{local:Localize Button_Plus15m}"
+                                       Click="OnPlus15mClick"
+                                       Height="30"
+                                       MinWidth="64"
+                                       Margin="0,0,8,0" />
+                            <ui:Button Content="{local:Localize Button_Plus1h}"
+                                       Click="OnPlus1hClick"
+                                       Height="30"
+                                       MinWidth="64" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="SpecificTimeOptionBorder"
+                        Padding="12"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        Margin="0,0,0,10"
+                        MouseLeftButtonDown="OnSpecificTimeOptionClick">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <RadioButton x:Name="UntilSpecificTimeRadioButton"
+                                         GroupName="ReminderOptions"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,12,0" />
+                            <ui:SymbolIcon Grid.Column="1"
+                                           Symbol="Clock24"
+                                           FontSize="16"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Margin="0,0,12,0" />
+                            <TextBlock Grid.Column="2"
+                                       Text="{local:Localize Dialog_ReminderUntilSpecificTime}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+
+                        <StackPanel x:Name="SpecificTimePanel"
+                                    Orientation="Horizontal"
+                                    Margin="44,12,0,0">
+                            <TextBlock Text="{local:Localize Label_At}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,0" />
+                            <controls:TimePickerControl x:Name="SpecificTimePicker"
+                                                        Width="140"
+                                                        Height="40" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="UntilTomorrowOptionBorder"
+                        Padding="12"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        Margin="0,0,0,18"
+                        MouseLeftButtonDown="OnUntilTomorrowOptionClick">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <RadioButton x:Name="UntilTomorrowRadioButton"
+                                     GroupName="ReminderOptions"
+                                     VerticalAlignment="Top"
+                                     Margin="0,1,12,0" />
+                        <ui:SymbolIcon Grid.Column="1"
+                                       Symbol="Calendar24"
+                                       FontSize="16"
+                                       VerticalAlignment="Top"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Margin="0,2,12,0" />
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="{local:Localize Dialog_ReminderUntilTomorrow}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{local:Localize Dialog_ReminderTomorrowDescription}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+
+            <Separator Margin="0,0,0,16" />
+
+            <TextBlock Text="{local:Localize Dialog_ReminderDefaultInterval}"
+                       FontSize="12"
+                       FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       Margin="0,0,0,6" />
+            <TextBlock Text="{local:Localize Dialog_ReminderDefaultIntervalDescription}"
+                       FontSize="12"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8" />
+
+            <ComboBox x:Name="DefaultIntervalComboBox"
+                      Height="42"
+                      HorizontalAlignment="Stretch"
+                      SelectionChanged="OnDefaultIntervalSelectionChanged"
+                      Margin="0,0,0,12">
+                <ComboBoxItem Tag="Minutes15" Content="{local:Localize Notification_15min}" />
+                <ComboBoxItem Tag="Minutes10" Content="{local:Localize Notification_10min}" />
+                <ComboBoxItem Tag="Minutes30" Content="{local:Localize Notification_30min}" />
+                <ComboBoxItem Tag="Hour1" Content="{local:Localize Notification_1hour}" />
+                <ComboBoxItem Tag="Hours2" Content="{local:Localize Notification_2hours}" />
+                <ComboBoxItem Tag="Custom" Content="{local:Localize Notification_Customize}" />
+            </ComboBox>
+
+            <StackPanel x:Name="DefaultCustomIntervalPanel"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,16">
+                <ui:NumberBox x:Name="DefaultHoursNumberBox"
+                              Width="96"
+                              Height="38"
+                              Margin="0,0,8,0"
+                              Minimum="0"
+                              Maximum="24" />
+                <TextBlock Text="{local:Localize Label_Hours}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,14,0" />
+                <ui:NumberBox x:Name="DefaultMinutesNumberBox"
+                              Width="96"
+                              Height="38"
+                              Margin="0,0,8,0"
+                              Minimum="0"
+                              Maximum="59" />
+                <TextBlock Text="{local:Localize Label_Minutes}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+
+            <Separator Margin="0,0,0,16" />
+
             <TextBlock Text="{local:Localize Dialog_ReminderNotificationState}"
                        FontSize="12"
                        FontWeight="SemiBold"
                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Margin="0,0,0,8" />
+                       Margin="0,0,0,12" />
 
             <ui:ToggleSwitch x:Name="NotificationsEnabledToggle"
                              Checked="OnNotificationsEnabledChanged"
                              Unchecked="OnNotificationsEnabledChanged"
-                             Margin="0,0,0,8" />
+                             Margin="4,0,0,12">
+                <ui:ToggleSwitch.Content>
+                    <StackPanel>
+                        <TextBlock Text="{local:Localize Label_EnableNotifications}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="{local:Localize Description_Notifications}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:ToggleSwitch.Content>
+            </ui:ToggleSwitch>
+
             <ui:ToggleSwitch x:Name="KeepNotificationsVisibleToggle"
-                             Margin="0,0,0,16" />
-
-            <!-- Sección: Próximo recordatorio -->
-            <TextBlock x:Name="NextReminderSectionHeader"
-                       Text="{local:Localize Dialog_ReminderNextReminder}"
-                       FontSize="12"
-                       FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                       Margin="0,0,0,8" />
-
-            <StackPanel x:Name="ReminderOptionsPanel">
-                <!-- Opción 1: hasta horas/minutos -->
-                <RadioButton x:Name="UntilTimeRadioButton"
-                             GroupName="ReminderOptions"
-                             IsChecked="True"
-                             Margin="0,0,0,12">
-                    <TextBlock Text="{local:Localize Dialog_ReminderUntilLabel}"
-                               FontWeight="SemiBold" />
-                </RadioButton>
-
-                <StackPanel x:Name="TimeInputPanel"
-                            Orientation="Horizontal"
-                            Margin="24,0,0,12">
-                    <ui:NumberBox x:Name="HoursNumberBox"
-                                  Width="140"
-                                  Height="40"
-                                  Margin="0,0,8,0"
-                                  Minimum="0"
-                                  Maximum="23" />
-                    <TextBlock Text="{local:Localize Label_Hours}"
-                               VerticalAlignment="Center"
-                               Margin="0,0,16,0" />
-                    <ui:NumberBox x:Name="MinutesNumberBox"
-                                  Width="140"
-                                  Height="40"
-                                  Margin="0,0,8,0"
-                                  Minimum="0"
-                                  Maximum="59" />
-                    <TextBlock Text="{local:Localize Label_Minutes}"
-                               VerticalAlignment="Center" />
-                </StackPanel>
-
-                <!-- Botones de ajuste -->
-                <StackPanel x:Name="AdjustButtonsPanel"
-                            Orientation="Horizontal"
-                            Margin="24,0,0,20">
-                    <ui:Button Content="{local:Localize Button_Minus15m}"
-                               Click="OnMinus15mClick"
-                               Height="32"
-                               Margin="0,0,8,0" />
-                    <ui:Button Content="{local:Localize Button_Minus1h}"
-                               Click="OnMinus1hClick"
-                               Height="32"
-                               Margin="0,0,8,0" />
-                    <ui:Button Content="{local:Localize Button_Plus1h}"
-                               Click="OnPlus1hClick"
-                               Height="32"
-                               Margin="0,0,8,0" />
-                    <ui:Button Content="{local:Localize Button_Plus15m}"
-                               Click="OnPlus15mClick"
-                               Height="32" />
-                </StackPanel>
-
-                <!-- Opción 2: hasta una hora concreta -->
-                <RadioButton x:Name="UntilSpecificTimeRadioButton"
-                             GroupName="ReminderOptions"
-                             Margin="0,0,0,12">
-                    <TextBlock Text="{local:Localize Dialog_ReminderUntilSpecificTime}"
-                               FontWeight="SemiBold" />
-                </RadioButton>
-
-                <StackPanel x:Name="SpecificTimePanel"
-                            Orientation="Horizontal"
-                            Margin="24,0,0,20">
-                    <TextBlock Text="{local:Localize Label_At}"
-                               VerticalAlignment="Center"
-                               Margin="0,0,8,0" />
-                    <controls:TimePickerControl x:Name="SpecificTimePicker"
-                                                Width="140"
-                                                Height="40" />
-                </StackPanel>
-
-                <!-- Opción 3: hasta mañana -->
-                <RadioButton x:Name="UntilTomorrowRadioButton"
-                             GroupName="ReminderOptions"
-                             Margin="0,0,0,12">
-                    <TextBlock Text="{local:Localize Dialog_ReminderUntilTomorrow}"
-                               FontWeight="SemiBold" />
-                </RadioButton>
-            </StackPanel>
+                             Margin="4,0,0,0">
+                <ui:ToggleSwitch.Content>
+                    <StackPanel>
+                        <TextBlock Text="{local:Localize Label_KeepNotificationsVisible}"
+                                   FontWeight="SemiBold" />
+                        <TextBlock Text="{local:Localize Description_KeepNotificationsVisible}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </ui:ToggleSwitch.Content>
+            </ui:ToggleSwitch>
 
             <TextBlock x:Name="ErrorText"
                        FontSize="12"
                        Foreground="{DynamicResource SystemFillColorCriticalBrush}"
-                       Margin="0,4,0,0"
+                       Margin="0,12,0,0"
                        TextWrapping="Wrap"
                        Visibility="Collapsed" />
         </StackPanel>
@@ -150,13 +297,17 @@
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
-                    Margin="24,16,24,24">
+                    Margin="24,28,24,24">
+            <ui:Button x:Name="CancelButton"
+                       Click="OnCancelClick"
+                       MinWidth="100"
+                       Height="38"
+                       Margin="0,0,12,0" />
             <ui:Button x:Name="PrimaryButton"
                        Appearance="Primary"
                        Click="OnPrimaryClick"
-                       Margin="0,0,8,0" />
-            <ui:Button x:Name="CancelButton"
-                       Click="OnCancelClick" />
+                       MinWidth="96"
+                       Height="38" />
         </StackPanel>
     </Grid>
 </ui:FluentWindow>

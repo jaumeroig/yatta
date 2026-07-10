@@ -140,7 +140,8 @@ public class NotificationService : INotificationService
     {
         return interval switch
         {
-            ReminderInterval.Minutes5 => 15,
+            ReminderInterval.Minutes15 => 15,
+            ReminderInterval.Minutes10 => 10,
             ReminderInterval.Minutes30 => 30,
             ReminderInterval.Hour1 => 60,
             ReminderInterval.Hours2 => 120,
@@ -473,6 +474,7 @@ public class NotificationService : INotificationService
 
         var currentSettings = ReadCurrentSettings();
         int defaultMinutes = currentSettings?.NotificationIntervalMinutes ?? 120;
+        var defaultInterval = currentSettings?.ReminderInterval ?? ReminderInterval.Hours2;
         bool notificationsEnabled = currentSettings?.Notifications ?? false;
         bool keepVisible = currentSettings?.KeepNotificationsVisible ?? false;
 
@@ -484,7 +486,7 @@ public class NotificationService : INotificationService
         ReminderDialogResult? result;
         try
         {
-            result = ShowReminderDialog(defaultMinutes, notificationsEnabled, keepVisible);
+            result = ShowReminderDialog(defaultMinutes, defaultInterval, notificationsEnabled, keepVisible);
         }
         finally
         {
@@ -508,8 +510,8 @@ public class NotificationService : INotificationService
     /// </summary>
     private void ApplyReminderDialogResult(ReminderDialogResult result)
     {
-        // Persist the keep-visible setting when it changed.
-        if (TryUpdateKeepNotificationsVisible(result.KeepNotificationsVisible))
+        // Persist dialog-managed settings when they changed.
+        if (TryUpdateReminderSettings(result))
         {
             OnStateChanged();
         }
@@ -547,20 +549,28 @@ public class NotificationService : INotificationService
     }
 
     /// <summary>
-    /// Updates the KeepNotificationsVisible setting in the database if it changed.
+    /// Updates reminder-related settings in the database if they changed.
     /// Returns true if the value was updated; otherwise false.
     /// </summary>
-    private bool TryUpdateKeepNotificationsVisible(bool keepVisible)
+    private bool TryUpdateReminderSettings(ReminderDialogResult result)
     {
         try
         {
             using var scope = _serviceProvider.CreateScope();
             var settingsRepository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
             var settings = settingsRepository.GetAsync().GetAwaiter().GetResult();
-            if (settings.KeepNotificationsVisible == keepVisible)
+            if (settings.Notifications == result.NotificationsEnabled
+                && settings.KeepNotificationsVisible == result.KeepNotificationsVisible
+                && settings.ReminderInterval == result.DefaultReminderInterval
+                && settings.NotificationIntervalMinutes == result.DefaultReminderMinutes)
+            {
                 return false;
+            }
 
-            settings.KeepNotificationsVisible = keepVisible;
+            settings.Notifications = result.NotificationsEnabled;
+            settings.KeepNotificationsVisible = result.KeepNotificationsVisible;
+            settings.ReminderInterval = result.DefaultReminderInterval;
+            settings.NotificationIntervalMinutes = result.DefaultReminderMinutes;
             settingsRepository.UpdateAsync(settings).GetAwaiter().GetResult();
             return true;
         }
@@ -591,7 +601,11 @@ public class NotificationService : INotificationService
     /// Opens a modal WPF dialog to collect the reminder configuration.
     /// Returns null if the user cancels.
     /// </summary>
-    private ReminderDialogResult? ShowReminderDialog(int defaultMinutes, bool notificationsEnabled, bool keepVisible)
+    private ReminderDialogResult? ShowReminderDialog(
+        int defaultMinutes,
+        ReminderInterval defaultInterval,
+        bool notificationsEnabled,
+        bool keepVisible)
     {
         ReminderDialogResult? result = null;
 
@@ -600,6 +614,7 @@ public class NotificationService : INotificationService
             var dialog = new ReminderCustomDialogWindow(
                 _serviceProvider,
                 defaultMinutes,
+                defaultInterval,
                 notificationsEnabled,
                 keepVisible)
             {

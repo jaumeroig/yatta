@@ -6,9 +6,9 @@ namespace Yatta.Core.Models;
 public enum ReminderInterval
 {
     /// <summary>
-    /// 5 minutes.
+    /// 15 minutes.
     /// </summary>
-    Minutes5,
+    Minutes15,
 
     /// <summary>
     /// 10 minutes.
