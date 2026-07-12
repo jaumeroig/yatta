@@ -1,5 +1,14 @@
 # Historial de versiones
 
+## v1.3.0 12/07/2026
+- Al crear o modificar un registro, ahora se conservan la actividad y la opción de teletrabajo del último registro.
+- Se ha añadido la posibilidad de ordenar la lista de actividades.
+- Los indicadores de tipo de día de la página Hoy son ahora más claros y fáciles de distinguir.
+- Se ha añadido un botón para crear un nuevo registro directamente desde la página Hoy.
+- El filtro de actividad del Historial permite buscar actividades y limpiar rápidamente la selección.
+- Se ha mejorado el comportamiento y la aplicación de los filtros del Historial.
+- Se han actualizado las dependencias de la aplicación.
+
 ## v1.2.0 12/05/2026
 - Posibilidad de especificar en las actividades el código de tarea de Jira.
 - Mostrar el código de tarea de Jira en la lista de actividades.

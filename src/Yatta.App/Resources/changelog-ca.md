@@ -1,5 +1,14 @@
 # Historial de versions
 
+## v1.3.0 12/07/2026
+- En crear o modificar un registre, ara es conserven l'activitat i l'opció de teletreball de l'últim registre.
+- S'ha afegit la possibilitat d'ordenar la llista d'activitats.
+- Els indicadors de tipus de dia de la pàgina Avui són ara més clars i fàcils de distingir.
+- S'ha afegit un botó per crear un registre nou directament des de la pàgina Avui.
+- El filtre d'activitat de l'Històric permet cercar activitats i netejar ràpidament la selecció.
+- S'ha millorat el comportament i l'aplicació dels filtres de l'Històric.
+- S'han actualitzat les dependències de l'aplicació.
+
 ## v1.2.0 12/05/2026
 - Poder especificar a les activitats el codi de tasca de Jira.
 - Mostrar el codi de tasca de Jira a la llista d'activitats.
