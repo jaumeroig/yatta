@@ -2,7 +2,7 @@
 
 > Yatta (やった) es una expresión coloquial japonesa que significa "¡Lo hice!", "¡Lo logré!" o "¡Bien!". Se utiliza para expresar alegría, alivio o celebración tras alcanzar una meta, superar un desafío o finalizar un trabajo. Proviene del verbo yaru (hacer) y se traduce frecuentemente como "listo" o "viola".
 
-Esta aplicación de escritorio desarrollada en WPF permite a los usuarios registrar y gestionar su tiempo de trabajo. Con una interfaz moderna basada en Fluent Design, facilita la imputación de horas y el registro de las horas trabajadas en cada jornada y el porcentaje de horas de teletrabajo.
+Esta aplicación de escritorio para Windows utiliza Blazor Hybrid con Blazor Blueprint dentro de ventanas WPF. Permite registrar y gestionar el tiempo de trabajo, las jornadas y el porcentaje de teletrabajo.
 
 ## 🎯 Funcionalidades principales
 
@@ -24,24 +24,24 @@ La aplicación es completamente **personalizable**: elige entre temas claro, osc
 ## 📚 Arquitectura
 
 Este proyecto sigue una arquitectura de 3 capas:
-- **Yatta.App** - Capa de presentación (WPF + WPF UI)
+- **Yatta.App** - Pantallas Razor con Blazor Blueprint; WPF aloja BlazorWebView y conserva las integraciones de Windows
 - **Yatta.Core** - Lógica de negocio y modelos
 - **Yatta.Data** - Capa de persistencia (EF Core + SQLite)
 
 ## 🛠️ Tecnologías
 
 - **.NET 10** - Framework de desarrollo
-- **WPF** - Windows Presentation Foundation
-- **WPF-UI** - Biblioteca de componentes UI modernos
-- **CommunityToolkit.Mvvm** - Herramientas para implementar MVVM
+- **Blazor Hybrid y Blazor Blueprint** - Interfaz, navegación y componentes
+- **WPF, WPF-UI y WebView2** - Ventanas e integraciones nativas de Windows
 - **Microsoft.Extensions.DependencyInjection** - Inyección de dependencias
-- **Entity Framework Core 10.0.2** - ORM para acceso a datos
+- **Entity Framework Core 10** - ORM para acceso a datos
 - **SQLite** - Base de datos local
 
 ## 🚀 Requisitos previos
 
 - Windows 10 o superior
 - .NET 10 SDK
+- Microsoft Edge WebView2 Runtime para ejecución fuera del instalador. El paquete Velopack lo instala como requisito.
 
 ## 🔧 Compilación y ejecución
 
@@ -74,19 +74,16 @@ dotnet test src/Yatta.slnx
 dotnet test --filter "FullyQualifiedName~ValidationServiceTests.ValidateTimeRange_ShouldReturnTrue"
 ```
 
+La compilación cruzada desde macOS es posible con `EnableWindowsTargeting`, pero la aplicación y las pruebas que referencian WPF se ejecutan en Windows. La publicación usa `dotnet publish src/Yatta.App/Yatta.App.csproj -c Release -r win-x64 --self-contained true`; el flujo de release mantiene `Yatta.exe`, `packId Yatta` y añade el requisito `webview2` al instalador Velopack.
+
 ## 📦 Estructura del proyecto
 ```
 src/
-├── Yatta.App/           # Aplicación WPF (capa de presentación)
-│   ├── Views/
-│   │   ├── Pages/            # Páginas principales (Hoy, Panel de Control, Histórico, etc.)
-│   │   └── Dialogs/          # Controles de diálogos reutilizables
-│   ├── ViewModels/           # ViewModels (MVVM)
-│   ├── Controls/             # Controles personalizados
-│   ├── Services/             # Servicios de UI (navegación, diálogos, notificaciones, etc.)
-│   ├── Resources/            # Recursos (cadenas localizadas, estilos)
-│   ├── Converters/           # Convertidores de datos para binding
-│   └── Models/               # Modelos específicos de UI
+├── Yatta.App/           # Host WPF y pantallas Blazor Hybrid
+│   ├── Blazor/               # Avui, Històric, Activitats, Informes, Configuració i Novetats
+│   ├── wwwroot/              # Estilos y host HTML de BlazorWebView
+│   ├── Services/             # Acciones compartidas e integraciones Windows
+│   └── Resources/            # Recursos es-ES y ca-ES
 ├── Yatta.Core/          # Lógica de negocio
 │   ├── Models/               # Modelos de dominio (TimeRecord, Activity, Workday, etc.)
 │   ├── Interfaces/           # Interfaces de servicios y repositorios
@@ -106,18 +103,19 @@ src/
 
 La aplicación utiliza SQLite como base de datos local. El archivo de base de datos se almacena en:
 ```
-%APPDATA%/Yatta/yatta.db
+%LOCALAPPDATA%\Yatta\Yatta.db
 ```
 
 Las migraciones de Entity Framework se aplican automáticamente al iniciar la aplicación.
+La migración de interfaz reutiliza esta misma base de datos y no modifica las entidades ni las migraciones.
 
 ## ✨ Características destacadas
 
 ### Interfaz moderna
-- Diseño basado en Fluent Design (Windows 11)
+- Interfaz Blazor Blueprint de base neutra con acento azul
 - Soporte completo para temas claro, oscuro y del sistema
 - Animaciones y transiciones fluidas
-- Controles personalizados optimizados (TimePickerControl, HotkeyTextBox, etc.)
+- Pantallas adaptadas a la ventana mínima, uso con teclado y acciones rápidas desde la bandeja
 
 ### Gestión inteligente de tiempo
 - Detección automática de registros obsoletos (actividades abiertas de días anteriores)
@@ -139,7 +137,7 @@ Las migraciones de Entity Framework se aplican automáticamente al iniciar la ap
 
 ### Arquitectura robusta
 - Inyección de dependencias en toda la aplicación
-- Patrón MVVM con CommunityToolkit.Mvvm
+- Servicios de acciones compartidas por las ventanas Blazor
 - Patrón Repository para acceso a datos
 - Separación clara de responsabilidades (App, Core, Data)
 - Tests unitarios con xUnit y Moq

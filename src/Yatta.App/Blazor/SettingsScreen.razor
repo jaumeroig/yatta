@@ -1,0 +1,107 @@
+@page "/settings"
+@namespace Yatta.App.Blazor
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject IThemeService ThemeService
+@inject INotificationService Notifications
+@inject IStartupService Startup
+@inject IGlobalHotkeyService Hotkey
+@inject UiEventService Events
+
+<div class="page">
+    <header class="page-header"><div><h1>@L.GetString("Page_Settings_Title")</h1><p>@L.GetString("Page_Settings_Subtitle")</p></div><BbButton OnClick="SaveAsync">@L.GetString("Button_Save")</BbButton></header>
+    @if (Settings is null) { <div class="empty-state">…</div> }
+    else
+    {
+        <div class="settings-grid">
+            <section class="card"><h2>@L.GetString("Settings_Section_AppearanceBehavior")</h2>
+                <div class="setting-line"><span><strong>@L.GetString("Label_AppTheme")</strong><small>@L.GetString("Label_ThemeDescription")</small></span><select @bind="Settings.Theme"><option value="@Theme.System">@L.GetString("Theme_System")</option><option value="@Theme.Light">@L.GetString("Theme_Light")</option><option value="@Theme.Dark">@L.GetString("Theme_Dark")</option></select></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_AppLanguage")</strong><small>@L.GetString("Description_Language")</small></span><select @bind="LanguageChoice"><option value="system">@L.GetString("Language_System")</option><option value="es-ES">@L.GetString("Language_Spanish")</option><option value="ca-ES">@L.GetString("Language_Catalan")</option></select></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_MinimizeToTray")</strong><small>@L.GetString("Description_MinimizeToTray")</small></span><input type="checkbox" @bind="Settings.MinimizeToTray" /></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_StartWithWindows")</strong><small>@L.GetString("Description_StartWithWindows")</small></span><input type="checkbox" @bind="Settings.StartWithWindows" /></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_StartTimerOnStartup")</strong><small>@L.GetString("Description_StartTimerOnStartup")</small></span><input type="checkbox" @bind="Settings.StartTimerOnStartup" /></div>
+            </section>
+            <section class="card"><h2>@L.GetString("Section_Notifications")</h2>
+                <div class="setting-line"><span><strong>@L.GetString("Label_EnableNotifications")</strong><small>@L.GetString("Description_Notifications")</small></span><input type="checkbox" @bind="Settings.Notifications" /></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_KeepNotificationsVisible")</strong><small>@L.GetString("Description_KeepNotificationsVisible")</small></span><input type="checkbox" @bind="Settings.KeepNotificationsVisible" /></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_NotificationInterval")</strong><small>@L.GetString("Description_NotificationInterval")</small></span><input type="number" min="1" max="1440" @bind="Settings.NotificationIntervalMinutes" /></div>
+            </section>
+            <section class="card"><h2>@L.GetString("Section_WorkdaySettings")</h2>
+                <div class="setting-line"><span><strong>@L.GetString("Label_WorkdayDuration")</strong><small>@L.GetString("Description_WorkdayDuration")</small></span><div class="inline-fields"><input type="number" min="0" max="23" aria-label="@L.GetString("Unit_Hours")" @bind="WorkdayHours" style="width:65px" /><span>@L.GetString("Unit_Hours")</span><input type="number" min="0" max="59" aria-label="@L.GetString("Unit_Minutes")" @bind="WorkdayMinutes" style="width:65px" /><span>@L.GetString("Unit_Minutes")</span></div></div>
+                <div class="setting-line"><span><strong>@L.GetString("Label_DefaultWorkingDays")</strong><small>@L.GetString("Description_DefaultWorkingDays")</small></span><div class="day-pills">@for (int i = 0; i < 7; i++) { int index = i; <label><input type="checkbox" checked="@DaySelected(index)" @onchange="args => ChangeDay(index, args)" />@L.GetString(DayKeys[index])</label> }</div></div>
+            </section>
+            <section class="card"><h2>@L.GetString("Settings_Section_KeyboardShortcuts")</h2><div class="setting-line"><span><strong>@L.GetString("Label_GlobalHotkey")</strong><small>@L.GetString("Description_GlobalHotkey")</small></span><BbInput @bind-Value="HotkeyText" Placeholder="Control+Alt+A" AriaLabel="@L.GetString("Label_GlobalHotkey")" /></div></section>
+            <section class="card"><h2>@L.GetString("Settings_Section_DataRetention")</h2>
+                <div class="setting-line"><span><strong>@L.GetString("Label_RetentionPolicy")</strong><small>@L.GetString("Description_RetentionPolicy")</small></span><select @bind="Settings.RetentionPolicy"><option value="@RetentionPolicy.Forever">@L.GetString("RetentionPolicy_Forever")</option><option value="@RetentionPolicy.OneYear">@L.GetString("RetentionPolicy_OneYear")</option><option value="@RetentionPolicy.TwoYears">@L.GetString("RetentionPolicy_TwoYears")</option><option value="@RetentionPolicy.ThreeYears">@L.GetString("RetentionPolicy_ThreeYears")</option><option value="@RetentionPolicy.Custom">@L.GetString("RetentionPolicy_Custom")</option></select></div>
+                @if (Settings.RetentionPolicy == RetentionPolicy.Custom) { <div class="setting-line"><span>@L.GetString("Label_CustomRetentionDays")</span><input type="number" min="1" @bind="Settings.CustomRetentionDays" /></div> }
+                <div class="action-row"><BbButton OnClick="PreviewPurgeAsync" Variant="ButtonVariant.Outline">@L.GetString("Button_PurgeNow")</BbButton></div>
+            </section>
+            <section class="card"><h2>@L.GetString("Settings_Section_About")</h2><div class="setting-line"><span>@L.GetString("Label_Application")</span><strong>Yatta</strong></div><div class="setting-line"><span>@L.GetString("Label_Version")</span><strong>@Version</strong></div></section>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Message)) { <p role="status" class="muted">@Message</p> }
+    }
+</div>
+
+@if (ShowPurge)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="ClosePurge"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation><h2>@L.GetString("Dialog_Purge_Title")</h2><p>@L.GetString("Dialog_Purge_Message")</p><p>@PurgeCount @L.GetString("Stat_Entries")</p><p>@L.GetString("Dialog_Purge_Warning")</p><div class="dialog-actions"><BbButton OnClick="ClosePurge" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="PurgeAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Purge")</BbButton></div></div></div>
+}
+
+@code {
+    private AppSettings? Settings;
+    private string LanguageChoice = "system";
+    private string HotkeyText = string.Empty;
+    private int WorkdayHours;
+    private int WorkdayMinutes;
+    private string Message = string.Empty;
+    private bool ShowPurge;
+    private DateOnly? PurgeCutoff;
+    private int PurgeCount;
+    private string Version => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "1.0.0";
+    private readonly string[] DayKeys = ["Label_Day_Monday", "Label_Day_Tuesday", "Label_Day_Wednesday", "Label_Day_Thursday", "Label_Day_Friday", "Label_Day_Saturday", "Label_Day_Sunday"];
+
+    protected override async Task OnInitializedAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        Settings = await scope.ServiceProvider.GetRequiredService<ISettingsRepository>().GetAsync();
+        LanguageChoice = Settings.Language ?? "system";
+        HotkeyText = Settings.GlobalHotkey ?? Hotkey.GetDefaultHotkey();
+        WorkdayHours = (int)Settings.WorkdayTotalTime.TotalHours;
+        WorkdayMinutes = Settings.WorkdayTotalTime.Minutes;
+    }
+    private bool DaySelected(int index) => Settings is not null && (Settings.DefaultWorkingDaysMask & (1 << index)) != 0;
+    private void ChangeDay(int index, ChangeEventArgs args) { if (Settings is null) { return; } if (args.Value is bool selected && selected) { Settings.DefaultWorkingDaysMask |= 1 << index; } else { Settings.DefaultWorkingDaysMask &= ~(1 << index); } }
+    private async Task SaveAsync()
+    {
+        if (Settings is null) { return; }
+        Message = string.Empty;
+        if (!Hotkey.ValidateHotkey(HotkeyText, out string error)) { Message = L.GetString(error); return; }
+        if (Settings.NotificationIntervalMinutes < 1 || WorkdayHours < 0 || WorkdayMinutes is < 0 or > 59 || Settings.CustomRetentionDays < 1) { Message = L.GetString("Validation_TargetDurationInvalid"); return; }
+        Settings.Language = LanguageChoice == "system" ? null : LanguageChoice;
+        Settings.GlobalHotkey = HotkeyText;
+        Settings.WorkdayTotalTime = TimeSpan.FromMinutes(WorkdayHours * 60 + WorkdayMinutes);
+        using IServiceScope scope = Scopes.CreateScope();
+        await scope.ServiceProvider.GetRequiredService<ISettingsRepository>().UpdateAsync(Settings);
+        if (Settings.StartWithWindows) { Startup.EnableStartup(); } else { Startup.DisableStartup(); }
+        Notifications.IsEnabled = Settings.Notifications;
+        Hotkey.RegisterHotkey(HotkeyText);
+        ThemeService.ApplyTheme(Settings.Theme);
+        L.SetCulture(Settings.Language);
+        Events.PublishDataChanged();
+        Message = L.GetString("Button_SaveChanges");
+    }
+    private async Task PreviewPurgeAsync()
+    {
+        if (Settings is null) { return; }
+        using IServiceScope scope = Scopes.CreateScope();
+        IDataPurgeService purge = scope.ServiceProvider.GetRequiredService<IDataPurgeService>();
+        PurgeCutoff = purge.CalculateCutoffDate(Settings.RetentionPolicy, Settings.CustomRetentionDays);
+        if (PurgeCutoff is null) { Message = L.GetString("Dialog_Purge_RetentionForever"); return; }
+        var counts = await purge.GetPurgeableCountAsync(PurgeCutoff.Value);
+        PurgeCount = counts.TimeRecordCount + counts.WorkdayCount;
+        if (PurgeCount == 0) { Message = L.GetString("Dialog_Purge_NothingToPurge"); return; }
+        ShowPurge = true;
+    }
+    private void ClosePurge() => ShowPurge = false;
+    private async Task PurgeAsync() { if (PurgeCutoff is null) { return; } using IServiceScope scope = Scopes.CreateScope(); await scope.ServiceProvider.GetRequiredService<IDataPurgeService>().ExecutePurgeAsync(PurgeCutoff.Value); ShowPurge = false; Message = L.GetString("Dialog_Purge_Success"); Events.PublishDataChanged(); }
+}

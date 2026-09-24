@@ -1,0 +1,13 @@
+@namespace Yatta.App.Blazor
+@inject ILocalizationService Localization
+<Router AppAssembly="@typeof(AppRouter).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>@Localization.GetString("Nav_PageNotFound")</p>
+        </LayoutView>
+    </NotFound>
+</Router>

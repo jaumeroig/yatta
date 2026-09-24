@@ -1,0 +1,164 @@
+@page "/reports"
+@page "/reports/{Period}"
+@namespace Yatta.App.Blazor
+@implements IDisposable
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject UiEventService Events
+
+<div class="page">
+    <header class="page-header"><div><h1>@L.GetString("Nav_Dashboard")</h1><p>@L.GetString("Dashboard_IndexSubtitle")</p></div>
+        <div class="header-actions"><BbButton OnClick="Previous" Variant="ButtonVariant.Outline" AriaLabel="@L.GetString("Navigation_Previous")">‹</BbButton><BbButton OnClick="ResetDate" Variant="ButtonVariant.Outline">@L.GetString("Button_Today")</BbButton><BbButton OnClick="Next" Variant="ButtonVariant.Outline" AriaLabel="@L.GetString("Navigation_Next")">›</BbButton></div>
+    </header>
+    <nav class="tabs" aria-label="@L.GetString("Nav_Dashboard")">
+        <NavLink href="/reports/day">@L.GetString("Dashboard_Day")</NavLink><NavLink href="/reports/week">@L.GetString("Dashboard_Week")</NavLink><NavLink href="/reports/month">@L.GetString("Dashboard_Month")</NavLink><NavLink href="/reports/year">@L.GetString("Dashboard_Year")</NavLink>
+    </nav>
+    <div class="toolbar"><div class="field"><label for="report-date">@L.GetString("Label_Date")</label><input id="report-date" type="date" value="@Anchor.ToString("yyyy-MM-dd")" @onchange="OnDateChanged" /></div><strong>@PeriodLabel</strong>
+        @if (Period == "day") { <BbButton OnClick="OpenDayConfig" Variant="ButtonVariant.Outline">@L.GetString("Button_Configure")</BbButton> }
+        @if (Period == "year") { <BbButton OnClick="OpenQuota" Variant="ButtonVariant.Outline">@L.GetString("Dialog_ConfigureYearQuota_Title")</BbButton> }
+    </div>
+
+    <section class="metric-grid">
+        <div class="card"><span class="eyebrow">@L.GetString("Dashboard_WorkedTime")</span><strong class="metric">@UiFormat.Duration(Worked)</strong></div>
+        <div class="card"><span class="eyebrow">@L.GetString("Dashboard_Target")</span><strong class="metric">@UiFormat.Duration(Target)</strong></div>
+        <div class="card"><span class="eyebrow">@L.GetString("Dashboard_Differential")</span><strong class="metric">@SignedDuration(Differential)</strong></div>
+        <div class="card"><span class="eyebrow">@L.GetString("Location_Telework")</span><strong class="metric">@TeleworkPercent.ToString("0")%</strong></div>
+    </section>
+
+    <div class="today-grid">
+        <section class="card"><h2>@L.GetString("Dashboard_Activities")</h2>
+            @if (Activities.Count == 0) { <div class="empty-state">@L.GetString("Empty_NoRecords")</div> }
+            else { @foreach (ActivityBreakdownItem item in Activities.OrderByDescending(a => a.TotalTime)) { <div class="report-item"><span class="color-dot" style="background:@item.Color"></span><span>@item.ActivityName</span><div class="bar-track"><div class="bar-part" style="width:@item.Percentage.ToString("0",CultureInfo.InvariantCulture)%;background:@item.Color"></div></div><strong>@UiFormat.Duration(item.TotalTime)</strong></div> } }
+        </section>
+        <section class="card"><h2>@L.GetString("Label_Location")</h2>
+            <div class="setting-line"><span>@L.GetString("Location_Office")</span><strong>@UiFormat.Duration(Office)</strong></div>
+            <div class="setting-line"><span>@L.GetString("Location_Telework")</span><strong>@UiFormat.Duration(Telework)</strong></div>
+            <div class="bar-track" style="margin-top:18px"><div class="bar-part" style="width:@TeleworkPercent.ToString("0", CultureInfo.InvariantCulture)%"></div></div>
+        </section>
+    </div>
+
+    @if (Summary is not null)
+    {
+        <section class="card report-days"><h2>@L.GetString("Today_DayType")</h2>
+            <div class="report-day-counts">
+                <div><span>@L.GetString("Today_DayType_WorkDay")</span><strong>@(DayCount(DayType.WorkDay) + DayCount(DayType.IntensiveDay))</strong></div>
+                <div><span>@L.GetString("Today_DayType_Holiday")</span><strong>@DayCount(DayType.Holiday)</strong></div>
+                <div><span>@L.GetString("Today_DayType_Vacation")</span><strong>@DayCount(DayType.Vacation)</strong></div>
+                <div><span>@L.GetString("Today_DayType_FreeChoice")</span><strong>@DayCount(DayType.FreeChoice)</strong></div>
+            </div>
+        </section>
+    }
+
+    @if (Period == "year" && Quota is not null)
+    {
+        <section class="card report-quota"><h2>@L.GetString("Dialog_ConfigureYearQuota_Title")</h2>
+            <div class="quota-head"><span></span><span>@L.GetString("Label_Available")</span><span>@L.GetString("Label_Used")</span><span>@L.GetString("Label_Remaining")</span></div>
+            @QuotaRow("Label_VacationDays", Quota.VacationDays, DayCount(DayType.Vacation))
+            @QuotaRow("Label_FreeChoiceDays", Quota.FreeChoiceDays, DayCount(DayType.FreeChoice))
+            @QuotaRow("Label_IntensiveDays", Quota.IntensiveDays, DayCount(DayType.IntensiveDay))
+        </section>
+    }
+
+    @if (Period == "day" && Day is not null)
+    {
+        <div class="section-title"><h2>@L.GetString("Dashboard_Timeline")</h2><span>@L.GetString($"Today_DayType_{Day.DayType}")</span></div>
+        @if (Day.Records.Count == 0) { <div class="empty-state">@L.GetString("Empty_NoRecords")</div> }
+        else { <div class="record-list">@foreach (TimeRecord record in Day.Records) { <div class="record-row"><span class="color-dot"></span><strong>@ActivityName(record.ActivityId)</strong><time>@record.StartTime.ToString("HH:mm") – @(record.EndTime?.ToString("HH:mm") ?? "···")</time><strong>@UiFormat.Duration(UiFormat.Elapsed(record, DateTime.Now))</strong></div> }</div> }
+    }
+    else if (Daily.Count > 0)
+    {
+        <div class="section-title"><h2>@L.GetString(Period == "year" ? "Dashboard_MonthlyHours" : "Dashboard_DailyHours")</h2></div>
+        <div class="card chart-bars" role="group" aria-label="@L.GetString(Period == "year" ? "Dashboard_MonthlyHours" : "Dashboard_DailyHours")">
+            @foreach (var point in ChartPoints)
+            {
+                <div class="chart-column" tabindex="0" aria-label="@($"{point.Label}: {UiFormat.Duration(TimeSpan.FromHours(point.Hours))}")" title="@($"{point.Label}: {UiFormat.Duration(TimeSpan.FromHours(point.Hours))}")"><div class="chart-track"><div class="chart-fill" style="height:@(Math.Max(2, point.Hours / ChartMax * 100).ToString("0",CultureInfo.InvariantCulture))%"></div></div><small>@point.Label</small></div>
+            }
+        </div>
+    }
+</div>
+
+@if (ConfiguringDay)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CloseDayConfig"><div class="dialog-panel" role="dialog" aria-modal="true" @onclick:stopPropagation><h2>@L.GetString("Dialog_ConfigureDay_Title")</h2>
+        <div class="form-grid"><div class="field span-2"><label>@L.GetString("Label_DayType")</label><select @bind="SelectedDayType">@foreach (DayType type in Enum.GetValues<DayType>()) { <option value="@type">@L.GetString("Today_DayType_" + type)</option> }</select></div><div class="field"><label>@L.GetString("Unit_Hours")</label><input type="number" min="0" max="24" @bind="TargetHours" /></div><div class="field"><label>@L.GetString("Unit_Minutes")</label><input type="number" min="0" max="59" @bind="TargetMinutes" /></div></div>
+        <div class="dialog-actions"><BbButton OnClick="CloseDayConfig" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="SaveDayConfigAsync">@L.GetString("Button_Save")</BbButton></div>
+    </div></div>
+}
+@if (ConfiguringQuota)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CloseQuota"><div class="dialog-panel" role="dialog" aria-modal="true" @onclick:stopPropagation><h2>@L.GetString("Dialog_ConfigureYearQuota_Title")</h2>
+        <div class="form-grid"><div class="field"><label>@L.GetString("Label_VacationDays")</label><input type="number" min="0" @bind="VacationDays" /></div><div class="field"><label>@L.GetString("Label_FreeChoiceDays")</label><input type="number" min="0" @bind="FreeChoiceDays" /></div><div class="field"><label>@L.GetString("Label_IntensiveDays")</label><input type="number" min="0" @bind="IntensiveDays" /></div></div>
+        <div class="dialog-actions"><BbButton OnClick="CloseQuota" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="SaveQuotaAsync">@L.GetString("Button_Save")</BbButton></div>
+    </div></div>
+}
+
+@code {
+    [Parameter] public string? Period { get; set; }
+    private DateOnly Anchor = DateOnly.FromDateTime(DateTime.Today);
+    private DayReport? Day;
+    private PeriodReport? Summary;
+    private AnnualQuota? Quota;
+    private List<DailyHoursSummary> Daily = [];
+    private List<Activity> ActivityLookup = [];
+    private bool ConfiguringDay;
+    private bool ConfiguringQuota;
+    private DayType SelectedDayType;
+    private int TargetHours;
+    private int TargetMinutes;
+    private int VacationDays;
+    private int FreeChoiceDays;
+    private int IntensiveDays;
+    private TimeSpan Worked => Day?.WorkedDuration ?? Summary?.TotalWorked ?? TimeSpan.Zero;
+    private TimeSpan Target => Day?.TargetDuration ?? Summary?.TotalTarget ?? TimeSpan.Zero;
+    private TimeSpan Differential => Day?.Differential ?? Summary?.Differential ?? TimeSpan.Zero;
+    private TimeSpan Office => Day?.OfficeTime ?? Summary?.OfficeTime ?? TimeSpan.Zero;
+    private TimeSpan Telework => Day?.TeleworkTime ?? Summary?.TeleworkTime ?? TimeSpan.Zero;
+    private double TeleworkPercent => Day?.TeleworkPercentage ?? Summary?.TeleworkPercentage ?? 0;
+    private List<ActivityBreakdownItem> Activities => Day?.Activities ?? Summary?.Activities ?? [];
+    private string PeriodLabel => Period switch { "week" => $"{Summary?.StartDate:d} – {Summary?.EndDate:d}", "month" => Anchor.ToString("Y"), "year" => Anchor.Year.ToString(), _ => Anchor.ToString("D") };
+    private List<(string Label, double Hours)> ChartPoints => Period == "year"
+        ? Daily.GroupBy(d => d.Date.Month).Select(g => (new DateTime(Anchor.Year, g.Key, 1).ToString("MMM"), g.Sum(d => d.TotalHours))).ToList()
+        : Daily.Select(d => (d.Date.ToString("dd"), d.TotalHours)).ToList();
+    private double ChartMax => Math.Max(1, ChartPoints.Max(p => p.Hours));
+    private int DayCount(DayType type) => Summary?.DayTypeCounts.GetValueOrDefault(type) ?? 0;
+    private RenderFragment QuotaRow(string label, int available, int used) => builder =>
+    {
+        builder.OpenElement(0, "div"); builder.AddAttribute(1, "class", "quota-row");
+        builder.OpenElement(2, "strong"); builder.AddContent(3, L.GetString(label)); builder.CloseElement();
+        builder.OpenElement(4, "span"); builder.AddContent(5, available); builder.CloseElement();
+        builder.OpenElement(6, "span"); builder.AddContent(7, used); builder.CloseElement();
+        builder.OpenElement(8, "strong"); builder.AddContent(9, available - used); builder.CloseElement();
+        builder.CloseElement();
+    };
+
+    protected override void OnInitialized() => Events.DataChanged += OnDataChanged;
+    protected override async Task OnParametersSetAsync() { Period = Period is "day" or "week" or "month" or "year" ? Period : "day"; await LoadAsync(); }
+    private async Task LoadAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        IDashboardService dashboard = scope.ServiceProvider.GetRequiredService<IDashboardService>();
+        ActivityLookup = (await scope.ServiceProvider.GetRequiredService<IActivityRepository>().GetAllAsync()).ToList();
+        Day = null; Summary = null; Daily = [];
+        if (Period == "day") { Day = await dashboard.GetDayReportAsync(Anchor); }
+        else
+        {
+            Summary = Period switch { "week" => await dashboard.GetWeekReportAsync(Anchor), "month" => await dashboard.GetMonthReportAsync(Anchor.Year, Anchor.Month), _ => await dashboard.GetYearReportAsync(Anchor.Year) };
+            Daily = Summary.DailyBreakdown;
+        }
+        if (Period == "year") { Quota = await scope.ServiceProvider.GetRequiredService<IAnnualQuotaRepository>().GetByYearAsync(Anchor.Year); }
+    }
+    private void OnDataChanged(object? sender, EventArgs args) => _ = InvokeAsync(async () => { await LoadAsync(); StateHasChanged(); });
+    private string ActivityName(Guid id) => ActivityLookup.FirstOrDefault(a => a.Id == id)?.Name ?? L.GetString("Activity_Unknown");
+    private static string SignedDuration(TimeSpan duration) => (duration < TimeSpan.Zero ? "−" : "+") + UiFormat.Duration(duration.Duration());
+    private async Task Previous() { Anchor = Period switch { "week" => Anchor.AddDays(-7), "month" => Anchor.AddMonths(-1), "year" => Anchor.AddYears(-1), _ => Anchor.AddDays(-1) }; await LoadAsync(); }
+    private async Task Next() { Anchor = Period switch { "week" => Anchor.AddDays(7), "month" => Anchor.AddMonths(1), "year" => Anchor.AddYears(1), _ => Anchor.AddDays(1) }; await LoadAsync(); }
+    private async Task ResetDate() { Anchor = DateOnly.FromDateTime(DateTime.Today); await LoadAsync(); }
+    private async Task OnDateChanged(ChangeEventArgs args) { if (DateOnly.TryParse(args.Value?.ToString(), out DateOnly selected)) { Anchor = selected; await LoadAsync(); } }
+    private void OpenDayConfig() { SelectedDayType = Day?.DayType ?? DayType.WorkDay; TargetHours = Day?.TargetDuration.Hours ?? 8; TargetMinutes = Day?.TargetDuration.Minutes ?? 0; ConfiguringDay = true; }
+    private void CloseDayConfig() => ConfiguringDay = false;
+    private async Task SaveDayConfigAsync() { using IServiceScope scope = Scopes.CreateScope(); await scope.ServiceProvider.GetRequiredService<IWorkdayConfigService>().SetConfigurationAsync(Anchor, SelectedDayType, TimeSpan.FromMinutes(Math.Max(0, TargetHours * 60 + TargetMinutes))); ConfiguringDay = false; await LoadAsync(); Events.PublishDataChanged(); }
+    private void OpenQuota() { VacationDays = Quota?.VacationDays ?? 0; FreeChoiceDays = Quota?.FreeChoiceDays ?? 0; IntensiveDays = Quota?.IntensiveDays ?? 0; ConfiguringQuota = true; }
+    private void CloseQuota() => ConfiguringQuota = false;
+    private async Task SaveQuotaAsync() { using IServiceScope scope = Scopes.CreateScope(); Quota = await scope.ServiceProvider.GetRequiredService<IAnnualQuotaRepository>().SaveAsync(new AnnualQuota { Id = Quota?.Id ?? Guid.NewGuid(), Year = Anchor.Year, VacationDays = Math.Max(0, VacationDays), FreeChoiceDays = Math.Max(0, FreeChoiceDays), IntensiveDays = Math.Max(0, IntensiveDays) }); ConfiguringQuota = false; Events.PublishDataChanged(); }
+    public void Dispose() => Events.DataChanged -= OnDataChanged;
+}

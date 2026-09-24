@@ -1,0 +1,103 @@
+@page "/history"
+@namespace Yatta.App.Blazor
+@implements IDisposable
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject TimeEntryService Entries
+@inject UiEventService Events
+
+<div class="page">
+    <header class="page-header"><div><h1>@L.GetString("Nav_Historic")</h1><p>@L.GetString("Page_Records_Title")</p></div><BbButton OnClick="NewRecord">+ @L.GetString("Button_NewRecord")</BbButton></header>
+    <div class="toolbar card">
+        <div class="field" style="flex:2;min-width:180px"><label for="history-search">@L.GetString("Placeholder_Search")</label><input id="history-search" placeholder="@L.GetString("Filter_SearchByActivityOrNotes")" @bind="Search" @bind:event="oninput" /></div>
+        <div class="field" style="flex:1;min-width:130px"><label for="history-activity">@L.GetString("Label_Activity")</label><select id="history-activity" @bind="ActivityFilter"><option value="00000000-0000-0000-0000-000000000000">@L.GetString("Filter_AllActivities")</option>@foreach (Activity activity in Activities.OrderBy(a => a.Name)) { <option value="@activity.Id">@activity.Name</option> }</select></div>
+        <div class="field" style="min-width:130px"><label for="history-from">@L.GetString("Filter_StartDate")</label><input id="history-from" type="date" value="@FromText" @onchange="e => FromText = e.Value?.ToString() ?? string.Empty" /></div>
+        <div class="field" style="min-width:130px"><label for="history-to">@L.GetString("Filter_EndDate")</label><input id="history-to" type="date" value="@ToText" @onchange="e => ToText = e.Value?.ToString() ?? string.Empty" /></div>
+        <label class="inline-fields"><input type="checkbox" checked="@SortAscending" @onchange="SetSortAsync" />@L.GetString("History_OldestFirst")</label>
+        <BbButton OnClick="ClearFilters" Variant="ButtonVariant.Outline">@L.GetString("Button_ClearFilters")</BbButton>
+    </div>
+    <div class="section-title"><h2>@L.GetString("Today_Records")</h2><span class="muted">@Filtered.Count</span></div>
+    @if (Filtered.Count == 0)
+    {
+        <div class="empty-state">@L.GetString("Empty_NoRecords")</div>
+    }
+    else
+    {
+        @foreach (IGrouping<DateOnly,TimeRecord> group in Filtered.Take(VisibleCount).GroupBy(r => r.Date))
+        {
+            <h3 class="history-date">@group.Key.ToString("D")</h3>
+            <div class="record-list">
+                @foreach (TimeRecord record in group)
+                {
+                    <div class="record-row">
+                        <span class="color-dot" style="background:@ActivityColor(record.ActivityId)"></span>
+                        <span><strong>@ActivityName(record.ActivityId)</strong><small>@record.Notes</small></span>
+                        <time>@record.StartTime.ToString("HH:mm") – @(record.EndTime?.ToString("HH:mm") ?? "···")<br />@UiFormat.Duration(UiFormat.Elapsed(record, DateTime.Now))</time>
+                        <span class="inline-fields"><BbButton OnClick="() => Edit(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Edit")">✎</BbButton><BbButton OnClick="() => ConfirmDelete(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Delete")">×</BbButton></span>
+                    </div>
+                }
+            </div>
+        }
+        @if (VisibleCount < Filtered.Count) { <div class="action-row"><BbButton OnClick="LoadMore" Variant="ButtonVariant.Outline">@L.GetString("Button_LoadMore")</BbButton></div> }
+    }
+</div>
+
+@if (Editor is not null) { <TimeRecordEditor @key="Editor" Record="Editor" Activities="Activities" OnSaved="EditorSavedAsync" OnCancel="CloseEditor" /> }
+@if (PendingDelete is not null)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CancelDelete"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
+        <h2>@L.GetString("Dialog_DeleteRecord_Title")</h2><p>@L.GetString("Dialog_DeleteRecord_Message")</p>
+        <div class="dialog-actions"><BbButton OnClick="CancelDelete" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="DeleteAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton></div>
+    </div></div>
+}
+
+@code {
+    private List<TimeRecord> Records = [];
+    private List<Activity> Activities = [];
+    private string Search = string.Empty;
+    private Guid ActivityFilter;
+    private string FromText = string.Empty;
+    private string ToText = string.Empty;
+    private int VisibleCount = 40;
+    private bool SortAscending;
+    private TimeRecord? Editor;
+    private TimeRecord? PendingDelete;
+    private List<TimeRecord> Filtered => Records.Where(r =>
+            (ActivityFilter == Guid.Empty || r.ActivityId == ActivityFilter) &&
+            (string.IsNullOrWhiteSpace(Search) || ActivityName(r.ActivityId).Contains(Search, StringComparison.CurrentCultureIgnoreCase) || (r.Notes?.Contains(Search, StringComparison.CurrentCultureIgnoreCase) ?? false)) &&
+            (!DateOnly.TryParse(FromText, out DateOnly from) || r.Date >= from) &&
+            (!DateOnly.TryParse(ToText, out DateOnly to) || r.Date <= to))
+        .OrderBy(r => SortAscending ? r.Date.DayNumber : -r.Date.DayNumber)
+        .ThenBy(r => SortAscending ? r.StartTime.Ticks : -r.StartTime.Ticks).ToList();
+
+    protected override async Task OnInitializedAsync() { Events.DataChanged += OnDataChanged; await LoadAsync(); }
+    private async Task LoadAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        Records = (await scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>().GetAllAsync()).ToList();
+        Activities = (await scope.ServiceProvider.GetRequiredService<IActivityRepository>().GetAllAsync()).ToList();
+        SortAscending = (await scope.ServiceProvider.GetRequiredService<ISettingsRepository>().GetAsync()).HistoricSortAscending;
+    }
+    private void OnDataChanged(object? sender, EventArgs args) => _ = InvokeAsync(async () => { await LoadAsync(); StateHasChanged(); });
+    private string ActivityName(Guid id) => Activities.FirstOrDefault(a => a.Id == id)?.Name ?? L.GetString("Activity_Unknown");
+    private string ActivityColor(Guid id) => Activities.FirstOrDefault(a => a.Id == id)?.Color ?? "#74859a";
+    private void ClearFilters() { Search = string.Empty; ActivityFilter = Guid.Empty; FromText = string.Empty; ToText = string.Empty; }
+    private void LoadMore() => VisibleCount += 40;
+    private async Task SetSortAsync(ChangeEventArgs args)
+    {
+        SortAscending = args.Value is bool selected && selected;
+        using IServiceScope scope = Scopes.CreateScope();
+        ISettingsRepository repository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+        AppSettings settings = await repository.GetAsync();
+        settings.HistoricSortAscending = SortAscending;
+        await repository.UpdateAsync(settings);
+    }
+    private void NewRecord() => Editor = new TimeRecord { Date = DateOnly.FromDateTime(DateTime.Today), StartTime = TimeOnly.FromDateTime(DateTime.Now) };
+    private void Edit(TimeRecord record) => Editor = record;
+    private void CloseEditor() => Editor = null;
+    private async Task EditorSavedAsync() { Editor = null; await LoadAsync(); }
+    private void ConfirmDelete(TimeRecord record) => PendingDelete = record;
+    private void CancelDelete() => PendingDelete = null;
+    private async Task DeleteAsync() { if (PendingDelete is not null) { await Entries.DeleteAsync(PendingDelete.Id); PendingDelete = null; await LoadAsync(); } }
+    public void Dispose() => Events.DataChanged -= OnDataChanged;
+}

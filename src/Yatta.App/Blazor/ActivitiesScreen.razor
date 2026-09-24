@@ -1,0 +1,126 @@
+@page "/activities"
+@namespace Yatta.App.Blazor
+@implements IDisposable
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject UiEventService Events
+
+<div class="page">
+    <header class="page-header"><div><h1>@L.GetString("Nav_Activities")</h1><p>@L.GetString("Page_Activities_Subtitle")</p></div><BbButton OnClick="Create">+ @L.GetString("Button_NewActivity")</BbButton></header>
+    <div class="toolbar"><div class="field" style="min-width:240px;flex:1"><label for="activity-search">@L.GetString("Placeholder_Search")</label><input id="activity-search" placeholder="@L.GetString("Filter_SearchByName")" @bind="Search" @bind:event="oninput" /></div><label class="inline-fields"><input type="checkbox" @bind="ShowArchived" /> @L.GetString("Filter_ShowArchived")</label></div>
+    @if (Filtered.Count == 0) { <div class="empty-state">@L.GetString("Empty_NoActivities")</div> }
+    else
+    {
+        <div class="activity-grid">
+            @foreach (Activity activity in Filtered)
+            {
+                <button class="card activity-tile" @onclick="() => Edit(activity)">
+                    <span class="color-dot" style="background:@activity.Color;display:block;width:18px;height:18px"></span>
+                    <strong>@activity.Name</strong>
+                    <small>@(activity.Active ? L.GetString("Status_Active") : L.GetString("Status_Inactive")) · @RecordCount(activity.Id) @L.GetString("Stat_Entries")</small>
+                    <div class="setting-line"><span>@L.GetString("Label_TotalTime")</span><strong>@UiFormat.Duration(TotalTime(activity.Id))</strong></div>
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@if (Editing)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CloseEditor"><div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="activity-title" @onclick:stopPropagation>
+        <h2 id="activity-title">@(EditingId == Guid.Empty ? L.GetString("Dialog_NewActivity_Title") : L.GetString("Dialog_EditActivity_Title"))</h2>
+        <div class="form-grid">
+            <div class="field span-2"><label for="activity-name">@L.GetString("Label_ActivityName")</label><BbInput Id="activity-name" @bind-Value="Name" /></div>
+            <div class="field"><label for="activity-jira">@L.GetString("Label_JiraCode")</label><BbInput Id="activity-jira" @bind-Value="JiraCode" /></div>
+            <div class="field"><label for="activity-color">@L.GetString("Label_Color")</label><input id="activity-color" type="color" @bind="Color" /></div>
+            <div class="field span-2"><label><input type="checkbox" @bind="Active" /> @L.GetString("CheckBox_ActivityActive")</label></div>
+        </div>
+        @if (EditingId != Guid.Empty)
+        {
+            <div class="activity-detail-summary"><span>@L.GetString("Stat_Entries"): <strong>@RecordCount(EditingId)</strong></span><span>@L.GetString("Label_TotalTime"): <strong>@UiFormat.Duration(TotalTime(EditingId))</strong></span></div>
+            <div class="activity-detail-records">
+                @foreach (TimeRecord record in Records.Where(record => record.ActivityId == EditingId).OrderByDescending(record => record.Date).ThenByDescending(record => record.StartTime).Take(8))
+                {
+                    <button class="activity-detail-record" @onclick="() => EditRecord(record)"><span>@record.Date.ToString("d")</span><span>@record.StartTime.ToString("HH:mm") – @(record.EndTime?.ToString("HH:mm") ?? "···")</span><strong>@UiFormat.Duration(UiFormat.Elapsed(record, DateTime.Now))</strong></button>
+                }
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Error)) { <p class="error-text" role="alert">@Error</p> }
+        <div class="dialog-actions">
+            @if (EditingId != Guid.Empty) { <BbButton OnClick="AskDelete" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton> }
+            <BbButton OnClick="CloseEditor" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton>
+            <BbButton OnClick="SaveAsync">@L.GetString("Button_Save")</BbButton>
+        </div>
+    </div></div>
+}
+@if (EditingRecord is not null) { <TimeRecordEditor @key="EditingRecord" Record="EditingRecord" Activities="Activities" OnSaved="RecordSavedAsync" OnCancel="CloseRecordEditor" /> }
+@if (ConfirmingDelete)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CancelDelete"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
+        <h2>@L.GetString("Dialog_DeleteActivity_Title")</h2><p>@string.Format(L.GetString("Message_DeleteActivityWarning"), RecordCount(EditingId))</p>
+        <div class="dialog-actions"><BbButton OnClick="CancelDelete" Variant="ButtonVariant.Outline">@L.GetString("Button_CancelDelete")</BbButton><BbButton OnClick="DeleteAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton></div>
+    </div></div>
+}
+
+@code {
+    private List<Activity> Activities = [];
+    private List<TimeRecord> Records = [];
+    private string Search = string.Empty;
+    private bool ShowArchived;
+    private bool Editing;
+    private bool ConfirmingDelete;
+    private TimeRecord? EditingRecord;
+    private Guid EditingId;
+    private string Name = string.Empty;
+    private string JiraCode = string.Empty;
+    private string Color = "#0967d2";
+    private bool Active = true;
+    private string Error = string.Empty;
+    private List<Activity> Filtered => Activities.Where(a => (ShowArchived || a.Active) && (string.IsNullOrWhiteSpace(Search) || a.Name.Contains(Search, StringComparison.CurrentCultureIgnoreCase) || (a.JiraCode?.Contains(Search, StringComparison.CurrentCultureIgnoreCase) ?? false))).OrderBy(a => a.Name).ToList();
+
+    protected override async Task OnInitializedAsync() { Events.DataChanged += OnDataChanged; await LoadAsync(); }
+    private async Task LoadAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        Activities = (await scope.ServiceProvider.GetRequiredService<IActivityRepository>().GetAllAsync()).ToList();
+        Records = (await scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>().GetAllAsync()).ToList();
+    }
+    private void OnDataChanged(object? sender, EventArgs args) => _ = InvokeAsync(async () => { await LoadAsync(); StateHasChanged(); });
+    private int RecordCount(Guid id) => Records.Count(r => r.ActivityId == id);
+    private TimeSpan TotalTime(Guid id) => TimeSpan.FromTicks(Records.Where(r => r.ActivityId == id).Sum(r => UiFormat.Elapsed(r, DateTime.Now).Ticks));
+    private void Create() { EditingId = Guid.Empty; Name = string.Empty; JiraCode = string.Empty; Color = "#0967d2"; Active = true; Error = string.Empty; Editing = true; }
+    private void Edit(Activity activity) { EditingId = activity.Id; Name = activity.Name; JiraCode = activity.JiraCode ?? string.Empty; Color = activity.Color; Active = activity.Active; Error = string.Empty; Editing = true; }
+    private void CloseEditor() => Editing = false;
+    private void EditRecord(TimeRecord record) => EditingRecord = record;
+    private void CloseRecordEditor() => EditingRecord = null;
+    private async Task RecordSavedAsync() { EditingRecord = null; await LoadAsync(); }
+    private async Task SaveAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Name)) { Error = L.GetString("Validation_ActivityNameRequired"); return; }
+        if (Name.Trim().Length > 100) { Error = L.GetString("Validation_ActivityNameTooLong"); return; }
+        if (JiraCode.Length > 50) { Error = L.GetString("Validation_JiraCodeTooLong"); return; }
+        using IServiceScope scope = Scopes.CreateScope();
+        IActivityRepository repository = scope.ServiceProvider.GetRequiredService<IActivityRepository>();
+        Activity? duplicate = await repository.GetByNameAsync(Name.Trim());
+        if (duplicate is not null && duplicate.Id != EditingId) { Error = L.GetString("Validation_ActivityNameExists"); return; }
+        Activity activity = new() { Id = EditingId == Guid.Empty ? Guid.NewGuid() : EditingId, Name = Name.Trim(), JiraCode = string.IsNullOrWhiteSpace(JiraCode) ? null : JiraCode.Trim(), Color = Color, Active = Active };
+        if (EditingId == Guid.Empty) { await repository.AddAsync(activity); } else { await repository.UpdateAsync(activity); }
+        Editing = false;
+        await LoadAsync();
+        Events.PublishDataChanged();
+    }
+    private void AskDelete() => ConfirmingDelete = true;
+    private void CancelDelete() => ConfirmingDelete = false;
+    private async Task DeleteAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        ITimeRecordRepository records = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
+        IActivityRepository activities = scope.ServiceProvider.GetRequiredService<IActivityRepository>();
+        foreach (TimeRecord record in await records.GetByActivityIdAsync(EditingId)) { await records.DeleteAsync(record.Id); }
+        await activities.DeleteAsync(EditingId);
+        ConfirmingDelete = false; Editing = false;
+        await LoadAsync();
+        Events.PublishDataChanged();
+    }
+    public void Dispose() => Events.DataChanged -= OnDataChanged;
+}

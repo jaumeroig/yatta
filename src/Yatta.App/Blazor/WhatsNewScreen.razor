@@ -1,0 +1,32 @@
+@page "/whats-new"
+@namespace Yatta.App.Blazor
+@implements IDisposable
+@inject ILocalizationService L
+
+<div class="page"><header class="page-header"><div><h1>@L.GetString("Page_WhatsNew_Title")</h1><p>Yatta</p></div></header>
+    <article class="card changelog">
+        @foreach (string line in Lines)
+        {
+            if (line.StartsWith("### ")) { <h3>@line[4..]</h3> }
+            else if (line.StartsWith("## ")) { <h2>@line[3..]</h2> }
+            else if (line.StartsWith("# ")) { <h1>@line[2..]</h1> }
+            else if (line.StartsWith("- ")) { <p class="changelog-item">• @line[2..]</p> }
+            else if (!string.IsNullOrWhiteSpace(line)) { <p>@line</p> }
+        }
+    </article>
+</div>
+
+@code {
+    private List<string> Lines = [];
+    protected override void OnInitialized() { L.CultureChanged += OnCultureChanged; Load(); }
+    private void OnCultureChanged(object? sender, EventArgs args) => _ = InvokeAsync(() => { Load(); StateHasChanged(); });
+    private void Load()
+    {
+        string name = L.GetCurrentCulture().StartsWith("ca", StringComparison.OrdinalIgnoreCase) ? "Yatta.App.Resources.changelog.ca.md" : "Yatta.App.Resources.changelog.md";
+        using Stream? stream = typeof(WhatsNewScreen).Assembly.GetManifestResourceStream(name);
+        if (stream is null) { Lines = []; return; }
+        using StreamReader reader = new(stream);
+        Lines = reader.ReadToEnd().Split('\n').Select(line => line.TrimEnd('\r')).ToList();
+    }
+    public void Dispose() => L.CultureChanged -= OnCultureChanged;
+}

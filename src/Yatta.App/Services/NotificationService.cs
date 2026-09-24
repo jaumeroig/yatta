@@ -1,7 +1,6 @@
 namespace Yatta.App.Services;
 
 using System.IO;
-using System.Reflection;
 using System.Timers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -219,11 +218,7 @@ public class NotificationService : INotificationService
     {
         try
         {
-            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            var appDirectory = Path.GetDirectoryName(assemblyLocation);
-            if (string.IsNullOrEmpty(appDirectory)) return null;
-
-            var logoPath = Path.Combine(appDirectory, "Resources", "Logo.ico");
+            string logoPath = Path.Combine(AppContext.BaseDirectory, "Resources", "Logo.ico");
             return File.Exists(logoPath) ? logoPath : null;
         }
         catch

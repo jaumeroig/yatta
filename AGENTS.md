@@ -4,18 +4,18 @@ This document provides guidelines for AI coding agents working in this repositor
 
 ## Project Overview
 
-TimeTracker is a Windows time tracking application built with .NET 10, WPF, and SQLite.
+Yatta is a Windows time tracking application built with .NET 10, Blazor Hybrid, WPF, and SQLite.
 
 ### Architecture
-- **Yatta.App** - WPF presentation layer (MVVM pattern)
+- **Yatta.App** - Razor presentation layer in WPF BlazorWebView windows; WPF owns native Windows integrations
 - **Yatta.Core** - Business logic, services, and models
 - **Yatta.Data** - Data persistence with Entity Framework Core + SQLite
 
 ### Key Technologies
 - .NET 10 (net10.0 / net10.0-windows)
-- WPF with WPF-UI library (modern UI)
-- CommunityToolkit.Mvvm for MVVM pattern
-- Entity Framework Core 10.0.2
+- WPF BlazorWebView and Blazor Blueprint components
+- WPF-UI for native window chrome and system tray
+- Entity Framework Core 10
 - SQLite database
 - Dependency Injection (Microsoft.Extensions.DependencyInjection)
 
@@ -43,9 +43,7 @@ dotnet run --project src/Yatta.App/Yatta.App.csproj
 
 ### Testing
 ```bash
-# No test projects currently exist
-# When creating tests, use xUnit or NUnit and follow naming:
-# Yatta.Tests, Yatta.Core.Tests, Yatta.Data.Tests
+# Yatta.Tests uses xUnit and Moq
 
 # Run tests (when available)
 dotnet test src/Yatta.slnx
@@ -190,35 +188,20 @@ public bool ValidateTimeRange(TimeOnly startTime, TimeOnly endTime, out string e
 Task<IEnumerable<Activity>> GetActiveAsync();
 ```
 
-### MVVM Pattern
-- ViewModels inherit from `ObservableObject` (CommunityToolkit.Mvvm)
-- Use `[ObservableProperty]` attribute for properties
-- Use `[RelayCommand]` attribute for commands
-- Keep ViewModels testable (inject dependencies)
-
-```csharp
-public partial class ActivitatsViewModel : ObservableObject
-{
-    private readonly IActivityRepository _repository;
-    
-    [ObservableProperty]
-    private string _searchText = string.Empty;
-    
-    [RelayCommand]
-    private async Task LoadActivitiesAsync()
-    {
-        // Implementation
-    }
-}
-```
+### Blazor Hybrid
+- Add screens and dialogs in `Yatta.App/Blazor` as Razor components.
+- Use Blazor Blueprint components and localized `ILocalizationService` strings for visible text.
+- Put actions shared by the main window, tray, and quick picker in injected services.
+- Create a fresh DI scope for every repository operation in long-lived components and singleton services.
+- Publish data changes through `UiEventService` so all open windows refresh.
 
 ### Dependency Injection
 - Register services in `App.xaml.cs` → `ConfigureServices`
 - Use constructor injection
 - Repositories: Scoped lifetime
 - Services: Scoped lifetime
-- ViewModels: Singleton (Main) or Transient (Pages)
-- Pages: Transient lifetime
+- Blazor components: Created by BlazorWebView
+- UI event and time entry coordination services: Singleton, with short-lived repository scopes
 
 ### Entity Framework
 - Use async methods: `ToListAsync()`, `FindAsync()`, `SaveChangesAsync()`
@@ -259,7 +242,7 @@ public class ValidationService : IValidationService
 
 ## Project-Specific Notes
 
-- Database stored in AppData: Use `DatabaseConfiguration.GetConnectionString()`
+- Database stored at `%LOCALAPPDATA%\Yatta\Yatta.db`: Use `DatabaseConfiguration.GetConnectionString()`
 - Migrations auto-applied on startup in `App.OnStartup`
 - Use `TimeOnly` for time values (not `DateTime`)
 - Use `DateOnly` for dates without time component
@@ -273,8 +256,8 @@ public class ValidationService : IValidationService
 4. Create repository in `Yatta.Data/Repositories`
 5. Add EF configuration in `Yatta.Data/Configurations`
 6. Create migration
-7. Create ViewModel in `Yatta.App/ViewModels`
-8. Create View (XAML + code-behind) in `Yatta.App/Views/Pages`
+7. Create or update a component in `Yatta.App/Blazor`
+8. Add shared UI operations to an injected service in `Yatta.App/Services`
 9. Register all in DI container (`App.xaml.cs`)
 
 ## References

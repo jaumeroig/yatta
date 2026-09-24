@@ -11,13 +11,15 @@ using Yatta.App.Resources;
 public class LocalizationService : ILocalizationService
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly CultureInfo _systemCulture;
     private CultureInfo _currentCulture;
 
     public event EventHandler? CultureChanged;
 
-    public LocalizationService(IServiceProvider serviceProvider)
+    public LocalizationService(IServiceProvider serviceProvider, CultureInfo? systemCulture = null)
     {
         _serviceProvider = serviceProvider;
+        _systemCulture = systemCulture ?? CultureInfo.InstalledUICulture;
         
         // Initialize with system language by default
         _currentCulture = GetSystemCulture();
@@ -107,9 +109,9 @@ public class LocalizationService : ILocalizationService
         }
     }
 
-    private static CultureInfo GetSystemCulture()
+    private CultureInfo GetSystemCulture()
     {
-        var systemCulture = CultureInfo.CurrentUICulture;
+        CultureInfo systemCulture = _systemCulture;
         
         // If the system is in Spanish or Catalan, use it
         if (systemCulture.Name.StartsWith("es") || systemCulture.Name.StartsWith("ca"))
@@ -125,6 +127,8 @@ public class LocalizationService : ILocalizationService
     {
         CultureInfo.CurrentUICulture = culture;
         CultureInfo.CurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
         Thread.CurrentThread.CurrentUICulture = culture;
         Thread.CurrentThread.CurrentCulture = culture;
         

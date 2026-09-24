@@ -69,6 +69,7 @@ jobs:
           --mainExe Yatta.exe
           --packTitle "Yatta"
           --icon src/Yatta.App/Resources/Logo.ico
+          --framework webview2
           --outputDir Releases
 
       - name: Create GitHub Release

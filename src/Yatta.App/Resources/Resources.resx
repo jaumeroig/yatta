@@ -1119,4 +1119,16 @@
   <data name="Label_Remaining" xml:space="preserve">
     <value>Restantes</value>
   </data>
+  <data name="Nav_PageNotFound" xml:space="preserve"><value>Página no encontrada.</value></data>
+  <data name="Navigation_Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Navigation_Next" xml:space="preserve"><value>Siguiente</value></data>
+  <data name="Blueprint_DataGrid_Loading" xml:space="preserve"><value>Cargando...</value></data>
+  <data name="Blueprint_DataGrid_SearchPlaceholder" xml:space="preserve"><value>Buscar...</value></data>
+  <data name="Blueprint_DataGrid_ShowingRange" xml:space="preserve"><value>Mostrando {0}–{1} de {2}</value></data>
+  <data name="Blueprint_Pagination_Next" xml:space="preserve"><value>Siguiente</value></data>
+  <data name="Blueprint_Pagination_Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Blueprint_Combobox_Placeholder" xml:space="preserve"><value>Seleccionar...</value></data>
+  <data name="History_OldestFirst" xml:space="preserve"><value>Primero los más antiguos</value></data>
+  <data name="Notice_Acknowledge" xml:space="preserve"><value>Entendido</value></data>
+  <data name="Validation_JiraCodeTooLong" xml:space="preserve"><value>El código Jira no puede superar los 50 caracteres.</value></data>
 </root>

@@ -1,103 +1,34 @@
 namespace Yatta.App;
 
-using System;
-using System.ComponentModel;
-using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Controls;
-using Yatta.App.Models;
-using Yatta.App.ViewModels;
-using AppResources = Yatta.App.Resources.Resources;
+using Yatta.App.Services;
 
-/// <summary>
-/// Standalone window for starting or changing an activity.
-/// Shown independently of the MainWindow when triggered from the tray icon or global hotkey
-/// while the MainWindow is hidden or minimized.
-/// </summary>
+/// <summary>Standalone Blazor activity picker for tray and global shortcut actions.</summary>
 public partial class ChangeActivityWindow : FluentWindow
 {
-    private readonly TodayViewModel _viewModel;
-    private bool _saved;
+    private readonly UiEventService _events;
 
-    public ChangeActivityWindow(IServiceProvider serviceProvider)
+    /// <summary>Creates the quick action window.</summary>
+    public ChangeActivityWindow(IServiceProvider services)
     {
-        _viewModel = serviceProvider.GetRequiredService<TodayViewModel>();
-        DataContext = _viewModel;
         InitializeComponent();
+        Resources.Add("services", services);
+        _events = services.GetRequiredService<UiEventService>();
+        _events.QuickActionCompleted += OnCompleted;
     }
 
-    /// <summary>
-    /// Loads the activity data and initializes the change activity model when the window is loaded.
-    /// </summary>
-    private async void Window_Loaded(object sender, RoutedEventArgs e)
+    /// <summary>Whether the quick action saved a new active entry.</summary>
+    public bool WasSaved { get; private set; }
+
+    private void OnCompleted(object? sender, EventArgs args)
     {
-        await _viewModel.LoadDataAsync();
-        await _viewModel.ChangeActivityCommand.ExecuteAsync(null);
-
-        // Update UI elements with model data
-        DialogTitleText.Text = _viewModel.ChangeActivityModel.DialogTitle;
-        PrimaryButton.Content = _viewModel.ChangeActivityModel.PrimaryButtonText;
-        PrimaryButton.IsEnabled = _viewModel.ChangeActivityModel.HasChanges;
-        Title = _viewModel.ChangeActivityModel.DialogTitle;
-
-        // Subscribe to model changes to keep buttons in sync
-        _viewModel.ChangeActivityModel.PropertyChanged += OnChangeActivityModelPropertyChanged;
-        Closed += Window_Closed;
+        Dispatcher.Invoke(() => { WasSaved = true; Close(); });
     }
 
-    /// <summary>
-    /// Unsubscribes from model property changes when the window is closed.
-    /// </summary>
-    private void Window_Closed(object? sender, EventArgs e)
+    protected override void OnClosed(EventArgs args)
     {
-        _viewModel.ChangeActivityModel.PropertyChanged -= OnChangeActivityModelPropertyChanged;
+        _events.QuickActionCompleted -= OnCompleted;
+        base.OnClosed(args);
     }
-
-    /// <summary>
-    /// Keeps the primary button state and text in sync with the model.
-    /// </summary>
-    private void OnChangeActivityModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(ChangeActivityModel.HasChanges))
-        {
-            PrimaryButton.IsEnabled = _viewModel.ChangeActivityModel.HasChanges;
-        }
-        else if (e.PropertyName == nameof(ChangeActivityModel.PrimaryButtonText))
-        {
-            PrimaryButton.Content = _viewModel.ChangeActivityModel.PrimaryButtonText;
-        }
-        else if (e.PropertyName == nameof(ChangeActivityModel.DialogTitle))
-        {
-            DialogTitleText.Text = _viewModel.ChangeActivityModel.DialogTitle;
-            Title = _viewModel.ChangeActivityModel.DialogTitle;
-        }
-    }
-
-    /// <summary>
-    /// Handles the primary button click (Start/Change activity).
-    /// </summary>
-    private async void OnPrimaryClick(object sender, RoutedEventArgs e)
-    {
-        await _viewModel.SaveChangeActivityCommand.ExecuteAsync(null);
-
-        // If the dialog was closed (save successful), close the window
-        if (!_viewModel.IsChangeActivityDialogOpen)
-        {
-            _saved = true;
-            Close();
-        }
-    }
-
-    /// <summary>
-    /// Handles the cancel button click.
-    /// </summary>
-    private void OnCancelClick(object sender, RoutedEventArgs e)
-    {
-        Close();
-    }
-
-    /// <summary>
-    /// Gets whether the activity was saved successfully.
-    /// </summary>
-    public bool WasSaved => _saved;
 }

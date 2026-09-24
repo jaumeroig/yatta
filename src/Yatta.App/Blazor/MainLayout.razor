@@ -1,0 +1,80 @@
+@namespace Yatta.App.Blazor
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject ILocalizationService Localization
+@inject IThemeService Theme
+@inject UiEventService Events
+
+<div class="app-shell @ThemeClass" lang="@Localization.GetCurrentCulture()">
+    <aside class="sidebar" aria-label="@Localization.GetString("App_Title")">
+        <div class="brand"><span class="brand-mark">◷</span><span><strong>Yatta</strong><small>@Localization.GetString("TitleBar_Subtitle")</small></span></div>
+        <nav class="primary-nav">
+            <NavLink href="/" Match="NavLinkMatch.All">◷ <span>@Localization.GetString("Nav_Today")</span></NavLink>
+            <NavLink href="/history">▤ <span>@Localization.GetString("Nav_Historic")</span></NavLink>
+            <NavLink href="/activities">▦ <span>@Localization.GetString("Nav_Activities")</span></NavLink>
+            <NavLink href="/reports">◫ <span>@Localization.GetString("Nav_Dashboard")</span></NavLink>
+        </nav>
+        <nav class="secondary-nav">
+            <NavLink href="/whats-new">✦ <span>@Localization.GetString("Nav_WhatsNew")</span></NavLink>
+            <NavLink href="/settings">⚙ <span>@Localization.GetString("Nav_Settings")</span></NavLink>
+        </nav>
+        <span class="sidebar-footer">Yatta</span>
+    </aside>
+    <main class="main-content" @key="Localization.GetCurrentCulture()">@Body</main>
+    <BbPortalHost />
+    <BbToastProvider />
+    <BbDialogProvider />
+    @if (CloseQuestion)
+    {
+        <div class="dialog-backdrop" role="presentation" @onclick="() => AnswerClose(CloseDecision.Cancel)"><div class="dialog-panel" role="alertdialog" aria-modal="true" tabindex="-1" @onclick:stopPropagation>
+            <h2>@Localization.GetString("Dialog_CloseApp_Title")</h2><p>@Localization.GetString("Dialog_CloseApp_Message")</p>
+            <div class="dialog-actions">
+                <BbButton OnClick="() => AnswerClose(CloseDecision.Cancel)" Variant="ButtonVariant.Outline">@Localization.GetString("Button_Cancel")</BbButton>
+                <BbButton OnClick="() => AnswerClose(CloseDecision.KeepRunningAndClose)" Variant="ButtonVariant.Outline">@Localization.GetString("Button_No")</BbButton>
+                <BbButton OnClick="() => AnswerClose(CloseDecision.StopAndClose)">@Localization.GetString("Button_Yes")</BbButton>
+            </div>
+        </div></div>
+    }
+    @if (UpdateQuestion)
+    {
+        <div class="dialog-backdrop" role="presentation" @onclick="() => AnswerUpdate(false)"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
+            <h2>@Localization.GetString("TitleBar_Title")</h2><p>@Localization.GetString("Update_Available")</p>
+            <div class="dialog-actions"><BbButton OnClick="() => AnswerUpdate(false)" Variant="ButtonVariant.Outline">@Localization.GetString("Update_Later")</BbButton><BbButton OnClick="() => AnswerUpdate(true)">@Localization.GetString("Update_InstallAndRestart")</BbButton></div>
+        </div></div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Events.NoticeKey))
+    {
+        <div class="dialog-backdrop" role="presentation" @onclick="Events.DismissNotice"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
+            <h2>@Localization.GetString("TitleBar_Title")</h2><p>@Localization.GetString(Events.NoticeKey!, Events.NoticeArguments)</p>
+            <div class="dialog-actions"><BbButton OnClick="Events.DismissNotice">@Localization.GetString("Notice_Acknowledge")</BbButton></div>
+        </div></div>
+    }
+</div>
+
+@code {
+    private bool CloseQuestion;
+    private bool UpdateQuestion;
+    private string ThemeClass => UiFormat.ThemeClass(Theme);
+
+    protected override void OnInitialized()
+    {
+        UpdateQuestion = Events.HasPendingUpdate;
+        Localization.CultureChanged += OnChanged;
+        Events.DataChanged += OnChanged;
+        Events.CloseDecisionRequested += OnCloseRequested;
+        Events.UpdateDecisionRequested += OnUpdateRequested;
+        Events.NoticeChanged += OnChanged;
+        Wpf.Ui.Appearance.ApplicationThemeManager.Changed += OnThemeChanged;
+    }
+
+    private void OnChanged(object? sender, EventArgs args) => _ = InvokeAsync(StateHasChanged);
+    private void OnThemeChanged(Wpf.Ui.Appearance.ApplicationTheme theme, System.Windows.Media.Color accent) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnCloseRequested(object? sender, EventArgs args) => _ = InvokeAsync(() => { CloseQuestion = true; StateHasChanged(); });
+    private void OnUpdateRequested(object? sender, EventArgs args) => _ = InvokeAsync(() => { UpdateQuestion = true; StateHasChanged(); });
+
+    private void AnswerClose(CloseDecision answer) { CloseQuestion = false; Events.AnswerCloseDecision(answer); }
+    private void AnswerUpdate(bool install) { UpdateQuestion = false; Events.AnswerUpdateDecision(install); }
+
+    public void Dispose() { Localization.CultureChanged -= OnChanged; Events.DataChanged -= OnChanged; Events.CloseDecisionRequested -= OnCloseRequested; Events.UpdateDecisionRequested -= OnUpdateRequested; Events.NoticeChanged -= OnChanged; Wpf.Ui.Appearance.ApplicationThemeManager.Changed -= OnThemeChanged; Events.AnswerCloseDecision(CloseDecision.Cancel); Events.AnswerUpdateDecision(false); }
+}

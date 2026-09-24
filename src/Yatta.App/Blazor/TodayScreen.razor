@@ -1,0 +1,227 @@
+@page "/"
+@namespace Yatta.App.Blazor
+@implements IAsyncDisposable
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject TimeEntryService Entries
+@inject UiEventService Events
+
+<div class="page">
+    <header class="page-header">
+        <div><h1>@L.GetString("Page_Today_Title")</h1><p>@Now.ToString("D")</p></div>
+        <div class="header-actions">
+            <BbButton OnClick="OpenNewRecord" Variant="ButtonVariant.Outline">+ @L.GetString("Button_NewRecord")</BbButton>
+            <BbButton OnClick="OpenDayDialog" Variant="ButtonVariant.Outline">@L.GetString("Today_ConfigureDay")</BbButton>
+        </div>
+    </header>
+
+    <section class="metric-grid" aria-label="@L.GetString("Today_DayInfo")">
+        <BbCard Class="card"><span class="eyebrow">@L.GetString("Today_WorkedTime")</span><strong class="metric">@UiFormat.Duration(Worked)</strong></BbCard>
+        <BbCard Class="card"><span class="eyebrow">@L.GetString("Today_TargetDuration")</span><strong class="metric">@UiFormat.Duration(Day?.TargetDuration ?? TimeSpan.Zero)</strong></BbCard>
+        <BbCard Class="card"><span class="eyebrow">@L.GetString("Today_RemainingTime")</span><strong class="metric">@UiFormat.Duration(Remaining)</strong></BbCard>
+        <BbCard Class="card"><span class="eyebrow">@L.GetString("Location_Telework")</span><strong class="metric">@TeleworkPercent.ToString("0")%</strong></BbCard>
+    </section>
+
+    <div class="today-grid">
+        <BbCard Class="card primary-card">
+            <span class="eyebrow">@(Active is null ? L.GetString("Tray_NoActivity") : L.GetString("Today_ActiveRecord"))</span>
+            <div class="running-name">@(Active is null ? L.GetString("Today_StartTracking") : ActivityName(Active.ActivityId))</div>
+            <div class="running-time">@(Active is null ? "00:00:00" : ElapsedClock(Active))</div>
+            <div class="muted">@(Active is null ? L.GetString("TrayPanel_StatusNotStarted") : $"{L.GetString("Label_StartTime")}: {Active.StartTime:HH:mm}")</div>
+            <div class="action-row">
+                <BbButton OnClick="OpenStartDialog">@(Active is null ? L.GetString("Button_Start") : L.GetString("Button_Change"))</BbButton>
+                @if (Active is not null)
+                {
+                    <BbButton OnClick="StopAsync" Variant="ButtonVariant.Outline">@L.GetString("Button_Stop")</BbButton>
+                }
+            </div>
+        </BbCard>
+        <BbCard Class="card">
+            <h2>@L.GetString("Today_DayInfo")</h2>
+            <div class="setting-line"><span>@L.GetString("Today_DayType")</span><strong>@DayTypeLabel</strong></div>
+            <div class="setting-line"><span>@L.GetString("Today_WorkdayStartTime")</span><strong>@(Records.Count == 0 ? "—" : Records.Min(r => r.StartTime).ToString("HH:mm"))</strong></div>
+            <div class="setting-line"><span>@L.GetString("Today_EstimatedEndTime")</span><strong>@EstimatedEnd</strong></div>
+        </BbCard>
+    </div>
+
+    <div class="section-title"><h2>@L.GetString("Today_Records")</h2><span class="muted">@Records.Count</span></div>
+    @if (Records.Count == 0)
+    {
+        <div class="empty-state">@L.GetString("Today_NoRecords")</div>
+    }
+    else
+    {
+        <div class="record-list">
+            @foreach (TimeRecord record in Records.OrderByDescending(r => r.StartTime))
+            {
+                <div class="record-row">
+                    <span class="color-dot" style="background:@ActivityColor(record.ActivityId)"></span>
+                    <span><strong>@ActivityName(record.ActivityId)</strong><small>@(string.IsNullOrEmpty(record.Notes) ? (record.Telework ? L.GetString("Location_Telework") : L.GetString("Location_Office")) : record.Notes)</small></span>
+                    <time>@record.StartTime.ToString("HH:mm") – @(record.EndTime?.ToString("HH:mm") ?? "···")<br />@UiFormat.Duration(UiFormat.Elapsed(record, Now))</time>
+                    <span class="inline-fields"><BbButton OnClick="() => EditRecord(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Edit")">✎</BbButton><BbButton OnClick="() => ConfirmDelete(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Delete")">×</BbButton></span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@if (ShowStart)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CloseStart">
+        <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="start-title" @onclick:stopPropagation>
+            <h2 id="start-title">@(Active is null ? L.GetString("Dialog_StartActivity_Title") : L.GetString("Dialog_ChangeActivity_Title"))</h2>
+            <div class="form-grid">
+                <div class="field span-2"><label for="start-activity">@L.GetString("Label_Activity")</label><select id="start-activity" @bind="SelectedActivityId">
+                    <option value="00000000-0000-0000-0000-000000000000">@L.GetString("Placeholder_SelectActivity")</option>
+                    @foreach (Activity activity in Activities.Where(a => a.Active).OrderBy(a => a.Name)) { <option value="@activity.Id">@activity.Name</option> }
+                </select></div>
+                <div class="field span-2"><label><input type="checkbox" @bind="StartTelework" /> @L.GetString("Location_Telework")</label></div>
+                <div class="field span-2"><label for="start-notes">@L.GetString("Label_Notes")</label><textarea id="start-notes" @bind="StartNotes"></textarea></div>
+            </div>
+            @if (!string.IsNullOrEmpty(Error)) { <p class="error-text" role="alert">@Error</p> }
+            <div class="dialog-actions"><BbButton OnClick="CloseStart" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="StartAsync">@L.GetString("Button_Start")</BbButton></div>
+        </div>
+    </div>
+}
+
+@if (Editor is not null)
+{
+    <TimeRecordEditor @key="Editor" Record="Editor" Activities="Activities" OnSaved="EditorSavedAsync" OnCancel="CloseEditor" />
+}
+
+@if (PendingDelete is not null)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CancelDelete"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
+        <h2>@L.GetString("Dialog_DeleteRecord_Title")</h2><p>@L.GetString("Dialog_DeleteRecord_Message")</p>
+        <div class="dialog-actions"><BbButton OnClick="CancelDelete" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="DeleteAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton></div>
+    </div></div>
+}
+
+@if (ShowDayDialog)
+{
+    <div class="dialog-backdrop" role="presentation" @onclick="CloseDayDialog">
+        <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="day-title" @onclick:stopPropagation>
+            <h2 id="day-title">@L.GetString("Dialog_ConfigureDay_Title")</h2>
+            <div class="form-grid">
+                <div class="field span-2"><label for="day-type">@L.GetString("Label_DayType")</label><select id="day-type" @bind="SelectedDayType">
+                    @foreach (DayType type in Enum.GetValues<DayType>()) { <option value="@type">@DayTypeText(type)</option> }
+                </select></div>
+                <div class="field"><label for="target-hours">@L.GetString("Unit_Hours")</label><input id="target-hours" type="number" min="0" max="24" @bind="TargetHours" /></div>
+                <div class="field"><label for="target-minutes">@L.GetString("Unit_Minutes")</label><input id="target-minutes" type="number" min="0" max="59" @bind="TargetMinutes" /></div>
+            </div>
+            <div class="dialog-actions"><BbButton OnClick="CloseDayDialog" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="SaveDayAsync">@L.GetString("Button_Save")</BbButton></div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly CancellationTokenSource _clockCancellation = new();
+    private List<Activity> Activities = [];
+    private List<TimeRecord> Records = [];
+    private TimeRecord? Active;
+    private Workday? Day;
+    private DateTime Now = DateTime.Now;
+    private bool ShowStart;
+    private Guid SelectedActivityId;
+    private bool StartTelework;
+    private string StartNotes = string.Empty;
+    private TimeRecord? Editor;
+    private TimeRecord? PendingDelete;
+    private bool ShowDayDialog;
+    private DayType SelectedDayType;
+    private int TargetHours;
+    private int TargetMinutes;
+    private string Error = string.Empty;
+
+    private TimeSpan Worked => TimeSpan.FromTicks(Records.Sum(r => UiFormat.Elapsed(r, Now).Ticks));
+    private TimeSpan Remaining => Day?.TargetDuration > Worked ? Day.TargetDuration - Worked : TimeSpan.Zero;
+    private double TeleworkPercent => Worked.TotalSeconds <= 0 ? 0 : Records.Where(r => r.Telework).Sum(r => UiFormat.Elapsed(r, Now).TotalSeconds) / Worked.TotalSeconds * 100;
+    private string EstimatedEnd => Active is null || Day is null || Day.TargetDuration == TimeSpan.Zero
+        ? "—"
+        : Now.Add(Remaining).ToString("HH:mm");
+    private string DayTypeLabel => Day is null ? "—" : DayTypeText(Day.DayType);
+
+    protected override async Task OnInitializedAsync()
+    {
+        Events.DataChanged += OnDataChanged;
+        Events.ChangeActivityRequested += OnChangeRequested;
+        await LoadAsync();
+        _ = TickAsync();
+    }
+
+    private async Task TickAsync()
+    {
+        using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(_clockCancellation.Token))
+            {
+                await InvokeAsync(async () =>
+                {
+                    DateOnly shownDate = DateOnly.FromDateTime(Now);
+                    Now = DateTime.Now;
+                    if (shownDate != DateOnly.FromDateTime(Now))
+                    {
+                        using IServiceScope scope = Scopes.CreateScope();
+                        await scope.ServiceProvider.GetRequiredService<IStaleActivityService>().CloseStaleActivitiesAsync();
+                        await LoadAsync();
+                        Events.PublishDataChanged();
+                    }
+                    StateHasChanged();
+                });
+            }
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    private async Task LoadAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        IActivityRepository activities = scope.ServiceProvider.GetRequiredService<IActivityRepository>();
+        ITimeRecordRepository entries = scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>();
+        IWorkdayConfigService days = scope.ServiceProvider.GetRequiredService<IWorkdayConfigService>();
+        Activities = (await activities.GetAllAsync()).ToList();
+        Records = (await entries.GetByDateAsync(DateOnly.FromDateTime(DateTime.Today))).ToList();
+        Active = Records.FirstOrDefault(r => r.EndTime is null);
+        Day = await days.GetEffectiveConfigurationAsync(DateOnly.FromDateTime(DateTime.Today));
+        Now = DateTime.Now;
+    }
+
+    private void OnDataChanged(object? sender, EventArgs args) => _ = InvokeAsync(async () => { await LoadAsync(); StateHasChanged(); });
+    private void OnChangeRequested(object? sender, EventArgs args) => _ = InvokeAsync(() => { OpenStartDialog(); StateHasChanged(); });
+    private string ActivityName(Guid id) => Activities.FirstOrDefault(a => a.Id == id)?.Name ?? L.GetString("Activity_Unknown");
+    private string ActivityColor(Guid id) => Activities.FirstOrDefault(a => a.Id == id)?.Color ?? "#74859a";
+    private string ElapsedClock(TimeRecord record) { TimeSpan elapsed = UiFormat.Elapsed(record, Now); return $"{(int)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}"; }
+    private string DayTypeText(DayType type) => L.GetString(type switch
+    {
+        DayType.WorkDay => "Today_DayType_WorkDay", DayType.IntensiveDay => "Today_DayType_IntensiveDay",
+        DayType.Holiday => "Today_DayType_Holiday", DayType.FreeChoice => "Today_DayType_FreeChoice",
+        DayType.Vacation => "Today_DayType_Vacation", _ => "Today_DayType_NonWorkingDay"
+    });
+    private void OpenStartDialog() { SelectedActivityId = Active?.ActivityId ?? Guid.Empty; StartTelework = Active?.Telework ?? false; StartNotes = string.Empty; Error = string.Empty; ShowStart = true; }
+    private void CloseStart() => ShowStart = false;
+    private async Task StartAsync()
+    {
+        try { await Entries.StartOrSwitchAsync(SelectedActivityId, StartTelework, StartNotes); ShowStart = false; await LoadAsync(); }
+        catch (ArgumentException) { Error = L.GetString("Validation_ActivityRequired"); }
+    }
+    private async Task StopAsync() { await Entries.StopAsync(); await LoadAsync(); }
+    private void OpenNewRecord() => Editor = new TimeRecord { Date = DateOnly.FromDateTime(DateTime.Today), StartTime = TimeOnly.FromDateTime(DateTime.Now) };
+    private void EditRecord(TimeRecord record) => Editor = record;
+    private Task EditorSavedAsync() { Editor = null; return LoadAsync(); }
+    private void CloseEditor() => Editor = null;
+    private void ConfirmDelete(TimeRecord record) => PendingDelete = record;
+    private void CancelDelete() => PendingDelete = null;
+    private async Task DeleteAsync() { if (PendingDelete is null) { return; } await Entries.DeleteAsync(PendingDelete.Id); PendingDelete = null; await LoadAsync(); }
+    private void OpenDayDialog() { SelectedDayType = Day?.DayType ?? DayType.WorkDay; TargetHours = Day?.TargetDuration.Hours ?? 8; TargetMinutes = Day?.TargetDuration.Minutes ?? 0; ShowDayDialog = true; }
+    private void CloseDayDialog() => ShowDayDialog = false;
+    private async Task SaveDayAsync()
+    {
+        using IServiceScope scope = Scopes.CreateScope();
+        await scope.ServiceProvider.GetRequiredService<IWorkdayConfigService>().SetConfigurationAsync(DateOnly.FromDateTime(DateTime.Today), SelectedDayType, TimeSpan.FromMinutes(Math.Max(0, TargetHours * 60 + TargetMinutes)));
+        ShowDayDialog = false;
+        await LoadAsync();
+        Events.PublishDataChanged();
+    }
+    public ValueTask DisposeAsync() { Events.DataChanged -= OnDataChanged; Events.ChangeActivityRequested -= OnChangeRequested; _clockCancellation.Cancel(); _clockCancellation.Dispose(); return ValueTask.CompletedTask; }
+}

@@ -1116,4 +1116,17 @@
   <data name="Label_Remaining" xml:space="preserve">
     <value>Restants</value>
   </data>
+  <data name="Nav_PageNotFound" xml:space="preserve"><value>No s'ha trobat la pàgina.</value></data>
+  <data name="Navigation_Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Navigation_Next" xml:space="preserve"><value>Següent</value></data>
+  <data name="Blueprint_DataGrid_Loading" xml:space="preserve"><value>Carregant...</value></data>
+  <data name="Blueprint_DataGrid_SearchPlaceholder" xml:space="preserve"><value>Cerca...</value></data>
+  <data name="Blueprint_DataGrid_ShowingRange" xml:space="preserve"><value>Mostrant {0}–{1} de {2}</value></data>
+  <data name="Blueprint_Pagination_Next" xml:space="preserve"><value>Següent</value></data>
+  <data name="Blueprint_Pagination_Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Blueprint_Combobox_Placeholder" xml:space="preserve"><value>Seleccionar...</value></data>
+  <data name="History_OldestFirst" xml:space="preserve"><value>Primer els més antics</value></data>
+  <data name="Notice_Acknowledge" xml:space="preserve"><value>Entesos</value></data>
+  <data name="Validation_JiraCodeTooLong" xml:space="preserve"><value>El codi Jira no pot superar els 50 caràcters.</value></data>
+  <data name="Settings_Section_KeyboardShortcuts" xml:space="preserve"><value>Dreceres de teclat</value></data>
 </root>

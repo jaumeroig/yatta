@@ -1,0 +1,104 @@
+@namespace Yatta.App.Blazor
+@inject ILocalizationService L
+@inject TimeEntryService Entries
+
+<div class="dialog-backdrop" role="presentation" @onclick="CancelAsync">
+    <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="record-title" @onclick:stopPropagation>
+        <h2 id="record-title">@(Record.Id == Guid.Empty ? L.GetString("Dialog_NewRecord_Title") : L.GetString("Dialog_EditRecord_Title"))</h2>
+        <div class="form-grid">
+            <div class="field span-2"><label for="activity">@L.GetString("Label_Activity")</label>
+                <select id="activity" @bind="ActivityId">
+                    <option value="00000000-0000-0000-0000-000000000000">@L.GetString("Placeholder_SelectActivity")</option>
+                    @foreach (Activity activity in Activities.OrderBy(a => a.Name))
+                    {
+                        <option value="@activity.Id">@activity.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="field"><label for="date">@L.GetString("Label_Date")</label><input id="date" type="date" value="@DateText" @onchange="e => DateText = e.Value?.ToString() ?? string.Empty" /></div>
+            <div class="field"><label for="start">@L.GetString("Label_StartTime")</label><input id="start" type="time" value="@StartText" @onchange="e => StartText = e.Value?.ToString() ?? string.Empty" /></div>
+            <div class="field"><label for="end">@L.GetString("Label_EndTime")</label><input id="end" type="time" value="@EndText" @onchange="e => EndText = e.Value?.ToString() ?? string.Empty" /></div>
+            <div class="field"><label><input type="checkbox" @bind="Telework" /> @L.GetString("Location_Telework")</label></div>
+            <div class="field span-2"><label for="notes">@L.GetString("Label_Notes")</label><textarea id="notes" @bind="Notes"></textarea></div>
+            <div class="field span-2"><label for="link">@L.GetString("Label_Link")</label><BbInput Id="link" Type="InputType.Url" @bind-Value="Link" /></div>
+        </div>
+        @if (!string.IsNullOrEmpty(Error)) { <p class="error-text" role="alert">@Error</p> }
+        <div class="dialog-actions">
+            <BbButton OnClick="CancelAsync" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton>
+            <BbButton OnClick="SaveAsync" Disabled="Busy">@L.GetString("Button_Save")</BbButton>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public TimeRecord Record { get; set; } = new();
+    [Parameter, EditorRequired] public IReadOnlyList<Activity> Activities { get; set; } = [];
+    [Parameter] public EventCallback OnSaved { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private Guid ActivityId;
+    private string DateText = string.Empty;
+    private string StartText = string.Empty;
+    private string EndText = string.Empty;
+    private string Notes = string.Empty;
+    private string Link = string.Empty;
+    private bool Telework;
+    private bool Busy;
+    private string Error = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        ActivityId = Record.ActivityId;
+        DateText = Record.Date == default ? DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd") : Record.Date.ToString("yyyy-MM-dd");
+        StartText = Record.StartTime == default ? DateTime.Now.ToString("HH:mm") : Record.StartTime.ToString("HH:mm");
+        EndText = Record.EndTime?.ToString("HH:mm") ?? string.Empty;
+        Notes = Record.Notes ?? string.Empty;
+        Link = Record.Link ?? string.Empty;
+        Telework = Record.Telework;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (Busy) { return; }
+        Busy = true;
+        Error = string.Empty;
+        try
+        {
+            if (!DateOnly.TryParseExact(DateText, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date) ||
+                !TimeOnly.TryParse(StartText, out TimeOnly start) ||
+                (!string.IsNullOrWhiteSpace(EndText) && !TimeOnly.TryParse(EndText, out _)))
+            {
+                Error = L.GetString("Validation_InvalidStartTime");
+                return;
+            }
+
+            TimeOnly? end = string.IsNullOrWhiteSpace(EndText) ? null : TimeOnly.Parse(EndText);
+            await Entries.SaveAsync(new TimeRecord
+            {
+                Id = Record.Id,
+                ActivityId = ActivityId,
+                Date = date,
+                StartTime = start,
+                EndTime = end,
+                Notes = Notes,
+                Link = Link,
+                Telework = Telework
+            });
+            await OnSaved.InvokeAsync();
+        }
+        catch (ArgumentException ex)
+        {
+            Error = L.GetString(ex.Message.Split(' ')[0]);
+        }
+        catch
+        {
+            Error = L.GetString("Validation_RecordSaveError");
+        }
+        finally
+        {
+            Busy = false;
+        }
+    }
+
+    private Task CancelAsync() => OnCancel.InvokeAsync();
+}

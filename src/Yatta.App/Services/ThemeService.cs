@@ -1,6 +1,7 @@
 namespace Yatta.App.Services;
 
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Wpf.Ui.Appearance;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Models;
@@ -11,13 +12,13 @@ using Yatta.Core.Models;
 /// </summary>
 public class ThemeService : IThemeService
 {
-    private readonly ISettingsRepository _settingsRepository;
+    private readonly IServiceScopeFactory _scopes;
     private Theme _currentTheme = Theme.Dark;
     private bool _isWatchingSystemTheme;
 
-    public ThemeService(ISettingsRepository settingsRepository)
+    public ThemeService(IServiceScopeFactory scopes)
     {
-        _settingsRepository = settingsRepository;
+        _scopes = scopes;
     }
 
     public Theme GetCurrentTheme()
@@ -89,7 +90,8 @@ public class ThemeService : IThemeService
 
     public async Task LoadThemeAsync()
     {
-        var settings = await _settingsRepository.GetAsync();
+        using IServiceScope scope = _scopes.CreateScope();
+        AppSettings settings = await scope.ServiceProvider.GetRequiredService<ISettingsRepository>().GetAsync();
         if (settings != null)
         {
             ApplyTheme(settings.Theme);
@@ -98,11 +100,13 @@ public class ThemeService : IThemeService
 
     public async Task SaveThemeAsync(Theme theme)
     {
-        var settings = await _settingsRepository.GetAsync();
+        using IServiceScope scope = _scopes.CreateScope();
+        ISettingsRepository repository = scope.ServiceProvider.GetRequiredService<ISettingsRepository>();
+        AppSettings settings = await repository.GetAsync();
         if (settings != null)
         {
             settings.Theme = theme;
-            await _settingsRepository.UpdateAsync(settings);
+            await repository.UpdateAsync(settings);
         }
         ApplyTheme(theme);
     }

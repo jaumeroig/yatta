@@ -1,0 +1,38 @@
+@namespace Yatta.App.Blazor
+@implements IAsyncDisposable
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject IThemeService ThemeService
+@inject TimeEntryService Entries
+@inject UiEventService Events
+@inject MainWindow Window
+
+<div class="tray-panel @UiFormat.ThemeClass(ThemeService)" lang="@L.GetCurrentCulture()">
+    <div class="tray-heading"><div><span class="eyebrow">Yatta</span><h1>@L.GetString("TrayPanel_Title")</h1></div><button class="tray-close" @onclick="Window.CloseTrayPanel" aria-label="@L.GetString("Button_Cancel")">×</button></div>
+    <div class="tray-total"><span class="eyebrow">@L.GetString("TrayPanel_WorkedLabel")</span><strong>@UiFormat.Duration(Worked)</strong></div>
+    <div class="tray-details"><div><span>@L.GetString("TrayPanel_StartLabel")</span><strong>@(Records.Count == 0 ? "—" : Records.Min(r => r.StartTime).ToString("HH:mm"))</strong></div><div><span>@L.GetString("TrayPanel_StatusLabel")</span><strong>@(Active is null ? L.GetString("TrayPanel_StatusPaused") : L.GetString("TrayPanel_StatusActive"))</strong></div></div>
+    <div class="tray-activity"><span class="eyebrow">@L.GetString("TrayPanel_CurrentActivityLabel")</span><strong>@(Active is null ? L.GetString("TrayPanel_NoActiveActivity") : ActivityName(Active.ActivityId))</strong>@if (Active is not null) { <small>@UiFormat.Duration(UiFormat.Elapsed(Active, Now))</small> }</div>
+    <div class="tray-actions"><BbButton OnClick="ChangeActivity">@(Active is null ? L.GetString("TrayPanel_ButtonStart") : L.GetString("TrayPanel_ButtonChange"))</BbButton>@if (Active is not null) { <BbButton OnClick="StopAsync" Variant="ButtonVariant.Outline">@L.GetString("TrayPanel_ButtonStop")</BbButton> }</div>
+    <button class="tray-open" @onclick="OpenApp">@L.GetString("TrayPanel_ButtonOpenApp") ↗</button>
+    <BbPortalHost />
+</div>
+
+@code {
+    private readonly CancellationTokenSource _timerCancellation = new();
+    private List<TimeRecord> Records = [];
+    private List<Activity> Activities = [];
+    private TimeRecord? Active;
+    private DateTime Now = DateTime.Now;
+    private TimeSpan Worked => TimeSpan.FromTicks(Records.Sum(r => UiFormat.Elapsed(r, Now).Ticks));
+    protected override async Task OnInitializedAsync() { Events.DataChanged += OnDataChanged; L.CultureChanged += OnCultureChanged; Wpf.Ui.Appearance.ApplicationThemeManager.Changed += OnThemeChanged; await LoadAsync(); _ = TickAsync(); }
+    private async Task LoadAsync() { using IServiceScope scope = Scopes.CreateScope(); Records = (await scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>().GetByDateAsync(DateOnly.FromDateTime(DateTime.Today))).ToList(); Activities = (await scope.ServiceProvider.GetRequiredService<IActivityRepository>().GetAllAsync()).ToList(); Active = Records.FirstOrDefault(r => r.EndTime is null); }
+    private async Task TickAsync() { using PeriodicTimer timer = new(TimeSpan.FromSeconds(1)); try { while (await timer.WaitForNextTickAsync(_timerCancellation.Token)) { await InvokeAsync(() => { Now = DateTime.Now; StateHasChanged(); }); } } catch (OperationCanceledException) { } }
+    private void OnDataChanged(object? sender, EventArgs args) => _ = InvokeAsync(async () => { await LoadAsync(); StateHasChanged(); });
+    private void OnCultureChanged(object? sender, EventArgs args) => _ = InvokeAsync(StateHasChanged);
+    private void OnThemeChanged(Wpf.Ui.Appearance.ApplicationTheme theme, System.Windows.Media.Color accent) => _ = InvokeAsync(StateHasChanged);
+    private string ActivityName(Guid id) => Activities.FirstOrDefault(a => a.Id == id)?.Name ?? L.GetString("Activity_Unknown");
+    private void ChangeActivity() { Window.CloseTrayPanel(); Window.ShowChangeActivityDialog(); }
+    private async Task StopAsync() { await Entries.StopAsync(); Window.CloseTrayPanel(); }
+    private void OpenApp() { Window.ShowMainWindow(); Window.CloseTrayPanel(); }
+    public ValueTask DisposeAsync() { Events.DataChanged -= OnDataChanged; L.CultureChanged -= OnCultureChanged; Wpf.Ui.Appearance.ApplicationThemeManager.Changed -= OnThemeChanged; _timerCancellation.Cancel(); _timerCancellation.Dispose(); return ValueTask.CompletedTask; }
+}

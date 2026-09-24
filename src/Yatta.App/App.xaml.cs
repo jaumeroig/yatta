@@ -4,9 +4,10 @@ using System.Globalization;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components.WebView.Wpf;
+using BlazorBlueprint.Components;
+using ThemeService = Yatta.App.Services.ThemeService;
 using Yatta.App.Services;
-using Yatta.App.ViewModels;
-using Yatta.App.Views.Pages;
 using Yatta.Core.Interfaces;
 using Yatta.Core.Services;
 using Yatta.Data;
@@ -106,14 +107,10 @@ public partial class App : Application
         // Show stale activity notification after the window is visible
         if (staleResult != null)
         {
-            mainWindow.Loaded += async (_, _) =>
+            mainWindow.Loaded += (_, _) =>
             {
-                var uiMessageBox = new Wpf.Ui.Controls.MessageBox
-                {
-                    Title = Yatta.App.Resources.Resources.TitleBar_Title,
-                    Content = string.Format(Yatta.App.Resources.Resources.StaleActivity_AutoClosed, staleResult.Date, staleResult.EndTime)
-                };
-                _ = await uiMessageBox.ShowDialogAsync();
+                _serviceProvider!.GetRequiredService<UiEventService>().ShowNotice(
+                    "StaleActivity_AutoClosed", staleResult.Date, staleResult.EndTime);
             };
         }
     }
@@ -281,16 +278,8 @@ public partial class App : Application
             if (!hasUpdate)
                 return;
 
-            var messageBox = new Wpf.Ui.Controls.MessageBox
-            {
-                Title = Yatta.App.Resources.Resources.TitleBar_Title,
-                Content = Yatta.App.Resources.Resources.Update_Available,
-                PrimaryButtonText = Yatta.App.Resources.Resources.Update_InstallAndRestart,
-                SecondaryButtonText = Yatta.App.Resources.Resources.Update_Later,
-            };
-
-            var result = await messageBox.ShowDialogAsync();
-            if (result == Wpf.Ui.Controls.MessageBoxResult.Primary)
+            bool install = await _serviceProvider!.GetRequiredService<UiEventService>().AskUpdateDecisionAsync();
+            if (install)
             {
                 await updateService.ApplyUpdateAndRestartAsync();
             }
@@ -355,6 +344,12 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        CultureInfo systemCulture = CultureInfo.CurrentUICulture;
+        services.AddWpfBlazorWebView();
+        services.AddBlazorBlueprintComponents();
+        services.AddScoped<IBbLocalizer, BlueprintLocalizer>();
+        services.AddSingleton<UiEventService>();
+        services.AddSingleton<TimeEntryService>();
         // Register DbContext
         services.AddDbContext<YattaDbContext>(options =>
             options.UseSqlite(DatabaseConfiguration.GetConnectionString()));
@@ -375,45 +370,13 @@ public partial class App : Application
         services.AddScoped<IDataPurgeService, DataPurgeService>();
         services.AddScoped<IStaleActivityService, StaleActivityService>();
         services.AddScoped<IAutoStartActivityService, AutoStartActivityService>();
-        services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<ThemeService>();
-        services.AddSingleton<IDialogService, DialogService>();
-        services.AddSingleton<ILocalizationService, LocalizationService>();
-        services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<IBreadcrumbService, BreadcrumbService>();
+        services.AddSingleton<IThemeService>(provider => provider.GetRequiredService<ThemeService>());
+        services.AddSingleton<ILocalizationService>(provider => new LocalizationService(provider, systemCulture));
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<IStartupService, StartupService>();
-        services.AddSingleton<IPageStateService, PageStateService>();
         services.AddSingleton<IGlobalHotkeyService, GlobalHotkeyService>();
         services.AddSingleton<IUpdateService, UpdateService>();
-
-        // Register ViewModels
-        services.AddSingleton<MainWindowViewModel>();
-        services.AddTransient<TodayViewModel>();
-        services.AddTransient<HistoricViewModel>();
-        services.AddTransient<ActivitiesViewModel>();
-        services.AddTransient<ActivityDetailViewModel>();
-        services.AddTransient<SettingsViewModel>();
-        services.AddTransient<WhatsNewViewModel>();
-        services.AddTransient<DashboardIndexViewModel>();
-        services.AddTransient<DashboardDayViewModel>();
-        services.AddTransient<DashboardWeekViewModel>();
-        services.AddTransient<DashboardMonthViewModel>();
-        services.AddTransient<DashboardYearViewModel>();
-        services.AddTransient<TrayPanelViewModel>();
-
-        // Register Pages
-        services.AddTransient<TodayPage>();
-        services.AddTransient<HistoricPage>();
-        services.AddTransient<ActivitiesPage>();
-        services.AddTransient<ActivityDetailPage>();
-        services.AddTransient<SettingsPage>();
-        services.AddTransient<WhatsNewPage>();
-        services.AddTransient<DashboardIndexPage>();
-        services.AddTransient<DashboardDayPage>();
-        services.AddTransient<DashboardWeekPage>();
-        services.AddTransient<DashboardMonthPage>();
-        services.AddTransient<DashboardYearPage>();
 
         // Register windows
         services.AddSingleton<MainWindow>();

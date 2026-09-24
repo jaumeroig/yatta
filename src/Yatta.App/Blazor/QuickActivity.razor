@@ -1,0 +1,47 @@
+@namespace Yatta.App.Blazor
+@implements IDisposable
+@inject IServiceScopeFactory Scopes
+@inject ILocalizationService L
+@inject IThemeService ThemeService
+@inject TimeEntryService Entries
+@inject UiEventService Events
+
+<div class="quick-panel @UiFormat.ThemeClass(ThemeService)" lang="@L.GetCurrentCulture()">
+    <span class="eyebrow">Yatta</span><h1>@L.GetString("Dialog_ChangeActivity_Title")</h1>
+    <p class="muted">@(Active is null ? L.GetString("Tray_NoActivity") : ActivityName(Active.ActivityId))</p>
+    <div class="field"><label for="quick-activity">@L.GetString("Label_Activity")</label><select id="quick-activity" @bind="ActivityId"><option value="00000000-0000-0000-0000-000000000000">@L.GetString("Placeholder_SelectActivity")</option>@foreach (Activity item in Activities.Where(a => a.Active).OrderBy(a => a.Name)) { <option value="@item.Id">@item.Name</option> }</select></div>
+    <div class="field"><label><input type="checkbox" @bind="Telework" /> @L.GetString("Location_Telework")</label></div>
+    <div class="field"><label for="quick-notes">@L.GetString("Label_Notes")</label><textarea id="quick-notes" @bind="Notes"></textarea></div>
+    @if (!string.IsNullOrEmpty(Error)) { <p class="error-text" role="alert">@Error</p> }
+    <div class="action-row"><BbButton OnClick="SaveAsync">@(Active is null ? L.GetString("Button_Start") : L.GetString("Button_Change"))</BbButton></div>
+    <BbPortalHost />
+</div>
+
+@code {
+    private List<Activity> Activities = [];
+    private TimeRecord? Active;
+    private Guid ActivityId;
+    private bool Telework;
+    private string Notes = string.Empty;
+    private string Error = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        L.CultureChanged += OnChanged;
+        Events.DataChanged += OnChanged;
+        Wpf.Ui.Appearance.ApplicationThemeManager.Changed += OnThemeChanged;
+        using IServiceScope scope = Scopes.CreateScope();
+        Activities = (await scope.ServiceProvider.GetRequiredService<IActivityRepository>().GetAllAsync()).ToList();
+        Active = await scope.ServiceProvider.GetRequiredService<ITimeRecordRepository>().GetActiveAsync();
+        ActivityId = Active?.ActivityId ?? Guid.Empty;
+        Telework = Active?.Telework ?? false;
+    }
+    private string ActivityName(Guid id) => Activities.FirstOrDefault(a => a.Id == id)?.Name ?? L.GetString("Activity_Unknown");
+    private void OnChanged(object? sender, EventArgs args) => _ = InvokeAsync(StateHasChanged);
+    private void OnThemeChanged(Wpf.Ui.Appearance.ApplicationTheme theme, System.Windows.Media.Color accent) => _ = InvokeAsync(StateHasChanged);
+    private async Task SaveAsync()
+    {
+        try { await Entries.StartOrSwitchAsync(ActivityId, Telework, Notes); Events.CompleteQuickAction(); }
+        catch (ArgumentException) { Error = L.GetString("Validation_ActivityRequired"); }
+    }
+    public void Dispose() { L.CultureChanged -= OnChanged; Events.DataChanged -= OnChanged; Wpf.Ui.Appearance.ApplicationThemeManager.Changed -= OnThemeChanged; }
+}

@@ -58,6 +58,9 @@ public class SettingsRepository : ISettingsRepository
             existingSettings.RetentionPolicy = settings.RetentionPolicy;
             existingSettings.CustomRetentionDays = settings.CustomRetentionDays;
             existingSettings.GlobalHotkey = settings.GlobalHotkey;
+            existingSettings.HistoricSortAscending = settings.HistoricSortAscending;
+            existingSettings.KeepNotificationsVisible = settings.KeepNotificationsVisible;
+            existingSettings.DefaultWorkingDaysMask = settings.DefaultWorkingDaysMask;
 
             dbContext.AppSettings.Update(existingSettings);
         }
