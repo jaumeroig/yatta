@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:md="http://schemas.lepo.co/wpfui/2022/xaml/markdown"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              xmlns:converters="clr-namespace:Yatta.App.Converters"
              xmlns:local="clr-namespace:Yatta.App">
     <Application.Resources>
@@ -39,6 +40,14 @@
             
             <!-- HotkeyTextBox Style -->
             <Style TargetType="{x:Type local:Controls.HotkeyTextBox}" BasedOn="{StaticResource {x:Type ui:TextBox}}" />
+
+            <!-- LiveCharts 2.0 stable uses a white control background by default. -->
+            <Style TargetType="{x:Type lvc:CartesianChart}">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            <Style TargetType="{x:Type lvc:PieChart}">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
             
             <!-- Color Button Style -->
             <Style x:Key="ColorButtonStyle" TargetType="Button">
