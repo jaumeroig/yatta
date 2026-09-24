@@ -1,5 +1,8 @@
 # Historial de versions
 
+## v1.4.1 24/09/2026
+- Es corregeix la resolució dels camins del logotip i les accions de notificació en la versió d'un sol fitxer.
+
 ## v1.4.0 24/09/2026
 - S'ha renovat la configuració dels recordatoris: permet escollir intervals predefinits o personalitzats i mantenir visibles les notificacions.
 - S'han millorat les accions interactives de les notificacions i el diàleg de personalització.

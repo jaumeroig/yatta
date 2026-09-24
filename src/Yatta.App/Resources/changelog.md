@@ -1,5 +1,8 @@
 # Historial de versiones
 
+## v1.4.1 24/09/2026
+- Se corrige la resolución de las rutas del logo y las acciones de notificación en la versión de un solo archivo.
+
 ## v1.4.0 24/09/2026
 - Se ha renovado la configuración de recordatorios: permite elegir intervalos predefinidos o personalizados y mantener las notificaciones visibles.
 - Se han mejorado las acciones interactivas de las notificaciones y el diálogo de personalización.

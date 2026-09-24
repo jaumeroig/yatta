@@ -1,7 +1,6 @@
 namespace Yatta.App.Services;
 
 using System.IO;
-using System.Reflection;
 using System.Timers;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
@@ -342,11 +341,7 @@ public class NotificationService : INotificationService
     {
         try
         {
-            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            var appDirectory = Path.GetDirectoryName(assemblyLocation);
-            if (string.IsNullOrEmpty(appDirectory)) return null;
-
-            var logoPath = Path.Combine(appDirectory, "Resources", "Logo.ico");
+            var logoPath = Path.Combine(AppContext.BaseDirectory, "Resources", "Logo.ico");
             return File.Exists(logoPath) ? logoPath : null;
         }
         catch
@@ -381,11 +376,7 @@ public class NotificationService : INotificationService
     {
         try
         {
-            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            var appDirectory = Path.GetDirectoryName(assemblyLocation);
-            if (string.IsNullOrEmpty(appDirectory)) return null;
-
-            var iconPath = Path.Combine(appDirectory, "Resources", "Notification", $"{iconName}.png");
+            var iconPath = Path.Combine(AppContext.BaseDirectory, "Resources", "Notification", $"{iconName}.png");
             return File.Exists(iconPath) ? iconPath : null;
         }
         catch
