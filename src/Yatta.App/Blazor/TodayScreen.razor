@@ -10,8 +10,8 @@
     <header class="page-header">
         <div><h1>@L.GetString("Page_Today_Title")</h1><p>@Now.ToString("D")</p></div>
         <div class="header-actions">
-            <BbButton OnClick="OpenNewRecord" Variant="ButtonVariant.Outline">+ @L.GetString("Button_NewRecord")</BbButton>
-            <BbButton OnClick="OpenDayDialog" Variant="ButtonVariant.Outline">@L.GetString("Today_ConfigureDay")</BbButton>
+            <BbButton OnClick="OpenNewRecord" Variant="ButtonVariant.Outline"><LucideIcon Name="plus" Size="16" aria-hidden="true" focusable="false" /> @L.GetString("Button_NewRecord")</BbButton>
+            <BbButton OnClick="OpenDayDialog" Variant="ButtonVariant.Outline"><LucideIcon Name="calendar-cog" Size="16" aria-hidden="true" focusable="false" />@L.GetString("Today_ConfigureDay")</BbButton>
         </div>
     </header>
 
@@ -29,10 +29,10 @@
             <div class="running-time">@(Active is null ? "00:00:00" : ElapsedClock(Active))</div>
             <div class="muted">@(Active is null ? L.GetString("TrayPanel_StatusNotStarted") : $"{L.GetString("Label_StartTime")}: {Active.StartTime:HH:mm}")</div>
             <div class="action-row">
-                <BbButton OnClick="OpenStartDialog">@(Active is null ? L.GetString("Button_Start") : L.GetString("Button_Change"))</BbButton>
+                <BbButton OnClick="OpenStartDialog"><LucideIcon Name="@(Active is null ? "play" : "arrow-right-left")" Size="16" aria-hidden="true" focusable="false" />@(Active is null ? L.GetString("Button_Start") : L.GetString("Button_Change"))</BbButton>
                 @if (Active is not null)
                 {
-                    <BbButton OnClick="StopAsync" Variant="ButtonVariant.Outline">@L.GetString("Button_Stop")</BbButton>
+                    <BbButton OnClick="StopAsync" Variant="ButtonVariant.Outline"><LucideIcon Name="square" Size="16" aria-hidden="true" focusable="false" />@L.GetString("Button_Stop")</BbButton>
                 }
             </div>
         </BbCard>
@@ -58,7 +58,7 @@
                     <span class="color-dot" style="background:@ActivityColor(record.ActivityId)"></span>
                     <span><strong>@ActivityName(record.ActivityId)</strong><small>@(string.IsNullOrEmpty(record.Notes) ? (record.Telework ? L.GetString("Location_Telework") : L.GetString("Location_Office")) : record.Notes)</small></span>
                     <time>@record.StartTime.ToString("HH:mm") – @(record.EndTime?.ToString("HH:mm") ?? "···")<br />@UiFormat.Duration(UiFormat.Elapsed(record, Now))</time>
-                    <span class="inline-fields"><BbButton OnClick="() => EditRecord(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Edit")">✎</BbButton><BbButton OnClick="() => ConfirmDelete(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Delete")">×</BbButton></span>
+                    <span class="inline-fields"><BbButton OnClick="() => EditRecord(record)" Variant="ButtonVariant.Ghost" Class="icon-button" AriaLabel="@L.GetString("Menu_Edit")"><LucideIcon Name="pencil" Size="16" aria-hidden="true" focusable="false" /></BbButton><BbButton OnClick="() => ConfirmDelete(record)" Variant="ButtonVariant.Ghost" Class="icon-button" AriaLabel="@L.GetString("Menu_Delete")"><LucideIcon Name="trash-2" Size="16" aria-hidden="true" focusable="false" /></BbButton></span>
                 </div>
             }
         </div>
@@ -67,9 +67,7 @@
 
 @if (ShowStart)
 {
-    <div class="dialog-backdrop" role="presentation" @onclick="CloseStart">
-        <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="start-title" @onclick:stopPropagation>
-            <h2 id="start-title">@(Active is null ? L.GetString("Dialog_StartActivity_Title") : L.GetString("Dialog_ChangeActivity_Title"))</h2>
+    <AppDialog Title="@(Active is null ? L.GetString("Dialog_StartActivity_Title") : L.GetString("Dialog_ChangeActivity_Title"))" OnClose="CloseStart" Busy="Busy">
             <div class="form-grid">
                 <div class="field span-2"><label for="start-activity">@L.GetString("Label_Activity")</label><select id="start-activity" @bind="SelectedActivityId">
                     <option value="00000000-0000-0000-0000-000000000000">@L.GetString("Placeholder_SelectActivity")</option>
@@ -78,10 +76,9 @@
                 <div class="field span-2"><label><input type="checkbox" @bind="StartTelework" /> @L.GetString("Location_Telework")</label></div>
                 <div class="field span-2"><label for="start-notes">@L.GetString("Label_Notes")</label><textarea id="start-notes" @bind="StartNotes"></textarea></div>
             </div>
-            @if (!string.IsNullOrEmpty(Error)) { <p class="error-text" role="alert">@Error</p> }
-            <div class="dialog-actions"><BbButton OnClick="CloseStart" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="StartAsync">@L.GetString("Button_Start")</BbButton></div>
-        </div>
-    </div>
+            @if (!string.IsNullOrEmpty(Error)) { <BbAlert Variant="AlertVariant.Danger"><BbAlertDescription>@Error</BbAlertDescription></BbAlert> }
+            <div class="dialog-actions"><BbButton OnClick="CloseStart" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="StartAsync" Disabled="Busy">@L.GetString(Active is null ? "Button_Start" : "Button_Change")</BbButton></div>
+        </AppDialog>
 }
 
 @if (Editor is not null)
@@ -91,17 +88,15 @@
 
 @if (PendingDelete is not null)
 {
-    <div class="dialog-backdrop" role="presentation" @onclick="CancelDelete"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
-        <h2>@L.GetString("Dialog_DeleteRecord_Title")</h2><p>@L.GetString("Dialog_DeleteRecord_Message")</p>
+    <AppDialog Title="@L.GetString("Dialog_DeleteRecord_Title")" OnClose="CancelDelete"><p>@L.GetString("Dialog_DeleteRecord_Message")</p>
         <div class="dialog-actions"><BbButton OnClick="CancelDelete" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="DeleteAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton></div>
-    </div></div>
+    </AppDialog>
 }
 
 @if (ShowDayDialog)
 {
-    <div class="dialog-backdrop" role="presentation" @onclick="CloseDayDialog">
-        <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="day-title" @onclick:stopPropagation>
-            <h2 id="day-title">@L.GetString("Dialog_ConfigureDay_Title")</h2>
+    <AppDialog Title="@L.GetString("Dialog_ConfigureDay_Title")" OnClose="CloseDayDialog">
+        @if (!string.IsNullOrEmpty(DayError)) { <BbAlert Variant="AlertVariant.Danger"><BbAlertDescription>@DayError</BbAlertDescription></BbAlert> }
             <div class="form-grid">
                 <div class="field span-2"><label for="day-type">@L.GetString("Label_DayType")</label><select id="day-type" @bind="SelectedDayType">
                     @foreach (DayType type in Enum.GetValues<DayType>()) { <option value="@type">@DayTypeText(type)</option> }
@@ -110,12 +105,12 @@
                 <div class="field"><label for="target-minutes">@L.GetString("Unit_Minutes")</label><input id="target-minutes" type="number" min="0" max="59" @bind="TargetMinutes" /></div>
             </div>
             <div class="dialog-actions"><BbButton OnClick="CloseDayDialog" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="SaveDayAsync">@L.GetString("Button_Save")</BbButton></div>
-        </div>
-    </div>
+        </AppDialog>
 }
 
 @code {
     private readonly CancellationTokenSource _clockCancellation = new();
+    private bool Busy;
     private List<Activity> Activities = [];
     private List<TimeRecord> Records = [];
     private TimeRecord? Active;
@@ -129,6 +124,7 @@
     private TimeRecord? PendingDelete;
     private bool ShowDayDialog;
     private DayType SelectedDayType;
+    private string DayError = string.Empty;
     private int TargetHours;
     private int TargetMinutes;
     private string Error = string.Empty;
@@ -199,8 +195,18 @@
         DayType.Vacation => "Today_DayType_Vacation", _ => "Today_DayType_NonWorkingDay"
     });
     private void OpenStartDialog() { SelectedActivityId = Active?.ActivityId ?? Guid.Empty; StartTelework = Active?.Telework ?? false; StartNotes = string.Empty; Error = string.Empty; ShowStart = true; }
-    private void CloseStart() => ShowStart = false;
+    private void CloseStart() { if (!Busy) { ShowStart = false; } }
     private async Task StartAsync()
+    {
+        if (Busy) { return; }
+        Busy = true;
+        Error = string.Empty;
+        try { await StartCoreAsync(); }
+        catch { Error = L.GetString("UI_OperationFailed"); }
+        finally { Busy = false; }
+    }
+
+    private async Task StartCoreAsync()
     {
         try { await Entries.StartOrSwitchAsync(SelectedActivityId, StartTelework, StartNotes); ShowStart = false; await LoadAsync(); }
         catch (ArgumentException) { Error = L.GetString("Validation_ActivityRequired"); }
@@ -213,10 +219,11 @@
     private void ConfirmDelete(TimeRecord record) => PendingDelete = record;
     private void CancelDelete() => PendingDelete = null;
     private async Task DeleteAsync() { if (PendingDelete is null) { return; } await Entries.DeleteAsync(PendingDelete.Id); PendingDelete = null; await LoadAsync(); }
-    private void OpenDayDialog() { SelectedDayType = Day?.DayType ?? DayType.WorkDay; TargetHours = Day?.TargetDuration.Hours ?? 8; TargetMinutes = Day?.TargetDuration.Minutes ?? 0; ShowDayDialog = true; }
+    private void OpenDayDialog() { DayError = string.Empty; SelectedDayType = Day?.DayType ?? DayType.WorkDay; TargetHours = (int)(Day?.TargetDuration.TotalHours ?? 8); TargetMinutes = Day?.TargetDuration.Minutes ?? 0; ShowDayDialog = true; }
     private void CloseDayDialog() => ShowDayDialog = false;
     private async Task SaveDayAsync()
     {
+        if (!UiFormat.IsValidDayTarget(TargetHours, TargetMinutes)) { DayError = L.GetString("Validation_TargetDurationInvalid"); return; }
         using IServiceScope scope = Scopes.CreateScope();
         await scope.ServiceProvider.GetRequiredService<IWorkdayConfigService>().SetConfigurationAsync(DateOnly.FromDateTime(DateTime.Today), SelectedDayType, TimeSpan.FromMinutes(Math.Max(0, TargetHours * 60 + TargetMinutes)));
         ShowDayDialog = false;

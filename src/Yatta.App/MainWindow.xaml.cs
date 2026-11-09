@@ -1,6 +1,7 @@
 namespace Yatta.App;
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -18,6 +19,7 @@ public partial class MainWindow : FluentWindow
     private readonly TimeEntryService _entries;
     private readonly ILocalizationService _localization;
     private readonly DispatcherTimer _tooltipTimer;
+    private readonly DispatcherTimer _trayClickTimer;
     private bool _allowClose;
     private bool _closingInProgress;
     private TrayPanelWindow? _trayPanel;
@@ -33,6 +35,8 @@ public partial class MainWindow : FluentWindow
         _entries = entries;
         _localization = services.GetRequiredService<ILocalizationService>();
         Resources.Add("services", services);
+        _trayClickTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(GetDoubleClickTime()) };
+        _trayClickTimer.Tick += TrayClickTimer_Tick;
         _tooltipTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         _tooltipTimer.Tick += async (_, _) => await UpdateTrayTooltipAsync();
         _tooltipTimer.Start();
@@ -98,14 +102,39 @@ public partial class MainWindow : FluentWindow
     private void TrayOpen_Click(object sender, RoutedEventArgs args)
     {
         if (DateTime.UtcNow - _lastTrayPanelClosedAt <= TimeSpan.FromMilliseconds(400)) { return; }
-        if (_trayPanel is not null) { _trayPanel.Close(); return; }
-        _trayPanel = new TrayPanelWindow(_services);
-        _trayPanel.Closed += (_, _) => { _lastTrayPanelClosedAt = DateTime.UtcNow; _trayPanel = null; };
-        _trayPanel.Show();
-        _trayPanel.Activate();
+        // Wait for Windows to distinguish a single click from a double click.
+        _trayClickTimer.Stop();
+        _trayClickTimer.Start();
     }
 
-    private void TrayOpen_DoubleClick(object sender, RoutedEventArgs args) { _trayPanel?.Close(); ShowMainWindow(); }
+    private void TrayClickTimer_Tick(object? sender, EventArgs args)
+    {
+        _trayClickTimer.Stop();
+        if (_trayPanel is not null) { CloseTrayPanel(); return; }
+        TrayPanelWindow panel = new(_services);
+        _trayPanel = panel;
+        panel.Closed += (_, _) =>
+        {
+            _lastTrayPanelClosedAt = DateTime.UtcNow;
+            if (ReferenceEquals(_trayPanel, panel))
+            {
+                _trayPanel = null;
+            }
+        };
+        panel.Show();
+        if (ReferenceEquals(_trayPanel, panel))
+        {
+            panel.Activate();
+        }
+    }
+
+    private void TrayOpen_DoubleClick(object sender, RoutedEventArgs args)
+    {
+        _trayClickTimer.Stop();
+        _lastTrayPanelClosedAt = DateTime.UtcNow;
+        CloseTrayPanel();
+        ShowMainWindow();
+    }
     private void TrayMenuOpen_Click(object sender, RoutedEventArgs args) => ShowMainWindow();
     private void TrayChangeActivity_Click(object sender, RoutedEventArgs args) => ShowChangeActivityDialog();
     private async void TrayStopActivity_Click(object sender, RoutedEventArgs args) => await StopActiveRecordAsync();
@@ -143,7 +172,12 @@ public partial class MainWindow : FluentWindow
     }
 
     /// <summary>Closes the Blazor tray panel after an action.</summary>
-    public void CloseTrayPanel() => _trayPanel?.Close();
+    public void CloseTrayPanel()
+    {
+        TrayPanelWindow? panel = _trayPanel;
+        _trayPanel = null;
+        panel?.RequestClose();
+    }
 
     private async void TrayContextMenu_Opened(object sender, RoutedEventArgs args)
     {
@@ -181,8 +215,14 @@ public partial class MainWindow : FluentWindow
     protected override void OnClosed(EventArgs args)
     {
         _tooltipTimer.Stop();
+        _trayClickTimer.Stop();
+        _trayClickTimer.Tick -= TrayClickTimer_Tick;
+        CloseTrayPanel();
         _events.DataChanged -= OnDataChanged;
         _localization.CultureChanged -= OnCultureChanged;
         base.OnClosed(args);
     }
+
+    [DllImport("user32.dll")]
+    private static extern uint GetDoubleClickTime();
 }

@@ -7,7 +7,7 @@
 @inject UiEventService Events
 
 <div class="page">
-    <header class="page-header"><div><h1>@L.GetString("Nav_Historic")</h1><p>@L.GetString("Page_Records_Title")</p></div><BbButton OnClick="NewRecord">+ @L.GetString("Button_NewRecord")</BbButton></header>
+    <header class="page-header"><div><h1>@L.GetString("Nav_Historic")</h1><p>@L.GetString("Page_Records_Title")</p></div><BbButton OnClick="NewRecord"><LucideIcon Name="plus" Size="16" aria-hidden="true" focusable="false" /> @L.GetString("Button_NewRecord")</BbButton></header>
     <div class="toolbar card">
         <div class="field" style="flex:2;min-width:180px"><label for="history-search">@L.GetString("Placeholder_Search")</label><input id="history-search" placeholder="@L.GetString("Filter_SearchByActivityOrNotes")" @bind="Search" @bind:event="oninput" /></div>
         <div class="field" style="flex:1;min-width:130px"><label for="history-activity">@L.GetString("Label_Activity")</label><select id="history-activity" @bind="ActivityFilter"><option value="00000000-0000-0000-0000-000000000000">@L.GetString("Filter_AllActivities")</option>@foreach (Activity activity in Activities.OrderBy(a => a.Name)) { <option value="@activity.Id">@activity.Name</option> }</select></div>
@@ -33,7 +33,7 @@
                         <span class="color-dot" style="background:@ActivityColor(record.ActivityId)"></span>
                         <span><strong>@ActivityName(record.ActivityId)</strong><small>@record.Notes</small></span>
                         <time>@record.StartTime.ToString("HH:mm") – @(record.EndTime?.ToString("HH:mm") ?? "···")<br />@UiFormat.Duration(UiFormat.Elapsed(record, DateTime.Now))</time>
-                        <span class="inline-fields"><BbButton OnClick="() => Edit(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Edit")">✎</BbButton><BbButton OnClick="() => ConfirmDelete(record)" Variant="ButtonVariant.Ghost" AriaLabel="@L.GetString("Menu_Delete")">×</BbButton></span>
+                        <span class="inline-fields"><BbButton OnClick="() => Edit(record)" Variant="ButtonVariant.Ghost" Class="icon-button" AriaLabel="@L.GetString("Menu_Edit")"><LucideIcon Name="pencil" Size="16" aria-hidden="true" focusable="false" /></BbButton><BbButton OnClick="() => ConfirmDelete(record)" Variant="ButtonVariant.Ghost" Class="icon-button" AriaLabel="@L.GetString("Menu_Delete")"><LucideIcon Name="trash-2" Size="16" aria-hidden="true" focusable="false" /></BbButton></span>
                     </div>
                 }
             </div>
@@ -45,10 +45,9 @@
 @if (Editor is not null) { <TimeRecordEditor @key="Editor" Record="Editor" Activities="Activities" OnSaved="EditorSavedAsync" OnCancel="CloseEditor" /> }
 @if (PendingDelete is not null)
 {
-    <div class="dialog-backdrop" role="presentation" @onclick="CancelDelete"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
-        <h2>@L.GetString("Dialog_DeleteRecord_Title")</h2><p>@L.GetString("Dialog_DeleteRecord_Message")</p>
+    <AppDialog Title="@L.GetString("Dialog_DeleteRecord_Title")" OnClose="CancelDelete"><p>@L.GetString("Dialog_DeleteRecord_Message")</p>
         <div class="dialog-actions"><BbButton OnClick="CancelDelete" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton><BbButton OnClick="DeleteAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton></div>
-    </div></div>
+    </AppDialog>
 }
 
 @code {

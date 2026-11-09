@@ -2,9 +2,7 @@
 @inject ILocalizationService L
 @inject TimeEntryService Entries
 
-<div class="dialog-backdrop" role="presentation" @onclick="CancelAsync">
-    <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="record-title" @onclick:stopPropagation>
-        <h2 id="record-title">@(Record.Id == Guid.Empty ? L.GetString("Dialog_NewRecord_Title") : L.GetString("Dialog_EditRecord_Title"))</h2>
+<AppDialog Title="@(Record.Id == Guid.Empty ? L.GetString("Dialog_NewRecord_Title") : L.GetString("Dialog_EditRecord_Title"))" OnClose="CancelAsync" Busy="Busy">
         <div class="form-grid">
             <div class="field span-2"><label for="activity">@L.GetString("Label_Activity")</label>
                 <select id="activity" @bind="ActivityId">
@@ -22,13 +20,12 @@
             <div class="field span-2"><label for="notes">@L.GetString("Label_Notes")</label><textarea id="notes" @bind="Notes"></textarea></div>
             <div class="field span-2"><label for="link">@L.GetString("Label_Link")</label><BbInput Id="link" Type="InputType.Url" @bind-Value="Link" /></div>
         </div>
-        @if (!string.IsNullOrEmpty(Error)) { <p class="error-text" role="alert">@Error</p> }
+        @if (!string.IsNullOrEmpty(Error)) { <BbAlert Variant="AlertVariant.Danger"><BbAlertDescription>@Error</BbAlertDescription></BbAlert> }
         <div class="dialog-actions">
             <BbButton OnClick="CancelAsync" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton>
             <BbButton OnClick="SaveAsync" Disabled="Busy">@L.GetString("Button_Save")</BbButton>
         </div>
-    </div>
-</div>
+    </AppDialog>
 
 @code {
     [Parameter, EditorRequired] public TimeRecord Record { get; set; } = new();
@@ -50,7 +47,7 @@
     {
         ActivityId = Record.ActivityId;
         DateText = Record.Date == default ? DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd") : Record.Date.ToString("yyyy-MM-dd");
-        StartText = Record.StartTime == default ? DateTime.Now.ToString("HH:mm") : Record.StartTime.ToString("HH:mm");
+        StartText = Record.StartTime.ToString("HH:mm");
         EndText = Record.EndTime?.ToString("HH:mm") ?? string.Empty;
         Notes = Record.Notes ?? string.Empty;
         Link = Record.Link ?? string.Empty;
@@ -65,21 +62,20 @@
         try
         {
             if (!DateOnly.TryParseExact(DateText, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date) ||
-                !TimeOnly.TryParse(StartText, out TimeOnly start) ||
+                !TimeOnly.TryParse(StartText, out _) ||
                 (!string.IsNullOrWhiteSpace(EndText) && !TimeOnly.TryParse(EndText, out _)))
             {
                 Error = L.GetString("Validation_InvalidStartTime");
                 return;
             }
 
-            TimeOnly? end = string.IsNullOrWhiteSpace(EndText) ? null : TimeOnly.Parse(EndText);
             await Entries.SaveAsync(new TimeRecord
             {
                 Id = Record.Id,
                 ActivityId = ActivityId,
                 Date = date,
-                StartTime = start,
-                EndTime = end,
+                StartTime = UiFormat.EditedTime(StartText, Record.StartTime)!.Value,
+                EndTime = UiFormat.EditedTime(EndText, Record.EndTime),
                 Notes = Notes,
                 Link = Link,
                 Telework = Telework
@@ -100,5 +96,5 @@
         }
     }
 
-    private Task CancelAsync() => OnCancel.InvokeAsync();
+    private Task CancelAsync() => Busy ? Task.CompletedTask : OnCancel.InvokeAsync();
 }

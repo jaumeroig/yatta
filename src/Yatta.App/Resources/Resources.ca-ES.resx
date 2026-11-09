@@ -313,7 +313,7 @@
     <value>Franges horàries</value>
   </data>
   <data name="Label_Location" xml:space="preserve">
-    <value>{0}</value>
+    <value>Ubicació</value>
   </data>
   <data name="Empty_NoSlots" xml:space="preserve">
     <value>No hi ha franges per aquest dia</value>
@@ -1129,4 +1129,12 @@
   <data name="Notice_Acknowledge" xml:space="preserve"><value>Entesos</value></data>
   <data name="Validation_JiraCodeTooLong" xml:space="preserve"><value>El codi Jira no pot superar els 50 caràcters.</value></data>
   <data name="Settings_Section_KeyboardShortcuts" xml:space="preserve"><value>Dreceres de teclat</value></data>
+  <data name="Settings_Saved" xml:space="preserve"><value>Configuració desada.</value></data>
+  <data name="UI_OperationFailed" xml:space="preserve"><value>No s’ha pogut completar l’operació. Torna-ho a provar.</value></data>
+  <data name="Blueprint_Toast_Region" xml:space="preserve">
+    <value>Notificacions</value>
+  </data>
+  <data name="Blueprint_Toast_Close" xml:space="preserve">
+    <value>Tanca</value>
+  </data>
 </root>

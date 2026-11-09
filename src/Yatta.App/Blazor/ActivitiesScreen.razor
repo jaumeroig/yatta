@@ -6,7 +6,7 @@
 @inject UiEventService Events
 
 <div class="page">
-    <header class="page-header"><div><h1>@L.GetString("Nav_Activities")</h1><p>@L.GetString("Page_Activities_Subtitle")</p></div><BbButton OnClick="Create">+ @L.GetString("Button_NewActivity")</BbButton></header>
+    <header class="page-header"><div><h1>@L.GetString("Nav_Activities")</h1><p>@L.GetString("Page_Activities_Subtitle")</p></div><BbButton OnClick="Create"><LucideIcon Name="plus" Size="16" aria-hidden="true" focusable="false" /> @L.GetString("Button_NewActivity")</BbButton></header>
     <div class="toolbar"><div class="field" style="min-width:240px;flex:1"><label for="activity-search">@L.GetString("Placeholder_Search")</label><input id="activity-search" placeholder="@L.GetString("Filter_SearchByName")" @bind="Search" @bind:event="oninput" /></div><label class="inline-fields"><input type="checkbox" @bind="ShowArchived" /> @L.GetString("Filter_ShowArchived")</label></div>
     @if (Filtered.Count == 0) { <div class="empty-state">@L.GetString("Empty_NoActivities")</div> }
     else
@@ -17,7 +17,7 @@
                 <button class="card activity-tile" @onclick="() => Edit(activity)">
                     <span class="color-dot" style="background:@activity.Color;display:block;width:18px;height:18px"></span>
                     <strong>@activity.Name</strong>
-                    <small>@(activity.Active ? L.GetString("Status_Active") : L.GetString("Status_Inactive")) · @RecordCount(activity.Id) @L.GetString("Stat_Entries")</small>
+                    <small>@(activity.Active ? L.GetString("Status_Active") : L.GetString("Status_Inactive")) · @L.GetString("Stat_Entries", RecordCount(activity.Id))</small>
                     <div class="setting-line"><span>@L.GetString("Label_TotalTime")</span><strong>@UiFormat.Duration(TotalTime(activity.Id))</strong></div>
                 </button>
             }
@@ -27,8 +27,7 @@
 
 @if (Editing)
 {
-    <div class="dialog-backdrop" role="presentation" @onclick="CloseEditor"><div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="activity-title" @onclick:stopPropagation>
-        <h2 id="activity-title">@(EditingId == Guid.Empty ? L.GetString("Dialog_NewActivity_Title") : L.GetString("Dialog_EditActivity_Title"))</h2>
+    <AppDialog Title="@(EditingId == Guid.Empty ? L.GetString("Dialog_NewActivity_Title") : L.GetString("Dialog_EditActivity_Title"))" OnClose="CloseEditor" Busy="Busy">
         <div class="form-grid">
             <div class="field span-2"><label for="activity-name">@L.GetString("Label_ActivityName")</label><BbInput Id="activity-name" @bind-Value="Name" /></div>
             <div class="field"><label for="activity-jira">@L.GetString("Label_JiraCode")</label><BbInput Id="activity-jira" @bind-Value="JiraCode" /></div>
@@ -37,7 +36,7 @@
         </div>
         @if (EditingId != Guid.Empty)
         {
-            <div class="activity-detail-summary"><span>@L.GetString("Stat_Entries"): <strong>@RecordCount(EditingId)</strong></span><span>@L.GetString("Label_TotalTime"): <strong>@UiFormat.Duration(TotalTime(EditingId))</strong></span></div>
+            <div class="activity-detail-summary"><span>@L.GetString("Stat_Entries", RecordCount(EditingId))</span><span>@L.GetString("Label_TotalTime"): <strong>@UiFormat.Duration(TotalTime(EditingId))</strong></span></div>
             <div class="activity-detail-records">
                 @foreach (TimeRecord record in Records.Where(record => record.ActivityId == EditingId).OrderByDescending(record => record.Date).ThenByDescending(record => record.StartTime).Take(8))
                 {
@@ -45,24 +44,24 @@
                 }
             </div>
         }
-        @if (!string.IsNullOrWhiteSpace(Error)) { <p class="error-text" role="alert">@Error</p> }
+        @if (!string.IsNullOrWhiteSpace(Error)) { <BbAlert Variant="AlertVariant.Danger"><BbAlertDescription>@Error</BbAlertDescription></BbAlert> }
         <div class="dialog-actions">
             @if (EditingId != Guid.Empty) { <BbButton OnClick="AskDelete" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton> }
             <BbButton OnClick="CloseEditor" Variant="ButtonVariant.Outline">@L.GetString("Button_Cancel")</BbButton>
-            <BbButton OnClick="SaveAsync">@L.GetString("Button_Save")</BbButton>
+            <BbButton OnClick="SaveAsync" Disabled="Busy">@L.GetString("Button_Save")</BbButton>
         </div>
-    </div></div>
+    </AppDialog>
 }
 @if (EditingRecord is not null) { <TimeRecordEditor @key="EditingRecord" Record="EditingRecord" Activities="Activities" OnSaved="RecordSavedAsync" OnCancel="CloseRecordEditor" /> }
 @if (ConfirmingDelete)
 {
-    <div class="dialog-backdrop" role="presentation" @onclick="CancelDelete"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
-        <h2>@L.GetString("Dialog_DeleteActivity_Title")</h2><p>@string.Format(L.GetString("Message_DeleteActivityWarning"), RecordCount(EditingId))</p>
+    <AppDialog Title="@L.GetString("Dialog_DeleteActivity_Title")" OnClose="CancelDelete"><p>@string.Format(L.GetString("Message_DeleteActivityWarning"), RecordCount(EditingId))</p>
         <div class="dialog-actions"><BbButton OnClick="CancelDelete" Variant="ButtonVariant.Outline">@L.GetString("Button_CancelDelete")</BbButton><BbButton OnClick="DeleteAsync" Variant="ButtonVariant.Destructive">@L.GetString("Button_Delete")</BbButton></div>
-    </div></div>
+    </AppDialog>
 }
 
 @code {
+    private bool Busy;
     private List<Activity> Activities = [];
     private List<TimeRecord> Records = [];
     private string Search = string.Empty;
@@ -90,14 +89,24 @@
     private TimeSpan TotalTime(Guid id) => TimeSpan.FromTicks(Records.Where(r => r.ActivityId == id).Sum(r => UiFormat.Elapsed(r, DateTime.Now).Ticks));
     private void Create() { EditingId = Guid.Empty; Name = string.Empty; JiraCode = string.Empty; Color = "#0967d2"; Active = true; Error = string.Empty; Editing = true; }
     private void Edit(Activity activity) { EditingId = activity.Id; Name = activity.Name; JiraCode = activity.JiraCode ?? string.Empty; Color = activity.Color; Active = activity.Active; Error = string.Empty; Editing = true; }
-    private void CloseEditor() => Editing = false;
+    private void CloseEditor() { if (!Busy) { Editing = false; } }
     private void EditRecord(TimeRecord record) => EditingRecord = record;
     private void CloseRecordEditor() => EditingRecord = null;
     private async Task RecordSavedAsync() { EditingRecord = null; await LoadAsync(); }
     private async Task SaveAsync()
     {
+        if (Busy) { return; }
+        Busy = true;
+        Error = string.Empty;
+        try { await SaveCoreAsync(); }
+        catch { Error = L.GetString("UI_OperationFailed"); }
+        finally { Busy = false; }
+    }
+
+    private async Task SaveCoreAsync()
+    {
         if (string.IsNullOrWhiteSpace(Name)) { Error = L.GetString("Validation_ActivityNameRequired"); return; }
-        if (Name.Trim().Length > 100) { Error = L.GetString("Validation_ActivityNameTooLong"); return; }
+        if (Name.Trim().Length > 100) { Error = L.GetString("Validation_ActivityNameTooLong", 100); return; }
         if (JiraCode.Length > 50) { Error = L.GetString("Validation_JiraCodeTooLong"); return; }
         using IServiceScope scope = Scopes.CreateScope();
         IActivityRepository repository = scope.ServiceProvider.GetRequiredService<IActivityRepository>();

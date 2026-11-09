@@ -1,0 +1,25 @@
+@namespace Yatta.App.Blazor
+@inject IThemeService Theme
+
+<BbDialog Open="true" OpenChanged="HandleOpenChanged" RenderingStrategy="BlazorBlueprint.Primitives.Services.OverlayRenderingStrategy.Native">
+    <BbDialogContent Class="@($"app-dialog {UiFormat.ThemeClass(Theme)}")" ShowClose="false" CloseOnOverlayClick="false" CloseOnEscape="@(!Busy)">
+        <BbDialogHeader><BbDialogTitle>@Title</BbDialogTitle></BbDialogHeader>
+        @ChildContent
+    </BbDialogContent>
+</BbDialog>
+
+@code {
+    /// <summary>Gets or sets the localized, accessible dialog title.</summary>
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the dialog fields and actions.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Gets or sets the callback invoked when the dialog is dismissed.</summary>
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    /// <summary>Gets or sets whether a pending operation prevents dismissal.</summary>
+    [Parameter] public bool Busy { get; set; }
+
+    private Task HandleOpenChanged(bool open) => !open && !Busy ? OnClose.InvokeAsync() : Task.CompletedTask;
+}
