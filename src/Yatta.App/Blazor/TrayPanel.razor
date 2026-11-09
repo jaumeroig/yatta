@@ -8,12 +8,12 @@
 @inject MainWindow Window
 
 <div class="tray-panel @UiFormat.ThemeClass(ThemeService)" lang="@L.GetCurrentCulture()">
-    <div class="tray-heading"><div><span class="eyebrow">Yatta</span><h1>@L.GetString("TrayPanel_Title")</h1></div><button class="tray-close" @onclick="Window.CloseTrayPanel" aria-label="@L.GetString("Button_Cancel")">×</button></div>
+    <div class="tray-heading"><div><span class="eyebrow">Yatta</span><h1>@L.GetString("TrayPanel_Title")</h1></div><button class="tray-close" @onclick="Window.CloseTrayPanel" aria-label="@L.GetString("Button_Cancel")"><LucideIcon Name="x" Size="18" aria-hidden="true" focusable="false" /></button></div>
     <div class="tray-total"><span class="eyebrow">@L.GetString("TrayPanel_WorkedLabel")</span><strong>@UiFormat.Duration(Worked)</strong></div>
     <div class="tray-details"><div><span>@L.GetString("TrayPanel_StartLabel")</span><strong>@(Records.Count == 0 ? "—" : Records.Min(r => r.StartTime).ToString("HH:mm"))</strong></div><div><span>@L.GetString("TrayPanel_StatusLabel")</span><strong>@(Active is null ? L.GetString("TrayPanel_StatusPaused") : L.GetString("TrayPanel_StatusActive"))</strong></div></div>
     <div class="tray-activity"><span class="eyebrow">@L.GetString("TrayPanel_CurrentActivityLabel")</span><strong>@(Active is null ? L.GetString("TrayPanel_NoActiveActivity") : ActivityName(Active.ActivityId))</strong>@if (Active is not null) { <small>@UiFormat.Duration(UiFormat.Elapsed(Active, Now))</small> }</div>
-    <div class="tray-actions"><BbButton OnClick="ChangeActivity">@(Active is null ? L.GetString("TrayPanel_ButtonStart") : L.GetString("TrayPanel_ButtonChange"))</BbButton>@if (Active is not null) { <BbButton OnClick="StopAsync" Variant="ButtonVariant.Outline">@L.GetString("TrayPanel_ButtonStop")</BbButton> }</div>
-    <button class="tray-open" @onclick="OpenApp">@L.GetString("TrayPanel_ButtonOpenApp") ↗</button>
+    <div class="tray-actions"><BbButton OnClick="ChangeActivity"><LucideIcon Name="@(Active is null ? "play" : "arrow-right-left")" Size="16" aria-hidden="true" focusable="false" />@(Active is null ? L.GetString("TrayPanel_ButtonStart") : L.GetString("TrayPanel_ButtonChange"))</BbButton>@if (Active is not null) { <BbButton OnClick="StopAsync" Variant="ButtonVariant.Outline"><LucideIcon Name="square" Size="16" aria-hidden="true" focusable="false" />@L.GetString("TrayPanel_ButtonStop")</BbButton> }</div>
+    <button class="tray-open" @onclick="OpenApp">@L.GetString("TrayPanel_ButtonOpenApp") <LucideIcon Name="arrow-up-right" Size="16" aria-hidden="true" focusable="false" /></button>
     <BbPortalHost />
 </div>
 

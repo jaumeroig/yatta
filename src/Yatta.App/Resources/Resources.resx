@@ -313,7 +313,7 @@
     <value>Franjas horarias</value>
   </data>
   <data name="Label_Location" xml:space="preserve">
-    <value>{0}</value>
+    <value>Ubicación</value>
   </data>
   <data name="Empty_NoSlots" xml:space="preserve">
     <value>No hay franjas para este día</value>
@@ -1131,4 +1131,12 @@
   <data name="History_OldestFirst" xml:space="preserve"><value>Primero los más antiguos</value></data>
   <data name="Notice_Acknowledge" xml:space="preserve"><value>Entendido</value></data>
   <data name="Validation_JiraCodeTooLong" xml:space="preserve"><value>El código Jira no puede superar los 50 caracteres.</value></data>
+  <data name="Settings_Saved" xml:space="preserve"><value>Configuración guardada.</value></data>
+  <data name="UI_OperationFailed" xml:space="preserve"><value>No se ha podido completar la operación. Vuelve a intentarlo.</value></data>
+  <data name="Blueprint_Toast_Region" xml:space="preserve">
+    <value>Notificaciones</value>
+  </data>
+  <data name="Blueprint_Toast_Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
 </root>

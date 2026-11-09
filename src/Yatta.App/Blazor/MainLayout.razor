@@ -7,16 +7,16 @@
 
 <div class="app-shell @ThemeClass" lang="@Localization.GetCurrentCulture()">
     <aside class="sidebar" aria-label="@Localization.GetString("App_Title")">
-        <div class="brand"><span class="brand-mark">◷</span><span><strong>Yatta</strong><small>@Localization.GetString("TitleBar_Subtitle")</small></span></div>
+        <div class="brand"><span class="brand-mark" aria-hidden="true"><LucideIcon Name="timer" Size="22" aria-hidden="true" focusable="false" /></span><span><strong>Yatta</strong><small>@Localization.GetString("TitleBar_Subtitle")</small></span></div>
         <nav class="primary-nav">
-            <NavLink href="/" Match="NavLinkMatch.All">◷ <span>@Localization.GetString("Nav_Today")</span></NavLink>
-            <NavLink href="/history">▤ <span>@Localization.GetString("Nav_Historic")</span></NavLink>
-            <NavLink href="/activities">▦ <span>@Localization.GetString("Nav_Activities")</span></NavLink>
-            <NavLink href="/reports">◫ <span>@Localization.GetString("Nav_Dashboard")</span></NavLink>
+            <NavLink href="/" Match="NavLinkMatch.All" title="@Localization.GetString("Nav_Today")" aria-label="@Localization.GetString("Nav_Today")"><span class="nav-icon" aria-hidden="true"><LucideIcon Name="clock-3" Size="20" aria-hidden="true" focusable="false" /></span><span class="nav-label">@Localization.GetString("Nav_Today")</span></NavLink>
+            <NavLink href="/history" title="@Localization.GetString("Nav_Historic")" aria-label="@Localization.GetString("Nav_Historic")"><span class="nav-icon" aria-hidden="true"><LucideIcon Name="history" Size="20" aria-hidden="true" focusable="false" /></span><span class="nav-label">@Localization.GetString("Nav_Historic")</span></NavLink>
+            <NavLink href="/activities" title="@Localization.GetString("Nav_Activities")" aria-label="@Localization.GetString("Nav_Activities")"><span class="nav-icon" aria-hidden="true"><LucideIcon Name="layout-grid" Size="20" aria-hidden="true" focusable="false" /></span><span class="nav-label">@Localization.GetString("Nav_Activities")</span></NavLink>
+            <NavLink href="/reports" title="@Localization.GetString("Nav_Dashboard")" aria-label="@Localization.GetString("Nav_Dashboard")"><span class="nav-icon" aria-hidden="true"><LucideIcon Name="chart-no-axes-combined" Size="20" aria-hidden="true" focusable="false" /></span><span class="nav-label">@Localization.GetString("Nav_Dashboard")</span></NavLink>
         </nav>
         <nav class="secondary-nav">
-            <NavLink href="/whats-new">✦ <span>@Localization.GetString("Nav_WhatsNew")</span></NavLink>
-            <NavLink href="/settings">⚙ <span>@Localization.GetString("Nav_Settings")</span></NavLink>
+            <NavLink href="/whats-new" title="@Localization.GetString("Nav_WhatsNew")" aria-label="@Localization.GetString("Nav_WhatsNew")"><span class="nav-icon" aria-hidden="true"><LucideIcon Name="sparkles" Size="20" aria-hidden="true" focusable="false" /></span><span class="nav-label">@Localization.GetString("Nav_WhatsNew")</span></NavLink>
+            <NavLink href="/settings" title="@Localization.GetString("Nav_Settings")" aria-label="@Localization.GetString("Nav_Settings")"><span class="nav-icon" aria-hidden="true"><LucideIcon Name="settings-2" Size="20" aria-hidden="true" focusable="false" /></span><span class="nav-label">@Localization.GetString("Nav_Settings")</span></NavLink>
         </nav>
         <span class="sidebar-footer">Yatta</span>
     </aside>
@@ -26,28 +26,25 @@
     <BbDialogProvider />
     @if (CloseQuestion)
     {
-        <div class="dialog-backdrop" role="presentation" @onclick="() => AnswerClose(CloseDecision.Cancel)"><div class="dialog-panel" role="alertdialog" aria-modal="true" tabindex="-1" @onclick:stopPropagation>
-            <h2>@Localization.GetString("Dialog_CloseApp_Title")</h2><p>@Localization.GetString("Dialog_CloseApp_Message")</p>
+        <AppDialog Title="@Localization.GetString("Dialog_CloseApp_Title")" OnClose="() => AnswerClose(CloseDecision.Cancel)"><p>@Localization.GetString("Dialog_CloseApp_Message")</p>
             <div class="dialog-actions">
                 <BbButton OnClick="() => AnswerClose(CloseDecision.Cancel)" Variant="ButtonVariant.Outline">@Localization.GetString("Button_Cancel")</BbButton>
                 <BbButton OnClick="() => AnswerClose(CloseDecision.KeepRunningAndClose)" Variant="ButtonVariant.Outline">@Localization.GetString("Button_No")</BbButton>
                 <BbButton OnClick="() => AnswerClose(CloseDecision.StopAndClose)">@Localization.GetString("Button_Yes")</BbButton>
             </div>
-        </div></div>
+        </AppDialog>
     }
     @if (UpdateQuestion)
     {
-        <div class="dialog-backdrop" role="presentation" @onclick="() => AnswerUpdate(false)"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
-            <h2>@Localization.GetString("TitleBar_Title")</h2><p>@Localization.GetString("Update_Available")</p>
+        <AppDialog Title="@Localization.GetString("TitleBar_Title")" OnClose="() => AnswerUpdate(false)"><p>@Localization.GetString("Update_Available")</p>
             <div class="dialog-actions"><BbButton OnClick="() => AnswerUpdate(false)" Variant="ButtonVariant.Outline">@Localization.GetString("Update_Later")</BbButton><BbButton OnClick="() => AnswerUpdate(true)">@Localization.GetString("Update_InstallAndRestart")</BbButton></div>
-        </div></div>
+        </AppDialog>
     }
     @if (!string.IsNullOrWhiteSpace(Events.NoticeKey))
     {
-        <div class="dialog-backdrop" role="presentation" @onclick="Events.DismissNotice"><div class="dialog-panel" role="alertdialog" aria-modal="true" @onclick:stopPropagation>
-            <h2>@Localization.GetString("TitleBar_Title")</h2><p>@Localization.GetString(Events.NoticeKey!, Events.NoticeArguments)</p>
+        <AppDialog Title="@Localization.GetString("TitleBar_Title")" OnClose="Events.DismissNotice"><p>@Localization.GetString(Events.NoticeKey!, Events.NoticeArguments)</p>
             <div class="dialog-actions"><BbButton OnClick="Events.DismissNotice">@Localization.GetString("Notice_Acknowledge")</BbButton></div>
-        </div></div>
+        </AppDialog>
     }
 </div>
 
