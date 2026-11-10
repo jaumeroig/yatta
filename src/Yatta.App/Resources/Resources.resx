@@ -394,7 +394,7 @@
     <value>Tecnología:</value>
   </data>
   <data name="Value_Technology" xml:space="preserve">
-    <value>.NET 10, WPF, SQLite</value>
+    <value>.NET 11, WPF, SQLite</value>
   </data>
   <data name="Status_Active" xml:space="preserve">
     <value>Activa</value>
