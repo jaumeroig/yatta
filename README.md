@@ -30,17 +30,17 @@ Este proyecto sigue una arquitectura de 3 capas:
 
 ## 🛠️ Tecnologías
 
-- **.NET 10** - Framework de desarrollo
+- **.NET 11** - Framework de desarrollo
 - **Blazor Hybrid y Blazor Blueprint** - Interfaz, navegación y componentes
 - **WPF, WPF-UI y WebView2** - Ventanas e integraciones nativas de Windows
 - **Microsoft.Extensions.DependencyInjection** - Inyección de dependencias
-- **Entity Framework Core 10** - ORM para acceso a datos
+- **Entity Framework Core 11** - ORM para acceso a datos
 - **SQLite** - Base de datos local
 
 ## 🚀 Requisitos previos
 
 - Windows 10 o superior
-- .NET 10 SDK
+- .NET 11 SDK
 - Microsoft Edge WebView2 Runtime para ejecución fuera del instalador. El paquete Velopack lo instala como requisito.
 
 ## 🔧 Compilación y ejecución

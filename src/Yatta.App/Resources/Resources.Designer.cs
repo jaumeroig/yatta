@@ -3184,7 +3184,7 @@ namespace Yatta.App.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .NET 10, WPF, SQLite.
+        ///   Looks up a localized string similar to .NET 11, WPF, SQLite.
         /// </summary>
         internal static string Value_Technology {
             get {

@@ -4,7 +4,7 @@ This document provides guidelines for AI coding agents working in this repositor
 
 ## Project Overview
 
-Yatta is a Windows time tracking application built with .NET 10, Blazor Hybrid, WPF, and SQLite.
+Yatta is a Windows time tracking application built with .NET 11, Blazor Hybrid, WPF, and SQLite.
 
 ### Architecture
 - **Yatta.App** - Razor presentation layer in WPF BlazorWebView windows; WPF owns native Windows integrations
@@ -12,10 +12,10 @@ Yatta is a Windows time tracking application built with .NET 10, Blazor Hybrid, 
 - **Yatta.Data** - Data persistence with Entity Framework Core + SQLite
 
 ### Key Technologies
-- .NET 10 (net10.0 / net10.0-windows)
+- .NET 11 (net11.0 / net11.0-windows)
 - WPF BlazorWebView and Blazor Blueprint components
 - WPF-UI for native window chrome and system tray
-- Entity Framework Core 10
+- Entity Framework Core 11
 - SQLite database
 - Dependency Injection (Microsoft.Extensions.DependencyInjection)
 

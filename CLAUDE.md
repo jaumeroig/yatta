@@ -28,11 +28,11 @@ dotnet restore src/Yatta.slnx
 
 ## Architecture
 
-Three-layer architecture targeting .NET 10 / Windows:
+Three-layer architecture targeting .NET 11 / Windows:
 
-- **Yatta.Core** (`net10.0`) — Models, interfaces, and business-logic services. No UI or EF dependencies. This is what the test project references.
-- **Yatta.Data** (`net10.0`) — EF Core 10 + SQLite. Repositories, entity configurations, and migrations. DB is stored in `%APPDATA%/TimeTracker/timetracker.db` via `DatabaseConfiguration.GetConnectionString()`.
-- **Yatta.App** (`net10.0-windows`) — WPF presentation layer using WPF-UI (Fluent Design) and CommunityToolkit.Mvvm.
+- **Yatta.Core** (`net11.0`) — Models, interfaces, and business-logic services. No UI or EF dependencies. This is what the test project references.
+- **Yatta.Data** (`net11.0`) — EF Core 11 + SQLite. Repositories, entity configurations, and migrations. DB is stored in `%APPDATA%/TimeTracker/timetracker.db` via `DatabaseConfiguration.GetConnectionString()`.
+- **Yatta.App** (`net11.0-windows`) — WPF presentation layer using WPF-UI (Fluent Design) and CommunityToolkit.Mvvm.
 
 DI is wired entirely in `App.xaml.cs → ConfigureServices`. Migrations are applied automatically on startup. Localization must be initialized (`InitializeLocalization`) **before** any Window or Page is created.
 
